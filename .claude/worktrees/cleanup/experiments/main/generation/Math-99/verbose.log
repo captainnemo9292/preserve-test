@@ -1,0 +1,891 @@
+
+====================================================================================================
+[13:29:33] BUG Math-99: failing test org.apache.commons.math.util.MathUtilsTest::testGcd -> org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-99/Math99b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-99/source
+====================================================================================================
+Title: MathUtils.gcd(Integer.MIN_VALUE, 0) should throw an Exception instead of returning Integer.MIN_VALUE
+
+The gcd method should throw an Exception for gcd(Integer.MIN_VALUE, 0), like for gcd(Integer.MIN_VALUE, Integer.MIN_VALUE). The method should only return nonnegative results.
+
+====================================================================================================
+[13:29:33] HIDDEN FROM THE AGENT: 41 relevant test classes
+====================================================================================================
+org.apache.commons.math.analysis.polynomials.PolynomialsUtilsTest
+org.apache.commons.math.analysis.solvers.LaguerreSolverTest
+org.apache.commons.math.analysis.solvers.MullerSolverTest
+org.apache.commons.math.analysis.solvers.RiddersSolverTest
+org.apache.commons.math.complex.ComplexTest
+org.apache.commons.math.distribution.BinomialDistributionTest
+org.apache.commons.math.distribution.HypergeometricDistributionTest
+org.apache.commons.math.distribution.PascalDistributionTest
+org.apache.commons.math.distribution.PoissonDistributionTest
+org.apache.commons.math.fraction.FractionFormatTest
+org.apache.commons.math.fraction.FractionTest
+org.apache.commons.math.geometry.RotationTest
+org.apache.commons.math.linear.DenseRealMatrixTest
+org.apache.commons.math.linear.RealMatrixImplTest
+org.apache.commons.math.linear.RealVectorImplTest
+org.apache.commons.math.linear.SparseRealMatrixTest
+org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest
+org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest
+org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.MultivariateSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.StatisticalSummaryValuesTest
+org.apache.commons.math.stat.descriptive.SummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.moment.FirstMomentTest
+org.apache.commons.math.stat.descriptive.moment.FourthMomentTest
+org.apache.commons.math.stat.descriptive.moment.GeometricMeanTest
+org.apache.commons.math.stat.descriptive.moment.KurtosisTest
+org.apache.commons.math.stat.descriptive.moment.MeanTest
+org.apache.commons.math.stat.descriptive.moment.SecondMomentTest
+org.apache.commons.math.stat.descriptive.moment.SkewnessTest
+org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest
+org.apache.commons.math.stat.descriptive.moment.ThirdMomentTest
+org.apache.commons.math.stat.descriptive.moment.VarianceTest
+org.apache.commons.math.stat.descriptive.rank.MaxTest
+org.apache.commons.math.stat.descriptive.rank.MinTest
+org.apache.commons.math.stat.descriptive.summary.ProductTest
+org.apache.commons.math.stat.descriptive.summary.SumLogTest
+org.apache.commons.math.stat.descriptive.summary.SumSqTest
+org.apache.commons.math.stat.descriptive.summary.SumTest
+org.apache.commons.math.util.MathUtilsTest
+
+====================================================================================================
+[13:29:33] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:29:33] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: MathUtils.gcd(Integer.MIN_VALUE, 0) should throw an Exception instead of returning Integer.MIN_VALUE
+
+The gcd method should throw an Exception for gcd(Integer.MIN_VALUE, 0), like for gcd(Integer.MIN_VALUE, Integer.MIN_VALUE). The method should only return nonnegative results.
+
+====================================================================================================
+[13:29:38] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "MathUtils.gcd(Integer.MIN_VALUE, 0) returns Integer.MIN_VALUE (a negative number) instead of throwing an ArithmeticException, since the true result 2^31 can't be represented as a nonnegative int. This is inconsistent with gcd(Integer.MIN_VALUE, Integer.MIN_VALUE), which already throws.",
+  "concrete_examples": [
+    {
+      "input": "MathUtils.gcd(Integer.MIN_VALUE, 0)",
+      "expected": "Throws an ArithmeticException (result 2^31 overflows int; gcd must be nonnegative)",
+      "actual": "Returns Integer.MIN_VALUE (-2147483648), a negative value"
+    },
+    {
+      "input": "MathUtils.gcd(0, Integer.MIN_VALUE)",
+      "expected": "Throws an ArithmeticException (result 2^31 overflows int)",
+      "actual": "Returns Integer.MIN_VALUE (-2147483648), a negative value"
+    },
+    {
+      "input": "MathUtils.gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)",
+      "expected": "Throws an ArithmeticException",
+      "actual": "Throws an ArithmeticException (correct; this is the reference behavior)"
+    }
+  ]
+}
+
+====================================================================================================
+[13:29:38] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:29:39] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0083
+====================================================================================================
+{
+  "issue_gist": "MathUtils.gcd(Integer.MIN_VALUE, 0) returns Integer.MIN_VALUE (a negative number) instead of throwing an ArithmeticException, since the true result 2^31 can't be represented as a nonnegative int. This is inconsistent with gcd(Integer.MIN_VALUE, Integer.MIN_VALUE), which already throws.",
+  "concrete_examples": [
+    {
+      "input": "MathUtils.gcd(Integer.MIN_VALUE, 0)",
+      "expected": "Throws an ArithmeticException (result 2^31 overflows int; gcd must be nonnegative)",
+      "actual": "Returns Integer.MIN_VALUE (-2147483648), a negative value"
+    },
+    {
+      "input": "MathUtils.gcd(0, Integer.MIN_VALUE)",
+      "expected": "Throws an ArithmeticException (result 2^31 overflows int)",
+      "actual": "Returns Integer.MIN_VALUE (-2147483648), a negative value"
+    },
+    {
+      "input": "MathUtils.gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)",
+      "expected": "Throws an ArithmeticException",
+      "actual": "Throws an ArithmeticException (correct; this is the reference behavior)"
+    }
+  ]
+}
+
+====================================================================================================
+[13:29:39] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:29:39] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-99/source
+Test file: src/test/org/apache/commons/math/util/JQF_MathUtilsTest.java
+Test class: org.apache.commons.math.util.JQF_MathUtilsTest
+Test method: testBugReproduction
+
+Bug summary: MathUtils.gcd(Integer.MIN_VALUE, 0) returns Integer.MIN_VALUE (a negative number) instead of throwing an ArithmeticException, since the true result 2^31 can't be represented as a nonnegative int. This is inconsistent with gcd(Integer.MIN_VALUE, Integer.MIN_VALUE), which already throws.
+
+Concrete examples:
+[{'input': 'MathUtils.gcd(Integer.MIN_VALUE, 0)', 'expected': 'Throws an ArithmeticException (result 2^31 overflows int; gcd must be nonnegative)', 'actual': 'Returns Integer.MIN_VALUE (-2147483648), a negative value'}, {'input': 'MathUtils.gcd(0, Integer.MIN_VALUE)', 'expected': 'Throws an ArithmeticException (result 2^31 overflows int)', 'actual': 'Returns Integer.MIN_VALUE (-2147483648), a negative value'}, {'input': 'MathUtils.gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)', 'expected': 'Throws an ArithmeticException', 'actual': 'Throws an ArithmeticException (correct; this is the reference behavior)'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-99/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:29:41] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public static int gcd",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-99/source",
+  "output_mode": "content",
+  "-A": 50,
+  "glob": "**/MathUtils.java"
+}
+
+====================================================================================================
+[13:29:41] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/java/org/apache/commons/math/util/MathUtils.java:539:    public static int gcd(final int p, final int q) {
+src/java/org/apache/commons/math/util/MathUtils.java-540-        int u = p;
+src/java/org/apache/commons/math/util/MathUtils.java-541-        int v = q;
+src/java/org/apache/commons/math/util/MathUtils.java-542-        if ((u == 0) || (v == 0)) {
+src/java/org/apache/commons/math/util/MathUtils.java-543-            return (Math.abs(u) + Math.abs(v));
+src/java/org/apache/commons/math/util/MathUtils.java-544-        }
+src/java/org/apache/commons/math/util/MathUtils.java-545-        // keep u and v negative, as negative integers range down to
+src/java/org/apache/commons/math/util/MathUtils.java-546-        // -2^31, while positive numbers can only be as large as 2^31-1
+src/java/org/apache/commons/math/util/MathUtils.java-547-        // (i.e. we can't necessarily negate a negative number without
+src/java/org/apache/commons/math/util/MathUtils.java-548-        // overflow)
+src/java/org/apache/commons/math/util/MathUtils.java-549-        /* assert u!=0 && v!=0; */
+src/java/org/apache/commons/math/util/MathUtils.java-550-        if (u > 0) {
+src/java/org/apache/commons/math/util/MathUtils.java-551-            u = -u;
+src/java/org/apache/commons/math/util/MathUtils.java-552-        } // make u negative
+src/java/org/apache/commons/math/util/MathUtils.java-553-        if (v > 0) {
+src/java/org/apache/commons/math/util/MathUtils.java-554-            v = -v;
+src/java/org/apache/commons/math/util/MathUtils.java-555-        } // make v negative
+src/java/org/apache/commons/math/util/MathUtils.java-556-        // B1. [Find power of 2]
+src/java/org/apache/commons/math/util/MathUtils.java-557-        int k = 0;
+src/java/org/apache/commons/math/util/MathUtils.java-558-        while ((u & 1) == 0 && (v & 1) == 0 && k < 31) { // while u and v are
+src/java/org/apache/commons/math/util/MathUtils.java-559-                                                            // both even...
+src/java/org/apache/commons/math/util/MathUtils.java-560-            u /= 2;
+src/java/org/apache/commons/math/util/MathUtils.java-561-            v /= 2;
+src/java/org/apache/commons/math/util/MathUtils.java-562-            k++; // cast out twos.
+src/java/org/apache/commons/math/util/MathUtils.java-563-        }
+src/java/org/apache/commons/math/util/MathUtils.java-564-        if (k == 31) {
+src/java/org/apache/commons/math/util/MathUtils.java-565-            throw MathRuntimeException.createArithmeticException(
+src/java/org/apache/commons/math/util/MathUtils.java-566-                    "overflow: gcd({0}, {1}) is 2^31",
+src/java/org/apache/commons/math/util/MathUtils.java-567-                    new Object[] { p, q });
+src/java/org/apache/commons/math/util/MathUtils.java-568-        }
+src/java/org/apache/commons/math/util/MathUtils.java-569-        // B2. Initialize: u and v have been divided by 2^k and at least
+src/java/org/apache/commons/math/util/MathUtils.java-570-        // one is odd.
+src/java/org/apache/commons/math/util/MathUtils.java-571-        int t = ((u & 1) == 1) ? v : -(u / 2)/* B3 */;
+src/java/org/apache/commons/math/util/MathUtils.java-572-        // t negative: u was odd, v may be even (t replaces v)
+src/java/org/apache/commons/math/util/MathUtils.java-573-        // t positive: u was even, v is odd (t replaces u)
+src/java/org/apache/commons/math/util/MathUtils.java-574-        do {
+src/java/org/apache/commons/math/util/MathUtils.java-575-            /* assert u<0 && v<0; */
+src/java/org/apache/commons/math/util/MathUtils.java-576-            // B4/B3: cast out twos from t.
+src/java/org/apache/commons/math/util/MathUtils.java-577-            while ((t & 1) == 0) { // while t is even..
+src/java/org/apache/commons/math/util/MathUtils.java-578-                t /= 2; // cast out twos
+src/java/org/apache/commons/math/util/MathUtils.java-579-            }
+src/java/org/apache/commons/math/util/MathUtils.java-580-            // B5 [reset max(u,v)]
+src/java/org/apache/commons/math/util/MathUtils.java-581-            if (t > 0) {
+src/java/org/apache/commons/math/util/MathUtils.java-582-                u = -t;
+src/java/org/apache/commons/math/util/MathUtils.java-583-            } else {
+src/java/org/apache/commons/math/util/MathUtils.java-584-                v = t;
+src/java/org/apache/commons/math/util/MathUtils.java-585-            }
+src/java/org/apache/commons/math/util/MathUtils.java-586-            // B6/B3. at this point both u and v should be odd.
+src/java/org/apache/commons/math/util/MathUtils.java-587-            t = (v - u) / 2;
+src/java/org/apache/commons/math/util/MathUtils.java-588-            // |u| larger: t positive (replace u)
+src/java/org/apache/commons/math/util/MathUtils.java-589-            // |v| larger: t negative (replace v)
+
+====================================================================================================
+[13:29:51] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    public static class IntGen extends Generator<Integer> {\n        public IntGen() { super(Integer.class); }\n        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(0, 9);\n            if (c < 4) return Integer.MIN_VALUE;\n            if (c < 8) return 0;\n            if (c == 8) return r.nextInt(-100, 100);\n            return r.nextInt();\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(IntGen.class) int p,\n                                    @From(IntGen.class) int q) {\n        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error\n        boolean validIf = true;\n        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exceptionClass = \"none\";\n        int result = 0;\n        try {\n            result = MathUtils.gcd(p, q);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String ex = exceptionClass;\n        final int res = result;\n        Log.logOutIf(true, () -> new Object[]{ ex, res });\n        assertEquals(\"java.lang.ArithmeticException\", ex);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:29:51] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:29:52] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1516
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    public static class IntGen extends Generator<Integer> {\n        public IntGen() { super(Integer.class); }\n        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(0, 9);\n            if (c < 4) return Integer.MIN_VALUE;\n            if (c < 8) return 0;\n            if (c == 8) return r.nextInt(-100, 100);\n            return r.nextInt();\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(IntGen.class) int p,\n                                    @From(IntGen.class) int q) {\n        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error\n        boolean validIf = true;\n        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exceptionClass = \"none\";\n        int result = 0;\n        try {\n            result = MathUtils.gcd(p, q);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String ex = exceptionClass;\n        final int res = result;\n        Log.logOutIf(true, () -> new Object[]{ ex, res });\n        assertEquals(\"java.lang.ArithmeticException\", ex);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:29:52] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:29:52] TEST CODE (org.apache.commons.math.util.JQF_MathUtilsTest)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+}
+
+====================================================================================================
+[13:29:54] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:30:15] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 90752,
+  "discarded_by_assume": 54853,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 1942
+  },
+  "passed_assume": 35899,
+  "classified": 1942
+}
+
+====================================================================================================
+[13:30:15] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:30:15] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: MathUtils.gcd(Integer.MIN_VALUE, 0) should throw an Exception instead of returning Integer.MIN_VALUE
+
+The gcd method should throw an Exception for gcd(Integer.MIN_VALUE, 0), like for gcd(Integer.MIN_VALUE, Integer.MIN_VALUE). The method should only return nonnegative results.
+
+=== Test ===
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[none]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)
+
+is triggered by the following inputs:
+
+    input (0, -2147483648) -> logged [none, -2147483648]
+    input (0, -2147483648) -> logged [none, -2147483648]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:30:23] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing input (0, Integer.MIN_VALUE) is the symmetric case of the reported gcd(Integer.MIN_VALUE, 0). The buggy code returns -2147483648 with no exception, but the true gcd is 2^31, which overflows int. The report says this should throw, as gcd(MIN_VALUE, MIN_VALUE) does, so the failure matches the report.\n\n(4) buggyIf covers only (MIN_VALUE, 0) and (0, MIN_VALUE). In the source, gcd returns Math.abs(u) + Math.abs(v) when either argument is 0, and Math.abs(MIN_VALUE) is MIN_VALUE. So both of these inputs return MIN_VALUE and do not throw. buggyIf therefore contains no input where the code already behaves correctly.\n\n(5) Other inputs do not trigger this bug. The (MIN_VALUE, MIN_VALUE) case already throws, and non-zero pairs go through the k==31 check. buggyIf therefore misses no bug-triggering inputs.\n\n(6) validIf is true and the generator draws from the full int range, mixing special values with random ones. The valid domain is not restricted to the bug inputs.\n\nThe assertion that an ArithmeticException is thrown matches the expected fixed behavior."
+}
+
+====================================================================================================
+[13:30:23] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:30:24] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2729
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing input (0, Integer.MIN_VALUE) is the symmetric case of the reported gcd(Integer.MIN_VALUE, 0). The buggy code returns -2147483648 with no exception, but the true gcd is 2^31, which overflows int. The report says this should throw, as gcd(MIN_VALUE, MIN_VALUE) does, so the failure matches the report.\n\n(4) buggyIf covers only (MIN_VALUE, 0) and (0, MIN_VALUE). In the source, gcd returns Math.abs(u) + Math.abs(v) when either argument is 0, and Math.abs(MIN_VALUE) is MIN_VALUE. So both of these inputs return MIN_VALUE and do not throw. buggyIf therefore contains no input where the code already behaves correctly.\n\n(5) Other inputs do not trigger this bug. The (MIN_VALUE, MIN_VALUE) case already throws, and non-zero pairs go through the k==31 check. buggyIf therefore misses no bug-triggering inputs.\n\n(6) validIf is true and the generator draws from the full int range, mixing special values with random ones. The valid domain is not restricted to the bug inputs.\n\nThe assertion that an ArithmeticException is thrown matches the expected fixed behavior."
+}
+
+====================================================================================================
+[13:30:24] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:30:24] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:30:28] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real MathUtils.gcd(p, q) directly. It uses no mocking libraries, fake subclasses or simulated return values. The only custom class is a Generator that produces input integers. The test catches the exception thrown by the real code and asserts on it."
+}
+
+====================================================================================================
+[13:30:28] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:30:29] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.3961
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real MathUtils.gcd(p, q) directly. It uses no mocking libraries, fake subclasses or simulated return values. The only custom class is a Generator that produces input integers. The test catches the exception thrown by the real code and asserts on it."
+}
+
+====================================================================================================
+[13:30:29] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:30:32] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. Its only assertion compares the exception class name recorded from the real MathUtils.gcd call with \"java.lang.ArithmeticException\". If gcd throws an ArithmeticException for (MIN_VALUE, 0) and (0, MIN_VALUE), as the bug report asks, the assertion passes. The test can therefore pass on fixed code."
+}
+
+====================================================================================================
+[13:30:32] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:30:33] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4053
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. Its only assertion compares the exception class name recorded from the real MathUtils.gcd call with \"java.lang.ArithmeticException\". If gcd throws an ArithmeticException for (MIN_VALUE, 0) and (0, MIN_VALUE), as the bug report asks, the assertion passes. The test can therefore pass on fixed code."
+}
+
+====================================================================================================
+[13:30:33] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:30:36] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"java.lang.ArithmeticException\", ex), which compares two Strings with assertEquals. That uses String.equals, so it is correct. The values are not doubles and not arrays, and the check does not use == on objects."
+}
+
+====================================================================================================
+[13:30:36] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:30:37] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4144
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"java.lang.ArithmeticException\", ex), which compares two Strings with assertEquals. That uses String.equals, so it is correct. The values are not doubles and not arrays, and the check does not use == on objects."
+}
+
+====================================================================================================
+[13:30:37] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:30:37] AGENT FINISHED success=True llm_calls=8
+====================================================================================================
+
+
+====================================================================================================
+[13:30:38] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_MathUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug99"
+}
+
+====================================================================================================
+[13:30:38] FINAL TEST FILE JQF_MathUtilsTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(0, 9);
+            if (c < 4) return Integer.MIN_VALUE;
+            if (c < 8) return 0;
+            if (c == 8) return r.nextInt(-100, 100);
+            return r.nextInt();
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        // gcd is defined for all int pairs; only the overflowing result (2^31) is an error
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionClass = "none";
+        int result = 0;
+        try {
+            result = MathUtils.gcd(p, q);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String ex = exceptionClass;
+        final int res = result;
+        Log.logOutIf(true, () -> new Object[]{ ex, res });
+        assertEquals("java.lang.ArithmeticException", ex);
+    }
+
+    @Fuzz
+    public void testGcd(@From(IntGen.class) int p,
+                                    @From(IntGen.class) int q) {
+        boolean validIf = true;
+        boolean buggyIf = (p == Integer.MIN_VALUE && q == 0) || (p == 0 && q == Integer.MIN_VALUE);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            String exceptionClass = "none";
+            int result = 0;
+            try {
+                result = MathUtils.gcd(p, q);
+            } catch (Throwable t) {
+                exceptionClass = t.getClass().getName();
+            }
+
+            final String ex = exceptionClass;
+            final int res = result;
+            Log.logOutIf(preserveIf, () -> new Object[]{ ex, res });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:33:04] VALIDATION valid=False some inputs inside buggyIf fail on the developer fix
+====================================================================================================
+{
+  "valid": false,
+  "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 39512,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 20000
+    }
+  },
+  "on_fix": {
+    "result": "fail",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 0,
+      "fail": 20000,
+      "not_run": 0,
+      "failing_examples": [
+        "input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo",
+        "input (-2147483648, 0) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo",
+        "input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo"
+      ]
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 39753,
+      "unique_failures": {
+        "org.junit.ComparisonFailure": 2
+      },
+      "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\nLocation: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\nis triggered by the following inputs:\n\n    input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\n    input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]"
+    }
+  }
+}

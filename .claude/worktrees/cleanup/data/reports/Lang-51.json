@@ -1,0 +1,6 @@
+{
+  "bug": "Lang-51",
+  "url": "https://issues.apache.org/jira/browse/LANG-365",
+  "title": "BooleanUtils.toBoolean() - invalid drop-thru in case statement causes StringIndexOutOfBoundsException",
+  "body": "The method BooleanUtils.toBoolean() has a case statement; case 3 drops through to case 4; this can cause StringIndexOutOfBoundsException, for example with the test:\n\nassertEquals(false, BooleanUtils.toBoolean(\"tru\"));\n\nThe end of case 3 should return false.\n\nPatch to follow for source and unit test."
+}

@@ -1,0 +1,2297 @@
+
+====================================================================================================
+[12:36:51] BUG Math-25: failing test org.apache.commons.math3.optimization.fitting.HarmonicFitterTest::testMath844 -> org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-25/Math25b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source
+====================================================================================================
+Title: "HarmonicFitter.ParameterGuesser" sometimes fails to return sensible values
+
+The inner class "ParameterGuesser" in "HarmonicFitter" (package "o.a.c.m.optimization.fitting") fails to compute a usable guess for the "amplitude" parameter.
+
+====================================================================================================
+[12:36:51] HIDDEN FROM THE AGENT: 1 relevant test classes
+====================================================================================================
+org.apache.commons.math3.optimization.fitting.HarmonicFitterTest
+
+====================================================================================================
+[12:36:51] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:36:51] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: "HarmonicFitter.ParameterGuesser" sometimes fails to return sensible values
+
+The inner class "ParameterGuesser" in "HarmonicFitter" (package "o.a.c.m.optimization.fitting") fails to compute a usable guess for the "amplitude" parameter.
+
+====================================================================================================
+[12:36:56] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.",
+  "concrete_examples": [
+    {
+      "input": "Observations of a harmonic signal such as y = a*cos(omega*t + phi) sampled at few or irregular points (for example, data that begins or ends mid-oscillation), passed to new HarmonicFitter.ParameterGuesser(observations) and then guess()",
+      "expected": "guess() returns sensible values: amplitude close to the true a, plus a valid omega and phase.",
+      "actual": "The amplitude guess is unusable (for example NaN, zero or wildly wrong), so the guessed parameters are not sensible and the fit fails or is poor."
+    }
+  ]
+}
+
+====================================================================================================
+[12:36:56] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:36:57] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0072
+====================================================================================================
+{
+  "issue_gist": "HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.",
+  "concrete_examples": [
+    {
+      "input": "Observations of a harmonic signal such as y = a*cos(omega*t + phi) sampled at few or irregular points (for example, data that begins or ends mid-oscillation), passed to new HarmonicFitter.ParameterGuesser(observations) and then guess()",
+      "expected": "guess() returns sensible values: amplitude close to the true a, plus a valid omega and phase.",
+      "actual": "The amplitude guess is unusable (for example NaN, zero or wildly wrong), so the guessed parameters are not sensible and the fit fails or is poor."
+    }
+  ]
+}
+
+====================================================================================================
+[12:36:57] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:36:57] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source
+Test file: src/test/java/org/apache/commons/math3/optimization/fitting/JQF_HarmonicFitterTest.java
+Test class: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest
+Test method: testBugReproduction
+
+Bug summary: HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.
+
+Concrete examples:
+[{'input': 'Observations of a harmonic signal such as y = a*cos(omega*t + phi) sampled at few or irregular points (for example, data that begins or ends mid-oscillation), passed to new HarmonicFitter.ParameterGuesser(observations) and then guess()', 'expected': 'guess() returns sensible values: amplitude close to the true a, plus a valid omega and phase.', 'actual': 'The amplitude guess is unusable (for example NaN, zero or wildly wrong), so the guessed parameters are not sensible and the fit fails or is poor.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:37:01] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source/src/main/java/org/apache/commons/math3/optimization/fitting/HarmonicFitter.java",
+  "offset": 60,
+  "limit": 300
+}
+
+====================================================================================================
+[12:37:02] [002_symbolize] TOOL RESULT
+====================================================================================================
+60	     */
+61	    public double[] fit(double[] initialGuess) {
+62	        return fit(new HarmonicOscillator.Parametric(), initialGuess);
+63	    }
+64	
+65	    /**
+66	     * Fit an harmonic function to the observed points.
+67	     * An initial guess will be automatically computed.
+68	     *
+69	     * @return the parameters of the harmonic function that best fits the
+70	     * observed points (see the other {@link #fit(double[]) fit} method.
+71	     * @throws NumberIsTooSmallException if the sample is too short for the
+72	     * the first guess to be computed.
+73	     * @throws ZeroException if the first guess cannot be computed because
+74	     * the abscissa range is zero.
+75	     */
+76	    public double[] fit() {
+77	        return fit((new ParameterGuesser(getObservations())).guess());
+78	    }
+79	
+80	    /**
+81	     * This class guesses harmonic coefficients from a sample.
+82	     * <p>The algorithm used to guess the coefficients is as follows:</p>
+83	     *
+84	     * <p>We know f (t) at some sampling points t<sub>i</sub> and want to find a,
+85	     * &omega; and &phi; such that f (t) = a cos (&omega; t + &phi;).
+86	     * </p>
+87	     *
+88	     * <p>From the analytical expression, we can compute two primitives :
+89	     * <pre>
+90	     *     If2  (t) = &int; f<sup>2</sup>  = a<sup>2</sup> &times; [t + S (t)] / 2
+91	     *     If'2 (t) = &int; f'<sup>2</sup> = a<sup>2</sup> &omega;<sup>2</sup> &times; [t - S (t)] / 2
+92	     *     where S (t) = sin (2 (&omega; t + &phi;)) / (2 &omega;)
+93	     * </pre>
+94	     * </p>
+95	     *
+96	     * <p>We can remove S between these expressions :
+97	     * <pre>
+98	     *     If'2 (t) = a<sup>2</sup> &omega;<sup>2</sup> t - &omega;<sup>2</sup> If2 (t)
+99	     * </pre>
+100	     * </p>
+101	     *
+102	     * <p>The preceding expression shows that If'2 (t) is a linear
+103	     * combination of both t and If2 (t): If'2 (t) = A &times; t + B &times; If2 (t)
+104	     * </p>
+105	     *
+106	     * <p>From the primitive, we can deduce the same form for definite
+107	     * integrals between t<sub>1</sub> and t<sub>i</sub> for each t<sub>i</sub> :
+108	     * <pre>
+109	     *   If2 (t<sub>i</sub>) - If2 (t<sub>1</sub>) = A &times; (t<sub>i</sub> - t<sub>1</sub>) + B &times; (If2 (t<sub>i</sub>) - If2 (t<sub>1</sub>))
+110	     * </pre>
+111	     * </p>
+112	     *
+113	     * <p>We can find the coefficients A and B that best fit the sample
+114	     * to this linear expression by computing the definite integrals for
+115	     * each sample points.
+116	     * </p>
+117	     *
+118	     * <p>For a bilinear expression z (x<sub>i</sub>, y<sub>i</sub>) = A &times; x<sub>i</sub> + B &times; y<sub>i</sub>, the
+119	     * coefficients A and B that minimize a least square criterion
+120	     * &sum; (z<sub>i</sub> - z (x<sub>i</sub>, y<sub>i</sub>))<sup>2</sup> are given by these expressions:</p>
+121	     * <pre>
+122	     *
+123	     *         &sum;y<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub>
+124	     *     A = ------------------------
+125	     *         &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>y<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>y<sub>i</sub>
+126	     *
+127	     *         &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub>
+128	     *     B = ------------------------
+129	     *         &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>y<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>y<sub>i</sub>
+130	     * </pre>
+131	     * </p>
+132	     *
+133	     *
+134	     * <p>In fact, we can assume both a and &omega; are positive and
+135	     * compute them directly, knowing that A = a<sup>2</sup> &omega;<sup>2</sup> and that
+136	     * B = - &omega;<sup>2</sup>. The complete algorithm is therefore:</p>
+137	     * <pre>
+138	     *
+139	     * for each t<sub>i</sub> from t<sub>1</sub> to t<sub>n-1</sub>, compute:
+140	     *   f  (t<sub>i</sub>)
+141	     *   f' (t<sub>i</sub>) = (f (t<sub>i+1</sub>) - f(t<sub>i-1</sub>)) / (t<sub>i+1</sub> - t<sub>i-1</sub>)
+142	     *   x<sub>i</sub> = t<sub>i</sub> - t<sub>1</sub>
+143	     *   y<sub>i</sub> = &int; f<sup>2</sup> from t<sub>1</sub> to t<sub>i</sub>
+144	     *   z<sub>i</sub> = &int; f'<sup>2</sup> from t<sub>1</sub> to t<sub>i</sub>
+145	     *   update the sums &sum;x<sub>i</sub>x<sub>i</sub>, &sum;y<sub>i</sub>y<sub>i</sub>, &sum;x<sub>i</sub>y<sub>i</sub>, &sum;x<sub>i</sub>z<sub>i</sub> and &sum;y<sub>i</sub>z<sub>i</sub>
+146	     * end for
+147	     *
+148	     *            |--------------------------
+149	     *         \  | &sum;y<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub>
+150	     * a     =  \ | ------------------------
+151	     *           \| &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub>
+152	     *
+153	     *
+154	     *            |--------------------------
+155	     *         \  | &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>z<sub>i</sub> - &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>z<sub>i</sub>
+156	     * &omega;     =  \ | ------------------------
+157	     *           \| &sum;x<sub>i</sub>x<sub>i</sub> &sum;y<sub>i</sub>y<sub>i</sub> - &sum;x<sub>i</sub>y<sub>i</sub> &sum;x<sub>i</sub>y<sub>i</sub>
+158	     *
+159	     * </pre>
+160	     * </p>
+161	     *
+162	     * <p>Once we know &omega;, we can compute:
+163	     * <pre>
+164	     *    fc = &omega; f (t) cos (&omega; t) - f' (t) sin (&omega; t)
+165	     *    fs = &omega; f (t) sin (&omega; t) + f' (t) cos (&omega; t)
+166	     * </pre>
+167	     * </p>
+168	     *
+169	     * <p>It appears that <code>fc = a &omega; cos (&phi;)</code> and
+170	     * <code>fs = -a &omega; sin (&phi;)</code>, so we can use these
+171	     * expressions to compute &phi;. The best estimate over the sample is
+172	     * given by averaging these expressions.
+173	     * </p>
+174	     *
+175	     * <p>Since integrals and means are involved in the preceding
+176	     * estimations, these operations run in O(n) time, where n is the
+177	     * number of measurements.</p>
+178	     */
+179	    public static class ParameterGuesser {
+180	        /** Sampled observations. */
+181	        private final WeightedObservedPoint[] observations;
+182	        /** Amplitude. */
+183	        private double a;
+184	        /** Angular frequency. */
+185	        private double omega;
+186	        /** Phase. */
+187	        private double phi;
+188	
+189	        /**
+190	         * Simple constructor.
+191	         * @param observations sampled observations
+192	         * @throws NumberIsTooSmallException if the sample is too short or if
+193	         * the first guess cannot be computed.
+194	         */
+195	        public ParameterGuesser(WeightedObservedPoint[] observations) {
+196	            if (observations.length < 4) {
+197	                throw new NumberIsTooSmallException(LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
+198	                                                    observations.length, 4, true);
+199	            }
+200	
+201	            this.observations = observations.clone();
+202	        }
+203	
+204	        /**
+205	         * Estimate a first guess of the coefficients.
+206	         *
+207	         * @return the guessed coefficients, in the following order:
+208	         * <ul>
+209	         *  <li>Amplitude</li>
+210	         *  <li>Angular frequency</li>
+211	         *  <li>Phase</li>
+212	         * </ul>
+213	         */
+214	        public double[] guess() {
+215	            sortObservations();
+216	            guessAOmega();
+217	            guessPhi();
+218	            return new double[] { a, omega, phi };
+219	        }
+220	
+221	        /**
+222	         * Sort the observations with respect to the abscissa.
+223	         */
+224	        private void sortObservations() {
+225	            // Since the samples are almost always already sorted, this
+226	            // method is implemented as an insertion sort that reorders the
+227	            // elements in place. Insertion sort is very efficient in this case.
+228	            WeightedObservedPoint curr = observations[0];
+229	            for (int j = 1; j < observations.length; ++j) {
+230	                WeightedObservedPoint prec = curr;
+231	                curr = observations[j];
+232	                if (curr.getX() < prec.getX()) {
+233	                    // the current element should be inserted closer to the beginning
+234	                    int i = j - 1;
+235	                    WeightedObservedPoint mI = observations[i];
+236	                    while ((i >= 0) && (curr.getX() < mI.getX())) {
+237	                        observations[i + 1] = mI;
+238	                        if (i-- != 0) {
+239	                            mI = observations[i];
+240	                        }
+241	                    }
+242	                    observations[i + 1] = curr;
+243	                    curr = observations[j];
+244	                }
+245	            }
+246	        }
+247	
+248	        /**
+249	         * Estimate a first guess of the amplitude and angular frequency.
+250	         * This method assumes that the {@link #sortObservations()} method
+251	         * has been called previously.
+252	         *
+253	         * @throws ZeroException if the abscissa range is zero.
+254	         * @throws MathIllegalStateException when the guessing procedure cannot
+255	         * produce sensible results.
+256	         */
+257	        private void guessAOmega() {
+258	            // initialize the sums for the linear model between the two integrals
+259	            double sx2 = 0;
+260	            double sy2 = 0;
+261	            double sxy = 0;
+262	            double sxz = 0;
+263	            double syz = 0;
+264	
+265	            double currentX = observations[0].getX();
+266	            double currentY = observations[0].getY();
+267	            double f2Integral = 0;
+268	            double fPrime2Integral = 0;
+269	            final double startX = currentX;
+270	            for (int i = 1; i < observations.length; ++i) {
+271	                // one step forward
+272	                final double previousX = currentX;
+273	                final double previousY = currentY;
+274	                currentX = observations[i].getX();
+275	                currentY = observations[i].getY();
+276	
+277	                // update the integrals of f<sup>2</sup> and f'<sup>2</sup>
+278	                // considering a linear model for f (and therefore constant f')
+279	                final double dx = currentX - previousX;
+280	                final double dy = currentY - previousY;
+281	                final double f2StepIntegral =
+282	                    dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+283	                final double fPrime2StepIntegral = dy * dy / dx;
+284	
+285	                final double x = currentX - startX;
+286	                f2Integral += f2StepIntegral;
+287	                fPrime2Integral += fPrime2StepIntegral;
+288	
+289	                sx2 += x * x;
+290	                sy2 += f2Integral * f2Integral;
+291	                sxy += x * f2Integral;
+292	                sxz += x * fPrime2Integral;
+293	                syz += f2Integral * fPrime2Integral;
+294	            }
+295	
+296	            // compute the amplitude and pulsation coefficients
+297	            double c1 = sy2 * sxz - sxy * syz;
+298	            double c2 = sxy * sxz - sx2 * syz;
+299	            double c3 = sx2 * sy2 - sxy * sxy;
+300	            if ((c1 / c2 < 0) || (c2 / c3 < 0)) {
+301	                final int last = observations.length - 1;
+302	                // Range of the observations, assuming that the
+303	                // observations are sorted.
+304	                final double xRange = observations[last].getX() - observations[0].getX();
+305	                if (xRange == 0) {
+306	                    throw new ZeroException();
+307	                }
+308	                omega = 2 * Math.PI / xRange;
+309	
+310	                double yMin = Double.POSITIVE_INFINITY;
+311	                double yMax = Double.NEGATIVE_INFINITY;
+312	                for (int i = 1; i < observations.length; ++i) {
+313	                    final double y = observations[i].getY();
+314	                    if (y < yMin) {
+315	                        yMin = y;
+316	                    }
+317	                    if (y > yMax) {
+318	                        yMax = y;
+319	                    }
+320	                }
+321	                a = 0.5 * (yMax - yMin);
+322	            } else {
+323	                    // In some ill-conditioned cases (cf. MATH-844), the guesser
+324	                    // procedure cannot produce sensible results.
+325	
+326	                a = FastMath.sqrt(c1 / c2);
+327	                omega = FastMath.sqrt(c2 / c3);
+328	            }
+329	        }
+330	
+331	        /**
+332	         * Estimate a first guess of the phase.
+333	         */
+334	        private void guessPhi() {
+335	            // initialize the means
+336	            double fcMean = 0;
+337	            double fsMean = 0;
+338	
+339	            double currentX = observations[0].getX();
+340	            double currentY = observations[0].getY();
+341	            for (int i = 1; i < observations.length; ++i) {
+342	                // one step forward
+343	                final double previousX = currentX;
+344	                final double previousY = currentY;
+345	                currentX = observations[i].getX();
+346	                currentY = observations[i].getY();
+347	                final double currentYPrime = (currentY - previousY) / (currentX - previousX);
+348	
+349	                double omegaX = omega * currentX;
+350	                double cosine = FastMath.cos(omegaX);
+351	                double sine = FastMath.sin(omegaX);
+352	                fcMean += omega * currentY * cosine - currentYPrime * sine;
+353	                fsMean += omega * currentY * sine + currentYPrime * cosine;
+354	            }
+355	
+356	            phi = FastMath.atan2(-fsMean, fcMean);
+357	        }
+358	    }
+359	}
+
+====================================================================================================
+[12:37:26] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        double[] xs = data[0];\n        double[] ys = data[1];\n        boolean validIf = xs.length >= 4 && xs.length == ys.length;\n        for (int i = 1; validIf && i < xs.length; i++) {\n            if (!(xs[i] > xs[i - 1])) {\n                validIf = false;\n            }\n        }\n        boolean buggyIf = validIf && fallbackUsed(xs, ys) && firstIsStrictExtreme(ys);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[xs.length];\n        for (int i = 0; i < xs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, xs[i], ys[i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : ys) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        double expectedA = 0.5 * (max - min);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:26] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:37:27] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1878
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        double[] xs = data[0];\n        double[] ys = data[1];\n        boolean validIf = xs.length >= 4 && xs.length == ys.length;\n        for (int i = 1; validIf && i < xs.length; i++) {\n            if (!(xs[i] > xs[i - 1])) {\n                validIf = false;\n            }\n        }\n        boolean buggyIf = validIf && fallbackUsed(xs, ys) && firstIsStrictExtreme(ys);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[xs.length];\n        for (int i = 0; i < xs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, xs[i], ys[i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : ys) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        double expectedA = 0.5 * (max - min);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:27] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:37:27] TEST CODE (org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest)
+====================================================================================================
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        double[] xs = data[0];
+        double[] ys = data[1];
+        boolean validIf = xs.length >= 4 && xs.length == ys.length;
+        for (int i = 1; validIf && i < xs.length; i++) {
+            if (!(xs[i] > xs[i - 1])) {
+                validIf = false;
+            }
+        }
+        boolean buggyIf = validIf && fallbackUsed(xs, ys) && firstIsStrictExtreme(ys);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[xs.length];
+        for (int i = 0; i < xs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, xs[i], ys[i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        double expectedA = 0.5 * (max - min);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+====================================================================================================
+[12:37:27] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `double[] xs = data[0];`
+
+====================================================================================================
+[12:37:27] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:37:27] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `double[] xs = data[0];`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source
+Test file: src/test/java/org/apache/commons/math3/optimization/fitting/JQF_HarmonicFitterTest.java
+Test class: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest
+Test method: testBugReproduction
+
+Bug summary: HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.
+
+Concrete examples:
+[{'input': 'Observations of a harmonic signal such as y = a*cos(omega*t + phi) sampled at few or irregular points (for example, data that begins or ends mid-oscillation), passed to new HarmonicFitter.ParameterGuesser(observations) and then guess()', 'expected': 'guess() returns sensible values: amplitude close to the true a, plus a valid omega and phase.', 'actual': 'The amplitude guess is unusable (for example NaN, zero or wildly wrong), so the guessed parameters are not sensible and the fit fails or is poor.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:37:40] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    static boolean isValid(double[][] data) {\n        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {\n            return false;\n        }\n        double[] xs = data[0];\n        double[] ys = data[1];\n        if (xs.length < 4 || xs.length != ys.length) {\n            return false;\n        }\n        for (int i = 0; i < xs.length; i++) {\n            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])\n                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {\n                return false;\n            }\n            if (i > 0 && !(xs[i] > xs[i - 1])) {\n                return false;\n            }\n        }\n        return true;\n    }\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    static boolean isBuggy(double[][] data) {\n        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        boolean validIf = isValid(data);\n        boolean buggyIf = validIf && isBuggy(data);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];\n        for (int i = 0; i < obs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : data[1]) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        double expectedA = 0.5 * (max - min);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:40] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:37:41] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2460
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    static boolean isValid(double[][] data) {\n        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {\n            return false;\n        }\n        double[] xs = data[0];\n        double[] ys = data[1];\n        if (xs.length < 4 || xs.length != ys.length) {\n            return false;\n        }\n        for (int i = 0; i < xs.length; i++) {\n            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])\n                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {\n                return false;\n            }\n            if (i > 0 && !(xs[i] > xs[i - 1])) {\n                return false;\n            }\n        }\n        return true;\n    }\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    static boolean isBuggy(double[][] data) {\n        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        boolean validIf = isValid(data);\n        boolean buggyIf = validIf && isBuggy(data);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];\n        for (int i = 0; i < obs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : data[1]) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        double expectedA = 0.5 * (max - min);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:41] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:37:41] TEST CODE (org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest)
+====================================================================================================
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : data[1]) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        double expectedA = 0.5 * (max - min);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+====================================================================================================
+[12:37:41] STRUCTURE CHECK FAILED
+====================================================================================================
+only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `for (double y : data[1]) { min = Math.min(min, y); max = Math.max(max, y); }`
+
+====================================================================================================
+[12:37:41] NODE 006 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:37:41] LLM CALL [006_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `for (double y : data[1]) { min = Math.min(min, y); max = Math.max(max, y); }`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source
+Test file: src/test/java/org/apache/commons/math3/optimization/fitting/JQF_HarmonicFitterTest.java
+Test class: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest
+Test method: testBugReproduction
+
+Bug summary: HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.
+
+Concrete examples:
+[{'input': 'Observations of a harmonic signal such as y = a*cos(omega*t + phi) sampled at few or irregular points (for example, data that begins or ends mid-oscillation), passed to new HarmonicFitter.ParameterGuesser(observations) and then guess()', 'expected': 'guess() returns sensible values: amplitude close to the true a, plus a valid omega and phase.', 'actual': 'The amplitude guess is unusable (for example NaN, zero or wildly wrong), so the guessed parameters are not sensible and the fit fails or is poor.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-25/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:37:54] [006_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    static boolean isValid(double[][] data) {\n        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {\n            return false;\n        }\n        double[] xs = data[0];\n        double[] ys = data[1];\n        if (xs.length < 4 || xs.length != ys.length) {\n            return false;\n        }\n        for (int i = 0; i < xs.length; i++) {\n            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])\n                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {\n                return false;\n            }\n            if (i > 0 && !(xs[i] > xs[i - 1])) {\n                return false;\n            }\n        }\n        return true;\n    }\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    static boolean isBuggy(double[][] data) {\n        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);\n    }\n\n    static double expectedAmplitude(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : ys) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        return 0.5 * (max - min);\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        boolean validIf = isValid(data);\n        boolean buggyIf = validIf && isBuggy(data);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];\n        for (int i = 0; i < obs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double expectedA = expectedAmplitude(data[1]);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:54] [006_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:37:55] [006_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2949
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.optimization.fitting;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;\n\n@RunWith(JQF.class)\npublic class JQF_HarmonicFitterTest {\n\n    static boolean isValid(double[][] data) {\n        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {\n            return false;\n        }\n        double[] xs = data[0];\n        double[] ys = data[1];\n        if (xs.length < 4 || xs.length != ys.length) {\n            return false;\n        }\n        for (int i = 0; i < xs.length; i++) {\n            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])\n                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {\n                return false;\n            }\n            if (i > 0 && !(xs[i] > xs[i - 1])) {\n                return false;\n            }\n        }\n        return true;\n    }\n\n    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */\n    static boolean fallbackUsed(double[] xs, double[] ys) {\n        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;\n        double currentX = xs[0];\n        double currentY = ys[0];\n        double f2Integral = 0;\n        double fPrime2Integral = 0;\n        final double startX = currentX;\n        for (int i = 1; i < xs.length; ++i) {\n            final double previousX = currentX;\n            final double previousY = currentY;\n            currentX = xs[i];\n            currentY = ys[i];\n            final double dx = currentX - previousX;\n            final double dy = currentY - previousY;\n            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;\n            final double fp2Step = dy * dy / dx;\n            final double x = currentX - startX;\n            f2Integral += f2Step;\n            fPrime2Integral += fp2Step;\n            sx2 += x * x;\n            sy2 += f2Integral * f2Integral;\n            sxy += x * f2Integral;\n            sxz += x * fPrime2Integral;\n            syz += f2Integral * fPrime2Integral;\n        }\n        double c1 = sy2 * sxz - sxy * syz;\n        double c2 = sxy * sxz - sx2 * syz;\n        double c3 = sx2 * sy2 - sxy * sxy;\n        return (c1 / c2 < 0) || (c2 / c3 < 0);\n    }\n\n    static boolean firstIsStrictExtreme(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (int i = 1; i < ys.length; i++) {\n            min = Math.min(min, ys[i]);\n            max = Math.max(max, ys[i]);\n        }\n        return ys[0] > max || ys[0] < min;\n    }\n\n    static boolean isBuggy(double[][] data) {\n        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);\n    }\n\n    static double expectedAmplitude(double[] ys) {\n        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;\n        for (double y : ys) {\n            min = Math.min(min, y);\n            max = Math.max(max, y);\n        }\n        return 0.5 * (max - min);\n    }\n\n    public static class DataGen extends Generator<double[][]> {\n        public DataGen() { super(double[][].class); }\n\n        @Override\n        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {\n            boolean wantBug = r.nextInt(100) < 50;\n            double[][] last = null;\n            for (int attempt = 0; attempt < 30; attempt++) {\n                int n = r.nextInt(4, 13);\n                double[] xs = new double[n];\n                double[] ys = new double[n];\n                double x = r.nextDouble(-10, 10);\n                for (int i = 0; i < n; i++) {\n                    xs[i] = x;\n                    x += r.nextDouble(0.1, 2.0);\n                    ys[i] = r.nextDouble(-10, 10);\n                }\n                if (wantBug) {\n                    double off = r.nextDouble(1, 20);\n                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;\n                }\n                last = new double[][] {xs, ys};\n                if (!wantBug || fallbackUsed(xs, ys)) {\n                    break;\n                }\n            }\n            return last;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DataGen.class) double[][] data) {\n        boolean validIf = isValid(data);\n        boolean buggyIf = validIf && isBuggy(data);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];\n        for (int i = 0; i < obs.length; i++) {\n            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);\n        }\n        double[] guess = null;\n        String exc = \"none\";\n        try {\n            guess = new HarmonicFitter.ParameterGuesser(obs).guess();\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double[] g = guess;\n        final String excF = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ excF,\n            g == null ? \"null\" : String.valueOf(g[0]),\n            g == null ? \"null\" : String.valueOf(g[1]),\n            g == null ? \"null\" : String.valueOf(g[2]) });\n\n        double expectedA = expectedAmplitude(data[1]);\n        assertEquals(\"none\", excF);\n        assertNotNull(g);\n        assertEquals(expectedA, g[0], 1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:37:55] NODE 007 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:37:55] TEST CODE (org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest)
+====================================================================================================
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+====================================================================================================
+[12:37:57] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:38:18] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 22613,
+  "discarded_by_assume": 9731,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 3275
+  },
+  "passed_assume": 12882,
+  "classified": 3275
+}
+
+====================================================================================================
+[12:38:18] NODE 008 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:38:18] LLM CALL [008_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: "HarmonicFitter.ParameterGuesser" sometimes fails to return sensible values
+
+The inner class "ParameterGuesser" in "HarmonicFitter" (package "o.a.c.m.optimization.fitting") fails to compute a usable guess for the "amplitude" parameter.
+
+=== Test ===
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<11.552072766425978> but was:<6.746829709475037>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)
+
+Location: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)
+
+is triggered by the following inputs:
+
+    input (-3.0701094372142723, -1.6068942054052042, -1.1333366922093049, 0.5844591626057636, -13.817397407459751, -0.37693799074307677, -5.765698009514497, 9.0079712847478) -> logged [none, 7.386834647131149, 1.7192686730491236, -1.6529051425910704]
+    input (5.641691157108767, 6.871666027580626, 8.440551002171988, 9.254681455156232, 10.592082697500002, 12.204770008781102, -8.110429225149522, 1.2927610431225816, 9.429319547358123, 1.6501643164499242, -3.0831341958111587, 3.7354197470880006) -> logged [none, 6.256226871584641, 0.9573533168169343, -1.5325977011527097]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:38:35] [008_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, and I found no problem with the test's input domains.
+
+**The failure matches the bug.**
+- In the first failing input, the sorted x values are about -3.07, -1.61, -1.13 and 0.58. The y values are -13.82, -0.38, -5.77 and 9.01.
+- The guesser returned an amplitude of 7.3868. That equals 0.5 × (9.008 − (−5.766)), the half-range of y over points 1 to n−1 only.
+- The correct half-range over all points is 0.5 × (9.008 − (−13.817)) = 11.41, so the first point was skipped.
+- In the shown source, the fallback branch of `guessAOmega` computes the y-min and y-max in a loop that starts at `i = 1`. That skips `observations[0]`, so the amplitude is wrong whenever the first sample is the strict minimum or maximum.
+- The second failing input shows the same pattern. The guesser returned 6.256, and the first point (5.64 → y = −8.11 in the sorted data) is not part of the half-range it computed.
+
+**The test's domains look right.**
+- (4) `buggyIf` requires the ill-conditioned fallback branch to be taken, which is replicated from the guesser's own c1/c2/c3 sign check. It also requires the first y to be strictly outside the range of the others. In exactly those cases the buggy code gives a wrong amplitude, and the half-range over all points is the correct value. It does not accept inputs where the code is already correct.
+- (5) `buggyIf` misses no bug-triggering inputs. If the first point is not a strict extreme, skipping it does not change the result. If the fallback is not used, the code takes a different path.
+- (6) `validIf` accepts any finite data with at least 4 points and strictly increasing x. That is the legal domain, not just the bug-triggering inputs. The generator is biased toward the bug but also produces non-buggy inputs.
+
+**The cause is the one the report names.** The wrong amplitude is a bad guess for the "amplitude" parameter, not an unrelated failure.
+
+====================================================================================================
+[12:38:38] [008_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported amplitude bug. In the fallback branch of guessAOmega, the y-min/y-max loop starts at i=1 and skips observations[0]. In the first failing input, the sorted y values are -13.82, -0.38, -5.77 and 9.01. The guesser returned 7.387, which is 0.5*(9.008 - (-5.766)), so the first point (-13.82, the strict minimum) was ignored; the correct half-range is about 11.4. The second input fails the same way. buggyIf requires the fallback branch to be taken and the first y to be a strict extreme, which is exactly when the skipped point changes the result, so it does not include inputs the buggy code handles correctly. Cases where the first point is not a strict extreme, or where the fallback is not used, are correctly excluded. validIf only requires at least 4 finite points with strictly increasing x, which is the legal domain, and the generator also produces non-buggy inputs."
+}
+
+====================================================================================================
+[12:38:38] [008_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:38:38] [008_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.5032
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported amplitude bug. In the fallback branch of guessAOmega, the y-min/y-max loop starts at i=1 and skips observations[0]. In the first failing input, the sorted y values are -13.82, -0.38, -5.77 and 9.01. The guesser returned 7.387, which is 0.5*(9.008 - (-5.766)), so the first point (-13.82, the strict minimum) was ignored; the correct half-range is about 11.4. The second input fails the same way. buggyIf requires the fallback branch to be taken and the first y to be a strict extreme, which is exactly when the skipped point changes the result, so it does not include inputs the buggy code handles correctly. Cases where the first point is not a strict extreme, or where the fallback is not used, are correctly excluded. validIf only requires at least 4 finite points with strictly increasing x, which is the legal domain, and the generator also produces non-buggy inputs."
+}
+
+====================================================================================================
+[12:38:38] NODE 009 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:38:38] LLM CALL [009_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:38:43] [009_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds real WeightedObservedPoint objects and calls the real HarmonicFitter.ParameterGuesser(...).guess(), then asserts on the actual returned amplitude. The helper methods (isValid, fallbackUsed, firstIsStrictExtreme, expectedAmplitude) only decide which inputs to select and what value to expect. They do not stand in for the code under test or fake its return values. fallbackUsed copies the guesser's ill-conditioning check to define the bug domain, but the result being tested comes from the real class."
+}
+
+====================================================================================================
+[12:38:43] [009_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:38:44] [009_validate] CALL DONE subtype=success turns=2 session_cost=$0.7068
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds real WeightedObservedPoint objects and calls the real HarmonicFitter.ParameterGuesser(...).guess(), then asserts on the actual returned amplitude. The helper methods (isValid, fallbackUsed, firstIsStrictExtreme, expectedAmplitude) only decide which inputs to select and what value to expect. They do not stand in for the code under test or fake its return values. fallbackUsed copies the guesser's ill-conditioning check to define the bug domain, but the result being tested comes from the real class."
+}
+
+====================================================================================================
+[12:38:44] LLM CALL [009_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:38:48] [009_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals(1, 0). Its three assertions depend on the real code's behavior: assertEquals(\"none\", excF) checks that no exception was thrown, assertNotNull(g) checks that a guess was returned, and assertEquals(expectedA, g[0], 1e-9) checks the amplitude against the half-range of all y values. A fixed implementation would satisfy all three. The test fails only when the amplitude guess is wrong, as in the buggy code."
+}
+
+====================================================================================================
+[12:38:48] [009_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:38:49] [009_validate] CALL DONE subtype=success turns=2 session_cost=$0.7251
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals(1, 0). Its three assertions depend on the real code's behavior: assertEquals(\"none\", excF) checks that no exception was thrown, assertNotNull(g) checks that a guess was returned, and assertEquals(expectedA, g[0], 1e-9) checks the amplitude against the half-range of all y values. A fixed implementation would satisfy all three. The test fails only when the amplitude guess is wrong, as in the buggy code."
+}
+
+====================================================================================================
+[12:38:49] LLM CALL [009_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:38:53] [009_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks use the right comparison for each type. The amplitude is a double, and it is compared with assertEquals(expectedA, g[0], 1e-9), which uses a delta. The exception name is a String, and it is compared with assertEquals(\"none\", excF), which uses equals() rather than ==. assertNotNull(g) is also appropriate. No arrays are compared with assertEquals, and no objects or strings are compared with ==."
+}
+
+====================================================================================================
+[12:38:53] [009_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:38:54] [009_validate] CALL DONE subtype=success turns=2 session_cost=$0.7434
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks use the right comparison for each type. The amplitude is a double, and it is compared with assertEquals(expectedA, g[0], 1e-9), which uses a delta. The exception name is a String, and it is compared with assertEquals(\"none\", excF), which uses equals() rather than ==. assertNotNull(g) is also appropriate. No arrays are compared with assertEquals, and no objects or strings are compared with ==."
+}
+
+====================================================================================================
+[12:38:54] NODE 010 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:38:54] AGENT FINISHED success=True llm_calls=12
+====================================================================================================
+
+
+====================================================================================================
+[12:38:55] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_HarmonicFitterTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug25"
+}
+
+====================================================================================================
+[12:38:55] FINAL TEST FILE JQF_HarmonicFitterTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math3.optimization.fitting;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.optimization.fitting.WeightedObservedPoint;
+
+@RunWith(JQF.class)
+public class JQF_HarmonicFitterTest {
+
+    static boolean isValid(double[][] data) {
+        if (data == null || data.length != 2 || data[0] == null || data[1] == null) {
+            return false;
+        }
+        double[] xs = data[0];
+        double[] ys = data[1];
+        if (xs.length < 4 || xs.length != ys.length) {
+            return false;
+        }
+        for (int i = 0; i < xs.length; i++) {
+            if (Double.isNaN(xs[i]) || Double.isInfinite(xs[i])
+                || Double.isNaN(ys[i]) || Double.isInfinite(ys[i])) {
+                return false;
+            }
+            if (i > 0 && !(xs[i] > xs[i - 1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Replicates the ill-conditioning test of the guesser (data sorted, strictly increasing x). */
+    static boolean fallbackUsed(double[] xs, double[] ys) {
+        double sx2 = 0, sy2 = 0, sxy = 0, sxz = 0, syz = 0;
+        double currentX = xs[0];
+        double currentY = ys[0];
+        double f2Integral = 0;
+        double fPrime2Integral = 0;
+        final double startX = currentX;
+        for (int i = 1; i < xs.length; ++i) {
+            final double previousX = currentX;
+            final double previousY = currentY;
+            currentX = xs[i];
+            currentY = ys[i];
+            final double dx = currentX - previousX;
+            final double dy = currentY - previousY;
+            final double f2Step = dx * (previousY * previousY + previousY * currentY + currentY * currentY) / 3;
+            final double fp2Step = dy * dy / dx;
+            final double x = currentX - startX;
+            f2Integral += f2Step;
+            fPrime2Integral += fp2Step;
+            sx2 += x * x;
+            sy2 += f2Integral * f2Integral;
+            sxy += x * f2Integral;
+            sxz += x * fPrime2Integral;
+            syz += f2Integral * fPrime2Integral;
+        }
+        double c1 = sy2 * sxz - sxy * syz;
+        double c2 = sxy * sxz - sx2 * syz;
+        double c3 = sx2 * sy2 - sxy * sxy;
+        return (c1 / c2 < 0) || (c2 / c3 < 0);
+    }
+
+    static boolean firstIsStrictExtreme(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (int i = 1; i < ys.length; i++) {
+            min = Math.min(min, ys[i]);
+            max = Math.max(max, ys[i]);
+        }
+        return ys[0] > max || ys[0] < min;
+    }
+
+    static boolean isBuggy(double[][] data) {
+        return fallbackUsed(data[0], data[1]) && firstIsStrictExtreme(data[1]);
+    }
+
+    static double expectedAmplitude(double[] ys) {
+        double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY;
+        for (double y : ys) {
+            min = Math.min(min, y);
+            max = Math.max(max, y);
+        }
+        return 0.5 * (max - min);
+    }
+
+    public static class DataGen extends Generator<double[][]> {
+        public DataGen() { super(double[][].class); }
+
+        @Override
+        public double[][] generate(SourceOfRandomness r, GenerationStatus status) {
+            boolean wantBug = r.nextInt(100) < 50;
+            double[][] last = null;
+            for (int attempt = 0; attempt < 30; attempt++) {
+                int n = r.nextInt(4, 13);
+                double[] xs = new double[n];
+                double[] ys = new double[n];
+                double x = r.nextDouble(-10, 10);
+                for (int i = 0; i < n; i++) {
+                    xs[i] = x;
+                    x += r.nextDouble(0.1, 2.0);
+                    ys[i] = r.nextDouble(-10, 10);
+                }
+                if (wantBug) {
+                    double off = r.nextDouble(1, 20);
+                    ys[0] = r.nextBoolean() ? 10 + off : -10 - off;
+                }
+                last = new double[][] {xs, ys};
+                if (!wantBug || fallbackUsed(xs, ys)) {
+                    break;
+                }
+            }
+            return last;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+        for (int i = 0; i < obs.length; i++) {
+            obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+        }
+        double[] guess = null;
+        String exc = "none";
+        try {
+            guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double[] g = guess;
+        final String excF = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ excF,
+            g == null ? "null" : String.valueOf(g[0]),
+            g == null ? "null" : String.valueOf(g[1]),
+            g == null ? "null" : String.valueOf(g[2]) });
+
+        double expectedA = expectedAmplitude(data[1]);
+        assertEquals("none", excF);
+        assertNotNull(g);
+        assertEquals(expectedA, g[0], 1e-9);
+    }
+
+    @Fuzz
+    public void testMath844(@From(DataGen.class) double[][] data) {
+        boolean validIf = isValid(data);
+        boolean buggyIf = validIf && isBuggy(data);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            WeightedObservedPoint[] obs = new WeightedObservedPoint[data[0].length];
+            for (int i = 0; i < obs.length; i++) {
+                obs[i] = new WeightedObservedPoint(1.0, data[0][i], data[1][i]);
+            }
+            double[] guess = null;
+            String exc = "none";
+            try {
+                guess = new HarmonicFitter.ParameterGuesser(obs).guess();
+            } catch (Exception e) {
+                exc = e.getClass().getName();
+            }
+            final double[] g = guess;
+            final String excF = exc;
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ excF,
+                g == null ? "null" : String.valueOf(g[0]),
+                g == null ? "null" : String.valueOf(g[1]),
+                g == null ? "null" : String.valueOf(g[2]) });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:42:01] VALIDATION valid=False some inputs inside buggyIf fail on the developer fix
+====================================================================================================
+{
+  "valid": false,
+  "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 47097,
+    "inside_buggyIf": 26997,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "fail",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 0,
+      "fail": 20000,
+      "not_run": 0,
+      "failing_examples": [
+        "input (7.55635663259871, 9.253528988041486, 9.721881328533131, 10.39197272733961, 11.892839692996349, 12.898549339080004, 13.732658261373697, 14.786952404469348, 16.33388647555889, 17.647935338739764, 18.701238188500813, 20.24363951054225, 24.304125434358774, 4.221360468789948, 7.3635108842229755, 2.099462800246947, -1.7538586735398667, -5.815966922156985, 3.561288430420543, -6.27994920153951, 3.273898100109509, -7.377143310878084, 7.931141714559221, -5.7643127198806905) -> logged [none, 7.654142512718653, 0.4952349031409015, 2.6352289623950838]\njava.lang.AssertionError: expected:<15.840634372618428> but was:<7.654142512718653>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv",
+        "input (3.368290416362349, 4.372905076714433, 4.999448825845874, 5.189544272674433, 5.3329777579821025, 6.932326814882421, 7.607015995567669, -15.242736276169847, 5.028453282875043, 8.59736247557241, 7.3090155126791565, 3.9366136995264576, 2.7134562184178908, 8.7489906258763) -> logged [none, 3.0177672037292043, 1.4823288721506627, -0.7271510769545577]\njava.lang.AssertionError: expected:<11.995863451023073> but was:<3.0177672037292043>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.in",
+        "input (-4.825364453669798, -3.180493600071391, -1.5609505573461735, -0.8507014158860093, 1.040752290462538, 19.970977932896396, 2.0336786489823773, 4.389135018294654, -7.935653811507482, -8.326717976981504) -> logged [none, 6.357926497638079, 1.0710978968266236, 2.8738098522197904]\njava.lang.AssertionError: expected:<14.148847954938951> but was:<6.357926497638079>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv"
+      ]
+    },
+    "fresh": {
+      "trials": 48701,
+      "inside_buggyIf": 27720,
+      "unique_failures": {
+        "java.lang.AssertionError": 2
+      },
+      "failing_examples": "The error:\n    java.lang.AssertionError: expected:<14.935164862662464> but was:<9.71172164060092>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nLocation: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nis triggered by the following inputs:\n\n    input (5.200556870602046, 7.112680465640926, 8.137488732920747, 8.664530898431536, 9.286525973883506, 9.83131159949611, 10.67973683791973, 11.161234361956453, 12.65310333662767, 13.13948028935929, 13.945576750146053, 14.98485851311603, -19.998345132629215, -4.276292554229535, -6.329538632490301, 9.871984592695714, 0.3540323911661236, 2.8129030771389196, 6.1511196506586465, -5.096173144936422, 0.8195405386228813, 3.194603946877052, -6.950801769866979, -9.551458688506125) -> logged [none, 9.71172164060092, 0.6421700328491897, -0.24366919102629278]\n    input (7.0476743241194875, 8.945947887986469, 9.090839739436262, 10.79751148252461, 29.49584333707319, -5.2484051283026245, -0.8956336926494917, 1.7551714705791106) -> logged [none, 3.5017882994408676, 1.6755888433971209, 1.134860483716715]"
+    }
+  }
+}

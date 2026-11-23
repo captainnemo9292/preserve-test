@@ -1,0 +1,172 @@
+{
+  "bug": "Lang-53",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 11,
+  "cost_usd": 0.6035,
+  "tokens": {
+    "input": 24,
+    "output": 10567,
+    "cache_write": 121093,
+    "cache_read": 134431
+  },
+  "seconds": 130.4,
+  "started_at": "2026-11-21T12:20:45",
+  "timing": {
+    "checkout": 9.6,
+    "agent": 120.8,
+    "derive": 1.4,
+    "validation": 187.2
+  },
+  "llm_seconds": 98.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 317,
+        "cache_write": 1026,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007359,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 40.8,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 4833,
+        "cache_write": 32581,
+        "cache_read": 25095
+      },
+      "cost_usd": 0.181175,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 11.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1676,
+        "cache_write": 8845,
+        "cache_read": 26441
+      },
+      "cost_usd": 0.054788,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 28.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3176,
+        "cache_write": 35987,
+        "cache_read": 611
+      },
+      "cost_usd": 0.175773,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 198,
+        "cache_write": 38904,
+        "cache_read": 603
+      },
+      "cost_usd": 0.157664,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 201,
+        "cache_write": 1859,
+        "cache_read": 39507
+      },
+      "cost_usd": 0.013405,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 166,
+        "cache_write": 1891,
+        "cache_read": 41366
+      },
+      "cost_usd": 0.013369,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.lang.time.DateUtilsTest::testRoundLang346",
+  "jqf_class": "org.apache.commons.lang.time.JQF_DateUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang.time.DateFormatUtilsTest",
+    "org.apache.commons.lang.time.DateUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testRoundLang346",
+  "issue_gist": "DateUtils.round() with Calendar.MINUTE (and SECOND) in versions 2.2/2.3 yields wrong results: rounding up a value at 59-ish boundaries adds the rounding increment to the wrong field, producing e.g. 03:01:00 instead of 03:10:00 when rounding 03:09:50 to the minute.",
+  "failing_inputs_count": 3005,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_DateUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug53",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 55861,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 55614,
+        "unique_failures": {
+          "java.lang.AssertionError": 1
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: expected:<592331155000> but was:<592334755000>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:645)\n    \tat org.junit.Assert.assertEquals(Assert.java:631)\n    \tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nLocation: org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nis triggered by the following inputs:\n\n    input (1, 1988, 9, 8, 16, 25, 54, 784) -> logged [592334755000, 592331154784]"
+      }
+    }
+  },
+  "total_seconds": 319.0,
+  "paired_inputs_archived": true
+}

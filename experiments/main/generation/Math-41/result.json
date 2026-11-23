@@ -1,0 +1,235 @@
+{
+  "bug": "Math-41",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 16,
+  "cost_usd": 0.8772,
+  "tokens": {
+    "input": 32,
+    "output": 13773,
+    "cache_write": 177400,
+    "cache_read": 297742
+  },
+  "seconds": 180.3,
+  "started_at": "2026-11-21T12:49:25",
+  "timing": {
+    "checkout": 10.8,
+    "agent": 169.5,
+    "derive": 1.8,
+    "validation": 112.8
+  },
+  "llm_seconds": 123.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 434,
+        "cache_write": 857,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007853,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 27.6,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 3184,
+        "cache_write": 35701,
+        "cache_read": 25335
+      },
+      "cost_usd": 0.17719,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1589,
+        "cache_write": 7360,
+        "cache_read": 29463
+      },
+      "cost_usd": 0.04828,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_symbolize",
+      "seconds": 10.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 1608,
+        "cache_write": 4831,
+        "cache_read": 36823
+      },
+      "cost_usd": 0.039094,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "008_check_inputs",
+      "seconds": 14.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1382,
+        "cache_write": 43703,
+        "cache_read": 611
+      },
+      "cost_usd": 0.188697,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_symbolize",
+      "seconds": 17.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2374,
+        "cache_write": 11448,
+        "cache_read": 41654
+      },
+      "cost_usd": 0.073701,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "011_check_inputs",
+      "seconds": 23.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2414,
+        "cache_write": 12210,
+        "cache_read": 44314
+      },
+      "cost_usd": 0.077415,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_validate",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 258,
+        "cache_write": 57501,
+        "cache_read": 603
+      },
+      "cost_usd": 0.232652,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "012_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 172,
+        "cache_write": 1923,
+        "cache_read": 58104
+      },
+      "cost_usd": 0.01523,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "012_validate",
+      "seconds": 5.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 358,
+        "cache_write": 1866,
+        "cache_read": 60027
+      },
+      "cost_usd": 0.017055,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 4,
+  "failing_test": "org.apache.commons.math.stat.descriptive.moment.VarianceTest::testEvaluateArraySegmentWeighted",
+  "jqf_class": "org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest",
+  "hidden_tests": [
+    "org.apache.commons.math.ode.JacobianMatricesTest",
+    "org.apache.commons.math.optimization.univariate.BrentOptimizerTest",
+    "org.apache.commons.math.stat.CertifiedDataTest",
+    "org.apache.commons.math.stat.StatUtilsTest",
+    "org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest",
+    "org.apache.commons.math.stat.correlation.CovarianceTest",
+    "org.apache.commons.math.stat.correlation.PearsonsCorrelationTest",
+    "org.apache.commons.math.stat.data.LewTest",
+    "org.apache.commons.math.stat.data.LotteryTest",
+    "org.apache.commons.math.stat.descriptive.AggregateSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.ListUnivariateImplTest",
+    "org.apache.commons.math.stat.descriptive.MixedListUnivariateImplTest",
+    "org.apache.commons.math.stat.descriptive.SummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.moment.InteractionTest",
+    "org.apache.commons.math.stat.descriptive.moment.KurtosisTest",
+    "org.apache.commons.math.stat.descriptive.moment.SemiVarianceTest",
+    "org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest",
+    "org.apache.commons.math.stat.descriptive.moment.VarianceTest",
+    "org.apache.commons.math.stat.inference.TTestTest",
+    "org.apache.commons.math.stat.inference.TestUtilsTest",
+    "org.apache.commons.math.stat.regression.GLSMultipleLinearRegressionTest",
+    "org.apache.commons.math.stat.regression.OLSMultipleLinearRegressionTest",
+    "org.apache.commons.math.util.ResizableDoubleArrayTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testEvaluateArraySegmentWeighted",
+  "issue_gist": "Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.",
+  "failing_inputs_count": 1283,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_VarianceTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug41",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 24253,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 24105,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 295.0,
+  "paired_inputs_archived": true
+}

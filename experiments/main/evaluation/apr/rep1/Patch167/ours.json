@@ -1,0 +1,81 @@
+{
+ "patch": "Patch167",
+ "dataset": "apr",
+ "bug": "Math-57",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T15:13:53",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-3.4380602944007483, -3.442056530445541, -3.3092422445255236, -2.6663923513100887, -2.836376023608301, -3.5130358533663233, 0.22378882325102134) -> logged [2, -3.4380602944007483,-3.442056530445541, 4, 2]\njava.lang.AssertionError: second initial center should be chosen with probability proportional to true D^2 expected same:<-2.6663923513100887> was not:<-3.442056530445541>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotSame(Assert.java:828)\n\tat org.junit.Assert.assertSame(Assert.java:771)\n\tat org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat",
+    "input (2.3005753099108954, 1.6568948997927715, 2.1782854846901607, 1.546245787333713, 1.7028670223391287, 1.5481405827661445, 2.412919161912916, 0.7148761788188892) -> logged [2, 2.3005753099108954,1.6568948997927715, 3, 4]\njava.lang.AssertionError: second initial center should be chosen with probability proportional to true D^2 expected same:<1.5481405827661445> was not:<1.6568948997927715>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotSame(Assert.java:828)\n\tat org.junit.Assert.assertSame(Assert.java:771)\n\tat org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat ",
+    "input (-2.8626953571493643, -3.0837315083694277, -3.003711032919403, -3.13229482348098, -3.074323803795402, 0.4542411499017106) -> logged [2, -2.8626953571493643,-3.0837315083694277, 1, 4]\njava.lang.AssertionError: second initial center should be chosen with probability proportional to true D^2 expected same:<-3.13229482348098> was not:<-3.0837315083694277>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotSame(Assert.java:828)\n\tat org.junit.Assert.assertSame(Assert.java:771)\n\tat org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat "
+   ]
+  },
+  "fresh": {
+   "trials": 97892,
+   "inside_buggyIf": 31797,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: second initial center should be chosen with probability proportional to true D^2 expected same:<-2.212604532374958> was not:<-1.4822181653771933>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotSame(Assert.java:828)\n    \tat org.junit.Assert.assertSame(Assert.java:771)\n    \tat org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)\n\nLocation: org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)\n\nis triggered by the following inputs:\n\n    input (-1.3300739947149443, -1.4822181653771933, -1.3169934423881682, -1.9737034725506464, -1.409985218751162, -2.212604532374958, -1.6935767739561856, 0.5478341179613301) -> logged [2, -1.3300739947149443,-1.4822181653771933, 2, 5]\n    input (4.5157522007645845, 2.6043751742575, 4.534686240114482, 3.4151375907315558, -0.17946463372252097, -4.143359644923281, 0.04043078164787872) -> logged [2, 4.5157522007645845,-0.17946463372252097, 4, 2]"
+  },
+  "seconds": 90.5
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 202.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 200.6635901927948,
+  "time": {
+   "CHECKOUT_BUGGY": 2.6021881103515625,
+   "DELTA_BUGGY": 0.0018374919891357422,
+   "COMPILE_BUGGY": 5.531506299972534,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 2.6057369709014893,
+   "PATCH": 0.01606583595275879,
+   "DELTA_PATCH": 0.0018944740295410156,
+   "COMPILE_PATCH": 6.101048231124878,
+   "PATCH_TEST": 2.480335235595703,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.30903434753418,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 299.9
+}

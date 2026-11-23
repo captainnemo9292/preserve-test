@@ -1,0 +1,260 @@
+{
+  "bug": "Math-90",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 24,
+  "cost_usd": 2.2532,
+  "tokens": {
+    "input": 40,
+    "output": 19260,
+    "cache_write": 497492,
+    "cache_read": 705860
+  },
+  "seconds": 301.6,
+  "started_at": "2026-11-21T13:24:30",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 291.3,
+    "derive": 1.7,
+    "validation": 180.3
+  },
+  "llm_seconds": 178.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 674,
+        "cache_write": 356,
+        "cache_read": 1731
+      },
+      "cost_usd": 0.008341,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 17.2,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 1740,
+        "cache_write": 33349,
+        "cache_read": 26434
+      },
+      "cost_usd": 0.153451,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 21.4,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 2706,
+        "cache_write": 60504,
+        "cache_read": 26748
+      },
+      "cost_usd": 0.271759,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 11.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1024,
+        "cache_write": 57404,
+        "cache_read": 611
+      },
+      "cost_usd": 0.239921,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 34.5,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3933,
+        "cache_write": 97023,
+        "cache_read": 54728
+      },
+      "cost_usd": 0.432903,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 8.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 817,
+        "cache_write": 87034,
+        "cache_read": 611
+      },
+      "cost_usd": 0.356371,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_symbolize",
+      "seconds": 17.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2195,
+        "cache_write": 13597,
+        "cache_read": 85039
+      },
+      "cost_usd": 0.084846,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_check_inputs",
+      "seconds": 12.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1296,
+        "cache_write": 10721,
+        "cache_read": 87645
+      },
+      "cost_usd": 0.064612,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_symbolize",
+      "seconds": 17.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2308,
+        "cache_write": 11829,
+        "cache_read": 98636
+      },
+      "cost_usd": 0.080264,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "015_check_inputs",
+      "seconds": 16.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1960,
+        "cache_write": 11493,
+        "cache_read": 98366
+      },
+      "cost_usd": 0.075413,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "016_validate",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 221,
+        "cache_write": 110948,
+        "cache_read": 603
+      },
+      "cost_usd": 0.44607,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "016_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 214,
+        "cache_write": 1606,
+        "cache_read": 111551
+      },
+      "cost_usd": 0.019727,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "016_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 172,
+        "cache_write": 1628,
+        "cache_read": 113157
+      },
+      "cost_usd": 0.019556,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 5,
+  "failing_test": "org.apache.commons.math.stat.FrequencyTest::testAddNonComparable",
+  "jqf_class": "org.apache.commons.math.stat.JQF_FrequencyTest",
+  "hidden_tests": [
+    "org.apache.commons.math.stat.FrequencyTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testAddNonComparable",
+  "issue_gist": "Frequency.addValue(Object) accepts non-Comparable objects (e.g. a plain Object) on the first add, and failure only occurs on a later add with IllegalArgumentException. getCount/getPct silently return 0 for non-Comparable objects, and getCumFreq/getCumPct only work with Comparable. The API should require Comparable and reject non-Comparable values immediately.",
+  "failing_inputs_count": 3060,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FrequencyTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug90",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 50230,
+      "inside_buggyIf": 25370,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (NC50, 4) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 4]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j",
+          "input (NC-50, 4) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 4]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j",
+          "input (java.lang.Object@7a1ebcd8, 2) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 2]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j"
+        ]
+      },
+      "fresh": {
+        "trials": 51363,
+        "inside_buggyIf": 25765,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failEquals(Assert.java:185)\n    \tat org.junit.Assert.assertNotEquals(Assert.java:161)\n    \tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\nLocation: org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\nis triggered by the following inputs:\n\n    input (sb49, 3) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 3]\n    input (NC45, 2) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 2]"
+      }
+    }
+  },
+  "total_seconds": 483.7,
+  "paired_inputs_archived": true
+}

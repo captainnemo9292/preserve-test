@@ -1,0 +1,1047 @@
+
+====================================================================================================
+[12:16:15] BUG Lang-35: failing test org.apache.commons.lang3.ArrayUtilsAddTest::testLANG571 -> org.apache.commons.lang3.JQF_ArrayUtilsAddTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Lang-35/Lang35b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-35/source
+====================================================================================================
+Title: ArrayUtils.add(T[] array, T element) can create unexpected ClassCastException
+
+ArrayUtils.add(T[] array, T element) can create an unexpected ClassCastException.
+
+For example, the following code compiles without a warning:
+
+{code}
+String[] sa = ArrayUtils.add(stringArray, aString);
+{code}
+
+and works fine, provided at least one of the parameters is non-null. However, if both parameters are null, the add() method returns an Object[] array, hence the Exception.
+
+If both parameters are null, it's not possible to determine the correct array type to return, so it seems to me this should be disallowed.
+
+I think the method ought to be changed to throw IllegalParameterException when both parameters are null.
+
+====================================================================================================
+[12:16:15] HIDDEN FROM THE AGENT: 24 relevant test classes
+====================================================================================================
+org.apache.commons.lang3.ArrayUtilsAddTest
+org.apache.commons.lang3.ArrayUtilsRemoveTest
+org.apache.commons.lang3.ArrayUtilsTest
+org.apache.commons.lang3.BooleanUtilsTest
+org.apache.commons.lang3.CharEncodingTest
+org.apache.commons.lang3.CharSetTest
+org.apache.commons.lang3.CharSetUtilsTest
+org.apache.commons.lang3.ClassUtilsTest
+org.apache.commons.lang3.StringEscapeUtilsTest
+org.apache.commons.lang3.StringUtilsEqualsIndexOfTest
+org.apache.commons.lang3.StringUtilsSubstringTest
+org.apache.commons.lang3.StringUtilsTest
+org.apache.commons.lang3.ValidateTest
+org.apache.commons.lang3.builder.CompareToBuilderTest
+org.apache.commons.lang3.builder.EqualsBuilderTest
+org.apache.commons.lang3.builder.HashCodeBuilderAndEqualsBuilderTest
+org.apache.commons.lang3.builder.HashCodeBuilderTest
+org.apache.commons.lang3.builder.ReflectionToStringBuilderExcludeTest
+org.apache.commons.lang3.exception.ExceptionUtilsTest
+org.apache.commons.lang3.reflect.ConstructorUtilsTest
+org.apache.commons.lang3.reflect.FieldUtilsTest
+org.apache.commons.lang3.reflect.MethodUtilsTest
+org.apache.commons.lang3.text.StrBuilderTest
+org.apache.commons.lang3.text.StrTokenizerTest
+
+====================================================================================================
+[12:16:15] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:16:15] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: ArrayUtils.add(T[] array, T element) can create unexpected ClassCastException
+
+ArrayUtils.add(T[] array, T element) can create an unexpected ClassCastException.
+
+For example, the following code compiles without a warning:
+
+{code}
+String[] sa = ArrayUtils.add(stringArray, aString);
+{code}
+
+and works fine, provided at least one of the parameters is non-null. However, if both parameters are null, the add() method returns an Object[] array, hence the Exception.
+
+If both parameters are null, it's not possible to determine the correct array type to return, so it seems to me this should be disallowed.
+
+I think the method ought to be changed to throw IllegalParameterException when both parameters are null.
+
+====================================================================================================
+[12:16:20] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "ArrayUtils.add(T[] array, T element) returns an Object[] when both the array and element are null, since the component type can't be determined. Callers who assign the result to a typed array like String[] get an unexpected ClassCastException at runtime, with no compile-time warning.",
+  "concrete_examples": [
+    {
+      "input": "String[] sa = ArrayUtils.add((String[]) null, (String) null);",
+      "expected": "The call should not return an Object[]. The reporter proposes throwing an IllegalArgumentException, since the array type can't be determined when both arguments are null.",
+      "actual": "add() returns an Object[] containing a single null. Assigning it to String[] throws ClassCastException."
+    },
+    {
+      "input": "String[] stringArray = null; String aString = null; String[] sa = ArrayUtils.add(stringArray, aString);",
+      "expected": "A clear, deliberate failure (IllegalArgumentException) or a correctly typed result, instead of a ClassCastException.",
+      "actual": "ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.String;"
+    },
+    {
+      "input": "String[] sa = ArrayUtils.add(new String[]{\"a\"}, (String) null);",
+      "expected": "Returns a String[] {\"a\", null}.",
+      "actual": "Works correctly. The array type is taken from the non-null array, so no bug here."
+    }
+  ]
+}
+
+====================================================================================================
+[12:16:20] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:16:21] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0090
+====================================================================================================
+{
+  "issue_gist": "ArrayUtils.add(T[] array, T element) returns an Object[] when both the array and element are null, since the component type can't be determined. Callers who assign the result to a typed array like String[] get an unexpected ClassCastException at runtime, with no compile-time warning.",
+  "concrete_examples": [
+    {
+      "input": "String[] sa = ArrayUtils.add((String[]) null, (String) null);",
+      "expected": "The call should not return an Object[]. The reporter proposes throwing an IllegalArgumentException, since the array type can't be determined when both arguments are null.",
+      "actual": "add() returns an Object[] containing a single null. Assigning it to String[] throws ClassCastException."
+    },
+    {
+      "input": "String[] stringArray = null; String aString = null; String[] sa = ArrayUtils.add(stringArray, aString);",
+      "expected": "A clear, deliberate failure (IllegalArgumentException) or a correctly typed result, instead of a ClassCastException.",
+      "actual": "ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.String;"
+    },
+    {
+      "input": "String[] sa = ArrayUtils.add(new String[]{\"a\"}, (String) null);",
+      "expected": "Returns a String[] {\"a\", null}.",
+      "actual": "Works correctly. The array type is taken from the non-null array, so no bug here."
+    }
+  ]
+}
+
+====================================================================================================
+[12:16:21] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:16:21] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-35/source
+Test file: src/test/java/org/apache/commons/lang3/JQF_ArrayUtilsAddTest.java
+Test class: org.apache.commons.lang3.JQF_ArrayUtilsAddTest
+Test method: testBugReproduction
+
+Bug summary: ArrayUtils.add(T[] array, T element) returns an Object[] when both the array and element are null, since the component type can't be determined. Callers who assign the result to a typed array like String[] get an unexpected ClassCastException at runtime, with no compile-time warning.
+
+Concrete examples:
+[{'input': 'String[] sa = ArrayUtils.add((String[]) null, (String) null);', 'expected': "The call should not return an Object[]. The reporter proposes throwing an IllegalArgumentException, since the array type can't be determined when both arguments are null.", 'actual': 'add() returns an Object[] containing a single null. Assigning it to String[] throws ClassCastException.'}, {'input': 'String[] stringArray = null; String aString = null; String[] sa = ArrayUtils.add(stringArray, aString);', 'expected': 'A clear, deliberate failure (IllegalArgumentException) or a correctly typed result, instead of a ClassCastException.', 'actual': 'ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.String;'}, {'input': 'String[] sa = ArrayUtils.add(new String[]{"a"}, (String) null);', 'expected': 'Returns a String[] {"a", null}.', 'actual': 'Works correctly. The array type is taken from the non-null array, so no bug here.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-35/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:16:25] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public static <T> T\\[\\] add\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-35/source/src/main/java/org/apache/commons/lang3/ArrayUtils.java",
+  "output_mode": "content",
+  "-A": 20
+}
+
+====================================================================================================
+[12:16:25] [002_symbolize] TOOL RESULT
+====================================================================================================
+3288:    public static <T> T[] add(T[] array, T element) {
+3289-        Class<?> type;
+3290-        if (array != null){
+3291-            type = array.getClass();
+3292-        } else if (element != null) {
+3293-            type = element.getClass();
+3294-        } else {
+3295-            type = Object.class;
+3296-        }
+3297-        @SuppressWarnings("unchecked") // type must be T
+3298-        T[] newArray = (T[]) copyArrayGrow1(array, type);
+3299-        newArray[newArray.length - 1] = element;
+3300-        return newArray;
+3301-    }
+3302-
+3303-    /**
+3304-     * <p>Copies the given array and adds the given element at the end of the new array.</p>
+3305-     *
+3306-     * <p>The new array contains the same elements of the input
+3307-     * array plus the given element in the last position. The component type of
+3308-     * the new array is the same as that of the input array.</p>
+--
+3567:    public static <T> T[] add(T[] array, int index, T element) {
+3568-        Class<?> clss = null;
+3569-        if (array != null) {
+3570-            clss = array.getClass().getComponentType();
+3571-        } else if (element != null) {
+3572-            clss = element.getClass();
+3573-        } else {
+3574-            return (T[]) new Object[] { null };
+3575-        }
+3576-        @SuppressWarnings("unchecked") // the add method creates an array of type clss, which is type T
+3577-        final T[] newArray = (T[]) add(array, index, element, clss);
+3578-        return newArray;
+3579-    }
+3580-
+3581-    /**
+3582-     * <p>Inserts the specified element at the specified position in the array.
+3583-     * Shifts the element currently at that position (if any) and any subsequent
+3584-     * elements to the right (adds one to their indices).</p>
+3585-     *
+3586-     * <p>This method returns a new array with the same elements of the input
+3587-     * array plus the given element on the specified position. The component
+
+====================================================================================================
+[12:16:35] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ArrayUtilsAddTest {\n\n    public static class StringArrayGen extends Generator<String[]> {\n        public StringArrayGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) {\n                return null;\n            }\n            int n = r.nextInt(0, 5);\n            String[] a = new String[n];\n            for (int i = 0; i < n; i++) {\n                a[i] = r.nextBoolean() ? null : \"s\" + r.nextInt(0, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class StringGen extends Generator<String> {\n        public StringGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) {\n                return null;\n            }\n            return \"e\" + r.nextInt(0, 100);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(StringArrayGen.class) String[] array,\n                                    @From(StringGen.class) String element) {\n        boolean validIf = true; // null or non-null array / element are all legal arguments\n        boolean buggyIf = array == null && element == null;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exceptionName = \"none\";\n        String resultClass = \"null\";\n        int resultLength = -1;\n        String resultContent = \"null\";\n        try {\n            Object result = ArrayUtils.add(array, element);\n            if (result != null) {\n                resultClass = result.getClass().getName();\n                Object[] arr = (Object[]) result;\n                resultLength = arr.length;\n                resultContent = java.util.Arrays.toString(arr);\n            }\n        } catch (Throwable t) {\n            exceptionName = t.getClass().getName();\n        }\n\n        final String fEx = exceptionName;\n        final String fCls = resultClass;\n        final int fLen = resultLength;\n        final String fContent = resultContent;\n        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });\n        String expectedException = \"java.lang.IllegalArgumentException\";\n        assertEquals(expectedException, fEx);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:16:35] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:16:36] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1517
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ArrayUtilsAddTest {\n\n    public static class StringArrayGen extends Generator<String[]> {\n        public StringArrayGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) {\n                return null;\n            }\n            int n = r.nextInt(0, 5);\n            String[] a = new String[n];\n            for (int i = 0; i < n; i++) {\n                a[i] = r.nextBoolean() ? null : \"s\" + r.nextInt(0, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class StringGen extends Generator<String> {\n        public StringGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) {\n                return null;\n            }\n            return \"e\" + r.nextInt(0, 100);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(StringArrayGen.class) String[] array,\n                                    @From(StringGen.class) String element) {\n        boolean validIf = true; // null or non-null array / element are all legal arguments\n        boolean buggyIf = array == null && element == null;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exceptionName = \"none\";\n        String resultClass = \"null\";\n        int resultLength = -1;\n        String resultContent = \"null\";\n        try {\n            Object result = ArrayUtils.add(array, element);\n            if (result != null) {\n                resultClass = result.getClass().getName();\n                Object[] arr = (Object[]) result;\n                resultLength = arr.length;\n                resultContent = java.util.Arrays.toString(arr);\n            }\n        } catch (Throwable t) {\n            exceptionName = t.getClass().getName();\n        }\n\n        final String fEx = exceptionName;\n        final String fCls = resultClass;\n        final int fLen = resultLength;\n        final String fContent = resultContent;\n        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });\n        String expectedException = \"java.lang.IllegalArgumentException\";\n        assertEquals(expectedException, fEx);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:16:36] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:16:36] TEST CODE (org.apache.commons.lang3.JQF_ArrayUtilsAddTest)
+====================================================================================================
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+}
+
+====================================================================================================
+[12:16:37] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:16:58] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 49861,
+  "discarded_by_assume": 31847,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 2008
+  },
+  "passed_assume": 18014,
+  "classified": 2008
+}
+
+====================================================================================================
+[12:16:58] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:16:58] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: ArrayUtils.add(T[] array, T element) can create unexpected ClassCastException
+
+ArrayUtils.add(T[] array, T element) can create an unexpected ClassCastException.
+
+For example, the following code compiles without a warning:
+
+{code}
+String[] sa = ArrayUtils.add(stringArray, aString);
+{code}
+
+and works fine, provided at least one of the parameters is non-null. However, if both parameters are null, the add() method returns an Object[] array, hence the Exception.
+
+If both parameters are null, it's not possible to determine the correct array type to return, so it seems to me this should be disallowed.
+
+I think the method ought to be changed to throw IllegalParameterException when both parameters are null.
+
+=== Test ===
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[java.lang.IllegalArgumentException]> but was:<[none]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.apache.commons.lang3.JQF_ArrayUtilsAddTest.testBugReproduction(JQF_ArrayUtilsAddTest.java:72)
+
+Location: org.apache.commons.lang3.JQF_ArrayUtilsAddTest.testBugReproduction(JQF_ArrayUtilsAddTest.java:72)
+
+is triggered by the following inputs:
+
+    input (null, null) -> logged [none, [Ljava.lang.Object;, 1, [null]]
+    input (null, null) -> logged [none, [Ljava.lang.Object;, 1, [null]]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:17:03] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "(1) The failing inputs are (null, null), which is the exact condition in the report. (2) The logged output is [none, [Ljava.lang.Object;, 1, [null]]. add() returned an Object[] holding one null and threw nothing. That Object[] is what causes the ClassCastException when the caller assigns the result to String[]. The test asserts that an IllegalArgumentException is thrown, which is the fix the reporter proposes, so it fails on the buggy code for the reported reason. (3) The root cause is the same. The code falls back to Object.class when both arguments are null. (4) buggyIf is `array == null && element == null`. Every input it accepts triggers the bug, and none of them already behaves correctly. (5) buggyIf misses nothing. With a non-null array the type comes from the array, and with a non-null element it comes from the element's class, so only (null, null) is affected. (6) validIf is `true`, and the generators produce null, empty and non-empty arrays and null and non-null elements. That covers the whole valid input domain, not just the bug-triggering inputs."
+}
+
+====================================================================================================
+[12:17:03] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:04] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2703
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "(1) The failing inputs are (null, null), which is the exact condition in the report. (2) The logged output is [none, [Ljava.lang.Object;, 1, [null]]. add() returned an Object[] holding one null and threw nothing. That Object[] is what causes the ClassCastException when the caller assigns the result to String[]. The test asserts that an IllegalArgumentException is thrown, which is the fix the reporter proposes, so it fails on the buggy code for the reported reason. (3) The root cause is the same. The code falls back to Object.class when both arguments are null. (4) buggyIf is `array == null && element == null`. Every input it accepts triggers the bug, and none of them already behaves correctly. (5) buggyIf misses nothing. With a non-null array the type comes from the array, and with a non-null element it comes from the element's class, so only (null, null) is affected. (6) validIf is `true`, and the generators produce null, empty and non-empty arrays and null and non-null elements. That covers the whole valid input domain, not just the bug-triggering inputs."
+}
+
+====================================================================================================
+[12:17:04] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:17:04] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:17:11] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real ArrayUtils.add(array, element) directly. It uses no mocking framework, no fake subclasses and no simulated return values. The two nested classes are input generators that only produce String[] and String arguments. The test records what the real method returned or threw, then asserts on that."
+}
+
+====================================================================================================
+[12:17:11] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:12] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.3925
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real ArrayUtils.add(array, element) directly. It uses no mocking framework, no fake subclasses and no simulated return values. The two nested classes are input generators that only produce String[] and String arguments. The test records what the real method returned or threw, then asserts on that."
+}
+
+====================================================================================================
+[12:17:12] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:17:15] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). The only assertion is assertEquals(\"java.lang.IllegalArgumentException\", fEx). fEx holds the exception name that the real ArrayUtils.add call produced. The assertion would pass if add() threw an IllegalArgumentException when both arguments are null, which is the fix the reporter proposes. It currently fails because the buggy code returns an Object[] and throws nothing."
+}
+
+====================================================================================================
+[12:17:15] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:16] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4031
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). The only assertion is assertEquals(\"java.lang.IllegalArgumentException\", fEx). fEx holds the exception name that the real ArrayUtils.add call produced. The assertion would pass if add() threw an IllegalArgumentException when both arguments are null, which is the fix the reporter proposes. It currently fails because the buggy code returns an Object[] and throws nothing."
+}
+
+====================================================================================================
+[12:17:16] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:17:19] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(expectedException, fEx). Both arguments are Strings, and assertEquals compares them with equals(), so the comparison is correct. It does not use == on objects. No doubles or arrays are compared, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[12:17:19] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:20] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4136
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(expectedException, fEx). Both arguments are Strings, and assertEquals compares them with equals(), so the comparison is correct. It does not use == on objects. No doubles or arrays are compared, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[12:17:20] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:17:20] AGENT FINISHED success=True llm_calls=8
+====================================================================================================
+
+
+====================================================================================================
+[12:17:22] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ArrayUtilsAddTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug35"
+}
+
+====================================================================================================
+[12:17:22] FINAL TEST FILE JQF_ArrayUtilsAddTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ArrayUtilsAddTest {
+
+    public static class StringArrayGen extends Generator<String[]> {
+        public StringArrayGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            int n = r.nextInt(0, 5);
+            String[] a = new String[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = r.nextBoolean() ? null : "s" + r.nextInt(0, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class StringGen extends Generator<String> {
+        public StringGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) {
+                return null;
+            }
+            return "e" + r.nextInt(0, 100);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true; // null or non-null array / element are all legal arguments
+        boolean buggyIf = array == null && element == null;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exceptionName = "none";
+        String resultClass = "null";
+        int resultLength = -1;
+        String resultContent = "null";
+        try {
+            Object result = ArrayUtils.add(array, element);
+            if (result != null) {
+                resultClass = result.getClass().getName();
+                Object[] arr = (Object[]) result;
+                resultLength = arr.length;
+                resultContent = java.util.Arrays.toString(arr);
+            }
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String fEx = exceptionName;
+        final String fCls = resultClass;
+        final int fLen = resultLength;
+        final String fContent = resultContent;
+        Log.logOutIf(true, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        String expectedException = "java.lang.IllegalArgumentException";
+        assertEquals(expectedException, fEx);
+    }
+
+    @Fuzz
+    public void testLANG571(@From(StringArrayGen.class) String[] array,
+                                    @From(StringGen.class) String element) {
+        boolean validIf = true;
+        boolean buggyIf = array == null && element == null;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            String exceptionName = "none";
+            String resultClass = "null";
+            int resultLength = -1;
+            String resultContent = "null";
+            try {
+                Object result = ArrayUtils.add(array, element);
+                if (result != null) {
+                    resultClass = result.getClass().getName();
+                    Object[] arr = (Object[]) result;
+                    resultLength = arr.length;
+                    resultContent = java.util.Arrays.toString(arr);
+                }
+            } catch (Throwable t) {
+                exceptionName = t.getClass().getName();
+            }
+
+            final String fEx = exceptionName;
+            final String fCls = resultClass;
+            final int fLen = resultLength;
+            final String fContent = resultContent;
+            Log.logOutIf(preserveIf, () -> new Object[]{ fEx, fCls, fLen, fContent });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:20:44] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 35888,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 89030,
+      "inside_buggyIf": 32196,
+      "unique_failures": {}
+    }
+  }
+}

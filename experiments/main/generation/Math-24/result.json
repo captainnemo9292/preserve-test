@@ -1,0 +1,262 @@
+{
+  "bug": "Math-24",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 20,
+  "cost_usd": 1.2269,
+  "tokens": {
+    "input": 34,
+    "output": 25807,
+    "cache_write": 230416,
+    "cache_read": 471253
+  },
+  "seconds": 327.7,
+  "started_at": "2026-11-21T12:33:51",
+  "timing": {
+    "checkout": 10.9,
+    "agent": 316.8,
+    "derive": 1.8,
+    "validation": 93.9
+  },
+  "llm_seconds": 256.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 346,
+        "cache_write": 788,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006697,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 65.8,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 6563,
+        "cache_write": 33832,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.201074,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 8.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1056,
+        "cache_write": 10675,
+        "cache_read": 27847
+      },
+      "cost_usd": 0.056049,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 21.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1595,
+        "cache_write": 35576,
+        "cache_read": 611
+      },
+      "cost_usd": 0.158319,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 17.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2006,
+        "cache_write": 9993,
+        "cache_read": 38522
+      },
+      "cost_usd": 0.063888,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 12.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1312,
+        "cache_write": 11163,
+        "cache_read": 36187
+      },
+      "cost_usd": 0.061395,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_symbolize",
+      "seconds": 24.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2729,
+        "cache_write": 11420,
+        "cache_read": 48515
+      },
+      "cost_usd": 0.077825,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_check_inputs",
+      "seconds": 24.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2508,
+        "cache_write": 10744,
+        "cache_read": 47350
+      },
+      "cost_usd": 0.072795,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_symbolize",
+      "seconds": 22.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3088,
+        "cache_write": 12170,
+        "cache_read": 59935
+      },
+      "cost_usd": 0.085557,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "015_check_inputs",
+      "seconds": 23.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2547,
+        "cache_write": 14382,
+        "cache_read": 58094
+      },
+      "cost_usd": 0.088811,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "016_validate",
+      "seconds": 15.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 993,
+        "cache_write": 73519,
+        "cache_read": 603
+      },
+      "cost_usd": 0.304074,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "016_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 200,
+        "cache_write": 3459,
+        "cache_read": 74122
+      },
+      "cost_usd": 0.023256,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "016_validate",
+      "seconds": 9.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 864,
+        "cache_write": 2695,
+        "cache_read": 77581
+      },
+      "cost_usd": 0.027186,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 5,
+  "failing_test": "org.apache.commons.math3.optimization.univariate.BrentOptimizerTest::testMath855",
+  "jqf_class": "org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.optimization.direct.PowellOptimizerTest",
+    "org.apache.commons.math3.optimization.univariate.BrentOptimizerTest",
+    "org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath855",
+  "issue_gist": "BrentOptimizer (Apache Commons Math univariate optimization) returns the last evaluated point without checking whether it is the best one found. The last evaluation can be slightly worse than the previous one, so the returned optimum is suboptimal.",
+  "failing_inputs_count": 397,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_BrentOptimizerTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug24",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 8331,
+      "paired_inputs": 8331,
+      "outcomes": {
+        "java.lang.AssertionError": 8331
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 8331,
+        "failed_on_buggy": 8331,
+        "pass": 20,
+        "fail": 8311,
+        "not_run": 0,
+        "failing_examples": [
+          "input (8.464970718208107, -39.257163523776605, 9.097242076797826, -33.11138632340898, 8.519883913799925E-4, 3.3179107219949466E-4, 0) -> logged [8.47251456606559, 5.690964049683694E-5, 3.1554436208840472E-30, 10.0]\njava.lang.AssertionError: Returned value 5.690964049683694E-5 is worse than best evaluated value 3.1554436208840472E-30\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Met",
+          "input (-29.177460127302435, -38.954327468672716, 31.520661743018508, -38.01694877639813, 2.818496653341128E-4, 0.008471204432595775, 0) -> logged [-29.16076526549766, 2.7871841068057506E-4, 0.0, 6.0]\njava.lang.AssertionError: Returned value 2.7871841068057506E-4 is worse than best evaluated value 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.",
+          "input (-36.71622021069536, -45.301718553425715, 37.64973388566882, 15.625019543860574, 5.241886823081687E-6, 0.003492928252904988, 0) -> logged [-36.71990560121916, 1.3582103312907577E-5, 4.543838814073028E-28, 6.0]\njava.lang.AssertionError: Returned value 1.3582103312907577E-5 is worse than best evaluated value 4.543838814073028E-28\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Met"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 8244,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: Returned value -5.816199399341245E-5 is worse than best evaluated value -0.0\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\nLocation: org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\nis triggered by the following inputs:\n\n    input (-13.773780016545977, -36.01116063419484, 26.98762003015274, -35.44906934993877, 8.662858916716456E-5, 0.006433197986407577, 1) -> logged [-13.766153615429237, -5.816199399341245E-5, -0.0, 6.0]\n    input (-13.638163072778951, -29.75557008238674, -6.048374889550459, -14.180773185107789, 2.7378972744754554E-4, 0.008875132331039766, 1) -> logged [-13.62555395149733, -1.5898993949461793E-4, -0.0, 6.0]"
+      }
+    }
+  },
+  "total_seconds": 423.4,
+  "paired_inputs_archived": true
+}

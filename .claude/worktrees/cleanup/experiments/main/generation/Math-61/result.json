@@ -1,0 +1,413 @@
+{
+  "bug": "Math-61",
+  "success": false,
+  "failure_reason": "The failures do not reproduce the bug: These failures do not reproduce the reported bug, and the result is the same as in every earlier round.\n\nThe report is about the constructor PoissonDistributionImpl(double, NormalDistribution). That constructor calls overridable setters (setNormal, setMean) and keeps and mutates the caller's NormalDistribution reference.\n\nThe test never calls that constructor. It calls the (p, epsilon, maxIterations) constructor with p <= 0. That constructor has no overridable calls and takes no NormalDistribution. It validates p and throws an IllegalArgumentException (MathRuntimeException$4), which is its documented behavior. The log confirms this: NotStrictlyPositiveException=false, IllegalArgumentException=true.\n\nThe assertion demands NotStrictlyPositiveException, which the report never mentions and the code never promised. So buggyIf (p <= 0) accepts inputs where the code already behaves correctly, and the test fails only because its own assertion is wrong. This is problem (4).\n\nProblem (5) also applies. buggyIf misses the real triggers: a subclass overriding setMean or setNormal, and a caller-supplied NormalDistribution that is shared and mutated. The test has no subclass and no NormalDistribution argument, so it can't observe either symptom.\n\nThe failure comes from a wrong expected exception type, not from the reported root cause. (after 50/50 LLM calls)",
+  "model": "sonnet",
+  "llm_call_count": 50,
+  "cost_usd": 2.9037,
+  "tokens": {
+    "input": 66,
+    "output": 24663,
+    "cache_write": 592165,
+    "cache_read": 2882280
+  },
+  "seconds": 539.9,
+  "started_at": "2026-11-21T13:01:38",
+  "timing": {
+    "checkout": 9.9,
+    "agent": 530.0
+  },
+  "llm_seconds": 237.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 569,
+        "cache_write": 1004,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009791,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 24.7,
+      "turns": 8,
+      "tokens": {
+        "input": 10,
+        "output": 2712,
+        "cache_write": 37278,
+        "cache_read": 86188
+      },
+      "cost_usd": 0.184871,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 7.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 553,
+        "cache_write": 32874,
+        "cache_read": 611
+      },
+      "cost_usd": 0.137091,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 16.2,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1902,
+        "cache_write": 70254,
+        "cache_read": 31183
+      },
+      "cost_usd": 0.303162,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_check_inputs",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 502,
+        "cache_write": 61515,
+        "cache_read": 611
+      },
+      "cost_usd": 0.251145,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "008_symbolize",
+      "seconds": 14.4,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1609,
+        "cache_write": 99682,
+        "cache_read": 60394
+      },
+      "cost_usd": 0.420865,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_check_inputs",
+      "seconds": 6.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 519,
+        "cache_write": 90364,
+        "cache_read": 611
+      },
+      "cost_usd": 0.366711,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "011_symbolize",
+      "seconds": 8.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1040,
+        "cache_write": 10948,
+        "cache_read": 89217
+      },
+      "cost_usd": 0.063118,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_check_inputs",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 535,
+        "cache_write": 9659,
+        "cache_read": 90975
+      },
+      "cost_usd": 0.053087,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "014_symbolize",
+      "seconds": 10.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1170,
+        "cache_write": 9912,
+        "cache_read": 100165
+      },
+      "cost_usd": 0.061368,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "016_check_inputs",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 525,
+        "cache_write": 9692,
+        "cache_read": 100634
+      },
+      "cost_usd": 0.054085,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "017_symbolize",
+      "seconds": 8.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 920,
+        "cache_write": 10022,
+        "cache_read": 110077
+      },
+      "cost_usd": 0.0603,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "019_check_inputs",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 527,
+        "cache_write": 9673,
+        "cache_read": 110326
+      },
+      "cost_usd": 0.054999,
+      "outcome": "success"
+    },
+    {
+      "call": 14,
+      "step": "020_symbolize",
+      "seconds": 13.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1479,
+        "cache_write": 9778,
+        "cache_read": 120099
+      },
+      "cost_usd": 0.065916,
+      "outcome": "success"
+    },
+    {
+      "call": 15,
+      "step": "022_check_inputs",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 520,
+        "cache_write": 10175,
+        "cache_read": 119999
+      },
+      "cost_usd": 0.057904,
+      "outcome": "success"
+    },
+    {
+      "call": 16,
+      "step": "023_symbolize",
+      "seconds": 9.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1164,
+        "cache_write": 10321,
+        "cache_read": 129877
+      },
+      "cost_usd": 0.065916,
+      "outcome": "success"
+    },
+    {
+      "call": 17,
+      "step": "025_check_inputs",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 524,
+        "cache_write": 9965,
+        "cache_read": 130174
+      },
+      "cost_usd": 0.058121,
+      "outcome": "success"
+    },
+    {
+      "call": 18,
+      "step": "026_symbolize",
+      "seconds": 10.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1097,
+        "cache_write": 10014,
+        "cache_read": 140198
+      },
+      "cost_usd": 0.06505,
+      "outcome": "success"
+    },
+    {
+      "call": 19,
+      "step": "028_check_inputs",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 519,
+        "cache_write": 9922,
+        "cache_read": 140139
+      },
+      "cost_usd": 0.058896,
+      "outcome": "success"
+    },
+    {
+      "call": 20,
+      "step": "029_symbolize",
+      "seconds": 9.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1096,
+        "cache_write": 9939,
+        "cache_read": 150212
+      },
+      "cost_usd": 0.065741,
+      "outcome": "success"
+    },
+    {
+      "call": 21,
+      "step": "031_check_inputs",
+      "seconds": 5.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 523,
+        "cache_write": 9917,
+        "cache_read": 150061
+      },
+      "cost_usd": 0.059908,
+      "outcome": "success"
+    },
+    {
+      "call": 22,
+      "step": "032_symbolize",
+      "seconds": 8.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1027,
+        "cache_write": 9942,
+        "cache_read": 160151
+      },
+      "cost_usd": 0.066057,
+      "outcome": "success"
+    },
+    {
+      "call": 23,
+      "step": "034_check_inputs",
+      "seconds": 6.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 523,
+        "cache_write": 9854,
+        "cache_read": 159978
+      },
+      "cost_usd": 0.060648,
+      "outcome": "success"
+    },
+    {
+      "call": 24,
+      "step": "035_symbolize",
+      "seconds": 8.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1037,
+        "cache_write": 9875,
+        "cache_read": 170093
+      },
+      "cost_usd": 0.066883,
+      "outcome": "success"
+    },
+    {
+      "call": 25,
+      "step": "037_check_inputs",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 517,
+        "cache_write": 9867,
+        "cache_read": 169832
+      },
+      "cost_usd": 0.061625,
+      "outcome": "success"
+    },
+    {
+      "call": 26,
+      "step": "038_symbolize",
+      "seconds": 8.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1031,
+        "cache_write": 9873,
+        "cache_read": 179968
+      },
+      "cost_usd": 0.067803,
+      "outcome": "success"
+    },
+    {
+      "call": 27,
+      "step": "040_check_inputs",
+      "seconds": 6.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 523,
+        "cache_write": 9846,
+        "cache_read": 179699
+      },
+      "cost_usd": 0.062588,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 13,
+  "failing_test": "org.apache.commons.math.distribution.PoissonDistributionTest::testMean",
+  "jqf_class": "org.apache.commons.math.distribution.JQF_PoissonDistributionTest",
+  "hidden_tests": [
+    "org.apache.commons.math.distribution.PoissonDistributionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMean",
+  "issue_gist": "PoissonDistributionImpl's constructor PoissonDistributionImpl(double p, NormalDistribution z) calls overridable setters (setNormal, setMean), which is unsafe because a subclass can override them. It also stores the caller-supplied NormalDistribution reference and later mutates it, so the caller's object is modified unexpectedly. The suggested fix is to make the class immutable and create the NormalDistribution internally.",
+  "failing_inputs_count": 2735,
+  "total_seconds": 539.9,
+  "paired_inputs_archived": false
+}

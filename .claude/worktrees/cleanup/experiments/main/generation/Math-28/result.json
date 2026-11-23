@@ -1,0 +1,441 @@
+{
+  "bug": "Math-28",
+  "success": false,
+  "failure_reason": "LLM call budget exhausted (50 calls)",
+  "model": "sonnet",
+  "llm_call_count": 50,
+  "cost_usd": 5.5029,
+  "tokens": {
+    "input": 68,
+    "output": 53087,
+    "cache_write": 1168015,
+    "cache_read": 2998823
+  },
+  "seconds": 913.4,
+  "started_at": "2026-11-21T12:37:12",
+  "timing": {
+    "checkout": 11.4,
+    "agent": 902.0
+  },
+  "llm_seconds": 413.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 511,
+        "cache_write": 1112,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009643,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 26.9,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3338,
+        "cache_write": 33326,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.1668,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 21.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3026,
+        "cache_write": 9407,
+        "cache_read": 26687
+      },
+      "cost_usd": 0.070561,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 13.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1223,
+        "cache_write": 40363,
+        "cache_read": 611
+      },
+      "cost_usd": 0.173747,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 13.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1794,
+        "cache_write": 17739,
+        "cache_read": 36094
+      },
+      "cost_usd": 0.092509,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_symbolize",
+      "seconds": 11.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 1658,
+        "cache_write": 9025,
+        "cache_read": 53833
+      },
+      "cost_usd": 0.058071,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "011_check_inputs",
+      "seconds": 12.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1124,
+        "cache_write": 25429,
+        "cache_read": 40974
+      },
+      "cost_usd": 0.117057,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_symbolize",
+      "seconds": 17.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2288,
+        "cache_write": 16352,
+        "cache_read": 62858
+      },
+      "cost_usd": 0.094578,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "014_check_inputs",
+      "seconds": 12.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1188,
+        "cache_write": 14579,
+        "cache_read": 66403
+      },
+      "cost_usd": 0.07684,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "015_symbolize",
+      "seconds": 19.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2443,
+        "cache_write": 12755,
+        "cache_read": 79210
+      },
+      "cost_usd": 0.083375,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "017_check_inputs",
+      "seconds": 10.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1129,
+        "cache_write": 12240,
+        "cache_read": 80982
+      },
+      "cost_usd": 0.068352,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "018_symbolize",
+      "seconds": 14.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2022,
+        "cache_write": 12789,
+        "cache_read": 91965
+      },
+      "cost_usd": 0.080577,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "020_symbolize",
+      "seconds": 14.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 2296,
+        "cache_write": 5325,
+        "cache_read": 104754
+      },
+      "cost_usd": 0.054743,
+      "outcome": "success"
+    },
+    {
+      "call": 14,
+      "step": "022_check_inputs",
+      "seconds": 10.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1022,
+        "cache_write": 18334,
+        "cache_read": 93222
+      },
+      "cost_usd": 0.092882,
+      "outcome": "success"
+    },
+    {
+      "call": 15,
+      "step": "023_symbolize",
+      "seconds": 22.6,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3222,
+        "cache_write": 154592,
+        "cache_read": 110618
+      },
+      "cost_usd": 0.661658,
+      "outcome": "success"
+    },
+    {
+      "call": 16,
+      "step": "025_check_inputs",
+      "seconds": 8.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 889,
+        "cache_write": 143761,
+        "cache_read": 611
+      },
+      "cost_usd": 0.583999,
+      "outcome": "success"
+    },
+    {
+      "call": 17,
+      "step": "026_symbolize",
+      "seconds": 16.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2537,
+        "cache_write": 14792,
+        "cache_read": 141947
+      },
+      "cost_usd": 0.098737,
+      "outcome": "success"
+    },
+    {
+      "call": 18,
+      "step": "028_check_inputs",
+      "seconds": 7.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 874,
+        "cache_write": 13027,
+        "cache_read": 144372
+      },
+      "cost_usd": 0.075289,
+      "outcome": "success"
+    },
+    {
+      "call": 19,
+      "step": "029_symbolize",
+      "seconds": 21.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2929,
+        "cache_write": 13410,
+        "cache_read": 156739
+      },
+      "cost_usd": 0.098608,
+      "outcome": "success"
+    },
+    {
+      "call": 20,
+      "step": "031_check_inputs",
+      "seconds": 12.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1197,
+        "cache_write": 12121,
+        "cache_read": 157399
+      },
+      "cost_usd": 0.076198,
+      "outcome": "success"
+    },
+    {
+      "call": 21,
+      "step": "032_symbolize",
+      "seconds": 13.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1958,
+        "cache_write": 13429,
+        "cache_read": 170149
+      },
+      "cost_usd": 0.090315,
+      "outcome": "success"
+    },
+    {
+      "call": 22,
+      "step": "034_check_inputs",
+      "seconds": 10.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1014,
+        "cache_write": 12382,
+        "cache_read": 169520
+      },
+      "cost_usd": 0.076624,
+      "outcome": "success"
+    },
+    {
+      "call": 23,
+      "step": "035_symbolize",
+      "seconds": 14.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2261,
+        "cache_write": 12184,
+        "cache_read": 183578
+      },
+      "cost_usd": 0.089708,
+      "outcome": "success"
+    },
+    {
+      "call": 24,
+      "step": "037_check_inputs",
+      "seconds": 8.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 915,
+        "cache_write": 13005,
+        "cache_read": 181902
+      },
+      "cost_usd": 0.079364,
+      "outcome": "success"
+    },
+    {
+      "call": 25,
+      "step": "038_symbolize",
+      "seconds": 19.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2852,
+        "cache_write": 13195,
+        "cache_read": 195762
+      },
+      "cost_usd": 0.10088,
+      "outcome": "success"
+    },
+    {
+      "call": 26,
+      "step": "040_check_inputs",
+      "seconds": 8.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 928,
+        "cache_write": 13037,
+        "cache_read": 194907
+      },
+      "cost_usd": 0.080923,
+      "outcome": "success"
+    },
+    {
+      "call": 27,
+      "step": "041_symbolize",
+      "seconds": 21.4,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 3052,
+        "cache_write": 254919,
+        "cache_read": 209496
+      },
+      "cost_usd": 1.071154,
+      "outcome": "success"
+    },
+    {
+      "call": 28,
+      "step": "043_check_inputs",
+      "seconds": 7.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 890,
+        "cache_write": 240506,
+        "cache_read": 611
+      },
+      "cost_usd": 0.970989,
+      "outcome": "success"
+    },
+    {
+      "call": 29,
+      "step": "044_symbolize",
+      "seconds": 17.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2507,
+        "cache_write": 14880,
+        "cache_read": 241733
+      },
+      "cost_usd": 0.108767,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 15,
+  "failing_test": "org.apache.commons.math3.optimization.linear.SimplexSolverTest::testMath828Cycle",
+  "jqf_class": "org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.optimization.linear.SimplexSolverTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath828Cycle",
+  "issue_gist": "SimplexSolver (Apache Commons Math) throws UnboundedSolutionException on feasible, bounded minimization LPs (DEA-style problems with randomly generated data), and the number of failures grows with the number of variables. Matlab solves the same problems without unbounded results. This points to a pivoting/ratio-test bug, probably in how near-zero or degenerate pivot entries are handled.",
+  "failing_inputs_count": 11,
+  "total_seconds": 913.4,
+  "paired_inputs_archived": false
+}

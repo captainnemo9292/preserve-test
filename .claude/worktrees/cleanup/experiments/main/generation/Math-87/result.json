@@ -1,0 +1,191 @@
+{
+  "bug": "Math-87",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 12,
+  "cost_usd": 0.7198,
+  "tokens": {
+    "input": 26,
+    "output": 10230,
+    "cache_write": 149507,
+    "cache_read": 194072
+  },
+  "seconds": 151.3,
+  "started_at": "2026-11-21T13:15:30",
+  "timing": {
+    "checkout": 10.9,
+    "agent": 140.4,
+    "derive": 1.7,
+    "validation": 200.9
+  },
+  "llm_seconds": 100.6,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 371,
+        "cache_write": 823,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007087,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 25.8,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 2661,
+        "cache_write": 38287,
+        "cache_read": 24870
+      },
+      "cost_usd": 0.182257,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 20.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2201,
+        "cache_write": 35677,
+        "cache_read": 611
+      },
+      "cost_usd": 0.164783,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 16.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2133,
+        "cache_write": 12715,
+        "cache_read": 32228
+      },
+      "cost_usd": 0.075417,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_check_inputs",
+      "seconds": 19.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2312,
+        "cache_write": 11306,
+        "cache_read": 36288
+      },
+      "cost_usd": 0.071977,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "008_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 158,
+        "cache_write": 48089,
+        "cache_read": 603
+      },
+      "cost_usd": 0.194004,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "008_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 179,
+        "cache_write": 1280,
+        "cache_read": 48692
+      },
+      "cost_usd": 0.011787,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "008_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 215,
+        "cache_write": 1330,
+        "cache_read": 49972
+      },
+      "cost_usd": 0.012475,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.optimization.linear.SimplexSolverTest::testSingleVariableAndConstraint",
+  "jqf_class": "org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.optimization.linear.SimplexSolverTest",
+    "org.apache.commons.math.optimization.linear.SimplexTableauTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testSingleVariableAndConstraint",
+  "issue_gist": "SimplexTableau's basic-variable detection treated any nonzero entry in a column as indicating a basic variable, rather than requiring the entry to equal exactly 1 (with the rest of the column zero). This misidentifies non-basic columns as basic and produces wrong solutions.",
+  "failing_inputs_count": 2332,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimplexSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug87",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 89124,
+      "inside_buggyIf": 38443,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (-1, 1.7430030572805393, 8.78782116326154) -> logged [none, 8.78782116326154, -8.78782116326154]\njava.lang.AssertionError: expected:<0.0> but was:<8.78782116326154>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:55)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodA",
+          "input (-1, 0.2552608871019215, 6.224046479951559) -> logged [none, 6.224046479951559, -6.224046479951559]\njava.lang.AssertionError: expected:<0.0> but was:<6.224046479951559>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:55)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod",
+          "input (-2, -4.6908413380245575, 4.734405852064233) -> logged [none, 4.734405852064233, -9.468811704128466]\njava.lang.AssertionError: expected:<0.0> but was:<4.734405852064233>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:55)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethod"
+        ]
+      },
+      "fresh": {
+        "trials": 92352,
+        "inside_buggyIf": 39732,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: expected:<0.0> but was:<2.8597714102125584>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:55)\n\nLocation: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:55)\n\nis triggered by the following inputs:\n\n    input (-3, -4.543540729119819, 2.8597714102125584) -> logged [none, 2.8597714102125584, -8.579314230637674]\n    input (-2, -0.8949436155217851, 2.7043618140574144) -> logged [none, 2.7043618140574144, -5.408723628114829]"
+      }
+    }
+  },
+  "total_seconds": 353.9,
+  "paired_inputs_archived": true
+}

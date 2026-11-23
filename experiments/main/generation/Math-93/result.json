@@ -1,0 +1,263 @@
+{
+  "bug": "Math-93",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 21,
+  "cost_usd": 1.3825,
+  "tokens": {
+    "input": 36,
+    "output": 12016,
+    "cache_write": 305835,
+    "cache_read": 389504
+  },
+  "seconds": 194.2,
+  "started_at": "2026-11-21T13:25:25",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 183.8,
+    "derive": 1.8,
+    "validation": 81.4
+  },
+  "llm_seconds": 123.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 445,
+        "cache_write": 865,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007995,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 21.8,
+      "turns": 6,
+      "tokens": {
+        "input": 8,
+        "output": 2172,
+        "cache_write": 33246,
+        "cache_read": 51939
+      },
+      "cost_usd": 0.159914,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 11.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1466,
+        "cache_write": 6217,
+        "cache_read": 26982
+      },
+      "cost_usd": 0.04223,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 12.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1071,
+        "cache_write": 34522,
+        "cache_read": 611
+      },
+      "cost_usd": 0.148863,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 16.7,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1902,
+        "cache_write": 69988,
+        "cache_read": 33738
+      },
+      "cost_usd": 0.302354,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 9.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 895,
+        "cache_write": 62907,
+        "cache_read": 611
+      },
+      "cost_usd": 0.260643,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_symbolize",
+      "seconds": 12.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1535,
+        "cache_write": 11525,
+        "cache_read": 60411
+      },
+      "cost_usd": 0.067495,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_check_inputs",
+      "seconds": 15.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1602,
+        "cache_write": 10081,
+        "cache_read": 63518
+      },
+      "cost_usd": 0.0627,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_validate",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 181,
+        "cache_write": 73907,
+        "cache_read": 603
+      },
+      "cost_usd": 0.297506,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "013_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 203,
+        "cache_write": 1263,
+        "cache_read": 74510
+      },
+      "cost_usd": 0.014541,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "013_validate",
+      "seconds": 7.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 544,
+        "cache_write": 1314,
+        "cache_read": 75773
+      },
+      "cost_usd": 0.018281,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 4,
+  "failing_test": "org.apache.commons.math.util.MathUtilsTest::testFactorial",
+  "jqf_class": "org.apache.commons.math.util.JQF_MathUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.solvers.LaguerreSolverTest",
+    "org.apache.commons.math.analysis.solvers.MullerSolverTest",
+    "org.apache.commons.math.analysis.solvers.RiddersSolverTest",
+    "org.apache.commons.math.complex.ComplexTest",
+    "org.apache.commons.math.distribution.BinomialDistributionTest",
+    "org.apache.commons.math.distribution.HypergeometricDistributionTest",
+    "org.apache.commons.math.distribution.PascalDistributionTest",
+    "org.apache.commons.math.distribution.PoissonDistributionTest",
+    "org.apache.commons.math.fraction.FractionFormatTest",
+    "org.apache.commons.math.fraction.FractionTest",
+    "org.apache.commons.math.geometry.RotationTest",
+    "org.apache.commons.math.linear.DenseRealMatrixTest",
+    "org.apache.commons.math.linear.RealMatrixImplTest",
+    "org.apache.commons.math.linear.RealVectorImplTest",
+    "org.apache.commons.math.linear.SparseRealMatrixTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.MultivariateSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.StatisticalSummaryValuesTest",
+    "org.apache.commons.math.stat.descriptive.SummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.moment.FirstMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.FourthMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.GeometricMeanTest",
+    "org.apache.commons.math.stat.descriptive.moment.KurtosisTest",
+    "org.apache.commons.math.stat.descriptive.moment.MeanTest",
+    "org.apache.commons.math.stat.descriptive.moment.SecondMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.SkewnessTest",
+    "org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest",
+    "org.apache.commons.math.stat.descriptive.moment.ThirdMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.VarianceTest",
+    "org.apache.commons.math.stat.descriptive.rank.MaxTest",
+    "org.apache.commons.math.stat.descriptive.rank.MinTest",
+    "org.apache.commons.math.stat.descriptive.summary.ProductTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumLogTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumSqTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumTest",
+    "org.apache.commons.math.util.MathUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testFactorial",
+  "issue_gist": "MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.",
+  "failing_inputs_count": 416,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_MathUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug93",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 8392,
+      "paired_inputs": 8392,
+      "outcomes": {
+        "java.lang.AssertionError": 8392
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 8392,
+        "failed_on_buggy": 8392,
+        "pass": 8392,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 8644,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 277.4,
+  "paired_inputs_archived": true
+}

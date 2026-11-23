@@ -1,0 +1,163 @@
+{
+  "bug": "Math-5",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.3846,
+  "tokens": {
+    "input": 20,
+    "output": 2928,
+    "cache_write": 87276,
+    "cache_read": 61673
+  },
+  "seconds": 74.9,
+  "started_at": "2026-11-21T12:29:57",
+  "timing": {
+    "checkout": 12.0,
+    "agent": 62.9,
+    "derive": 1.7,
+    "validation": 156.3
+  },
+  "llm_seconds": 40.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 188,
+        "cache_write": 808,
+        "cache_read": 808
+      },
+      "cost_usd": 0.005197,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 12.5,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1253,
+        "cache_write": 29473,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.130538,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 7.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 601,
+        "cache_write": 26730,
+        "cache_read": 611
+      },
+      "cost_usd": 0.112995,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 168,
+        "cache_write": 28176,
+        "cache_read": 603
+      },
+      "cost_usd": 0.114452,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 198,
+        "cache_write": 1015,
+        "cache_read": 28779
+      },
+      "cost_usd": 0.008926,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 7.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 520,
+        "cache_write": 1074,
+        "cache_read": 29794
+      },
+      "cost_usd": 0.012483,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math3.complex.ComplexTest::testReciprocalZero",
+  "jqf_class": "org.apache.commons.math3.complex.JQF_ComplexTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.analysis.solvers.LaguerreSolverTest",
+    "org.apache.commons.math3.complex.ComplexFieldTest",
+    "org.apache.commons.math3.complex.ComplexFormatTest",
+    "org.apache.commons.math3.complex.ComplexTest",
+    "org.apache.commons.math3.complex.ComplexUtilsTest",
+    "org.apache.commons.math3.complex.FrenchComplexFormatTest",
+    "org.apache.commons.math3.linear.EigenDecompositionTest",
+    "org.apache.commons.math3.transform.FastCosineTransformerTest",
+    "org.apache.commons.math3.transform.FastFourierTransformerTest",
+    "org.apache.commons.math3.transform.FastSineTransformerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testReciprocalZero",
+  "issue_gist": "Complex.ZERO.reciprocal() returns Complex.NaN instead of Complex.INF. The zero-handling branch in reciprocal() yields NaN when it should return infinity.",
+  "failing_inputs_count": 1480,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ComplexTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug5",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 26666,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 27027,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 232.9,
+  "paired_inputs_archived": true
+}

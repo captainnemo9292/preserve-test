@@ -1,0 +1,169 @@
+{
+  "bug": "Math-70",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.4987,
+  "tokens": {
+    "input": 22,
+    "output": 5601,
+    "cache_write": 108145,
+    "cache_read": 100357
+  },
+  "seconds": 85.7,
+  "started_at": "2026-11-21T13:03:09",
+  "timing": {
+    "checkout": 10.5,
+    "agent": 75.2,
+    "derive": 1.6,
+    "validation": 76.8
+  },
+  "llm_seconds": 60.4,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 310,
+        "cache_write": 949,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006981,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 16.9,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1541,
+        "cache_write": 31482,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.141454,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 8.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1064,
+        "cache_write": 5827,
+        "cache_read": 25410
+      },
+      "cost_usd": 0.036493,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 15.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1692,
+        "cache_write": 32765,
+        "cache_read": 611
+      },
+      "cost_usd": 0.148045,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 197,
+        "cache_write": 34742,
+        "cache_read": 603
+      },
+      "cost_usd": 0.141006,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 234,
+        "cache_write": 1157,
+        "cache_read": 35345
+      },
+      "cost_usd": 0.01051,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 6.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 563,
+        "cache_write": 1223,
+        "cache_read": 36502
+      },
+      "cost_usd": 0.01418,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.analysis.solvers.BisectionSolverTest::testMath369",
+  "jqf_class": "org.apache.commons.math.analysis.solvers.JQF_BisectionSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.solvers.BisectionSolverTest",
+    "org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactoryImplTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath369",
+  "issue_gist": "BisectionSolver.solve(f, min, max, initial) delegates to solve(min, max), which uses the uninitialized member field f (null) and throws a NullPointerException. It should delegate to solve(f, min, max), which sets f first.",
+  "failing_inputs_count": 193,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_BisectionSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug70",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 4248,
+      "paired_inputs": 4248,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 4248
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 4248,
+        "failed_on_buggy": 4248,
+        "pass": 4248,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 4097,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 164.2,
+  "paired_inputs_archived": true
+}

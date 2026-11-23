@@ -1,0 +1,6 @@
+{
+  "bug": "Math-50",
+  "url": "https://issues.apache.org/jira/browse/MATH-631",
+  "title": "\"RegulaFalsiSolver\" failure",
+  "body": "The following unit test:\n{code}\n@Test\npublic void testBug() {\n    final UnivariateRealFunction f = new UnivariateRealFunction() {\n            @Override\n            public double value(double x) {\n                return Math.exp(x) - Math.pow(Math.PI, 3.0);\n            }\n        };\n\n    UnivariateRealSolver solver = new RegulaFalsiSolver();\n    double root = solver.solve(100, f, 1, 10);\n}\n{code}\nfails with\n{noformat}\nillegal state: maximal count (100) exceeded: evaluations\n{noformat}\n\nUsing \"PegasusSolver\", the answer is found after 17 evaluations.\n"
+}

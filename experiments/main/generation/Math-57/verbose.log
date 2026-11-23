@@ -1,0 +1,1607 @@
+
+====================================================================================================
+[12:57:55] BUG Math-57: failing test org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest::testSmallDistances -> org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-57/Math57b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source
+====================================================================================================
+Title: Truncation issue in KMeansPlusPlusClusterer
+
+The for loop inside KMeansPlusPlusClusterer.chooseInitialClusters defines a variable
+  int sum = 0;
+This variable should have type double, rather than int.  Using an int causes the method to truncate the distances between points to (square roots of) integers.  It's especially bad when the distances between points are typically less than 1.
+
+As an aside, in version 2.2, this bug manifested itself by making the clusterer return empty clusters.  I wonder if the EmptyClusterStrategy would still be necessary if this bug were fixed.
+
+====================================================================================================
+[12:57:55] HIDDEN FROM THE AGENT: 1 relevant test classes
+====================================================================================================
+org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest
+
+====================================================================================================
+[12:57:55] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:57:55] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Truncation issue in KMeansPlusPlusClusterer
+
+The for loop inside KMeansPlusPlusClusterer.chooseInitialClusters defines a variable
+  int sum = 0;
+This variable should have type double, rather than int.  Using an int causes the method to truncate the distances between points to (square roots of) integers.  It's especially bad when the distances between points are typically less than 1.
+
+As an aside, in version 2.2, this bug manifested itself by making the clusterer return empty clusters.  I wonder if the EmptyClusterStrategy would still be necessary if this bug were fixed.
+
+====================================================================================================
+[12:58:00] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "In KMeansPlusPlusClusterer.chooseInitialClusters, the accumulator `int sum = 0` in the loop should be `double`. Using an int truncates the squared distances between points to integers, which skews the weighted initial center selection. This is especially bad when distances are below 1, and it can lead to empty clusters.",
+  "concrete_examples": [
+    {
+      "input": "Cluster points whose pairwise distances are all less than 1 (e.g. 1-D points 0.1, 0.2, 0.3, 0.4, 0.5, 0.6) with KMeansPlusPlusClusterer, k=2 or more. This exercises chooseInitialClusters.",
+      "expected": "The sum of squared distances is accumulated as a double. The next initial center is chosen with probability proportional to the true D^2 values, and the resulting clusters are non-empty.",
+      "actual": "`int sum` truncates each distance contribution to an integer, so fractional distances (<1) become 0. The weighted selection is distorted or degenerate, and the clusterer can return empty clusters."
+    },
+    {
+      "input": "Distances such as 1.9 and 1.5 between points in chooseInitialClusters.",
+      "expected": "Sum is 3.4, or 3.61 + 2.25 = 5.86 if squared, used as the weighting total.",
+      "actual": "The int sum truncates the value to 1 + 1 = 2 (or 3 + 2 = 5), so the selection probabilities are wrong."
+    }
+  ]
+}
+
+====================================================================================================
+[12:58:00] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:01] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0092
+====================================================================================================
+{
+  "issue_gist": "In KMeansPlusPlusClusterer.chooseInitialClusters, the accumulator `int sum = 0` in the loop should be `double`. Using an int truncates the squared distances between points to integers, which skews the weighted initial center selection. This is especially bad when distances are below 1, and it can lead to empty clusters.",
+  "concrete_examples": [
+    {
+      "input": "Cluster points whose pairwise distances are all less than 1 (e.g. 1-D points 0.1, 0.2, 0.3, 0.4, 0.5, 0.6) with KMeansPlusPlusClusterer, k=2 or more. This exercises chooseInitialClusters.",
+      "expected": "The sum of squared distances is accumulated as a double. The next initial center is chosen with probability proportional to the true D^2 values, and the resulting clusters are non-empty.",
+      "actual": "`int sum` truncates each distance contribution to an integer, so fractional distances (<1) become 0. The weighted selection is distorted or degenerate, and the clusterer can return empty clusters."
+    },
+    {
+      "input": "Distances such as 1.9 and 1.5 between points in chooseInitialClusters.",
+      "expected": "Sum is 3.4, or 3.61 + 2.25 = 5.86 if squared, used as the weighting total.",
+      "actual": "The int sum truncates the value to 1 + 1 = 2 (or 3 + 2 = 5), so the selection probabilities are wrong."
+    }
+  ]
+}
+
+====================================================================================================
+[12:58:01] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:58:01] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source
+Test file: src/test/java/org/apache/commons/math/stat/clustering/JQF_KMeansPlusPlusClustererTest.java
+Test class: org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest
+Test method: testBugReproduction
+
+Bug summary: In KMeansPlusPlusClusterer.chooseInitialClusters, the accumulator `int sum = 0` in the loop should be `double`. Using an int truncates the squared distances between points to integers, which skews the weighted initial center selection. This is especially bad when distances are below 1, and it can lead to empty clusters.
+
+Concrete examples:
+[{'input': 'Cluster points whose pairwise distances are all less than 1 (e.g. 1-D points 0.1, 0.2, 0.3, 0.4, 0.5, 0.6) with KMeansPlusPlusClusterer, k=2 or more. This exercises chooseInitialClusters.', 'expected': 'The sum of squared distances is accumulated as a double. The next initial center is chosen with probability proportional to the true D^2 values, and the resulting clusters are non-empty.', 'actual': '`int sum` truncates each distance contribution to an integer, so fractional distances (<1) become 0. The weighted selection is distorted or degenerate, and the clusterer can return empty clusters.'}, {'input': 'Distances such as 1.9 and 1.5 between points in chooseInitialClusters.', 'expected': 'Sum is 3.4, or 3.61 + 2.25 = 5.86 if squared, used as the weighting total.', 'actual': 'The int sum truncates the value to 1 + 1 = 2 (or 3 + 2 = 5), so the selection probabilities are wrong.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:58:04] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "chooseInitialClusters",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source/src/main",
+  "output_mode": "content",
+  "-n": true
+}
+
+====================================================================================================
+[12:58:04] [002_symbolize] TOOL RESULT
+====================================================================================================
+No matches found
+
+====================================================================================================
+[12:58:06] [002_symbolize] TOOL CALL Glob
+====================================================================================================
+{
+  "pattern": "**/KMeansPlusPlusClusterer.java",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source"
+}
+
+====================================================================================================
+[12:58:06] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java
+
+====================================================================================================
+[12:58:08] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java",
+  "offset": 40,
+  "limit": 260
+}
+
+====================================================================================================
+[12:58:08] [002_symbolize] TOOL RESULT
+====================================================================================================
+40	
+41	        /** Split the cluster with largest distance variance. */
+42	        LARGEST_VARIANCE,
+43	
+44	        /** Split the cluster with largest number of points. */
+45	        LARGEST_POINTS_NUMBER,
+46	
+47	        /** Create a cluster around the point farthest from its centroid. */
+48	        FARTHEST_POINT,
+49	
+50	        /** Generate an error. */
+51	        ERROR
+52	
+53	    }
+54	
+55	    /** Random generator for choosing initial centers. */
+56	    private final Random random;
+57	
+58	    /** Selected strategy for empty clusters. */
+59	    private final EmptyClusterStrategy emptyStrategy;
+60	
+61	    /** Build a clusterer.
+62	     * <p>
+63	     * The default strategy for handling empty clusters that may appear during
+64	     * algorithm iterations is to split the cluster with largest distance variance.
+65	     * </p>
+66	     * @param random random generator to use for choosing initial centers
+67	     */
+68	    public KMeansPlusPlusClusterer(final Random random) {
+69	        this(random, EmptyClusterStrategy.LARGEST_VARIANCE);
+70	    }
+71	
+72	    /** Build a clusterer.
+73	     * @param random random generator to use for choosing initial centers
+74	     * @param emptyStrategy strategy to use for handling empty clusters that
+75	     * may appear during algorithm iterations
+76	     * @since 2.2
+77	     */
+78	    public KMeansPlusPlusClusterer(final Random random, final EmptyClusterStrategy emptyStrategy) {
+79	        this.random        = random;
+80	        this.emptyStrategy = emptyStrategy;
+81	    }
+82	
+83	    /**
+84	     * Runs the K-means++ clustering algorithm.
+85	     *
+86	     * @param points the points to cluster
+87	     * @param k the number of clusters to split the data into
+88	     * @param maxIterations the maximum number of iterations to run the algorithm
+89	     *     for.  If negative, no maximum will be used
+90	     * @return a list of clusters containing the points
+91	     */
+92	    public List<Cluster<T>> cluster(final Collection<T> points,
+93	                                    final int k, final int maxIterations) {
+94	        // create the initial clusters
+95	        List<Cluster<T>> clusters = chooseInitialCenters(points, k, random);
+96	        assignPointsToClusters(clusters, points);
+97	
+98	        // iterate through updating the centers until we're done
+99	        final int max = (maxIterations < 0) ? Integer.MAX_VALUE : maxIterations;
+100	        for (int count = 0; count < max; count++) {
+101	            boolean clusteringChanged = false;
+102	            List<Cluster<T>> newClusters = new ArrayList<Cluster<T>>();
+103	            for (final Cluster<T> cluster : clusters) {
+104	                final T newCenter;
+105	                if (cluster.getPoints().isEmpty()) {
+106	                    switch (emptyStrategy) {
+107	                        case LARGEST_VARIANCE :
+108	                            newCenter = getPointFromLargestVarianceCluster(clusters);
+109	                            break;
+110	                        case LARGEST_POINTS_NUMBER :
+111	                            newCenter = getPointFromLargestNumberCluster(clusters);
+112	                            break;
+113	                        case FARTHEST_POINT :
+114	                            newCenter = getFarthestPoint(clusters);
+115	                            break;
+116	                        default :
+117	                            throw new ConvergenceException(LocalizedFormats.EMPTY_CLUSTER_IN_K_MEANS);
+118	                    }
+119	                    clusteringChanged = true;
+120	                } else {
+121	                    newCenter = cluster.getCenter().centroidOf(cluster.getPoints());
+122	                    if (!newCenter.equals(cluster.getCenter())) {
+123	                        clusteringChanged = true;
+124	                    }
+125	                }
+126	                newClusters.add(new Cluster<T>(newCenter));
+127	            }
+128	            if (!clusteringChanged) {
+129	                return clusters;
+130	            }
+131	            assignPointsToClusters(newClusters, points);
+132	            clusters = newClusters;
+133	        }
+134	        return clusters;
+135	    }
+136	
+137	    /**
+138	     * Adds the given points to the closest {@link Cluster}.
+139	     *
+140	     * @param <T> type of the points to cluster
+141	     * @param clusters the {@link Cluster}s to add the points to
+142	     * @param points the points to add to the given {@link Cluster}s
+143	     */
+144	    private static <T extends Clusterable<T>> void
+145	        assignPointsToClusters(final Collection<Cluster<T>> clusters, final Collection<T> points) {
+146	        for (final T p : points) {
+147	            Cluster<T> cluster = getNearestCluster(clusters, p);
+148	            cluster.addPoint(p);
+149	        }
+150	    }
+151	
+152	    /**
+153	     * Use K-means++ to choose the initial centers.
+154	     *
+155	     * @param <T> type of the points to cluster
+156	     * @param points the points to choose the initial centers from
+157	     * @param k the number of centers to choose
+158	     * @param random random generator to use
+159	     * @return the initial centers
+160	     */
+161	    private static <T extends Clusterable<T>> List<Cluster<T>>
+162	        chooseInitialCenters(final Collection<T> points, final int k, final Random random) {
+163	
+164	        final List<T> pointSet = new ArrayList<T>(points);
+165	        final List<Cluster<T>> resultSet = new ArrayList<Cluster<T>>();
+166	
+167	        // Choose one center uniformly at random from among the data points.
+168	        final T firstPoint = pointSet.remove(random.nextInt(pointSet.size()));
+169	        resultSet.add(new Cluster<T>(firstPoint));
+170	
+171	        final double[] dx2 = new double[pointSet.size()];
+172	        while (resultSet.size() < k) {
+173	            // For each data point x, compute D(x), the distance between x and
+174	            // the nearest center that has already been chosen.
+175	            int sum = 0;
+176	            for (int i = 0; i < pointSet.size(); i++) {
+177	                final T p = pointSet.get(i);
+178	                final Cluster<T> nearest = getNearestCluster(resultSet, p);
+179	                final double d = p.distanceFrom(nearest.getCenter());
+180	                sum += d * d;
+181	                dx2[i] = sum;
+182	            }
+183	
+184	            // Add one new data point as a center. Each point x is chosen with
+185	            // probability proportional to D(x)2
+186	            final double r = random.nextDouble() * sum;
+187	            for (int i = 0 ; i < dx2.length; i++) {
+188	                if (dx2[i] >= r) {
+189	                    final T p = pointSet.remove(i);
+190	                    resultSet.add(new Cluster<T>(p));
+191	                    break;
+192	                }
+193	            }
+194	        }
+195	
+196	        return resultSet;
+197	
+198	    }
+199	
+200	    /**
+201	     * Get a random point from the {@link Cluster} with the largest distance variance.
+202	     *
+203	     * @param clusters the {@link Cluster}s to search
+204	     * @return a random point from the selected cluster
+205	     */
+206	    private T getPointFromLargestVarianceCluster(final Collection<Cluster<T>> clusters) {
+207	
+208	        double maxVariance = Double.NEGATIVE_INFINITY;
+209	        Cluster<T> selected = null;
+210	        for (final Cluster<T> cluster : clusters) {
+211	            if (!cluster.getPoints().isEmpty()) {
+212	
+213	                // compute the distance variance of the current cluster
+214	                final T center = cluster.getCenter();
+215	                final Variance stat = new Variance();
+216	                for (final T point : cluster.getPoints()) {
+217	                    stat.increment(point.distanceFrom(center));
+218	                }
+219	                final double variance = stat.getResult();
+220	
+221	                // select the cluster with the largest variance
+222	                if (variance > maxVariance) {
+223	                    maxVariance = variance;
+224	                    selected = cluster;
+225	                }
+226	
+227	            }
+228	        }
+229	
+230	        // did we find at least one non-empty cluster ?
+231	        if (selected == null) {
+232	            throw new ConvergenceException(LocalizedFormats.EMPTY_CLUSTER_IN_K_MEANS);
+233	        }
+234	
+235	        // extract a random point from the cluster
+236	        final List<T> selectedPoints = selected.getPoints();
+237	        return selectedPoints.remove(random.nextInt(selectedPoints.size()));
+238	
+239	    }
+240	
+241	    /**
+242	     * Get a random point from the {@link Cluster} with the largest number of points
+243	     *
+244	     * @param clusters the {@link Cluster}s to search
+245	     * @return a random point from the selected cluster
+246	     */
+247	    private T getPointFromLargestNumberCluster(final Collection<Cluster<T>> clusters) {
+248	
+249	        int maxNumber = 0;
+250	        Cluster<T> selected = null;
+251	        for (final Cluster<T> cluster : clusters) {
+252	
+253	            // get the number of points of the current cluster
+254	            final int number = cluster.getPoints().size();
+255	
+256	            // select the cluster with the largest number of points
+257	            if (number > maxNumber) {
+258	                maxNumber = number;
+259	                selected = cluster;
+260	            }
+261	
+262	        }
+263	
+264	        // did we find at least one non-empty cluster ?
+265	        if (selected == null) {
+266	            throw new ConvergenceException(LocalizedFormats.EMPTY_CLUSTER_IN_K_MEANS);
+267	        }
+268	
+269	        // extract a random point from the cluster
+270	        final List<T> selectedPoints = selected.getPoints();
+271	        return selectedPoints.remove(random.nextInt(selectedPoints.size()));
+272	
+273	    }
+274	
+275	    /**
+276	     * Get the point farthest to its cluster center
+277	     *
+278	     * @param clusters the {@link Cluster}s to search
+279	     * @return point farthest to its cluster center
+280	     */
+281	    private T getFarthestPoint(final Collection<Cluster<T>> clusters) {
+282	
+283	        double maxDistance = Double.NEGATIVE_INFINITY;
+284	        Cluster<T> selectedCluster = null;
+285	        int selectedPoint = -1;
+286	        for (final Cluster<T> cluster : clusters) {
+287	
+288	            // get the farthest point
+289	            final T center = cluster.getCenter();
+290	            final List<T> points = cluster.getPoints();
+291	            for (int i = 0; i < points.size(); ++i) {
+292	                final double distance = points.get(i).distanceFrom(center);
+293	                if (distance > maxDistance) {
+294	                    maxDistance     = distance;
+295	                    selectedCluster = cluster;
+296	                    selectedPoint   = i;
+297	                }
+298	            }
+299
+
+====================================================================================================
+[12:58:08] [002_symbolize] TOOL CALL Glob
+====================================================================================================
+{
+  "pattern": "src/main/java/org/apache/commons/math/stat/clustering/*.java",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source"
+}
+
+====================================================================================================
+[12:58:08] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/main/java/org/apache/commons/math/stat/clustering/EuclideanIntegerPoint.java
+src/main/java/org/apache/commons/math/stat/clustering/Clusterable.java
+src/main/java/org/apache/commons/math/stat/clustering/Cluster.java
+src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java
+
+====================================================================================================
+[12:58:23] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source/src/main/java/org/apache/commons/math/stat/clustering/Clusterable.java",
+  "offset": 17
+}
+
+====================================================================================================
+[12:58:23] [002_symbolize] TOOL RESULT
+====================================================================================================
+17	
+18	package org.apache.commons.math.stat.clustering;
+19	
+20	import java.util.Collection;
+21	
+22	/**
+23	 * Interface for points that can be clustered together.
+24	 * @param <T> the type of point that can be clustered
+25	 * @version $Revision$ $Date$
+26	 * @since 2.0
+27	 */
+28	public interface Clusterable<T> {
+29	
+30	    /**
+31	     * Returns the distance from the given point.
+32	     *
+33	     * @param p the point to compute the distance from
+34	     * @return the distance from the given point
+35	     */
+36	    double distanceFrom(T p);
+37	
+38	    /**
+39	     * Returns the centroid of the given Collection of points.
+40	     *
+41	     * @param p the Collection of points to compute the centroid of
+42	     * @return the centroid of the given Collection of Points
+43	     */
+44	    T centroidOf(Collection<T> p);
+45	
+46	}
+47
+
+====================================================================================================
+[12:58:24] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public ",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source/src/main/java/org/apache/commons/math/stat/clustering/Cluster.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:58:24] [002_symbolize] TOOL RESULT
+====================================================================================================
+30:public class Cluster<T extends Clusterable<T>> implements Serializable {
+45:    public Cluster(final T center) {
+54:    public void addPoint(final T point) {
+62:    public List<T> getPoints() {
+70:    public T getCenter() {
+
+====================================================================================================
+[12:58:24] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "getNearestCluster",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-57/source/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java",
+  "output_mode": "content",
+  "-A": 18
+}
+
+====================================================================================================
+[12:58:24] [002_symbolize] TOOL RESULT
+====================================================================================================
+147:            Cluster<T> cluster = getNearestCluster(clusters, p);
+148-            cluster.addPoint(p);
+149-        }
+150-    }
+151-
+152-    /**
+153-     * Use K-means++ to choose the initial centers.
+154-     *
+155-     * @param <T> type of the points to cluster
+156-     * @param points the points to choose the initial centers from
+157-     * @param k the number of centers to choose
+158-     * @param random random generator to use
+159-     * @return the initial centers
+160-     */
+161-    private static <T extends Clusterable<T>> List<Cluster<T>>
+162-        chooseInitialCenters(final Collection<T> points, final int k, final Random random) {
+163-
+164-        final List<T> pointSet = new ArrayList<T>(points);
+165-        final List<Cluster<T>> resultSet = new ArrayList<Cluster<T>>();
+--
+178:                final Cluster<T> nearest = getNearestCluster(resultSet, p);
+179-                final double d = p.distanceFrom(nearest.getCenter());
+180-                sum += d * d;
+181-                dx2[i] = sum;
+182-            }
+183-
+184-            // Add one new data point as a center. Each point x is chosen with
+185-            // probability proportional to D(x)2
+186-            final double r = random.nextDouble() * sum;
+187-            for (int i = 0 ; i < dx2.length; i++) {
+188-                if (dx2[i] >= r) {
+189-                    final T p = pointSet.remove(i);
+190-                    resultSet.add(new Cluster<T>(p));
+191-                    break;
+192-                }
+193-            }
+194-        }
+195-
+196-        return resultSet;
+--
+320:        getNearestCluster(final Collection<Cluster<T>> clusters, final T point) {
+321-        double minDistance = Double.MAX_VALUE;
+322-        Cluster<T> minCluster = null;
+323-        for (final Cluster<T> c : clusters) {
+324-            final double distance = point.distanceFrom(c.getCenter());
+325-            if (distance < minDistance) {
+326-                minDistance = distance;
+327-                minCluster = c;
+328-            }
+329-        }
+330-        return minCluster;
+331-    }
+332-
+333-}
+
+====================================================================================================
+[12:58:42] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.clustering;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Random;\n\n@RunWith(JQF.class)\npublic class JQF_KMeansPlusPlusClustererTest {\n\n    /** 1-D point with a double coordinate. */\n    public static class P implements Clusterable<P> {\n        final double x;\n        P(double x) { this.x = x; }\n        public double distanceFrom(P p) { return Math.abs(x - p.x); }\n        public P centroidOf(Collection<P> c) {\n            double s = 0;\n            for (P p : c) { s += p.x; }\n            return new P(c.isEmpty() ? 0 : s / c.size());\n        }\n        @Override public String toString() { return Double.toString(x); }\n    }\n\n    /** Random with scripted values: first center = index 0, nextDouble = u. */\n    public static class ScriptedRandom extends Random {\n        private final double u;\n        ScriptedRandom(double u) { this.u = u; }\n        @Override public int nextInt(int bound) { return 0; }\n        @Override public double nextDouble() { return u; }\n    }\n\n    public static class XsGen extends Generator<double[]> {\n        public XsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(2, 9);\n            double[] xs = new double[n];\n            boolean compact = r.nextBoolean();\n            double base = r.nextDouble(-5, 5);\n            for (int i = 0; i < n; i++) {\n                if (compact) {\n                    xs[i] = base + r.nextDouble(0, 0.99);\n                } else {\n                    xs[i] = r.nextDouble(-5, 5);\n                }\n            }\n            return xs;\n        }\n    }\n\n    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */\n    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {\n        int m = xs.length - 1;\n        double[] dx2 = new double[m];\n        double dsum = 0;\n        int isum = 0;\n        for (int i = 0; i < m; i++) {\n            double d = Math.abs(xs[i + 1] - xs[0]);\n            if (buggyInt) {\n                isum += d * d;\n                dx2[i] = isum;\n            } else {\n                dsum += d * d;\n                dx2[i] = dsum;\n            }\n        }\n        double r = u * (buggyInt ? (double) isum : dsum);\n        for (int i = 0; i < m; i++) {\n            if (dx2[i] >= r) { return i; }\n        }\n        return -1;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(XsGen.class) double[] xs,\n                         @InRange(minDouble = 0, maxDouble = 1) double u) {\n        boolean validIf = xs != null && xs.length >= 2;\n        boolean buggyIf = validIf\n                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        List<P> pts = new ArrayList<P>();\n        for (double x : xs) { pts.add(new P(x)); }\n\n        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));\n        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);\n\n        final String centers = clusters.get(0).getCenter() + \",\" + clusters.get(1).getCenter();\n        final int size0 = clusters.get(0).getPoints().size();\n        final int size1 = clusters.get(1).getPoints().size();\n        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });\n\n        int expectedIdx = chosenIndex(xs, u, false);\n        P expectedCenter = pts.get(expectedIdx + 1);\n        assertSame(\"second initial center should be chosen with probability proportional to true D^2\",\n                expectedCenter, clusters.get(1).getCenter());\n    }\n}\n"
+}
+
+====================================================================================================
+[12:58:42] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:43] [002_symbolize] CALL DONE subtype=success turns=9 session_cost=$0.2180
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.clustering;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Random;\n\n@RunWith(JQF.class)\npublic class JQF_KMeansPlusPlusClustererTest {\n\n    /** 1-D point with a double coordinate. */\n    public static class P implements Clusterable<P> {\n        final double x;\n        P(double x) { this.x = x; }\n        public double distanceFrom(P p) { return Math.abs(x - p.x); }\n        public P centroidOf(Collection<P> c) {\n            double s = 0;\n            for (P p : c) { s += p.x; }\n            return new P(c.isEmpty() ? 0 : s / c.size());\n        }\n        @Override public String toString() { return Double.toString(x); }\n    }\n\n    /** Random with scripted values: first center = index 0, nextDouble = u. */\n    public static class ScriptedRandom extends Random {\n        private final double u;\n        ScriptedRandom(double u) { this.u = u; }\n        @Override public int nextInt(int bound) { return 0; }\n        @Override public double nextDouble() { return u; }\n    }\n\n    public static class XsGen extends Generator<double[]> {\n        public XsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(2, 9);\n            double[] xs = new double[n];\n            boolean compact = r.nextBoolean();\n            double base = r.nextDouble(-5, 5);\n            for (int i = 0; i < n; i++) {\n                if (compact) {\n                    xs[i] = base + r.nextDouble(0, 0.99);\n                } else {\n                    xs[i] = r.nextDouble(-5, 5);\n                }\n            }\n            return xs;\n        }\n    }\n\n    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */\n    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {\n        int m = xs.length - 1;\n        double[] dx2 = new double[m];\n        double dsum = 0;\n        int isum = 0;\n        for (int i = 0; i < m; i++) {\n            double d = Math.abs(xs[i + 1] - xs[0]);\n            if (buggyInt) {\n                isum += d * d;\n                dx2[i] = isum;\n            } else {\n                dsum += d * d;\n                dx2[i] = dsum;\n            }\n        }\n        double r = u * (buggyInt ? (double) isum : dsum);\n        for (int i = 0; i < m; i++) {\n            if (dx2[i] >= r) { return i; }\n        }\n        return -1;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(XsGen.class) double[] xs,\n                         @InRange(minDouble = 0, maxDouble = 1) double u) {\n        boolean validIf = xs != null && xs.length >= 2;\n        boolean buggyIf = validIf\n                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        List<P> pts = new ArrayList<P>();\n        for (double x : xs) { pts.add(new P(x)); }\n\n        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));\n        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);\n\n        final String centers = clusters.get(0).getCenter() + \",\" + clusters.get(1).getCenter();\n        final int size0 = clusters.get(0).getPoints().size();\n        final int size1 = clusters.get(1).getPoints().size();\n        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });\n\n        int expectedIdx = chosenIndex(xs, u, false);\n        P expectedCenter = pts.get(expectedIdx + 1);\n        assertSame(\"second initial center should be chosen with probability proportional to true D^2\",\n                expectedCenter, clusters.get(1).getCenter());\n    }\n}\n"
+}
+
+====================================================================================================
+[12:58:43] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:58:43] TEST CODE (org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest)
+====================================================================================================
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+}
+
+====================================================================================================
+[12:58:44] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:59:04] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 45863,
+  "discarded_by_assume": 30800,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 1667
+  },
+  "passed_assume": 15063,
+  "classified": 1667
+}
+
+====================================================================================================
+[12:59:04] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:59:04] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Truncation issue in KMeansPlusPlusClusterer
+
+The for loop inside KMeansPlusPlusClusterer.chooseInitialClusters defines a variable
+  int sum = 0;
+This variable should have type double, rather than int.  Using an int causes the method to truncate the distances between points to (square roots of) integers.  It's especially bad when the distances between points are typically less than 1.
+
+As an aside, in version 2.2, this bug manifested itself by making the clusterer return empty clusters.  I wonder if the EmptyClusterStrategy would still be necessary if this bug were fixed.
+
+=== Test ===
+```java
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: second initial center should be chosen with probability proportional to true D^2 expected same:<-1.9183369876457181> was not:<-2.3730183398481146>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotSame(Assert.java:828)
+    	at org.junit.Assert.assertSame(Assert.java:771)
+    	at org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)
+
+Location: org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest.testBugReproduction(JQF_KMeansPlusPlusClustererTest.java:106)
+
+is triggered by the following inputs:
+
+    input (0.9163285966540058, 0.9944666904326889, 1.1339931128367366, 0.968730835996066, 0.8819366694099748, 0.9412929835050035, 0.5794404834524878, 0.3013133425678738) -> logged [2, 0.9163285966540058,0.9944666904326889, 4, 3]
+    input (5.20860756453786, 4.910316144535963, 4.899392303930202, 5.373027193223986, 5.1403914312489976, 5.169896747251469, 0.7171992722743801) -> logged [2, 5.20860756453786,4.910316144535963, 4, 2]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:59:18] [004_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug.
+
+1. **Same root cause.** The test models the buggy accumulator exactly. `isum += d * d` on an `int` truncates each squared distance, and `dx2[i] = isum` and `r = u * isum` match the source. The reference version uses a `double` accumulator.
+   - In the first failing input, the points are clustered within 1 unit of each other. Every squared distance truncates to 0, so `sum` is 0 and `r` is 0. The buggy code always picks index 0, here 0.9944…, instead of drawing from the true D² weights.
+   - This is the "distances less than 1" case the report calls out.
+
+2. **Real behavioral difference.** The test uses a scripted `Random` and `maxIterations = 0`, so `cluster` returns the initial centers unchanged. The assertion compares the second initial center against what a double-valued sum would select. That is the intended behavior, and the buggy code violates it.
+
+3. **`buggyIf` is exact.** It holds exactly when the int-truncated and double-valued sums select different indices. That is the set of inputs where the bug changes the outcome. It does not include inputs where the buggy code already behaves correctly, and it does not omit inputs where the outcome differs.
+
+4. **Valid domain is reasonable.** The generator covers 2 to 8 points, in both compact (all distances under 1) and spread-out configurations, with `u` over [0, 1). The only restrictions are fixed `k = 2` and 1-D points. These do not narrow the domain to the bug-triggering inputs.
+
+5. **Minor mismatch.** The stack trace values (-1.918 versus -2.373) differ from the listed inputs. This is just a different failing input in the same run and does not affect the conclusion.
+
+====================================================================================================
+[12:59:20] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test models the buggy `int sum` accumulation exactly, including per-term truncation, and compares the chosen second center against the double-valued reference. Failing inputs, such as compact points with all distances under 1, make the int sum 0, so r is 0 and index 0 is always picked instead of a D²-weighted choice. That is the reported bug. buggyIf is true exactly when the int and double versions select different indices, so it neither includes already-correct inputs nor misses triggering ones. The generator and validIf cover a broad valid domain: 2 to 8 points, compact and spread-out, with u in [0, 1). The only restrictions are fixed k=2 and 1-D points. With maxIterations=0 the returned centers are the initial ones, so the assertion directly checks chooseInitialCenters."
+}
+
+====================================================================================================
+[12:59:20] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:59:21] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3754
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test models the buggy `int sum` accumulation exactly, including per-term truncation, and compares the chosen second center against the double-valued reference. Failing inputs, such as compact points with all distances under 1, make the int sum 0, so r is 0 and index 0 is always picked instead of a D²-weighted choice. That is the reported bug. buggyIf is true exactly when the int and double versions select different indices, so it neither includes already-correct inputs nor misses triggering ones. The generator and validIf cover a broad valid domain: 2 to 8 points, compact and spread-out, with u in [0, 1). The only restrictions are fixed k=2 and 1-D points. With maxIterations=0 the returned centers are the initial ones, so the assertion directly checks chooseInitialCenters."
+}
+
+====================================================================================================
+[12:59:21] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:59:21] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:59:28] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real KMeansPlusPlusClusterer.cluster() and checks the real returned clusters. It uses no mocking framework and does not override or replace any of the code under test. P is a plain Clusterable implementation, which the API requires the caller to supply. ScriptedRandom is a Random subclass that only makes the random input deterministic, and that is an injected dependency, not the code under test. The chosenIndex helper re-computes the expected result as the oracle for the assertion, and it is never substituted for the actual call. The assertion compares the actual clusterer output with that expected value."
+}
+
+====================================================================================================
+[12:59:28] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:59:29] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.5312
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real KMeansPlusPlusClusterer.cluster() and checks the real returned clusters. It uses no mocking framework and does not override or replace any of the code under test. P is a plain Clusterable implementation, which the API requires the caller to supply. ScriptedRandom is a Random subclass that only makes the random input deterministic, and that is an injected dependency, not the code under test. The chosenIndex helper re-computes the expected result as the oracle for the assertion, and it is never substituted for the actual call. The assertion compares the actual clusterer output with that expected value."
+}
+
+====================================================================================================
+[12:59:29] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:59:34] [005_validate] MODEL TEXT
+====================================================================================================
+The test has no hardcoded failure. Its only assertion is `assertSame(expectedCenter, clusters.get(1).getCenter())`. On a fixed version with a `double` accumulator, this can pass. With `maxIterations = 0`, `cluster()` returns the initial clusters unchanged. The second center is then the same `P` object that `chosenIndex(..., false)` selects from `pts`. There is no `fail()`, `assertTrue(false)` or constant-mismatch assertion. The test fails only when the buggy `int` truncation picks a different index.
+
+====================================================================================================
+[12:59:35] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "No hardcoded failures. The only assertion, assertSame, compares the actual second center to the one expected under a double-valued sum. With the fix, and maxIterations=0, the returned center is the same object as the expected one, so the test can pass. On buggy code it fails only when the int truncation selects a different index."
+}
+
+====================================================================================================
+[12:59:35] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:59:36] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.5487
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "No hardcoded failures. The only assertion, assertSame, compares the actual second center to the one expected under a double-valued sum. With the fix, and maxIterations=0, the returned center is the same object as the expected one, so the test can pass. On buggy code it fails only when the int truncation selects a different index."
+}
+
+====================================================================================================
+[12:59:36] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:59:41] [005_validate] MODEL TEXT
+====================================================================================================
+The equality check is correct. `assertSame` compares two `P` objects by reference, and that is the right comparison here. `P` does not override `equals`, so `assertEquals` would fall back to reference equality anyway. The expected value, `pts.get(expectedIdx + 1)`, is the same instance the clusterer puts into `new Cluster<T>(p)`. With `maxIterations = 0`, `cluster()` returns the initial clusters without building new centroid objects, so the center is not replaced. Identity also tells apart different points that share a coordinate value, which a value comparison would not. The test compares no doubles, strings or arrays directly, so no delta or `assertArrayEquals` is needed.
+
+====================================================================================================
+[12:59:42] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "assertSame on the P instances is appropriate. P has no equals override, and the returned center is the same object taken from the input list. With maxIterations=0 the initial centers are returned unchanged, so reference identity holds on correct code and distinguishes points with equal coordinates. No doubles, strings or arrays are compared directly."
+}
+
+====================================================================================================
+[12:59:42] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:59:43] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.5677
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "assertSame on the P instances is appropriate. P has no equals override, and the returned center is the same object taken from the input list. With maxIterations=0 the initial centers are returned unchanged, so reference identity holds on correct code and distinguishes points with equal coordinates. No doubles, strings or arrays are compared directly."
+}
+
+====================================================================================================
+[12:59:43] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:59:43] AGENT FINISHED success=True llm_calls=14
+====================================================================================================
+
+
+====================================================================================================
+[12:59:44] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_KMeansPlusPlusClustererTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug57"
+}
+
+====================================================================================================
+[12:59:44] FINAL TEST FILE JQF_KMeansPlusPlusClustererTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.stat.clustering;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+@RunWith(JQF.class)
+public class JQF_KMeansPlusPlusClustererTest {
+
+    /** 1-D point with a double coordinate. */
+    public static class P implements Clusterable<P> {
+        final double x;
+        P(double x) { this.x = x; }
+        public double distanceFrom(P p) { return Math.abs(x - p.x); }
+        public P centroidOf(Collection<P> c) {
+            double s = 0;
+            for (P p : c) { s += p.x; }
+            return new P(c.isEmpty() ? 0 : s / c.size());
+        }
+        @Override public String toString() { return Double.toString(x); }
+    }
+
+    /** Random with scripted values: first center = index 0, nextDouble = u. */
+    public static class ScriptedRandom extends Random {
+        private final double u;
+        ScriptedRandom(double u) { this.u = u; }
+        @Override public int nextInt(int bound) { return 0; }
+        @Override public double nextDouble() { return u; }
+    }
+
+    public static class XsGen extends Generator<double[]> {
+        public XsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(2, 9);
+            double[] xs = new double[n];
+            boolean compact = r.nextBoolean();
+            double base = r.nextDouble(-5, 5);
+            for (int i = 0; i < n; i++) {
+                if (compact) {
+                    xs[i] = base + r.nextDouble(0, 0.99);
+                } else {
+                    xs[i] = r.nextDouble(-5, 5);
+                }
+            }
+            return xs;
+        }
+    }
+
+    /** Index (in the list of remaining points, first point removed) chosen for 2nd center. */
+    private static int chosenIndex(double[] xs, double u, boolean buggyInt) {
+        int m = xs.length - 1;
+        double[] dx2 = new double[m];
+        double dsum = 0;
+        int isum = 0;
+        for (int i = 0; i < m; i++) {
+            double d = Math.abs(xs[i + 1] - xs[0]);
+            if (buggyInt) {
+                isum += d * d;
+                dx2[i] = isum;
+            } else {
+                dsum += d * d;
+                dx2[i] = dsum;
+            }
+        }
+        double r = u * (buggyInt ? (double) isum : dsum);
+        for (int i = 0; i < m; i++) {
+            if (dx2[i] >= r) { return i; }
+        }
+        return -1;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        List<P> pts = new ArrayList<P>();
+        for (double x : xs) { pts.add(new P(x)); }
+
+        KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+        List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+        final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+        final int size0 = clusters.get(0).getPoints().size();
+        final int size1 = clusters.get(1).getPoints().size();
+        Log.logOutIf(true, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+
+        int expectedIdx = chosenIndex(xs, u, false);
+        P expectedCenter = pts.get(expectedIdx + 1);
+        assertSame("second initial center should be chosen with probability proportional to true D^2",
+                expectedCenter, clusters.get(1).getCenter());
+    }
+
+    @Fuzz
+    public void testSmallDistances(@From(XsGen.class) double[] xs,
+                         @InRange(minDouble = 0, maxDouble = 1) double u) {
+        boolean validIf = xs != null && xs.length >= 2;
+        boolean buggyIf = validIf
+                && chosenIndex(xs, u, true) != chosenIndex(xs, u, false);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            List<P> pts = new ArrayList<P>();
+            for (double x : xs) { pts.add(new P(x)); }
+
+            KMeansPlusPlusClusterer<P> clusterer = new KMeansPlusPlusClusterer<P>(new ScriptedRandom(u));
+            List<Cluster<P>> clusters = clusterer.cluster(pts, 2, 0);
+
+            final String centers = clusters.get(0).getCenter() + "," + clusters.get(1).getCenter();
+            final int size0 = clusters.get(0).getPoints().size();
+            final int size1 = clusters.get(1).getPoints().size();
+            Log.logOutIf(preserveIf, () -> new Object[]{ clusters.size(), centers, size0, size1 });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:03:08] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 96565,
+    "inside_buggyIf": 31728,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 32826,
+      "unique_failures": {}
+    }
+  }
+}

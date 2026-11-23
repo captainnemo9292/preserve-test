@@ -1,0 +1,158 @@
+{
+  "bug": "Math-35",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 9,
+  "cost_usd": 0.414,
+  "tokens": {
+    "input": 20,
+    "output": 2907,
+    "cache_write": 94573,
+    "cache_read": 66173
+  },
+  "seconds": 71.4,
+  "started_at": "2026-11-21T12:44:59",
+  "timing": {
+    "checkout": 11.4,
+    "agent": 60.0,
+    "derive": 1.6,
+    "validation": 192.1
+  },
+  "llm_seconds": 37.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 429,
+        "cache_write": 758,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007407,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 12.0,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1372,
+        "cache_write": 32224,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.142732,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 7.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 511,
+        "cache_write": 29018,
+        "cache_read": 611
+      },
+      "cost_usd": 0.121247,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 212,
+        "cache_write": 30394,
+        "cache_read": 603
+      },
+      "cost_usd": 0.123764,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 204,
+        "cache_write": 1079,
+        "cache_read": 30997
+      },
+      "cost_usd": 0.009464,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 179,
+        "cache_write": 1100,
+        "cache_read": 32076
+      },
+      "cost_usd": 0.009406,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math3.genetics.ElitisticListPopulationTest::testConstructorTooLow",
+  "jqf_class": "org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.genetics.ElitisticListPopulationTest",
+    "org.apache.commons.math3.genetics.FitnessCachingTest",
+    "org.apache.commons.math3.genetics.GeneticAlgorithmTestBinary",
+    "org.apache.commons.math3.genetics.GeneticAlgorithmTestPermutations",
+    "org.apache.commons.math3.genetics.TournamentSelectionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testConstructorTooLow",
+  "issue_gist": "ElitisticListPopulation's constructors accept any elitismRate without validation, whereas setElitismRate enforces the range [0,1] and throws OutOfRangeException. Invalid rates can therefore be set through construction.",
+  "failing_inputs_count": 4687,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ElitisticListPopulationTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug35",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 78023,
+      "inside_buggyIf": 66922,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 49737,
+        "inside_buggyIf": 42657,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 265.1,
+  "paired_inputs_archived": true
+}

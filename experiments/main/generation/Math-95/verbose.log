@@ -1,0 +1,942 @@
+
+====================================================================================================
+[13:25:37] BUG Math-95: failing test org.apache.commons.math.distribution.FDistributionTest::testSmallDegreesOfFreedom -> org.apache.commons.math.distribution.JQF_FDistributionTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-95/Math95b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-95/source
+====================================================================================================
+Title: denominatorDegreeOfFreedom in FDistribution leads to IllegalArgumentsException in UnivariateRealSolverUtils.bracket
+
+We are using the FDistributionImpl from the commons.math project to do
+some statistical calculations, namely receiving the upper and lower
+boundaries of a confidence interval. Everything is working fine and the
+results are matching our reference calculations.
+
+However, the FDistribution behaves strange if a
+denominatorDegreeOfFreedom of 2 is used, with an alpha-value of 0.95.
+This results in an IllegalArgumentsException, stating:
+        
+Invalid endpoint parameters:  lowerBound=0.0 initial=Infinity
+upperBound=1.7976931348623157E308
+        
+coming from
+org.apache.commons.math.analysis.UnivariateRealSolverUtils.bracket
+        
+The problem is the 'initial' parameter to that function, wich is
+POSITIVE_INFINITY and therefore not within the boundaries. I already
+pinned down the problem to the FDistributions getInitialDomain()-method,
+wich goes like:
+
+        return getDenominatorDegreesOfFreedom() /
+                    (getDenominatorDegreesOfFreedom() - 2.0);
+        
+Obviously, in case of denominatorDegreesOfFreedom == 2, this must lead
+to a division-by-zero, resulting in POSTIVE_INFINITY. The result of this
+operation is then directly passed into the
+UnivariateRealSolverUtils.bracket() - method as second argument.
+
+====================================================================================================
+[13:25:37] HIDDEN FROM THE AGENT: 3 relevant test classes
+====================================================================================================
+org.apache.commons.math.distribution.FDistributionTest
+org.apache.commons.math.stat.inference.OneWayAnovaTest
+org.apache.commons.math.stat.inference.TestUtilsTest
+
+====================================================================================================
+[13:25:37] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:25:37] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: denominatorDegreeOfFreedom in FDistribution leads to IllegalArgumentsException in UnivariateRealSolverUtils.bracket
+
+We are using the FDistributionImpl from the commons.math project to do
+some statistical calculations, namely receiving the upper and lower
+boundaries of a confidence interval. Everything is working fine and the
+results are matching our reference calculations.
+
+However, the FDistribution behaves strange if a
+denominatorDegreeOfFreedom of 2 is used, with an alpha-value of 0.95.
+This results in an IllegalArgumentsException, stating:
+        
+Invalid endpoint parameters:  lowerBound=0.0 initial=Infinity
+upperBound=1.7976931348623157E308
+        
+coming from
+org.apache.commons.math.analysis.UnivariateRealSolverUtils.bracket
+        
+The problem is the 'initial' parameter to that function, wich is
+POSITIVE_INFINITY and therefore not within the boundaries. I already
+pinned down the problem to the FDistributions getInitialDomain()-method,
+wich goes like:
+
+        return getDenominatorDegreesOfFreedom() /
+                    (getDenominatorDegreesOfFreedom() - 2.0);
+        
+Obviously, in case of denominatorDegreesOfFreedom == 2, this must lead
+to a division-by-zero, resulting in POSTIVE_INFINITY. The result of this
+operation is then directly passed into the
+UnivariateRealSolverUtils.bracket() - method as second argument.
+
+====================================================================================================
+[13:25:42] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "FDistributionImpl.getInitialDomain() computes d/(d-2), which divides by zero when the denominator degrees of freedom is 2. That gives POSITIVE_INFINITY, which is passed as the initial value to UnivariateRealSolverUtils.bracket. bracket rejects it with an IllegalArgumentException, so inverse cumulative probability fails.",
+  "concrete_examples": [
+    {
+      "input": "new FDistributionImpl(numeratorDF, 2.0).inverseCumulativeProbability(0.95)",
+      "expected": "Returns a valid finite quantile of the F distribution, because the initial domain value is finite and within the bounds.",
+      "actual": "Throws IllegalArgumentException: Invalid endpoint parameters: lowerBound=0.0 initial=Infinity upperBound=1.7976931348623157E308"
+    },
+    {
+      "input": "new FDistributionImpl(5.0, 2.0).getInitialDomain(0.95)",
+      "expected": "A finite value inside (0, Double.MAX_VALUE).",
+      "actual": "Returns Double.POSITIVE_INFINITY, because 2.0 / (2.0 - 2.0) divides by zero."
+    }
+  ]
+}
+
+====================================================================================================
+[13:25:42] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:25:43] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0096
+====================================================================================================
+{
+  "issue_gist": "FDistributionImpl.getInitialDomain() computes d/(d-2), which divides by zero when the denominator degrees of freedom is 2. That gives POSITIVE_INFINITY, which is passed as the initial value to UnivariateRealSolverUtils.bracket. bracket rejects it with an IllegalArgumentException, so inverse cumulative probability fails.",
+  "concrete_examples": [
+    {
+      "input": "new FDistributionImpl(numeratorDF, 2.0).inverseCumulativeProbability(0.95)",
+      "expected": "Returns a valid finite quantile of the F distribution, because the initial domain value is finite and within the bounds.",
+      "actual": "Throws IllegalArgumentException: Invalid endpoint parameters: lowerBound=0.0 initial=Infinity upperBound=1.7976931348623157E308"
+    },
+    {
+      "input": "new FDistributionImpl(5.0, 2.0).getInitialDomain(0.95)",
+      "expected": "A finite value inside (0, Double.MAX_VALUE).",
+      "actual": "Returns Double.POSITIVE_INFINITY, because 2.0 / (2.0 - 2.0) divides by zero."
+    }
+  ]
+}
+
+====================================================================================================
+[13:25:43] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:25:43] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-95/source
+Test file: src/test/org/apache/commons/math/distribution/JQF_FDistributionTest.java
+Test class: org.apache.commons.math.distribution.JQF_FDistributionTest
+Test method: testBugReproduction
+
+Bug summary: FDistributionImpl.getInitialDomain() computes d/(d-2), which divides by zero when the denominator degrees of freedom is 2. That gives POSITIVE_INFINITY, which is passed as the initial value to UnivariateRealSolverUtils.bracket. bracket rejects it with an IllegalArgumentException, so inverse cumulative probability fails.
+
+Concrete examples:
+[{'input': 'new FDistributionImpl(numeratorDF, 2.0).inverseCumulativeProbability(0.95)', 'expected': 'Returns a valid finite quantile of the F distribution, because the initial domain value is finite and within the bounds.', 'actual': 'Throws IllegalArgumentException: Invalid endpoint parameters: lowerBound=0.0 initial=Infinity upperBound=1.7976931348623157E308'}, {'input': 'new FDistributionImpl(5.0, 2.0).getInitialDomain(0.95)', 'expected': 'A finite value inside (0, Double.MAX_VALUE).', 'actual': 'Returns Double.POSITIVE_INFINITY, because 2.0 / (2.0 - 2.0) divides by zero.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-95/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:25:46] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "getInitialDomain|setDenominatorDegreesOfFreedom|setNumeratorDegreesOfFreedom|public FDistributionImpl",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-95/source/src/java/org/apache/commons/math/distribution/FDistributionImpl.java",
+  "output_mode": "content",
+  "-A": 8
+}
+
+====================================================================================================
+[13:25:46] [002_symbolize] TOOL RESULT
+====================================================================================================
+48:    public FDistributionImpl(double numeratorDegreesOfFreedom,
+49-            double denominatorDegreesOfFreedom) {
+50-        super();
+51:        setNumeratorDegreesOfFreedom(numeratorDegreesOfFreedom);
+52:        setDenominatorDegreesOfFreedom(denominatorDegreesOfFreedom);
+53-    }
+54-    
+55-    /**
+56-     * For this distribution, X, this method returns P(X &lt; x).
+57-     * 
+58-     * The implementation of this method is based on:
+59-     * <ul>
+60-     * <li>
+--
+143:    protected double getInitialDomain(double p) {
+144-        double ret;
+145-        double d = getDenominatorDegreesOfFreedom();
+146-            // use mean
+147-            ret = d / (d - 2.0);
+148-        return ret;
+149-    }
+150-    
+151-    /**
+--
+157:    public void setNumeratorDegreesOfFreedom(double degreesOfFreedom) {
+158-        if (degreesOfFreedom <= 0.0) {
+159-            throw new IllegalArgumentException(
+160-                "degrees of freedom must be positive.");
+161-        }
+162-        this.numeratorDegreesOfFreedom = degreesOfFreedom;
+163-    }
+164-    
+165-    /**
+--
+179:    public void setDenominatorDegreesOfFreedom(double degreesOfFreedom) {
+180-        if (degreesOfFreedom <= 0.0) {
+181-            throw new IllegalArgumentException(
+182-                "degrees of freedom must be positive.");
+183-        }
+184-        this.denominatorDegreesOfFreedom = degreesOfFreedom;
+185-    }
+186-    
+187-    /**
+
+====================================================================================================
+[13:25:56] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_FDistributionTest {\n\n    public static class DenomDfGen extends Generator<Double> {\n        public DenomDfGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(100) < 45) {\n                return 2.0;\n            }\n            if (r.nextBoolean()) {\n                return (double) (r.nextInt(1, 20));\n            }\n            return r.nextDouble(0.01, 100.0);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,\n                                    @From(DenomDfGen.class) double denDf,\n                                    @InRange(minDouble = 0, maxDouble = 1) double p) {\n        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;\n        boolean buggyIf = denDf == 2.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        double res = Double.NaN;\n        String exc = \"none\";\n        try {\n            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);\n            res = dist.inverseCumulativeProbability(p);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double fres = res;\n        final String fexc = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fres });\n        assertEquals(\"none\", fexc);\n        assertFalse(Double.isNaN(fres));\n        assertFalse(Double.isInfinite(fres));\n    }\n}\n"
+}
+
+====================================================================================================
+[13:25:56] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:25:57] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1519
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_FDistributionTest {\n\n    public static class DenomDfGen extends Generator<Double> {\n        public DenomDfGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(100) < 45) {\n                return 2.0;\n            }\n            if (r.nextBoolean()) {\n                return (double) (r.nextInt(1, 20));\n            }\n            return r.nextDouble(0.01, 100.0);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,\n                                    @From(DenomDfGen.class) double denDf,\n                                    @InRange(minDouble = 0, maxDouble = 1) double p) {\n        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;\n        boolean buggyIf = denDf == 2.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        double res = Double.NaN;\n        String exc = \"none\";\n        try {\n            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);\n            res = dist.inverseCumulativeProbability(p);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final double fres = res;\n        final String fexc = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fres });\n        assertEquals(\"none\", fexc);\n        assertFalse(Double.isNaN(fres));\n        assertFalse(Double.isInfinite(fres));\n    }\n}\n"
+}
+
+====================================================================================================
+[13:25:57] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:25:57] TEST CODE (org.apache.commons.math.distribution.JQF_FDistributionTest)
+====================================================================================================
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+}
+
+====================================================================================================
+[13:25:58] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:26:19] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 51511,
+  "discarded_by_assume": 27538,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 2397
+  },
+  "passed_assume": 23973,
+  "classified": 2397
+}
+
+====================================================================================================
+[13:26:19] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:26:19] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: denominatorDegreeOfFreedom in FDistribution leads to IllegalArgumentsException in UnivariateRealSolverUtils.bracket
+
+We are using the FDistributionImpl from the commons.math project to do
+some statistical calculations, namely receiving the upper and lower
+boundaries of a confidence interval. Everything is working fine and the
+results are matching our reference calculations.
+
+However, the FDistribution behaves strange if a
+denominatorDegreeOfFreedom of 2 is used, with an alpha-value of 0.95.
+This results in an IllegalArgumentsException, stating:
+        
+Invalid endpoint parameters:  lowerBound=0.0 initial=Infinity
+upperBound=1.7976931348623157E308
+        
+coming from
+org.apache.commons.math.analysis.UnivariateRealSolverUtils.bracket
+        
+The problem is the 'initial' parameter to that function, wich is
+POSITIVE_INFINITY and therefore not within the boundaries. I already
+pinned down the problem to the FDistributions getInitialDomain()-method,
+wich goes like:
+
+        return getDenominatorDegreesOfFreedom() /
+                    (getDenominatorDegreesOfFreedom() - 2.0);
+        
+Obviously, in case of denominatorDegreesOfFreedom == 2, this must lead
+to a division-by-zero, resulting in POSTIVE_INFINITY. The result of this
+operation is then directly passed into the
+UnivariateRealSolverUtils.bracket() - method as second argument.
+
+=== Test ===
+```java
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.apache.commons.math.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:52)
+
+Location: org.apache.commons.math.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:52)
+
+is triggered by the following inputs:
+
+    input (38.86827199813599, 2.0, 0.179787161441615) -> logged [java.lang.IllegalArgumentException, NaN]
+    input (80.84515909348241, 2.0, 0.1700670677193079) -> logged [java.lang.IllegalArgumentException, NaN]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:26:25] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have denominator DF = 2.0 and a valid p, with numerator DF positive. This is the exact condition in the report. inverseCumulativeProbability throws IllegalArgumentException, which matches the reported failure from getInitialDomain returning d/(d-2) = Infinity and bracket rejecting it. The root cause is the same. Logged result was [IllegalArgumentException, NaN], so the assertion failed on the exception, as intended.\n\n(4) buggyIf (denDf == 2.0) is exact. getInitialDomain returns Infinity only when d == 2, and the reported bug (Infinity initial) happens for every such input regardless of numDf or p. Other denDf values, such as 1 or 3, give a finite initial domain, so they are correctly excluded. A denDf of 2.0 with p in (0,1) should not throw, so the assertion is correct for every accepted input.\n\n(5) No bug-triggering inputs are missed. Only d == 2 produces the division by zero.\n\n(6) The ranges cover the valid domain well. numDf is 0.01 to 100, denDf comes from a generator that mixes 2.0, integers, and arbitrary positives up to 100, and p is in (0,1). validIf only removes illegal values (non-positive DF, p outside (0,1)). The ranges are not restricted to bug-triggering inputs."
+}
+
+====================================================================================================
+[13:26:25] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:26] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2718
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have denominator DF = 2.0 and a valid p, with numerator DF positive. This is the exact condition in the report. inverseCumulativeProbability throws IllegalArgumentException, which matches the reported failure from getInitialDomain returning d/(d-2) = Infinity and bracket rejecting it. The root cause is the same. Logged result was [IllegalArgumentException, NaN], so the assertion failed on the exception, as intended.\n\n(4) buggyIf (denDf == 2.0) is exact. getInitialDomain returns Infinity only when d == 2, and the reported bug (Infinity initial) happens for every such input regardless of numDf or p. Other denDf values, such as 1 or 3, give a finite initial domain, so they are correctly excluded. A denDf of 2.0 with p in (0,1) should not throw, so the assertion is correct for every accepted input.\n\n(5) No bug-triggering inputs are missed. Only d == 2 produces the division by zero.\n\n(6) The ranges cover the valid domain well. numDf is 0.01 to 100, denDf comes from a generator that mixes 2.0, integers, and arbitrary positives up to 100, and p is in (0,1). validIf only removes illegal values (non-positive DF, p outside (0,1)). The ranges are not restricted to bug-triggering inputs."
+}
+
+====================================================================================================
+[13:26:26] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:26:26] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:26:29] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test doesn't use mocking or simulation. It constructs a real FDistributionImpl and calls the real inverseCumulativeProbability. There are no mock frameworks, no fake subclasses, and no hard-coded return values. The only nested class is a Generator that produces inputs. The assertions check the actual result of the real code."
+}
+
+====================================================================================================
+[13:26:29] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:31] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.3943
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test doesn't use mocking or simulation. It constructs a real FDistributionImpl and calls the real inverseCumulativeProbability. There are no mock frameworks, no fake subclasses, and no hard-coded return values. The only nested class is a Generator that produces inputs. The assertions check the actual result of the real code."
+}
+
+====================================================================================================
+[13:26:31] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:26:34] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no assertEquals(1, 0). Its assertions depend on the result of the real inverseCumulativeProbability call. They check that no exception was thrown and that the result is neither NaN nor infinite. A fixed implementation would pass these assertions, so the test can pass."
+}
+
+====================================================================================================
+[13:26:34] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:35] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4038
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no assertEquals(1, 0). Its assertions depend on the result of the real inverseCumulativeProbability call. They check that no exception was thrown and that the result is neither NaN nor infinite. A fixed implementation would pass these assertions, so the test can pass."
+}
+
+====================================================================================================
+[13:26:35] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:26:38] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"none\", fexc), which compares two Strings with equals(). That is correct, because it doesn't use ==. The double result is not compared with assertEquals. It is checked with Double.isNaN and Double.isInfinite, which need no delta. No array or object comparison is done improperly."
+}
+
+====================================================================================================
+[13:26:38] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:38] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4135
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"none\", fexc), which compares two Strings with equals(). That is correct, because it doesn't use ==. The double result is not compared with assertEquals. It is checked with Double.isNaN and Double.isInfinite, which need no delta. No array or object comparison is done improperly."
+}
+
+====================================================================================================
+[13:26:38] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:26:38] AGENT FINISHED success=True llm_calls=8
+====================================================================================================
+
+
+====================================================================================================
+[13:26:40] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FDistributionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug95"
+}
+
+====================================================================================================
+[13:26:40] FINAL TEST FILE JQF_FDistributionTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    public static class DenomDfGen extends Generator<Double> {
+        public DenomDfGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(100) < 45) {
+                return 2.0;
+            }
+            if (r.nextBoolean()) {
+                return (double) (r.nextInt(1, 20));
+            }
+            return r.nextDouble(0.01, 100.0);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        double res = Double.NaN;
+        String exc = "none";
+        try {
+            FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+            res = dist.inverseCumulativeProbability(p);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final double fres = res;
+        final String fexc = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fres });
+        assertEquals("none", fexc);
+        assertFalse(Double.isNaN(fres));
+        assertFalse(Double.isInfinite(fres));
+    }
+
+    @Fuzz
+    public void testSmallDegreesOfFreedom(@InRange(minDouble = 0.01, maxDouble = 100.0) double numDf,
+                                    @From(DenomDfGen.class) double denDf,
+                                    @InRange(minDouble = 0, maxDouble = 1) double p) {
+        boolean validIf = numDf > 0.0 && denDf > 0.0 && p > 0.0 && p < 1.0;
+        boolean buggyIf = denDf == 2.0;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            double res = Double.NaN;
+            String exc = "none";
+            try {
+                FDistributionImpl dist = new FDistributionImpl(numDf, denDf);
+                res = dist.inverseCumulativeProbability(p);
+            } catch (Exception e) {
+                exc = e.getClass().getName();
+            }
+            final double fres = res;
+            final String fexc = exc;
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ fexc, fres });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:29:22] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 46497,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 46493,
+      "unique_failures": {}
+    }
+  }
+}

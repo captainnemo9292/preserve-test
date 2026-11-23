@@ -1,0 +1,1458 @@
+
+====================================================================================================
+[12:13:11] BUG Chart-9: failing test org.jfree.data.time.junit.TimeSeriesTests::testBug1864222 -> org.jfree.data.time.junit.JQF_TimeSeriesTests.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Chart-9/Chart9b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source
+====================================================================================================
+Title: Error on TimeSeries createCopy() method
+
+The test case at the end fails with :
+
+java.lang.IllegalArgumentException: Requires start &lt;= end.
+
+
+The problem is in that the int start and end indexes corresponding to given timePeriod are computed incorectly. Here I would expect an empty serie to be returned, not an exception. This is with jfreechart 1.0.7
+
+
+public class foo \{
+static public void main\(String args\[\]\) \{
+		TimeSeries foo = new TimeSeries\("foo",Day.class\);
+		foo.add\(new Day\(19,4,2005\),1\);
+		foo.add\(new Day\(25,5,2005\),1\);
+		foo.add\(new Day\(28,5,2005\),1\);
+		foo.add\(new Day\(30,5,2005\),1\);
+		foo.add\(new Day\(1,6,2005\),1\);
+		foo.add\(new Day\(3,6,2005\),1\);
+		foo.add\(new Day\(19,8,2005\),1\);
+		foo.add\(new Day\(31,1,2006\),1\);
+		
+		
+		try \{
+			TimeSeries bar = foo.createCopy\(new Day\(1,12,2005\),new Day\(18,1,2006\)\);
+		\} catch \(CloneNotSupportedException e\) \{
+
+			e.printStackTrace\(\);
+\}
+\}
+
+====================================================================================================
+[12:13:11] HIDDEN FROM THE AGENT: 5 relevant test classes
+====================================================================================================
+org.jfree.chart.junit.JFreeChartTests
+org.jfree.chart.plot.junit.XYPlotTests
+org.jfree.data.time.junit.MovingAverageTests
+org.jfree.data.time.junit.TimeSeriesCollectionTests
+org.jfree.data.time.junit.TimeSeriesTests
+
+====================================================================================================
+[12:13:11] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:11] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Error on TimeSeries createCopy() method
+
+The test case at the end fails with :
+
+java.lang.IllegalArgumentException: Requires start &lt;= end.
+
+
+The problem is in that the int start and end indexes corresponding to given timePeriod are computed incorectly. Here I would expect an empty serie to be returned, not an exception. This is with jfreechart 1.0.7
+
+
+public class foo \{
+static public void main\(String args\[\]\) \{
+		TimeSeries foo = new TimeSeries\("foo",Day.class\);
+		foo.add\(new Day\(19,4,2005\),1\);
+		foo.add\(new Day\(25,5,2005\),1\);
+		foo.add\(new Day\(28,5,2005\),1\);
+		foo.add\(new Day\(30,5,2005\),1\);
+		foo.add\(new Day\(1,6,2005\),1\);
+		foo.add\(new Day\(3,6,2005\),1\);
+		foo.add\(new Day\(19,8,2005\),1\);
+		foo.add\(new Day\(31,1,2006\),1\);
+		
+		
+		try \{
+			TimeSeries bar = foo.createCopy\(new Day\(1,12,2005\),new Day\(18,1,2006\)\);
+		\} catch \(CloneNotSupportedException e\) \{
+
+			e.printStackTrace\(\);
+\}
+\}
+
+====================================================================================================
+[12:13:15] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "TimeSeries.createCopy(RegularTimePeriod start, RegularTimePeriod end) throws IllegalArgumentException \"Requires start <= end\" when the requested period range lies in a gap between existing items (no data points inside the range). The computed start/end indexes are wrong; an empty series should be returned instead.",
+  "concrete_examples": [
+    {
+      "input": "TimeSeries foo = new TimeSeries(\"foo\", Day.class); add Day(19,4,2005), Day(25,5,2005), Day(28,5,2005), Day(30,5,2005), Day(1,6,2005), Day(3,6,2005), Day(19,8,2005), Day(31,1,2006) each with value 1; then foo.createCopy(new Day(1,12,2005), new Day(18,1,2006))",
+      "expected": "An empty TimeSeries is returned (no items between 1 Dec 2005 and 18 Jan 2006).",
+      "actual": "Throws java.lang.IllegalArgumentException: Requires start <= end."
+    }
+  ]
+}
+
+====================================================================================================
+[12:13:15] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:16] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0120
+====================================================================================================
+{
+  "issue_gist": "TimeSeries.createCopy(RegularTimePeriod start, RegularTimePeriod end) throws IllegalArgumentException \"Requires start <= end\" when the requested period range lies in a gap between existing items (no data points inside the range). The computed start/end indexes are wrong; an empty series should be returned instead.",
+  "concrete_examples": [
+    {
+      "input": "TimeSeries foo = new TimeSeries(\"foo\", Day.class); add Day(19,4,2005), Day(25,5,2005), Day(28,5,2005), Day(30,5,2005), Day(1,6,2005), Day(3,6,2005), Day(19,8,2005), Day(31,1,2006) each with value 1; then foo.createCopy(new Day(1,12,2005), new Day(18,1,2006))",
+      "expected": "An empty TimeSeries is returned (no items between 1 Dec 2005 and 18 Jan 2006).",
+      "actual": "Throws java.lang.IllegalArgumentException: Requires start <= end."
+    }
+  ]
+}
+
+====================================================================================================
+[12:13:16] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:16] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source
+Test file: tests/org/jfree/data/time/junit/JQF_TimeSeriesTests.java
+Test class: org.jfree.data.time.junit.JQF_TimeSeriesTests
+Test method: testBugReproduction
+
+Bug summary: TimeSeries.createCopy(RegularTimePeriod start, RegularTimePeriod end) throws IllegalArgumentException "Requires start <= end" when the requested period range lies in a gap between existing items (no data points inside the range). The computed start/end indexes are wrong; an empty series should be returned instead.
+
+Concrete examples:
+[{'input': 'TimeSeries foo = new TimeSeries("foo", Day.class); add Day(19,4,2005), Day(25,5,2005), Day(28,5,2005), Day(30,5,2005), Day(1,6,2005), Day(3,6,2005), Day(19,8,2005), Day(31,1,2006) each with value 1; then foo.createCopy(new Day(1,12,2005), new Day(18,1,2006))', 'expected': 'An empty TimeSeries is returned (no items between 1 Dec 2005 and 18 Jan 2006).', 'actual': 'Throws java.lang.IllegalArgumentException: Requires start <= end.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:13:21] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public TimeSeries createCopy\\(RegularTimePeriod",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source",
+  "output_mode": "content",
+  "-A": 50,
+  "glob": "**/TimeSeries.java"
+}
+
+====================================================================================================
+[12:13:21] [002_symbolize] TOOL RESULT
+====================================================================================================
+source/org/jfree/data/time/TimeSeries.java:918:    public TimeSeries createCopy(RegularTimePeriod start, RegularTimePeriod end)
+source/org/jfree/data/time/TimeSeries.java-919-        throws CloneNotSupportedException {
+source/org/jfree/data/time/TimeSeries.java-920-
+source/org/jfree/data/time/TimeSeries.java-921-        if (start == null) {
+source/org/jfree/data/time/TimeSeries.java-922-            throw new IllegalArgumentException("Null 'start' argument.");
+source/org/jfree/data/time/TimeSeries.java-923-        }
+source/org/jfree/data/time/TimeSeries.java-924-        if (end == null) {
+source/org/jfree/data/time/TimeSeries.java-925-            throw new IllegalArgumentException("Null 'end' argument.");
+source/org/jfree/data/time/TimeSeries.java-926-        }
+source/org/jfree/data/time/TimeSeries.java-927-        if (start.compareTo(end) > 0) {
+source/org/jfree/data/time/TimeSeries.java-928-            throw new IllegalArgumentException(
+source/org/jfree/data/time/TimeSeries.java-929-                    "Requires start on or before end.");
+source/org/jfree/data/time/TimeSeries.java-930-        }
+source/org/jfree/data/time/TimeSeries.java-931-        boolean emptyRange = false;
+source/org/jfree/data/time/TimeSeries.java-932-        int startIndex = getIndex(start);
+source/org/jfree/data/time/TimeSeries.java-933-        if (startIndex < 0) {
+source/org/jfree/data/time/TimeSeries.java-934-            startIndex = -(startIndex + 1);
+source/org/jfree/data/time/TimeSeries.java-935-            if (startIndex == this.data.size()) {
+source/org/jfree/data/time/TimeSeries.java-936-                emptyRange = true;  // start is after last data item
+source/org/jfree/data/time/TimeSeries.java-937-            }
+source/org/jfree/data/time/TimeSeries.java-938-        }
+source/org/jfree/data/time/TimeSeries.java-939-        int endIndex = getIndex(end);
+source/org/jfree/data/time/TimeSeries.java-940-        if (endIndex < 0) {             // end period is not in original series
+source/org/jfree/data/time/TimeSeries.java-941-            endIndex = -(endIndex + 1); // this is first item AFTER end period
+source/org/jfree/data/time/TimeSeries.java-942-            endIndex = endIndex - 1;    // so this is last item BEFORE end
+source/org/jfree/data/time/TimeSeries.java-943-        }
+source/org/jfree/data/time/TimeSeries.java-944-        if (endIndex < 0) {
+source/org/jfree/data/time/TimeSeries.java-945-            emptyRange = true;
+source/org/jfree/data/time/TimeSeries.java-946-        }
+source/org/jfree/data/time/TimeSeries.java-947-        if (emptyRange) {
+source/org/jfree/data/time/TimeSeries.java-948-            TimeSeries copy = (TimeSeries) super.clone();
+source/org/jfree/data/time/TimeSeries.java-949-            copy.data = new java.util.ArrayList();
+source/org/jfree/data/time/TimeSeries.java-950-            return copy;
+source/org/jfree/data/time/TimeSeries.java-951-        }
+source/org/jfree/data/time/TimeSeries.java-952-        else {
+source/org/jfree/data/time/TimeSeries.java-953-            return createCopy(startIndex, endIndex);
+source/org/jfree/data/time/TimeSeries.java-954-        }
+source/org/jfree/data/time/TimeSeries.java-955-
+source/org/jfree/data/time/TimeSeries.java-956-    }
+source/org/jfree/data/time/TimeSeries.java-957-
+source/org/jfree/data/time/TimeSeries.java-958-    /**
+source/org/jfree/data/time/TimeSeries.java-959-     * Tests the series for equality with an arbitrary object.
+source/org/jfree/data/time/TimeSeries.java-960-     *
+source/org/jfree/data/time/TimeSeries.java-961-     * @param object  the object to test against (<code>null</code> permitted).
+source/org/jfree/data/time/TimeSeries.java-962-     *
+source/org/jfree/data/time/TimeSeries.java-963-     * @return A boolean.
+source/org/jfree/data/time/TimeSeries.java-964-     */
+source/org/jfree/data/time/TimeSeries.java-965-    public boolean equals(Object object) {
+source/org/jfree/data/time/TimeSeries.java-966-        if (object == this) {
+source/org/jfree/data/time/TimeSeries.java-967-            return true;
+source/org/jfree/data/time/TimeSeries.java-968-        }
+
+====================================================================================================
+[12:13:38] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.jfree.data.time.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.jfree.data.time.Day;\nimport org.jfree.data.time.RegularTimePeriod;\nimport org.jfree.data.time.TimeSeries;\n\n@RunWith(JQF.class)\npublic class JQF_TimeSeriesTests {\n\n    /** Generates a sorted array of distinct day offsets in [0, 40). */\n    public static class DaysGen extends Generator<int[]> {\n        public DaysGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(0, 7);\n            boolean[] used = new boolean[40];\n            int count = 0;\n            for (int i = 0; i < n; i++) {\n                int v = r.nextInt(0, 40);\n                if (!used[v]) {\n                    used[v] = true;\n                    count++;\n                }\n            }\n            int[] out = new int[count];\n            int k = 0;\n            for (int i = 0; i < 40; i++) {\n                if (used[i]) {\n                    out[k++] = i;\n                }\n            }\n            return out;\n        }\n    }\n\n    private static Day dayAt(int offset) {\n        Day d = new Day(1, 1, 2005);\n        for (int i = 0; i < offset; i++) {\n            d = (Day) d.next();\n        }\n        return d;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DaysGen.class) int[] days,\n                                    @InRange(minInt = 0, maxInt = 40) int s,\n                                    @InRange(minInt = 0, maxInt = 40) int e) {\n        boolean validIf = s <= e;\n\n        boolean anyBefore = false;\n        boolean anyAfter = false;\n        boolean anyInside = false;\n        for (int d : days) {\n            if (d < s) anyBefore = true;\n            if (d > e) anyAfter = true;\n            if (d >= s && d <= e) anyInside = true;\n        }\n        boolean buggyIf = anyBefore && anyAfter && !anyInside;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        TimeSeries series = new TimeSeries(\"foo\", Day.class);\n        for (int d : days) {\n            series.add(dayAt(d), 1.0);\n        }\n        String exceptionName = \"none\";\n        TimeSeries copy = null;\n        try {\n            copy = series.createCopy(dayAt(s), dayAt(e));\n        } catch (Exception ex) {\n            exceptionName = ex.getClass().getName();\n        }\n        final String exName = exceptionName;\n        final int copySize = copy == null ? -1 : copy.getItemCount();\n        final int origSize = series.getItemCount();\n        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });\n        assertEquals(\"none\", exName);\n        assertEquals(0, copySize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:38] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:39] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1689
+====================================================================================================
+{
+  "pbt": "package org.jfree.data.time.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.jfree.data.time.Day;\nimport org.jfree.data.time.RegularTimePeriod;\nimport org.jfree.data.time.TimeSeries;\n\n@RunWith(JQF.class)\npublic class JQF_TimeSeriesTests {\n\n    /** Generates a sorted array of distinct day offsets in [0, 40). */\n    public static class DaysGen extends Generator<int[]> {\n        public DaysGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(0, 7);\n            boolean[] used = new boolean[40];\n            int count = 0;\n            for (int i = 0; i < n; i++) {\n                int v = r.nextInt(0, 40);\n                if (!used[v]) {\n                    used[v] = true;\n                    count++;\n                }\n            }\n            int[] out = new int[count];\n            int k = 0;\n            for (int i = 0; i < 40; i++) {\n                if (used[i]) {\n                    out[k++] = i;\n                }\n            }\n            return out;\n        }\n    }\n\n    private static Day dayAt(int offset) {\n        Day d = new Day(1, 1, 2005);\n        for (int i = 0; i < offset; i++) {\n            d = (Day) d.next();\n        }\n        return d;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DaysGen.class) int[] days,\n                                    @InRange(minInt = 0, maxInt = 40) int s,\n                                    @InRange(minInt = 0, maxInt = 40) int e) {\n        boolean validIf = s <= e;\n\n        boolean anyBefore = false;\n        boolean anyAfter = false;\n        boolean anyInside = false;\n        for (int d : days) {\n            if (d < s) anyBefore = true;\n            if (d > e) anyAfter = true;\n            if (d >= s && d <= e) anyInside = true;\n        }\n        boolean buggyIf = anyBefore && anyAfter && !anyInside;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        TimeSeries series = new TimeSeries(\"foo\", Day.class);\n        for (int d : days) {\n            series.add(dayAt(d), 1.0);\n        }\n        String exceptionName = \"none\";\n        TimeSeries copy = null;\n        try {\n            copy = series.createCopy(dayAt(s), dayAt(e));\n        } catch (Exception ex) {\n            exceptionName = ex.getClass().getName();\n        }\n        final String exName = exceptionName;\n        final int copySize = copy == null ? -1 : copy.getItemCount();\n        final int origSize = series.getItemCount();\n        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });\n        assertEquals(\"none\", exName);\n        assertEquals(0, copySize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:39] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:13:39] TEST CODE (org.jfree.data.time.junit.JQF_TimeSeriesTests)
+====================================================================================================
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+
+        boolean anyBefore = false;
+        boolean anyAfter = false;
+        boolean anyInside = false;
+        for (int d : days) {
+            if (d < s) anyBefore = true;
+            if (d > e) anyAfter = true;
+            if (d >= s && d <= e) anyInside = true;
+        }
+        boolean buggyIf = anyBefore && anyAfter && !anyInside;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+====================================================================================================
+[12:13:39] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 2 of the method must be `boolean buggyIf = <expression>;`, found `boolean anyBefore = false;`
+
+====================================================================================================
+[12:13:39] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:39] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 2 of the method must be `boolean buggyIf = <expression>;`, found `boolean anyBefore = false;`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source
+Test file: tests/org/jfree/data/time/junit/JQF_TimeSeriesTests.java
+Test class: org.jfree.data.time.junit.JQF_TimeSeriesTests
+Test method: testBugReproduction
+
+Bug summary: TimeSeries.createCopy(RegularTimePeriod start, RegularTimePeriod end) throws IllegalArgumentException "Requires start <= end" when the requested period range lies in a gap between existing items (no data points inside the range). The computed start/end indexes are wrong; an empty series should be returned instead.
+
+Concrete examples:
+[{'input': 'TimeSeries foo = new TimeSeries("foo", Day.class); add Day(19,4,2005), Day(25,5,2005), Day(28,5,2005), Day(30,5,2005), Day(1,6,2005), Day(3,6,2005), Day(19,8,2005), Day(31,1,2006) each with value 1; then foo.createCopy(new Day(1,12,2005), new Day(18,1,2006))', 'expected': 'An empty TimeSeries is returned (no items between 1 Dec 2005 and 18 Jan 2006).', 'actual': 'Throws java.lang.IllegalArgumentException: Requires start <= end.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-9/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:13:48] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.jfree.data.time.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.jfree.data.time.Day;\nimport org.jfree.data.time.TimeSeries;\n\n@RunWith(JQF.class)\npublic class JQF_TimeSeriesTests {\n\n    /** Generates a sorted array of distinct day offsets in [0, 40). */\n    public static class DaysGen extends Generator<int[]> {\n        public DaysGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(0, 7);\n            boolean[] used = new boolean[40];\n            int count = 0;\n            for (int i = 0; i < n; i++) {\n                int v = r.nextInt(0, 40);\n                if (!used[v]) {\n                    used[v] = true;\n                    count++;\n                }\n            }\n            int[] out = new int[count];\n            int k = 0;\n            for (int i = 0; i < 40; i++) {\n                if (used[i]) {\n                    out[k++] = i;\n                }\n            }\n            return out;\n        }\n    }\n\n    private static Day dayAt(int offset) {\n        Day d = new Day(1, 1, 2005);\n        for (int i = 0; i < offset; i++) {\n            d = (Day) d.next();\n        }\n        return d;\n    }\n\n    /** True if some item lies before s, some after e, and none within [s, e]. */\n    private static boolean isInnerGap(int[] days, int s, int e) {\n        boolean before = false;\n        boolean after = false;\n        for (int d : days) {\n            if (d >= s && d <= e) {\n                return false;\n            }\n            if (d < s) {\n                before = true;\n            }\n            if (d > e) {\n                after = true;\n            }\n        }\n        return before && after;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DaysGen.class) int[] days,\n                                    @InRange(minInt = 0, maxInt = 40) int s,\n                                    @InRange(minInt = 0, maxInt = 40) int e) {\n        boolean validIf = s <= e;\n        boolean buggyIf = isInnerGap(days, s, e);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        TimeSeries series = new TimeSeries(\"foo\", Day.class);\n        for (int d : days) {\n            series.add(dayAt(d), 1.0);\n        }\n        String exceptionName = \"none\";\n        TimeSeries copy = null;\n        try {\n            copy = series.createCopy(dayAt(s), dayAt(e));\n        } catch (Exception ex) {\n            exceptionName = ex.getClass().getName();\n        }\n        final String exName = exceptionName;\n        final int copySize = copy == null ? -1 : copy.getItemCount();\n        final int origSize = series.getItemCount();\n        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });\n        assertEquals(\"none\", exName);\n        assertEquals(0, copySize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:48] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:49] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2114
+====================================================================================================
+{
+  "pbt": "package org.jfree.data.time.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.jfree.data.time.Day;\nimport org.jfree.data.time.TimeSeries;\n\n@RunWith(JQF.class)\npublic class JQF_TimeSeriesTests {\n\n    /** Generates a sorted array of distinct day offsets in [0, 40). */\n    public static class DaysGen extends Generator<int[]> {\n        public DaysGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int n = r.nextInt(0, 7);\n            boolean[] used = new boolean[40];\n            int count = 0;\n            for (int i = 0; i < n; i++) {\n                int v = r.nextInt(0, 40);\n                if (!used[v]) {\n                    used[v] = true;\n                    count++;\n                }\n            }\n            int[] out = new int[count];\n            int k = 0;\n            for (int i = 0; i < 40; i++) {\n                if (used[i]) {\n                    out[k++] = i;\n                }\n            }\n            return out;\n        }\n    }\n\n    private static Day dayAt(int offset) {\n        Day d = new Day(1, 1, 2005);\n        for (int i = 0; i < offset; i++) {\n            d = (Day) d.next();\n        }\n        return d;\n    }\n\n    /** True if some item lies before s, some after e, and none within [s, e]. */\n    private static boolean isInnerGap(int[] days, int s, int e) {\n        boolean before = false;\n        boolean after = false;\n        for (int d : days) {\n            if (d >= s && d <= e) {\n                return false;\n            }\n            if (d < s) {\n                before = true;\n            }\n            if (d > e) {\n                after = true;\n            }\n        }\n        return before && after;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(DaysGen.class) int[] days,\n                                    @InRange(minInt = 0, maxInt = 40) int s,\n                                    @InRange(minInt = 0, maxInt = 40) int e) {\n        boolean validIf = s <= e;\n        boolean buggyIf = isInnerGap(days, s, e);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        TimeSeries series = new TimeSeries(\"foo\", Day.class);\n        for (int d : days) {\n            series.add(dayAt(d), 1.0);\n        }\n        String exceptionName = \"none\";\n        TimeSeries copy = null;\n        try {\n            copy = series.createCopy(dayAt(s), dayAt(e));\n        } catch (Exception ex) {\n            exceptionName = ex.getClass().getName();\n        }\n        final String exName = exceptionName;\n        final int copySize = copy == null ? -1 : copy.getItemCount();\n        final int origSize = series.getItemCount();\n        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });\n        assertEquals(\"none\", exName);\n        assertEquals(0, copySize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:49] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:13:49] TEST CODE (org.jfree.data.time.junit.JQF_TimeSeriesTests)
+====================================================================================================
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+====================================================================================================
+[12:13:50] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:14:05] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 93823,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 285
+  },
+  "passed_assume": 6178,
+  "classified": 285
+}
+
+====================================================================================================
+[12:14:05] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:14:05] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Error on TimeSeries createCopy() method
+
+The test case at the end fails with :
+
+java.lang.IllegalArgumentException: Requires start &lt;= end.
+
+
+The problem is in that the int start and end indexes corresponding to given timePeriod are computed incorectly. Here I would expect an empty serie to be returned, not an exception. This is with jfreechart 1.0.7
+
+
+public class foo \{
+static public void main\(String args\[\]\) \{
+		TimeSeries foo = new TimeSeries\("foo",Day.class\);
+		foo.add\(new Day\(19,4,2005\),1\);
+		foo.add\(new Day\(25,5,2005\),1\);
+		foo.add\(new Day\(28,5,2005\),1\);
+		foo.add\(new Day\(30,5,2005\),1\);
+		foo.add\(new Day\(1,6,2005\),1\);
+		foo.add\(new Day\(3,6,2005\),1\);
+		foo.add\(new Day\(19,8,2005\),1\);
+		foo.add\(new Day\(31,1,2006\),1\);
+		
+		
+		try \{
+			TimeSeries bar = foo.createCopy\(new Day\(1,12,2005\),new Day\(18,1,2006\)\);
+		\} catch \(CloneNotSupportedException e\) \{
+
+			e.printStackTrace\(\);
+\}
+\}
+
+=== Test ===
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.jfree.data.time.junit.JQF_TimeSeriesTests.testBugReproduction(JQF_TimeSeriesTests.java:96)
+
+Location: org.jfree.data.time.junit.JQF_TimeSeriesTests.testBugReproduction(JQF_TimeSeriesTests.java:96)
+
+is triggered by the following inputs:
+
+    input (7, 15, 22, 37, 38, 27, 35) -> logged [java.lang.IllegalArgumentException, -1, 5]
+    input (3, 13, 36, 37, 39, 19, 19) -> logged [java.lang.IllegalArgumentException, -1, 5]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:14:22] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug.
+
+1. **Inputs match the report.** The two failing inputs decode to days=[7,15,22,37,38], s=27, e=35 and days=[3,13,36,37,39], s=19, e=19. In both, the series has items before the start, items after the end, and none inside [s, e]. That is the same gap scenario as the report: Day(1,12,2005) to Day(18,1,2006) lies between 19 Aug 2005 and 31 Jan 2006.
+
+2. **Error matches the report.** The logged result is an `IllegalArgumentException` with `copySize` of -1, which is the exception the report describes. The expected behavior is an empty copy, and the test asserts exactly that.
+
+3. **Same root cause.** I read `createCopy(start, end)` earlier in this session. When start is absent from the series, `startIndex` becomes the first item after start. When end is absent, `endIndex` becomes the last item before end. In a gap, `startIndex` is therefore `endIndex + 1`. `emptyRange` stays false, so `createCopy(int, int)` is called with start > end and throws "Requires start <= end". This is the index miscalculation the report names.
+
+4. **`buggyIf` does not accept correct cases.** The other empty-result cases already work. With no items before s, `endIndex` is -1 and `emptyRange` is set. With no items after e, `startIndex` equals the size and `emptyRange` is set. An empty series also takes the `emptyRange` path. Any item inside [s, e] gives a valid index range. So `buggyIf` is true only when the buggy code throws.
+
+5. **`buggyIf` does not miss bug inputs.** The exception needs items before s, items after e, and none inside, which is the whole `buggyIf` condition. No other input produces `startIndex` > `endIndex`.
+
+6. **Ranges and `validIf` cover the valid domain.** `validIf` is s <= e, which excludes only the inputs that legitimately throw (start after end). The generated series range from empty to 6 distinct days across 40 days. They include cases with items inside the range, before it only, after it only, and none. Duplicate periods are excluded because `add` rejects them, so the test does not narrow the domain to the bug alone.
+
+====================================================================================================
+[12:14:24] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs (days=[7,15,22,37,38], s=27, e=35 and days=[3,13,36,37,39], s=19, e=19) are gap cases: items before s, items after e, none inside [s, e]. The IllegalArgumentException is the one the report describes. The cause is also the same: in createCopy(start, end), a gap makes startIndex equal endIndex+1 without setting emptyRange, so createCopy(int, int) throws \"Requires start <= end\". The other empty-result cases (no items before s, no items after e, empty series) already return an empty copy, so buggyIf is neither too wide nor too narrow. validIf (s <= e) removes only inputs that legitimately throw, and the day-offset ranges and the generated series (empty up to six distinct days) cover the valid domain. The assertions (no exception, empty copy) match the expected behavior."
+}
+
+====================================================================================================
+[12:14:24] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:25] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3682
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs (days=[7,15,22,37,38], s=27, e=35 and days=[3,13,36,37,39], s=19, e=19) are gap cases: items before s, items after e, none inside [s, e]. The IllegalArgumentException is the one the report describes. The cause is also the same: in createCopy(start, end), a gap makes startIndex equal endIndex+1 without setting emptyRange, so createCopy(int, int) throws \"Requires start <= end\". The other empty-result cases (no items before s, no items after e, empty series) already return an empty copy, so buggyIf is neither too wide nor too narrow. validIf (s <= e) removes only inputs that legitimately throw, and the day-offset ranges and the generated series (empty up to six distinct days) cover the valid domain. The assertions (no exception, empty copy) match the expected behavior."
+}
+
+====================================================================================================
+[12:14:25] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:14:25] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:14:30] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework, fake subclasses or simulated return values. It builds a real TimeSeries, adds real Day periods, and calls the real createCopy(start, end). The generator and the dayAt and isInnerGap helpers only produce inputs and evaluate the precondition. They do not stand in for the code under test. The assertions check the output of the actual call."
+}
+
+====================================================================================================
+[12:14:30] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:31] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5191
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework, fake subclasses or simulated return values. It builds a real TimeSeries, adds real Day periods, and calls the real createCopy(start, end). The generator and the dayAt and isInnerGap helpers only produce inputs and evaluate the precondition. They do not stand in for the code under test. The assertions check the output of the actual call."
+}
+
+====================================================================================================
+[12:14:31] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:14:34] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no fail(), assertTrue(false) or assertEquals(1, 0). Both assertions depend on the result of the real createCopy call: assertEquals(\"none\", exName) and assertEquals(0, copySize). A correct implementation returns an empty copy and throws no exception, so the test can pass."
+}
+
+====================================================================================================
+[12:14:34] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:35] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5309
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no fail(), assertTrue(false) or assertEquals(1, 0). Both assertions depend on the result of the real createCopy call: assertEquals(\"none\", exName) and assertEquals(0, copySize). A correct implementation returns an empty copy and throws no exception, so the test can pass."
+}
+
+====================================================================================================
+[12:14:35] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:14:38] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. assertEquals(\"none\", exName) compares Strings with equals(), not ==. assertEquals(0, copySize) compares ints, which need no delta. No doubles, arrays or other objects are compared, so none of the cases that need special handling occur."
+}
+
+====================================================================================================
+[12:14:38] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:39] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5427
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. assertEquals(\"none\", exName) compares Strings with equals(), not ==. assertEquals(0, copySize) compares ints, which need no delta. No doubles, arrays or other objects are compared, so none of the cases that need special handling occur."
+}
+
+====================================================================================================
+[12:14:39] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:14:39] AGENT FINISHED success=True llm_calls=10
+====================================================================================================
+
+
+====================================================================================================
+[12:14:40] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TimeSeriesTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug9"
+}
+
+====================================================================================================
+[12:14:40] FINAL TEST FILE JQF_TimeSeriesTests.java (repro method + derived preservation method)
+====================================================================================================
+package org.jfree.data.time.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+
+@RunWith(JQF.class)
+public class JQF_TimeSeriesTests {
+
+    /** Generates a sorted array of distinct day offsets in [0, 40). */
+    public static class DaysGen extends Generator<int[]> {
+        public DaysGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int n = r.nextInt(0, 7);
+            boolean[] used = new boolean[40];
+            int count = 0;
+            for (int i = 0; i < n; i++) {
+                int v = r.nextInt(0, 40);
+                if (!used[v]) {
+                    used[v] = true;
+                    count++;
+                }
+            }
+            int[] out = new int[count];
+            int k = 0;
+            for (int i = 0; i < 40; i++) {
+                if (used[i]) {
+                    out[k++] = i;
+                }
+            }
+            return out;
+        }
+    }
+
+    private static Day dayAt(int offset) {
+        Day d = new Day(1, 1, 2005);
+        for (int i = 0; i < offset; i++) {
+            d = (Day) d.next();
+        }
+        return d;
+    }
+
+    /** True if some item lies before s, some after e, and none within [s, e]. */
+    private static boolean isInnerGap(int[] days, int s, int e) {
+        boolean before = false;
+        boolean after = false;
+        for (int d : days) {
+            if (d >= s && d <= e) {
+                return false;
+            }
+            if (d < s) {
+                before = true;
+            }
+            if (d > e) {
+                after = true;
+            }
+        }
+        return before && after;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        TimeSeries series = new TimeSeries("foo", Day.class);
+        for (int d : days) {
+            series.add(dayAt(d), 1.0);
+        }
+        String exceptionName = "none";
+        TimeSeries copy = null;
+        try {
+            copy = series.createCopy(dayAt(s), dayAt(e));
+        } catch (Exception ex) {
+            exceptionName = ex.getClass().getName();
+        }
+        final String exName = exceptionName;
+        final int copySize = copy == null ? -1 : copy.getItemCount();
+        final int origSize = series.getItemCount();
+        Log.logOutIf(true, () -> new Object[]{ exName, copySize, origSize });
+        assertEquals("none", exName);
+        assertEquals(0, copySize);
+    }
+
+    @Fuzz
+    public void testBug1864222(@From(DaysGen.class) int[] days,
+                                    @InRange(minInt = 0, maxInt = 40) int s,
+                                    @InRange(minInt = 0, maxInt = 40) int e) {
+        boolean validIf = s <= e;
+        boolean buggyIf = isInnerGap(days, s, e);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            TimeSeries series = new TimeSeries("foo", Day.class);
+            for (int d : days) {
+                series.add(dayAt(d), 1.0);
+            }
+            String exceptionName = "none";
+            TimeSeries copy = null;
+            try {
+                copy = series.createCopy(dayAt(s), dayAt(e));
+            } catch (Exception ex) {
+                exceptionName = ex.getClass().getName();
+            }
+            final String exName = exceptionName;
+            final int copySize = copy == null ? -1 : copy.getItemCount();
+            final int origSize = series.getItemCount();
+            Log.logOutIf(preserveIf, () -> new Object[]{ exName, copySize, origSize });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:16:05] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 6243,
+    "paired_inputs": 6243,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 6243
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 6243,
+      "failed_on_buggy": 6243,
+      "pass": 6243,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 6064,
+      "unique_failures": {}
+    }
+  }
+}

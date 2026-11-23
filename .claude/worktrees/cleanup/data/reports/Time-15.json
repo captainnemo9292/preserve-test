@@ -1,0 +1,6 @@
+{
+  "bug": "Time-15",
+  "url": "https://sourceforge.net/p/joda-time/bugs/147",
+  "title": "possibly a bug in org.joda.time.field.FieldUtils.safeMultipl",
+  "body": "It seems to me that as currently written in joda-time-2.1.jar\r\norg.joda.time.field.FieldUtils.safeMultiply(long val1, int scalar)\r\ndoesn't detect the overflow if the long val1 == Long.MIN_VALUE and the int scalar == -1.\r\n\r\nThe attached file demonstrates what I think is the bug and suggests a patch.\r\n\r\nI looked at the Joda Time bugs list in SourceForge but couldn't see anything that looked relevant: my apologies if I've missed something, or if I'm making a mistake with this bug report.\r\n\r\nColin Bartlett"
+}

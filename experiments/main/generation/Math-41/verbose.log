@@ -1,0 +1,2400 @@
+
+====================================================================================================
+[12:49:36] BUG Math-41: failing test org.apache.commons.math.stat.descriptive.moment.VarianceTest::testEvaluateArraySegmentWeighted -> org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-41/Math41b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source
+====================================================================================================
+Title: One of Variance.evaluate() methods does not work correctly
+
+The method org.apache.commons.math.stat.descriptive.moment.Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) does not work properly. Looks loke it ignores the length parameter and grabs the whole dataset.
+Similar method in Mean class seems to work.
+I did not check other methods taking the part of the array; they may have the same problem.
+
+Workaround: I had to shrink my arrays and use the method without the length.
+
+====================================================================================================
+[12:49:36] HIDDEN FROM THE AGENT: 26 relevant test classes
+====================================================================================================
+org.apache.commons.math.ode.JacobianMatricesTest
+org.apache.commons.math.optimization.univariate.BrentOptimizerTest
+org.apache.commons.math.stat.CertifiedDataTest
+org.apache.commons.math.stat.StatUtilsTest
+org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest
+org.apache.commons.math.stat.correlation.CovarianceTest
+org.apache.commons.math.stat.correlation.PearsonsCorrelationTest
+org.apache.commons.math.stat.data.LewTest
+org.apache.commons.math.stat.data.LotteryTest
+org.apache.commons.math.stat.descriptive.AggregateSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.ListUnivariateImplTest
+org.apache.commons.math.stat.descriptive.MixedListUnivariateImplTest
+org.apache.commons.math.stat.descriptive.SummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.moment.InteractionTest
+org.apache.commons.math.stat.descriptive.moment.KurtosisTest
+org.apache.commons.math.stat.descriptive.moment.SemiVarianceTest
+org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest
+org.apache.commons.math.stat.descriptive.moment.VarianceTest
+org.apache.commons.math.stat.inference.TTestTest
+org.apache.commons.math.stat.inference.TestUtilsTest
+org.apache.commons.math.stat.regression.GLSMultipleLinearRegressionTest
+org.apache.commons.math.stat.regression.OLSMultipleLinearRegressionTest
+org.apache.commons.math.util.ResizableDoubleArrayTest
+
+====================================================================================================
+[12:49:36] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:49:36] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: One of Variance.evaluate() methods does not work correctly
+
+The method org.apache.commons.math.stat.descriptive.moment.Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) does not work properly. Looks loke it ignores the length parameter and grabs the whole dataset.
+Similar method in Mean class seems to work.
+I did not check other methods taking the part of the array; they may have the same problem.
+
+Workaround: I had to shrink my arrays and use the method without the length.
+
+====================================================================================================
+[12:49:40] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.",
+  "concrete_examples": [
+    {
+      "input": "values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)",
+      "expected": "Variance computed over only the first 4 elements (~1.6667 for unbiased)",
+      "actual": "Variance computed over all 5 elements including 100, producing a much larger value"
+    },
+    {
+      "input": "values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)",
+      "expected": "Variance of elements at indices 1..4 only (~1.6667)",
+      "actual": "Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance"
+    }
+  ]
+}
+
+====================================================================================================
+[12:49:40] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:49:41] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0079
+====================================================================================================
+{
+  "issue_gist": "Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.",
+  "concrete_examples": [
+    {
+      "input": "values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)",
+      "expected": "Variance computed over only the first 4 elements (~1.6667 for unbiased)",
+      "actual": "Variance computed over all 5 elements including 100, producing a much larger value"
+    },
+    {
+      "input": "values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)",
+      "expected": "Variance of elements at indices 1..4 only (~1.6667)",
+      "actual": "Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance"
+    }
+  ]
+}
+
+====================================================================================================
+[12:49:41] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:49:41] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source
+Test file: src/test/java/org/apache/commons/math/stat/descriptive/moment/JQF_VarianceTest.java
+Test class: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest
+Test method: testBugReproduction
+
+Bug summary: Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.
+
+Concrete examples:
+[{'input': 'values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)', 'expected': 'Variance computed over only the first 4 elements (~1.6667 for unbiased)', 'actual': 'Variance computed over all 5 elements including 100, producing a much larger value'}, {'input': 'values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)', 'expected': 'Variance of elements at indices 1..4 only (~1.6667)', 'actual': 'Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:49:45] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public double evaluate",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source/src/main/java/org/apache/commons/math/stat/descriptive/moment/Variance.java",
+  "output_mode": "content",
+  "-n": true
+}
+
+====================================================================================================
+[12:49:45] [002_symbolize] TOOL RESULT
+====================================================================================================
+226:    public double evaluate(final double[] values) {
+254:    public double evaluate(final double[] values, final int begin, final int length) {
+313:    public double evaluate(final double[] values, final double[] weights,
+369:    public double evaluate(final double[] values, final double[] weights) {
+399:    public double evaluate(final double[] values, final double mean,
+452:    public double evaluate(final double[] values, final double mean) {
+501:    public double evaluate(final double[] values, final double[] weights,
+575:    public double evaluate(final double[] values, final double[] weights, final double mean) {
+
+====================================================================================================
+[12:49:47] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source/src/main/java/org/apache/commons/math/stat/descriptive/moment/Variance.java",
+  "offset": 290,
+  "limit": 300
+}
+
+====================================================================================================
+[12:49:47] [002_symbolize] TOOL RESULT
+====================================================================================================
+290	     * <p>
+291	     * Throws <code>IllegalArgumentException</code> if any of the following are true:
+292	     * <ul><li>the values array is null</li>
+293	     *     <li>the weights array is null</li>
+294	     *     <li>the weights array does not have the same length as the values array</li>
+295	     *     <li>the weights array contains one or more infinite values</li>
+296	     *     <li>the weights array contains one or more NaN values</li>
+297	     *     <li>the weights array contains negative values</li>
+298	     *     <li>the start and length arguments do not determine a valid array</li>
+299	     * </ul></p>
+300	     * <p>
+301	     * Does not change the internal state of the statistic.</p>
+302	     * <p>
+303	     * Throws <code>IllegalArgumentException</code> if either array is null.</p>
+304	     *
+305	     * @param values the input array
+306	     * @param weights the weights array
+307	     * @param begin index of the first array element to include
+308	     * @param length the number of elements to include
+309	     * @return the weighted variance of the values or Double.NaN if length = 0
+310	     * @throws IllegalArgumentException if the parameters are not valid
+311	     * @since 2.1
+312	     */
+313	    public double evaluate(final double[] values, final double[] weights,
+314	                           final int begin, final int length) {
+315	
+316	        double var = Double.NaN;
+317	
+318	        if (test(values, weights,begin, length)) {
+319	            clear();
+320	            if (length == 1) {
+321	                var = 0.0;
+322	            } else if (length > 1) {
+323	                Mean mean = new Mean();
+324	                double m = mean.evaluate(values, weights, begin, length);
+325	                var = evaluate(values, weights, m, begin, length);
+326	            }
+327	        }
+328	        return var;
+329	    }
+330	
+331	    /**
+332	     * <p>
+333	     * Returns the weighted variance of the entries in the the input array.</p>
+334	     * <p>
+335	     * Uses the formula <pre>
+336	     *   &Sigma;(weights[i]*(values[i] - weightedMean)<sup>2</sup>)/(&Sigma;(weights[i]) - 1)
+337	     * </pre>
+338	     * where weightedMean is the weighted mean</p>
+339	     * <p>
+340	     * This formula will not return the same result as the unweighted variance when all
+341	     * weights are equal, unless all weights are equal to 1. The formula assumes that
+342	     * weights are to be treated as "expansion values," as will be the case if for example
+343	     * the weights represent frequency counts. To normalize weights so that the denominator
+344	     * in the variance computation equals the length of the input vector minus one, use <pre>
+345	     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length)); </code>
+346	     * </pre>
+347	     * <p>
+348	     * Returns 0 for a single-value (i.e. length = 1) sample.</p>
+349	     * <p>
+350	     * Throws <code>IllegalArgumentException</code> if any of the following are true:
+351	     * <ul><li>the values array is null</li>
+352	     *     <li>the weights array is null</li>
+353	     *     <li>the weights array does not have the same length as the values array</li>
+354	     *     <li>the weights array contains one or more infinite values</li>
+355	     *     <li>the weights array contains one or more NaN values</li>
+356	     *     <li>the weights array contains negative values</li>
+357	     * </ul></p>
+358	     * <p>
+359	     * Does not change the internal state of the statistic.</p>
+360	     * <p>
+361	     * Throws <code>IllegalArgumentException</code> if either array is null.</p>
+362	     *
+363	     * @param values the input array
+364	     * @param weights the weights array
+365	     * @return the weighted variance of the values
+366	     * @throws IllegalArgumentException if the parameters are not valid
+367	     * @since 2.1
+368	     */
+369	    public double evaluate(final double[] values, final double[] weights) {
+370	        return evaluate(values, weights, 0, values.length);
+371	    }
+372	
+373	    /**
+374	     * Returns the variance of the entries in the specified portion of
+375	     * the input array, using the precomputed mean value.  Returns
+376	     * <code>Double.NaN</code> if the designated subarray is empty.
+377	     * <p>
+378	     * See {@link Variance} for details on the computing algorithm.</p>
+379	     * <p>
+380	     * The formula used assumes that the supplied mean value is the arithmetic
+381	     * mean of the sample data, not a known population parameter.  This method
+382	     * is supplied only to save computation when the mean has already been
+383	     * computed.</p>
+384	     * <p>
+385	     * Returns 0 for a single-value (i.e. length = 1) sample.</p>
+386	     * <p>
+387	     * Throws <code>IllegalArgumentException</code> if the array is null.</p>
+388	     * <p>
+389	     * Does not change the internal state of the statistic.</p>
+390	     *
+391	     * @param values the input array
+392	     * @param mean the precomputed mean value
+393	     * @param begin index of the first array element to include
+394	     * @param length the number of elements to include
+395	     * @return the variance of the values or Double.NaN if length = 0
+396	     * @throws IllegalArgumentException if the array is null or the array index
+397	     *  parameters are not valid
+398	     */
+399	    public double evaluate(final double[] values, final double mean,
+400	            final int begin, final int length) {
+401	
+402	        double var = Double.NaN;
+403	
+404	        if (test(values, begin, length)) {
+405	            if (length == 1) {
+406	                var = 0.0;
+407	            } else if (length > 1) {
+408	                double accum = 0.0;
+409	                double dev = 0.0;
+410	                double accum2 = 0.0;
+411	                for (int i = begin; i < begin + length; i++) {
+412	                    dev = values[i] - mean;
+413	                    accum += dev * dev;
+414	                    accum2 += dev;
+415	                }
+416	                double len = length;
+417	                if (isBiasCorrected) {
+418	                    var = (accum - (accum2 * accum2 / len)) / (len - 1.0);
+419	                } else {
+420	                    var = (accum - (accum2 * accum2 / len)) / len;
+421	                }
+422	            }
+423	        }
+424	        return var;
+425	    }
+426	
+427	    /**
+428	     * Returns the variance of the entries in the input array, using the
+429	     * precomputed mean value.  Returns <code>Double.NaN</code> if the array
+430	     * is empty.
+431	     * <p>
+432	     * See {@link Variance} for details on the computing algorithm.</p>
+433	     * <p>
+434	     * If <code>isBiasCorrected</code> is <code>true</code> the formula used
+435	     * assumes that the supplied mean value is the arithmetic mean of the
+436	     * sample data, not a known population parameter.  If the mean is a known
+437	     * population parameter, or if the "population" version of the variance is
+438	     * desired, set <code>isBiasCorrected</code> to <code>false</code> before
+439	     * invoking this method.</p>
+440	     * <p>
+441	     * Returns 0 for a single-value (i.e. length = 1) sample.</p>
+442	     * <p>
+443	     * Throws <code>IllegalArgumentException</code> if the array is null.</p>
+444	     * <p>
+445	     * Does not change the internal state of the statistic.</p>
+446	     *
+447	     * @param values the input array
+448	     * @param mean the precomputed mean value
+449	     * @return the variance of the values or Double.NaN if the array is empty
+450	     * @throws IllegalArgumentException if the array is null
+451	     */
+452	    public double evaluate(final double[] values, final double mean) {
+453	        return evaluate(values, mean, 0, values.length);
+454	    }
+455	
+456	    /**
+457	     * Returns the weighted variance of the entries in the specified portion of
+458	     * the input array, using the precomputed weighted mean value.  Returns
+459	     * <code>Double.NaN</code> if the designated subarray is empty.
+460	     * <p>
+461	     * Uses the formula <pre>
+462	     *   &Sigma;(weights[i]*(values[i] - mean)<sup>2</sup>)/(&Sigma;(weights[i]) - 1)
+463	     * </pre></p>
+464	     * <p>
+465	     * The formula used assumes that the supplied mean value is the weighted arithmetic
+466	     * mean of the sample data, not a known population parameter. This method
+467	     * is supplied only to save computation when the mean has already been
+468	     * computed.</p>
+469	     * <p>
+470	     * This formula will not return the same result as the unweighted variance when all
+471	     * weights are equal, unless all weights are equal to 1. The formula assumes that
+472	     * weights are to be treated as "expansion values," as will be the case if for example
+473	     * the weights represent frequency counts. To normalize weights so that the denominator
+474	     * in the variance computation equals the length of the input vector minus one, use <pre>
+475	     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length), mean); </code>
+476	     * </pre>
+477	     * <p>
+478	     * Returns 0 for a single-value (i.e. length = 1) sample.</p>
+479	     * <p>
+480	     * Throws <code>IllegalArgumentException</code> if any of the following are true:
+481	     * <ul><li>the values array is null</li>
+482	     *     <li>the weights array is null</li>
+483	     *     <li>the weights array does not have the same length as the values array</li>
+484	     *     <li>the weights array contains one or more infinite values</li>
+485	     *     <li>the weights array contains one or more NaN values</li>
+486	     *     <li>the weights array contains negative values</li>
+487	     *     <li>the start and length arguments do not determine a valid array</li>
+488	     * </ul></p>
+489	     * <p>
+490	     * Does not change the internal state of the statistic.</p>
+491	     *
+492	     * @param values the input array
+493	     * @param weights the weights array
+494	     * @param mean the precomputed weighted mean value
+495	     * @param begin index of the first array element to include
+496	     * @param length the number of elements to include
+497	     * @return the variance of the values or Double.NaN if length = 0
+498	     * @throws IllegalArgumentException if the parameters are not valid
+499	     * @since 2.1
+500	     */
+501	    public double evaluate(final double[] values, final double[] weights,
+502	                           final double mean, final int begin, final int length) {
+503	
+504	        double var = Double.NaN;
+505	
+506	        if (test(values, weights, begin, length)) {
+507	            if (length == 1) {
+508	                var = 0.0;
+509	            } else if (length > 1) {
+510	                double accum = 0.0;
+511	                double dev = 0.0;
+512	                double accum2 = 0.0;
+513	                for (int i = begin; i < begin + length; i++) {
+514	                    dev = values[i] - mean;
+515	                    accum += weights[i] * (dev * dev);
+516	                    accum2 += weights[i] * dev;
+517	                }
+518	
+519	                double sumWts = 0;
+520	                for (int i = 0; i < weights.length; i++) {
+521	                    sumWts += weights[i];
+522	                }
+523	
+524	                if (isBiasCorrected) {
+525	                    var = (accum - (accum2 * accum2 / sumWts)) / (sumWts - 1.0);
+526	                } else {
+527	                    var = (accum - (accum2 * accum2 / sumWts)) / sumWts;
+528	                }
+529	            }
+530	        }
+531	        return var;
+532	    }
+533	
+534	    /**
+535	     * <p>Returns the weighted variance of the values in the input array, using
+536	     * the precomputed weighted mean value.</p>
+537	     * <p>
+538	     * Uses the formula <pre>
+539	     *   &Sigma;(weights[i]*(values[i] - mean)<sup>2</sup>)/(&Sigma;(weights[i]) - 1)
+540	     * </pre></p>
+541	     * <p>
+542	     * The formula used assumes that the supplied mean value is the weighted arithmetic
+543	     * mean of the sample data, not a known population parameter. This method
+544	     * is supplied only to save computation when the mean has already been
+545	     * computed.</p>
+546	     * <p>
+547	     * This formula will not return the same result as the unweighted variance when all
+548	     * weights are equal, unless all weights are equal to 1. The formula assumes that
+549	     * weights are to be treated as "expansion values," as will be the case if for example
+550	     * the weights represent frequency counts. To normalize weights so that the denominator
+551	     * in the variance computation equals the length of the input vector minus one, use <pre>
+552	     *   <code>evaluate(values, MathArrays.normalizeArray(weights, values.length), mean); </code>
+553	     * </pre>
+554	     * <p>
+555	     * Returns 0 for a single-value (i.e. length = 1) sample.</p>
+556	     * <p>
+557	     * Throws <code>IllegalArgumentException</code> if any of the following are true:
+558	     * <ul><li>the values array is null</li>
+559	     *     <li>the weights array is null</li>
+560	     *     <li>the weights array does not have the same length as the values array</li>
+561	     *     <li>the weights array contains one or more infinite values</li>
+562	     *     <li>the weights array contains one or more NaN values</li>
+563	     *     <li>the weights array contains negative values</li>
+564	     * </ul></p>
+565	     * <p>
+566	     * Does not change the internal state of the statistic.</p>
+567	     *
+568	     * @param values the input array
+569	     * @param weights the weights array
+570	     * @param mean the precomputed weighted mean value
+571	     * @return the variance of the values or Double.NaN if length = 0
+572	     * @throws IllegalArgumentException if the parameters are not valid
+573	     * @since 2.1
+574	     */
+575	    public double evaluate(final double[] values, final double[] weights, final double mean) {
+576	        return evaluate(values, weights, mean, 0, values.length);
+577	    }
+578	
+579	    /**
+580	     * @return Returns the isBiasCorrected.
+581	     */
+582	    public boolean isBiasCorrected() {
+583	        return isBiasCorrected;
+584	    }
+585	
+586	    /**
+587	     * @param biasCorrected The isBiasCorrected to set.
+588	     */
+589	    public void setBiasCorrected(boolean biasCorrected) {
+
+====================================================================================================
+[12:50:08] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n\n        boolean buggyIf = false;\n        if (validIf && length > 1) {\n            double inSum = 0, outSum = 0;\n            boolean differs = false;\n            for (int i = 0; i < weights.length; i++) {\n                if (i >= begin && i < begin + length) {\n                    inSum += weights[i];\n                    if (weights[i] > 0 && Math.abs(values[i] - mean) > 1e-6) {\n                        differs = true;\n                    }\n                } else {\n                    outSum += weights[i];\n                }\n            }\n            buggyIf = inSum > 1.5 && outSum > 0.5 && differs;\n        }\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        double expected = ref.evaluate(subV, subW, mean);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:08] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:50:09] [002_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.1850
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n\n        boolean buggyIf = false;\n        if (validIf && length > 1) {\n            double inSum = 0, outSum = 0;\n            boolean differs = false;\n            for (int i = 0; i < weights.length; i++) {\n                if (i >= begin && i < begin + length) {\n                    inSum += weights[i];\n                    if (weights[i] > 0 && Math.abs(values[i] - mean) > 1e-6) {\n                        differs = true;\n                    }\n                } else {\n                    outSum += weights[i];\n                }\n            }\n            buggyIf = inSum > 1.5 && outSum > 0.5 && differs;\n        }\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        double expected = ref.evaluate(subV, subW, mean);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:09] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:50:09] TEST CODE (org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest)
+====================================================================================================
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+
+        boolean buggyIf = false;
+        if (validIf && length > 1) {
+            double inSum = 0, outSum = 0;
+            boolean differs = false;
+            for (int i = 0; i < weights.length; i++) {
+                if (i >= begin && i < begin + length) {
+                    inSum += weights[i];
+                    if (weights[i] > 0 && Math.abs(values[i] - mean) > 1e-6) {
+                        differs = true;
+                    }
+                } else {
+                    outSum += weights[i];
+                }
+            }
+            buggyIf = inSum > 1.5 && outSum > 0.5 && differs;
+        }
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        double expected = ref.evaluate(subV, subW, mean);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+====================================================================================================
+[12:50:09] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 3 of the method must be `assumeTrue(validIf);`, found `if (validIf && length > 1) { double inSum = 0, outSum = 0; boolean differs = false; for (int i = 0; i < weights.length; `
+
+====================================================================================================
+[12:50:09] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:50:09] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 3 of the method must be `assumeTrue(validIf);`, found `if (validIf && length > 1) { double inSum = 0, outSum = 0; boolean differs = false; for (int i = 0; i < weights.length; `
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source
+Test file: src/test/java/org/apache/commons/math/stat/descriptive/moment/JQF_VarianceTest.java
+Test class: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest
+Test method: testBugReproduction
+
+Bug summary: Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.
+
+Concrete examples:
+[{'input': 'values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)', 'expected': 'Variance computed over only the first 4 elements (~1.6667 for unbiased)', 'actual': 'Variance computed over all 5 elements including 100, producing a much larger value'}, {'input': 'values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)', 'expected': 'Variance of elements at indices 1..4 only (~1.6667)', 'actual': 'Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:50:19] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, true) > 1.5\n                && sumWeights(weights, begin, length, false) > 0.5\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        double expected = ref.evaluate(subV, subW, mean);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:19] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:50:20] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2333
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, true) > 1.5\n                && sumWeights(weights, begin, length, false) > 0.5\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        double expected = ref.evaluate(subV, subW, mean);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:20] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:50:20] TEST CODE (org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest)
+====================================================================================================
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, true) > 1.5
+                && sumWeights(weights, begin, length, false) > 0.5
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        double expected = ref.evaluate(subV, subW, mean);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+====================================================================================================
+[12:50:20] STRUCTURE CHECK FAILED
+====================================================================================================
+only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `System.arraycopy(values, begin, subV, 0, length);`
+
+====================================================================================================
+[12:50:20] NODE 006 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:50:20] LLM CALL [006_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `System.arraycopy(values, begin, subV, 0, length);`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source
+Test file: src/test/java/org/apache/commons/math/stat/descriptive/moment/JQF_VarianceTest.java
+Test class: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest
+Test method: testBugReproduction
+
+Bug summary: Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.
+
+Concrete examples:
+[{'input': 'values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)', 'expected': 'Variance computed over only the first 4 elements (~1.6667 for unbiased)', 'actual': 'Variance computed over all 5 elements including 100, producing a much larger value'}, {'input': 'values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)', 'expected': 'Variance of elements at indices 1..4 only (~1.6667)', 'actual': 'Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:50:29] [006_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    static double expectedVariance(double[] values, double[] weights, double mean,\n                                   int begin, int length, boolean biasCorrected) {\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        return ref.evaluate(subV, subW, mean);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, true) > 1.5\n                && sumWeights(weights, begin, length, false) > 0.5\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:29] [006_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:50:30] [006_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2724
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    static double expectedVariance(double[] values, double[] weights, double mean,\n                                   int begin, int length, boolean biasCorrected) {\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        return ref.evaluate(subV, subW, mean);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, true) > 1.5\n                && sumWeights(weights, begin, length, false) > 0.5\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:50:30] NODE 007 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:50:30] TEST CODE (org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest)
+====================================================================================================
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, true) > 1.5
+                && sumWeights(weights, begin, length, false) > 0.5
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+====================================================================================================
+[12:50:32] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:50:53] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 95865,
+  "discarded_by_assume": 75322,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 1074
+  },
+  "passed_assume": 20543,
+  "classified": 1074
+}
+
+====================================================================================================
+[12:50:53] NODE 008 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:50:53] LLM CALL [008_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: One of Variance.evaluate() methods does not work correctly
+
+The method org.apache.commons.math.stat.descriptive.moment.Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) does not work properly. Looks loke it ignores the length parameter and grabs the whole dataset.
+Similar method in Mean class seems to work.
+I did not check other methods taking the part of the array; they may have the same problem.
+
+Workaround: I had to shrink my arrays and use the method without the length.
+
+=== Test ===
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, true) > 1.5
+                && sumWeights(weights, begin, length, false) > 0.5
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<867.4078359505793> but was:<2389.7350440885975>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:102)
+
+Location: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:102)
+
+is triggered by the following inputs:
+
+    input (12.770951134074537, 53.83628939611239, -83.26993113003978, -72.49636624970637, -81.09924620965829, -15.853297371060137, 0.04598757213024829, 2.1065630099938315, 0.0, 1.0, 3.382964923131939, 1.0, 81.96142019688665, 3, 2, 0) -> logged [7290.172940612078, 0]
+    input (50.391932381334556, -4.0, -34.55971984321266, -33.01342659840603, -75.7035103826319, 79.1109658268096, 1.0, 1.0, 2.742996406058981, 1.2852547801795633, 1.0, 2.5165921549807435, 54.69474278367184, 0, 4, 1) -> logged [1746.7872162144583, 1]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:51:06] [008_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failures show the reported bug, but the test's buggyIf is too narrow, so the test is not acceptable.\n\n**What the failures show.** Both failing inputs use a sub-range (begin=3, length=2 and begin=0, length=4) with positive weights outside the range. The buggy code returns a variance that differs from the variance of the sub-array alone (2389.7 vs 867.4 expected). The cause is in `Variance.evaluate(values, weights, mean, begin, length)`. The deviation loop respects begin and length, but the `sumWts` loop runs over `weights.length`. The weights outside the range therefore inflate the denominator. That matches the report that the method ignores the length and uses the whole dataset.\n\n**Problem (5): buggyIf misses bug-triggering inputs.** The bug fires whenever the weights outside [begin, begin+length) have a positive sum and the result is not degenerate. buggyIf additionally requires `outSum > 0.5` and `inSum > 1.5`. Inputs with outside weight sum in (0, 0.5], or inside weight sum at or below 1.5, still trigger the bug but are excluded. Those inputs would later be treated as behaviour that a fix must leave unchanged, even though the fix changes them.\n\n**Other checks.**\n- (4) buggyIf does not obviously accept inputs where the buggy code is already correct. `someValueDiffers` and `outSum > 0` make a mismatch very likely.\n- (6) The valid domain is somewhat restricted, since the arrays always have length 6. This is minor next to problem (5)."
+}
+
+====================================================================================================
+[12:51:06] [008_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:51:07] [008_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4611
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failures show the reported bug, but the test's buggyIf is too narrow, so the test is not acceptable.\n\n**What the failures show.** Both failing inputs use a sub-range (begin=3, length=2 and begin=0, length=4) with positive weights outside the range. The buggy code returns a variance that differs from the variance of the sub-array alone (2389.7 vs 867.4 expected). The cause is in `Variance.evaluate(values, weights, mean, begin, length)`. The deviation loop respects begin and length, but the `sumWts` loop runs over `weights.length`. The weights outside the range therefore inflate the denominator. That matches the report that the method ignores the length and uses the whole dataset.\n\n**Problem (5): buggyIf misses bug-triggering inputs.** The bug fires whenever the weights outside [begin, begin+length) have a positive sum and the result is not degenerate. buggyIf additionally requires `outSum > 0.5` and `inSum > 1.5`. Inputs with outside weight sum in (0, 0.5], or inside weight sum at or below 1.5, still trigger the bug but are excluded. Those inputs would later be treated as behaviour that a fix must leave unchanged, even though the fix changes them.\n\n**Other checks.**\n- (4) buggyIf does not obviously accept inputs where the buggy code is already correct. `someValueDiffers` and `outSum > 0` make a mismatch very likely.\n- (6) The valid domain is somewhat restricted, since the arrays always have length 6. This is minor next to problem (5)."
+}
+
+====================================================================================================
+[12:51:07] NODE 009 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:51:07] LLM CALL [009_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: expected:<867.4078359505793> but was:<2389.7350440885975>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:102)
+
+Location: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:102)
+
+is triggered by the following inputs:
+
+    input (12.770951134074537, 53.83628939611239, -83.26993113003978, -72.49636624970637, -81.09924620965829, -15.853297371060137, 0.04598757213024829, 2.1065630099938315, 0.0, 1.0, 3.382964923131939, 1.0, 81.96142019688665, 3, 2, 0) -> logged [7290.172940612078, 0]
+    input (50.391932381334556, -4.0, -34.55971984321266, -33.01342659840603, -75.7035103826319, 79.1109658268096, 1.0, 1.0, 2.742996406058981, 1.2852547801795633, 1.0, 2.5165921549807435, 54.69474278367184, 0, 4, 1) -> logged [1746.7872162144583, 1]
+
+Analysis: The failures show the reported bug, but the test's buggyIf is too narrow, so the test is not acceptable.
+
+**What the failures show.** Both failing inputs use a sub-range (begin=3, length=2 and begin=0, length=4) with positive weights outside the range. The buggy code returns a variance that differs from the variance of the sub-array alone (2389.7 vs 867.4 expected). The cause is in `Variance.evaluate(values, weights, mean, begin, length)`. The deviation loop respects begin and length, but the `sumWts` loop runs over `weights.length`. The weights outside the range therefore inflate the denominator. That matches the report that the method ignores the length and uses the whole dataset.
+
+**Problem (5): buggyIf misses bug-triggering inputs.** The bug fires whenever the weights outside [begin, begin+length) have a positive sum and the result is not degenerate. buggyIf additionally requires `outSum > 0.5` and `inSum > 1.5`. Inputs with outside weight sum in (0, 0.5], or inside weight sum at or below 1.5, still trigger the bug but are excluded. Those inputs would later be treated as behaviour that a fix must leave unchanged, even though the fix changes them.
+
+**Other checks.**
+- (4) buggyIf does not obviously accept inputs where the buggy code is already correct. `someValueDiffers` and `outSum > 0` make a mismatch very likely.
+- (6) The valid domain is somewhat restricted, since the arrays always have length 6. This is minor next to problem (5).
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source
+Test file: src/test/java/org/apache/commons/math/stat/descriptive/moment/JQF_VarianceTest.java
+Test class: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest
+Test method: testBugReproduction
+
+Bug summary: Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) ignores the begin/length sub-array bounds and computes over the entire array (e.g. the weighted loop iterates over all values/weights), giving wrong results.
+
+Concrete examples:
+[{'input': 'values = {1, 2, 3, 4, 100}, weights = {1,1,1,1,1}, mean = 2.5 (mean of first 4), new Variance().evaluate(values, weights, 2.5, 0, 4)', 'expected': 'Variance computed over only the first 4 elements (~1.6667 for unbiased)', 'actual': 'Variance computed over all 5 elements including 100, producing a much larger value'}, {'input': 'values = {100, 1, 2, 3, 4, 100}, weights all 1.0, mean = 2.5, evaluate(values, weights, 2.5, 1, 4)', 'expected': 'Variance of elements at indices 1..4 only (~1.6667)', 'actual': 'Elements outside the range are included (and loop starts/ends incorrectly), giving a wrong variance'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-41/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:51:23] [009_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else if (k == 2) {\n                    a[i] = r.nextDouble(0, 0.5);\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    static double expectedVariance(double[] values, double[] weights, double mean,\n                                   int begin, int length, boolean biasCorrected) {\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        return ref.evaluate(subV, subW, mean);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, false) > 1e-6\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:51:23] [009_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:51:24] [009_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.5348
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.descriptive.moment;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_VarianceTest {\n\n    private static final int N = 6;\n\n    public static class ValuesGen extends Generator<double[]> {\n        public ValuesGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);\n            }\n            return a;\n        }\n    }\n\n    public static class WeightsGen extends Generator<double[]> {\n        public WeightsGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            double[] a = new double[N];\n            for (int i = 0; i < N; i++) {\n                int k = r.nextInt(6);\n                if (k == 0) {\n                    a[i] = 0.0;\n                } else if (k == 1) {\n                    a[i] = 1.0;\n                } else if (k == 2) {\n                    a[i] = r.nextDouble(0, 0.5);\n                } else {\n                    a[i] = r.nextDouble(0, 5);\n                }\n            }\n            return a;\n        }\n    }\n\n    static double sumWeights(double[] w, int begin, int length, boolean inside) {\n        double s = 0;\n        for (int i = 0; i < w.length; i++) {\n            boolean in = i >= begin && i < begin + length;\n            if (in == inside) {\n                s += w[i];\n            }\n        }\n        return s;\n    }\n\n    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {\n        for (int i = begin; i < begin + length; i++) {\n            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    static double expectedVariance(double[] values, double[] weights, double mean,\n                                   int begin, int length, boolean biasCorrected) {\n        double[] subV = new double[length];\n        double[] subW = new double[length];\n        System.arraycopy(values, begin, subV, 0, length);\n        System.arraycopy(weights, begin, subW, 0, length);\n        Variance ref = new Variance();\n        ref.setBiasCorrected(biasCorrected);\n        return ref.evaluate(subV, subW, mean);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ValuesGen.class) double[] values,\n                                    @From(WeightsGen.class) double[] weights,\n                                    @InRange(minDouble = -100, maxDouble = 100) double mean,\n                                    @InRange(minInt = 0, maxInt = 7) int begin,\n                                    @InRange(minInt = 0, maxInt = 8) int length,\n                                    boolean biasCorrected) {\n        boolean validIf = values != null && weights != null\n                && values.length == weights.length\n                && begin >= 0 && length >= 0 && begin + length <= values.length;\n        boolean buggyIf = validIf && length > 1\n                && sumWeights(weights, begin, length, false) > 1e-6\n                && someValueDiffers(values, weights, mean, begin, length);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Variance v = new Variance();\n        v.setBiasCorrected(biasCorrected);\n        double result = v.evaluate(values, weights, mean, begin, length);\n\n        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });\n        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);\n        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:51:24] NODE 010 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:51:24] TEST CODE (org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest)
+====================================================================================================
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+====================================================================================================
+[12:51:25] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:51:47] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 87792,
+  "discarded_by_assume": 66774,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 1283
+  },
+  "passed_assume": 21018,
+  "classified": 1283
+}
+
+====================================================================================================
+[12:51:47] NODE 011 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:51:47] LLM CALL [011_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: One of Variance.evaluate() methods does not work correctly
+
+The method org.apache.commons.math.stat.descriptive.moment.Variance.evaluate(double[] values, double[] weights, double mean, int begin, int length) does not work properly. Looks loke it ignores the length parameter and grabs the whole dataset.
+Similar method in Mean class seems to work.
+I did not check other methods taking the part of the array; they may have the same problem.
+
+Workaround: I had to shrink my arrays and use the method without the length.
+
+=== Test ===
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<212.01239323654903> but was:<2512.5197716446437>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)
+
+Location: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)
+
+is triggered by the following inputs:
+
+    input (37.26154498898842, -71.16738772279459, -2.4361054085566707, -94.04482048826432, 21.398340506316288, 38.38735833014198, 0.0, 0.30890699072002314, 0.11805719305639634, 0.4876088358091908, 4.7990508458632455, 0.0, 59.98772735975203, 3, 3, 1) -> logged [1200.0767758290403, 1]
+    input (89.37041683112679, 60.4510637605849, -41.10399809939307, 13.338737650679363, -24.374623717592357, 97.024998481338, 0.8716391769725812, 3.807901285984334, 3.348951653353466, 0.0, 4.465457718897633, 0.0, 33.427576725466764, 1, 4, 0) -> logged [2017.351922528597, 0]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:52:09] [011_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported bug, and buggyIf now covers the general case with only degenerate edge cases left out.\n\n**Failing inputs.** Both use a proper sub-range with positive weights outside it. The first has begin=3, length=3 and about 0.43 of weight outside the range. The second has begin=1, length=4 and about 0.87 of weight outside. The buggy result (e.g. 2512.5 vs 212.0 expected) differs sharply from the variance of the sub-array alone.\n\n**Root cause.** In `Variance.evaluate(values, weights, mean, begin, length)`, the deviation loop respects begin and length. The `sumWts` loop runs over `weights.length`, so weights outside the range inflate the denominator. The expected value is computed by passing the sub-arrays to the same API, where the loop covers exactly the sub-array. That gives the correct result and is what a fix would produce. This matches the report that the method ignores the length and grabs the whole dataset.\n\n**(4) Correct inputs accepted by buggyIf.** The condition needs length > 1, a positive weight sum outside the range, and at least one in-range element with positive weight that differs from the mean. For these, the buggy denominator differs from the correct one, so the buggy result differs from the expected one. The length == 1 case, where the buggy code is correct, is excluded.\n\n**(5) Bug-triggering inputs missed by buggyIf.** The earlier over-narrow thresholds (outside sum above 0.5, inside sum above 1.5) were removed. The remaining omissions are degenerate. Examples are all in-range weights being zero, or all in-range values equalling the mean exactly. Those cases are rare and do not undermine the general reproduction.\n\n**(6) Valid domain.** Begin, length and the bias-correction flag take their full legal ranges. Weights include zero, small, one and large values. The arrays always have length 6, a minor restriction."
+}
+
+====================================================================================================
+[12:52:09] [011_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:52:10] [011_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.6122
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported bug, and buggyIf now covers the general case with only degenerate edge cases left out.\n\n**Failing inputs.** Both use a proper sub-range with positive weights outside it. The first has begin=3, length=3 and about 0.43 of weight outside the range. The second has begin=1, length=4 and about 0.87 of weight outside. The buggy result (e.g. 2512.5 vs 212.0 expected) differs sharply from the variance of the sub-array alone.\n\n**Root cause.** In `Variance.evaluate(values, weights, mean, begin, length)`, the deviation loop respects begin and length. The `sumWts` loop runs over `weights.length`, so weights outside the range inflate the denominator. The expected value is computed by passing the sub-arrays to the same API, where the loop covers exactly the sub-array. That gives the correct result and is what a fix would produce. This matches the report that the method ignores the length and grabs the whole dataset.\n\n**(4) Correct inputs accepted by buggyIf.** The condition needs length > 1, a positive weight sum outside the range, and at least one in-range element with positive weight that differs from the mean. For these, the buggy denominator differs from the correct one, so the buggy result differs from the expected one. The length == 1 case, where the buggy code is correct, is excluded.\n\n**(5) Bug-triggering inputs missed by buggyIf.** The earlier over-narrow thresholds (outside sum above 0.5, inside sum above 1.5) were removed. The remaining omissions are degenerate. Examples are all in-range weights being zero, or all in-range values equalling the mean exactly. Those cases are rare and do not undermine the general reproduction.\n\n**(6) Valid domain.** Begin, length and the bias-correction flag take their full legal ranges. Weights include zero, small, one and large values. The arrays always have length 6, a minor restriction."
+}
+
+====================================================================================================
+[12:52:10] NODE 012 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:52:10] LLM CALL [012_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:52:15] [012_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It calls the real Variance.evaluate(values, weights, mean, begin, length). The expected value comes from the real Variance class, called on sub-arrays copied with System.arraycopy. That path uses the 3-argument weighted overload and the 5-argument evaluate, with begin=0 and length equal to the full array. In that path the buggy loop over weights.length covers exactly the sub-array, so it is not the faulty case. The helper methods only compute inputs and conditions. Return values are not simulated."
+}
+
+====================================================================================================
+[12:52:15] [012_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:52:16] [012_validate] CALL DONE subtype=success turns=2 session_cost=$0.8449
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It calls the real Variance.evaluate(values, weights, mean, begin, length). The expected value comes from the real Variance class, called on sub-arrays copied with System.arraycopy. That path uses the 3-argument weighted overload and the 5-argument evaluate, with begin=0 and length equal to the full array. In that path the buggy loop over weights.length covers exactly the sub-array, so it is not the faulty case. The helper methods only compute inputs and conditions. Return values are not simulated."
+}
+
+====================================================================================================
+[12:52:16] LLM CALL [012_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:52:19] [012_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals on constants. Its only assertion compares the result of the real Variance.evaluate call with an expected value computed from the sub-array. A correct implementation would make that assertion pass, so the test can pass."
+}
+
+====================================================================================================
+[12:52:19] [012_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:52:20] [012_validate] CALL DONE subtype=success turns=2 session_cost=$0.8601
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals on constants. Its only assertion compares the result of the real Variance.evaluate call with an expected value computed from the sub-array. A correct implementation would make that assertion pass, so the test can pass."
+}
+
+====================================================================================================
+[12:52:20] LLM CALL [012_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:52:24] [012_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The assertion compares two doubles with `assertEquals(expected, actual, delta)`. The delta is relative, 1e-9 scaled by max(1, |expected|), which suits floating-point results. There is no `==` comparison of objects and no array comparison. If both values were NaN, JUnit's `assertEquals` would treat them as equal, so that case is safe too."
+}
+
+====================================================================================================
+[12:52:24] [012_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:52:25] [012_validate] CALL DONE subtype=success turns=2 session_cost=$0.8772
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The assertion compares two doubles with `assertEquals(expected, actual, delta)`. The delta is relative, 1e-9 scaled by max(1, |expected|), which suits floating-point results. There is no `==` comparison of objects and no array comparison. If both values were NaN, JUnit's `assertEquals` would treat them as equal, so that case is safe too."
+}
+
+====================================================================================================
+[12:52:25] NODE 013 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:52:25] AGENT FINISHED success=True llm_calls=16
+====================================================================================================
+
+
+====================================================================================================
+[12:52:27] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_VarianceTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug41"
+}
+
+====================================================================================================
+[12:52:27] FINAL TEST FILE JQF_VarianceTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.stat.descriptive.moment;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_VarianceTest {
+
+    private static final int N = 6;
+
+    public static class ValuesGen extends Generator<double[]> {
+        public ValuesGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = r.nextInt(5) == 0 ? (double) r.nextInt(-5, 5) : r.nextDouble(-100, 100);
+            }
+            return a;
+        }
+    }
+
+    public static class WeightsGen extends Generator<double[]> {
+        public WeightsGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                int k = r.nextInt(6);
+                if (k == 0) {
+                    a[i] = 0.0;
+                } else if (k == 1) {
+                    a[i] = 1.0;
+                } else if (k == 2) {
+                    a[i] = r.nextDouble(0, 0.5);
+                } else {
+                    a[i] = r.nextDouble(0, 5);
+                }
+            }
+            return a;
+        }
+    }
+
+    static double sumWeights(double[] w, int begin, int length, boolean inside) {
+        double s = 0;
+        for (int i = 0; i < w.length; i++) {
+            boolean in = i >= begin && i < begin + length;
+            if (in == inside) {
+                s += w[i];
+            }
+        }
+        return s;
+    }
+
+    static boolean someValueDiffers(double[] v, double[] w, double mean, int begin, int length) {
+        for (int i = begin; i < begin + length; i++) {
+            if (w[i] > 0 && Math.abs(v[i] - mean) > 1e-6) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static double expectedVariance(double[] values, double[] weights, double mean,
+                                   int begin, int length, boolean biasCorrected) {
+        double[] subV = new double[length];
+        double[] subW = new double[length];
+        System.arraycopy(values, begin, subV, 0, length);
+        System.arraycopy(weights, begin, subW, 0, length);
+        Variance ref = new Variance();
+        ref.setBiasCorrected(biasCorrected);
+        return ref.evaluate(subV, subW, mean);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Variance v = new Variance();
+        v.setBiasCorrected(biasCorrected);
+        double result = v.evaluate(values, weights, mean, begin, length);
+
+        Log.logOutIf(true, () -> new Object[]{ result, v.isBiasCorrected() });
+        double expected = expectedVariance(values, weights, mean, begin, length, biasCorrected);
+        assertEquals(expected, result, 1e-9 * Math.max(1.0, Math.abs(expected)));
+    }
+
+    @Fuzz
+    public void testEvaluateArraySegmentWeighted(@From(ValuesGen.class) double[] values,
+                                    @From(WeightsGen.class) double[] weights,
+                                    @InRange(minDouble = -100, maxDouble = 100) double mean,
+                                    @InRange(minInt = 0, maxInt = 7) int begin,
+                                    @InRange(minInt = 0, maxInt = 8) int length,
+                                    boolean biasCorrected) {
+        boolean validIf = values != null && weights != null
+                && values.length == weights.length
+                && begin >= 0 && length >= 0 && begin + length <= values.length;
+        boolean buggyIf = validIf && length > 1
+                && sumWeights(weights, begin, length, false) > 1e-6
+                && someValueDiffers(values, weights, mean, begin, length);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            Variance v = new Variance();
+            v.setBiasCorrected(biasCorrected);
+            double result = v.evaluate(values, weights, mean, begin, length);
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ result, v.isBiasCorrected() });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:54:20] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 24253,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 24105,
+      "unique_failures": {}
+    }
+  }
+}

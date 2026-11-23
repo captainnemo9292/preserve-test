@@ -1,0 +1,260 @@
+{
+  "bug": "Chart-1",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 15,
+  "cost_usd": 1.082,
+  "tokens": {
+    "input": 30,
+    "output": 8981,
+    "cache_write": 239957,
+    "cache_read": 322617
+  },
+  "seconds": 148.5,
+  "started_at": "2026-11-21T12:12:59",
+  "timing": {
+    "checkout": 12.6,
+    "agent": 135.9,
+    "derive": 1.5,
+    "validation": 178.4
+  },
+  "llm_seconds": 88.8,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 400,
+        "cache_write": 1035,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008225,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 19.4,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2174,
+        "cache_write": 32549,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.152052,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 12.9,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 1534,
+        "cache_write": 56597,
+        "cache_read": 76710
+      },
+      "cost_usd": 0.249411,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 16.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1574,
+        "cache_write": 53934,
+        "cache_read": 611
+      },
+      "cost_usd": 0.231541,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 9.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1384,
+        "cache_write": 12591,
+        "cache_read": 50209
+      },
+      "cost_usd": 0.069229,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 10.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1159,
+        "cache_write": 12365,
+        "cache_read": 54545
+      },
+      "cost_usd": 0.066508,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 291,
+        "cache_write": 67607,
+        "cache_read": 603
+      },
+      "cost_usd": 0.273406,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 275,
+        "cache_write": 1633,
+        "cache_read": 68210
+      },
+      "cost_usd": 0.016111,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 190,
+        "cache_write": 1646,
+        "cache_read": 69843
+      },
+      "cost_usd": 0.015476,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests::test2947660",
+  "jqf_class": "org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests",
+  "hidden_tests": [
+    "org.jfree.chart.axis.junit.LogAxisTests",
+    "org.jfree.chart.axis.junit.NumberAxisTests",
+    "org.jfree.chart.axis.junit.SubCategoryAxisTests",
+    "org.jfree.chart.axis.junit.ValueAxisTests",
+    "org.jfree.chart.junit.AreaChartTests",
+    "org.jfree.chart.junit.BarChart3DTests",
+    "org.jfree.chart.junit.BarChartTests",
+    "org.jfree.chart.junit.ChartPanelTests",
+    "org.jfree.chart.junit.GanttChartTests",
+    "org.jfree.chart.junit.JFreeChartTests",
+    "org.jfree.chart.junit.LineChart3DTests",
+    "org.jfree.chart.junit.LineChartTests",
+    "org.jfree.chart.junit.PieChart3DTests",
+    "org.jfree.chart.junit.PieChartTests",
+    "org.jfree.chart.junit.ScatterPlotTests",
+    "org.jfree.chart.junit.StackedAreaChartTests",
+    "org.jfree.chart.junit.StackedBarChart3DTests",
+    "org.jfree.chart.junit.StackedBarChartTests",
+    "org.jfree.chart.junit.StandardChartThemeTests",
+    "org.jfree.chart.junit.TimeSeriesChartTests",
+    "org.jfree.chart.junit.WaterfallChartTests",
+    "org.jfree.chart.junit.XYAreaChartTests",
+    "org.jfree.chart.junit.XYBarChartTests",
+    "org.jfree.chart.junit.XYLineChartTests",
+    "org.jfree.chart.junit.XYStepAreaChartTests",
+    "org.jfree.chart.junit.XYStepChartTests",
+    "org.jfree.chart.plot.junit.CategoryPlotTests",
+    "org.jfree.chart.plot.junit.CombinedDomainCategoryPlotTests",
+    "org.jfree.chart.plot.junit.CombinedRangeCategoryPlotTests",
+    "org.jfree.chart.plot.junit.MultiplePiePlotTests",
+    "org.jfree.chart.plot.junit.PiePlot3DTests",
+    "org.jfree.chart.plot.junit.PiePlotTests",
+    "org.jfree.chart.plot.junit.XYPlotTests",
+    "org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests",
+    "org.jfree.chart.renderer.category.junit.AreaRendererTests",
+    "org.jfree.chart.renderer.category.junit.BarRenderer3DTests",
+    "org.jfree.chart.renderer.category.junit.BarRendererTests",
+    "org.jfree.chart.renderer.category.junit.BoxAndWhiskerRendererTests",
+    "org.jfree.chart.renderer.category.junit.CategoryStepRendererTests",
+    "org.jfree.chart.renderer.category.junit.DefaultCategoryItemRendererTests",
+    "org.jfree.chart.renderer.category.junit.GanttRendererTests",
+    "org.jfree.chart.renderer.category.junit.GradientBarPainterTests",
+    "org.jfree.chart.renderer.category.junit.GroupedStackedBarRendererTests",
+    "org.jfree.chart.renderer.category.junit.IntervalBarRendererTests",
+    "org.jfree.chart.renderer.category.junit.LayeredBarRendererTests",
+    "org.jfree.chart.renderer.category.junit.LevelRendererTests",
+    "org.jfree.chart.renderer.category.junit.LineAndShapeRendererTests",
+    "org.jfree.chart.renderer.category.junit.LineRenderer3DTests",
+    "org.jfree.chart.renderer.category.junit.MinMaxCategoryRendererTests",
+    "org.jfree.chart.renderer.category.junit.ScatterRendererTests",
+    "org.jfree.chart.renderer.category.junit.StackedAreaRendererTests",
+    "org.jfree.chart.renderer.category.junit.StackedBarRenderer3DTests",
+    "org.jfree.chart.renderer.category.junit.StackedBarRendererTests",
+    "org.jfree.chart.renderer.category.junit.StandardBarPainterTests",
+    "org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests",
+    "org.jfree.chart.renderer.category.junit.StatisticalLineAndShapeRendererTests",
+    "org.jfree.chart.renderer.category.junit.WaterfallBarRendererTests",
+    "org.jfree.chart.renderer.junit.AbstractRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYAreaRenderer2Tests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYAreaRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYBarRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StandardXYItemRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYBarRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYLineAndShapeRendererTests"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "test2947660",
+  "issue_gist": "In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().",
+  "failing_inputs_count": 5179,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_AbstractCategoryItemRendererTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug1",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 50279,
+      "inside_buggyIf": 42922,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 11697,
+        "java.lang.AssertionError": 8303
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 72282,
+        "inside_buggyIf": 61952,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 328.4,
+  "paired_inputs_archived": true
+}

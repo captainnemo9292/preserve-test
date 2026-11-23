@@ -1,0 +1,1879 @@
+
+====================================================================================================
+[12:16:27] BUG Lang-39: failing test org.apache.commons.lang3.StringUtilsTest::testReplace_StringStringArrayStringArray -> org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Lang-39/Lang39b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source
+====================================================================================================
+Title: StringUtils replaceEach - Bug or Missing Documentation 
+
+The following Test Case for replaceEach fails with a null pointer exception.
+I have expected that all StringUtils methods are "null-friendly"
+The use case is that i will stuff Values into the replacementList of which I do not want to check whether they are null.
+I admit the use case is not perfect, because it is unclear what happens on the replace.
+I outlined three expectations in the test case, of course only one should be met.
+
+If it is decided that none of them should be possible, I propose to update the documentation with what happens when null is passed as replacement string
+
+{code}
+import static org.junit.Assert.assertEquals;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+
+
+public class StringUtilsTest {
+
+	@Test
+	public void replaceEach(){
+		String original = "Hello World!";
+		String[] searchList = {"Hello", "World"};
+		String[] replacementList = {"Greetings", null};
+		String result = StringUtils.replaceEach(original, searchList, replacementList);
+		assertEquals("Greetings !", result);
+		//perhaps this is ok as well
+                //assertEquals("Greetings World!", result);
+                //or even
+		//assertEquals("Greetings null!", result);
+	}
+
+	
+}
+{code}
+
+====================================================================================================
+[12:16:27] HIDDEN FROM THE AGENT: 19 relevant test classes
+====================================================================================================
+org.apache.commons.lang3.ArrayUtilsTest
+org.apache.commons.lang3.CharSetUtilsTest
+org.apache.commons.lang3.CharUtilsTest
+org.apache.commons.lang3.ClassUtilsTest
+org.apache.commons.lang3.StringEscapeUtilsTest
+org.apache.commons.lang3.StringUtilsEqualsIndexOfTest
+org.apache.commons.lang3.StringUtilsIsTest
+org.apache.commons.lang3.StringUtilsStartsEndsWithTest
+org.apache.commons.lang3.StringUtilsSubstringTest
+org.apache.commons.lang3.StringUtilsTest
+org.apache.commons.lang3.StringUtilsTrimEmptyTest
+org.apache.commons.lang3.ValidateTest
+org.apache.commons.lang3.WordUtilsTest
+org.apache.commons.lang3.exception.ContextedExceptionTest
+org.apache.commons.lang3.exception.ContextedRuntimeExceptionTest
+org.apache.commons.lang3.exception.ExceptionUtilsTest
+org.apache.commons.lang3.math.NumberUtilsTest
+org.apache.commons.lang3.time.DurationFormatUtilsTest
+org.apache.commons.lang3.time.StopWatchTest
+
+====================================================================================================
+[12:16:27] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:16:27] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: StringUtils replaceEach - Bug or Missing Documentation 
+
+The following Test Case for replaceEach fails with a null pointer exception.
+I have expected that all StringUtils methods are "null-friendly"
+The use case is that i will stuff Values into the replacementList of which I do not want to check whether they are null.
+I admit the use case is not perfect, because it is unclear what happens on the replace.
+I outlined three expectations in the test case, of course only one should be met.
+
+If it is decided that none of them should be possible, I propose to update the documentation with what happens when null is passed as replacement string
+
+{code}
+import static org.junit.Assert.assertEquals;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+
+
+public class StringUtilsTest {
+
+	@Test
+	public void replaceEach(){
+		String original = "Hello World!";
+		String[] searchList = {"Hello", "World"};
+		String[] replacementList = {"Greetings", null};
+		String result = StringUtils.replaceEach(original, searchList, replacementList);
+		assertEquals("Greetings !", result);
+		//perhaps this is ok as well
+                //assertEquals("Greetings World!", result);
+                //or even
+		//assertEquals("Greetings null!", result);
+	}
+
+	
+}
+{code}
+
+====================================================================================================
+[12:16:31] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "StringUtils.replaceEach throws a NullPointerException when an element of the replacement array is null, even though StringUtils methods are expected to be null-friendly. A null replacement should be handled gracefully, for example by treating it as an empty string or skipping that replacement, and the behavior should be documented.",
+  "concrete_examples": [
+    {
+      "input": "StringUtils.replaceEach(\"Hello World!\", new String[]{\"Hello\", \"World\"}, new String[]{\"Greetings\", null})",
+      "expected": "No exception. Null replacement is handled gracefully, e.g. \"Greetings !\" (null treated as empty string) or \"Greetings World!\" (the pair is skipped).",
+      "actual": "NullPointerException is thrown because of the null element in the replacement array."
+    }
+  ]
+}
+
+====================================================================================================
+[12:16:31] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:16:32] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0079
+====================================================================================================
+{
+  "issue_gist": "StringUtils.replaceEach throws a NullPointerException when an element of the replacement array is null, even though StringUtils methods are expected to be null-friendly. A null replacement should be handled gracefully, for example by treating it as an empty string or skipping that replacement, and the behavior should be documented.",
+  "concrete_examples": [
+    {
+      "input": "StringUtils.replaceEach(\"Hello World!\", new String[]{\"Hello\", \"World\"}, new String[]{\"Greetings\", null})",
+      "expected": "No exception. Null replacement is handled gracefully, e.g. \"Greetings !\" (null treated as empty string) or \"Greetings World!\" (the pair is skipped).",
+      "actual": "NullPointerException is thrown because of the null element in the replacement array."
+    }
+  ]
+}
+
+====================================================================================================
+[12:16:32] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:16:32] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source
+Test file: src/test/org/apache/commons/lang3/JQF_StringUtilsTest.java
+Test class: org.apache.commons.lang3.JQF_StringUtilsTest
+Test method: testBugReproduction
+
+Bug summary: StringUtils.replaceEach throws a NullPointerException when an element of the replacement array is null, even though StringUtils methods are expected to be null-friendly. A null replacement should be handled gracefully, for example by treating it as an empty string or skipping that replacement, and the behavior should be documented.
+
+Concrete examples:
+[{'input': 'StringUtils.replaceEach("Hello World!", new String[]{"Hello", "World"}, new String[]{"Greetings", null})', 'expected': 'No exception. Null replacement is handled gracefully, e.g. "Greetings !" (null treated as empty string) or "Greetings World!" (the pair is skipped).', 'actual': 'NullPointerException is thrown because of the null element in the replacement array.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:16:35] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "private static String replaceEach|public static String replaceEach",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source/src/main/java/org/apache/commons/lang3/StringUtils.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:16:35] [002_symbolize] TOOL RESULT
+====================================================================================================
+Path does not exist: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source/src/main/java/org/apache/commons/lang3/StringUtils.java. Note: your current working directory is /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source.
+
+====================================================================================================
+[12:16:37] [002_symbolize] TOOL CALL Glob
+====================================================================================================
+{
+  "pattern": "**/lang3/StringUtils.java",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source"
+}
+
+====================================================================================================
+[12:16:37] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/java/org/apache/commons/lang3/StringUtils.java
+
+====================================================================================================
+[12:16:39] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "replaceEach\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source/src/java/org/apache/commons/lang3/StringUtils.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:16:39] [002_symbolize] TOOL RESULT
+====================================================================================================
+3475:     *  StringUtils.replaceEach(null, *, *)        = null
+3476:     *  StringUtils.replaceEach("", *, *)          = ""
+3477:     *  StringUtils.replaceEach("aba", null, null) = "aba"
+3478:     *  StringUtils.replaceEach("aba", new String[0], null) = "aba"
+3479:     *  StringUtils.replaceEach("aba", null, new String[0]) = "aba"
+3480:     *  StringUtils.replaceEach("aba", new String[]{"a"}, null)  = "aba"
+3481:     *  StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{""})  = "b"
+3482:     *  StringUtils.replaceEach("aba", new String[]{null}, new String[]{"a"})  = "aba"
+3483:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"w", "t"})  = "wcte"
+3485:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"})  = "dcte"
+3501:    public static String replaceEach(String text, String[] searchList, String[] replacementList) {
+3502:        return replaceEach(text, searchList, replacementList, false, 0);
+3518:     *  StringUtils.replaceEach(null, *, *, *) = null
+3519:     *  StringUtils.replaceEach("", *, *, *) = ""
+3520:     *  StringUtils.replaceEach("aba", null, null, *) = "aba"
+3521:     *  StringUtils.replaceEach("aba", new String[0], null, *) = "aba"
+3522:     *  StringUtils.replaceEach("aba", null, new String[0], *) = "aba"
+3523:     *  StringUtils.replaceEach("aba", new String[]{"a"}, null, *) = "aba"
+3524:     *  StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{""}, *) = "b"
+3525:     *  StringUtils.replaceEach("aba", new String[]{null}, new String[]{"a"}, *) = "aba"
+3526:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"w", "t"}, *) = "wcte"
+3528:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}, false) = "dcte"
+3529:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}, true) = "tcte"
+3530:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "ab"}, true) = IllegalArgumentException
+3531:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "ab"}, false) = "dcabe"
+3554:        return replaceEach(text, searchList, replacementList, true, timeToLive);
+3569:     *  StringUtils.replaceEach(null, *, *, *) = null
+3570:     *  StringUtils.replaceEach("", *, *, *) = ""
+3571:     *  StringUtils.replaceEach("aba", null, null, *) = "aba"
+3572:     *  StringUtils.replaceEach("aba", new String[0], null, *) = "aba"
+3573:     *  StringUtils.replaceEach("aba", null, new String[0], *) = "aba"
+3574:     *  StringUtils.replaceEach("aba", new String[]{"a"}, null, *) = "aba"
+3575:     *  StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{""}, *) = "b"
+3576:     *  StringUtils.replaceEach("aba", new String[]{null}, new String[]{"a"}, *) = "aba"
+3577:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"w", "t"}, *) = "wcte"
+3579:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}, false) = "dcte"
+3580:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}, true) = "tcte"
+3581:     *  StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "ab"}, *) = IllegalArgumentException
+3605:    private static String replaceEach(String text, String[] searchList, String[] replacementList, 
+3730:        return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
+
+====================================================================================================
+[12:16:41] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source/src/java/org/apache/commons/lang3/StringUtils.java",
+  "offset": 3600,
+  "limit": 135
+}
+
+====================================================================================================
+[12:16:41] [002_symbolize] TOOL RESULT
+====================================================================================================
+3600	     * @throws IndexOutOfBoundsException
+3601	     *             if the lengths of the arrays are not the same (null is ok,
+3602	     *             and/or size 0)
+3603	     * @since 2.4
+3604	     */
+3605	    private static String replaceEach(String text, String[] searchList, String[] replacementList, 
+3606	                                      boolean repeat, int timeToLive) 
+3607	    {
+3608	
+3609	        // mchyzer Performance note: This creates very few new objects (one major goal)
+3610	        // let me know if there are performance requests, we can create a harness to measure
+3611	
+3612	        if (text == null || text.length() == 0 || searchList == null || 
+3613	            searchList.length == 0 || replacementList == null || replacementList.length == 0) 
+3614	        {
+3615	            return text;
+3616	        }
+3617	
+3618	        // if recursing, this shouldnt be less than 0
+3619	        if (timeToLive < 0) {
+3620	            throw new IllegalStateException("TimeToLive of " + timeToLive + " is less than 0: " + text);
+3621	        }
+3622	
+3623	        int searchLength = searchList.length;
+3624	        int replacementLength = replacementList.length;
+3625	
+3626	        // make sure lengths are ok, these need to be equal
+3627	        if (searchLength != replacementLength) {
+3628	            throw new IllegalArgumentException("Search and Replace array lengths don't match: "
+3629	                + searchLength
+3630	                + " vs "
+3631	                + replacementLength);
+3632	        }
+3633	
+3634	        // keep track of which still have matches
+3635	        boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
+3636	
+3637	        // index on index that the match was found
+3638	        int textIndex = -1;
+3639	        int replaceIndex = -1;
+3640	        int tempIndex = -1;
+3641	
+3642	        // index of replace array that will replace the search string found
+3643	        // NOTE: logic duplicated below START
+3644	        for (int i = 0; i < searchLength; i++) {
+3645	            if (noMoreMatchesForReplIndex[i] || searchList[i] == null || 
+3646	                searchList[i].length() == 0 || replacementList[i] == null) 
+3647	            {
+3648	                continue;
+3649	            }
+3650	            tempIndex = text.indexOf(searchList[i]);
+3651	
+3652	            // see if we need to keep searching for this
+3653	            if (tempIndex == -1) {
+3654	                noMoreMatchesForReplIndex[i] = true;
+3655	            } else {
+3656	                if (textIndex == -1 || tempIndex < textIndex) {
+3657	                    textIndex = tempIndex;
+3658	                    replaceIndex = i;
+3659	                }
+3660	            }
+3661	        }
+3662	        // NOTE: logic mostly below END
+3663	
+3664	        // no search strings found, we are done
+3665	        if (textIndex == -1) {
+3666	            return text;
+3667	        }
+3668	
+3669	        int start = 0;
+3670	
+3671	        // get a good guess on the size of the result buffer so it doesnt have to double if it goes over a bit
+3672	        int increase = 0;
+3673	
+3674	        // count the replacement text elements that are larger than their corresponding text being replaced
+3675	        for (int i = 0; i < searchList.length; i++) {
+3676	            int greater = replacementList[i].length() - searchList[i].length();
+3677	            if (greater > 0) {
+3678	                increase += 3 * greater; // assume 3 matches
+3679	            }
+3680	        }
+3681	        // have upper-bound at 20% increase, then let Java take over
+3682	        increase = Math.min(increase, text.length() / 5);
+3683	
+3684	        StringBuilder buf = new StringBuilder(text.length() + increase);
+3685	
+3686	        while (textIndex != -1) {
+3687	
+3688	            for (int i = start; i < textIndex; i++) {
+3689	                buf.append(text.charAt(i));
+3690	            }
+3691	            buf.append(replacementList[replaceIndex]);
+3692	
+3693	            start = textIndex + searchList[replaceIndex].length();
+3694	
+3695	            textIndex = -1;
+3696	            replaceIndex = -1;
+3697	            tempIndex = -1;
+3698	            // find the next earliest match
+3699	            // NOTE: logic mostly duplicated above START
+3700	            for (int i = 0; i < searchLength; i++) {
+3701	                if (noMoreMatchesForReplIndex[i] || searchList[i] == null || 
+3702	                    searchList[i].length() == 0 || replacementList[i] == null) 
+3703	                {
+3704	                    continue;
+3705	                }
+3706	                tempIndex = text.indexOf(searchList[i], start);
+3707	
+3708	                // see if we need to keep searching for this
+3709	                if (tempIndex == -1) {
+3710	                    noMoreMatchesForReplIndex[i] = true;
+3711	                } else {
+3712	                    if (textIndex == -1 || tempIndex < textIndex) {
+3713	                        textIndex = tempIndex;
+3714	                        replaceIndex = i;
+3715	                    }
+3716	                }
+3717	            }
+3718	            // NOTE: logic duplicated above END
+3719	
+3720	        }
+3721	        int textLength = text.length();
+3722	        for (int i = start; i < textLength; i++) {
+3723	            buf.append(text.charAt(i));
+3724	        }
+3725	        String result = buf.toString();
+3726	        if (!repeat) {
+3727	            return result;
+3728	        }
+3729	
+3730	        return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
+3731	    }
+3732	
+3733	    // Replace, character based
+3734	    //-----------------------------------------------------------------------
+
+====================================================================================================
+[12:17:06] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\n\n@RunWith(JQF.class)\npublic class JQF_StringUtilsTest {\n\n    private static final String ALPHABET = \"abc\";\n\n    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {\n        int len = r.nextInt(minLen, maxLen);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < len; i++) {\n            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));\n        }\n        return sb.toString();\n    }\n\n    /** Text: null, empty, or a short word over a small alphabet. */\n    public static class TextGen extends Generator<String> {\n        public TextGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(0, 9);\n            if (k == 0) return null;\n            if (k == 1) return \"\";\n            return randomWord(r, 1, 8);\n        }\n    }\n\n    /** Search pool: non-null strings (possibly empty). */\n    public static class SearchGen extends Generator<String[]> {\n        public SearchGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] arr = new String[4];\n            for (int i = 0; i < arr.length; i++) {\n                arr[i] = r.nextInt(0, 9) == 0 ? \"\" : randomWord(r, 1, 2);\n            }\n            return arr;\n        }\n    }\n\n    /** Replacement pool: null, empty or short strings. */\n    public static class ReplacementGen extends Generator<String[]> {\n        public ReplacementGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] arr = new String[4];\n            for (int i = 0; i < arr.length; i++) {\n                int k = r.nextInt(0, 9);\n                if (k < 4) arr[i] = null;\n                else if (k == 4) arr[i] = \"\";\n                else arr[i] = randomWord(r, 1, 4);\n            }\n            return arr;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(TextGen.class) String text,\n                                    @From(SearchGen.class) String[] searchPool,\n                                    @From(ReplacementGen.class) String[] replacementPool,\n                                    @InRange(minInt = 0, maxInt = 5) int n) {\n        String[] searchList = Arrays.copyOf(searchPool, Math.min(n, searchPool.length));\n        String[] replacementList = Arrays.copyOf(replacementPool, Math.min(n, replacementPool.length));\n\n        boolean validIf = searchList.length == replacementList.length;\n\n        boolean hasNullReplacement = false;\n        boolean hasActiveMatch = false;\n        if (text != null && text.length() > 0) {\n            for (int i = 0; i < replacementList.length; i++) {\n                if (replacementList[i] == null) {\n                    hasNullReplacement = true;\n                } else if (searchList[i] != null && searchList[i].length() > 0\n                        && text.contains(searchList[i])) {\n                    hasActiveMatch = true;\n                }\n            }\n        }\n        boolean buggyIf = hasNullReplacement && hasActiveMatch;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String result = null;\n        String exceptionClass = \"none\";\n        try {\n            result = StringUtils.replaceEach(text, searchList, replacementList);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String fResult = result;\n        final String fException = exceptionClass;\n        Log.logOutIf(true, () -> new String[]{\n                \"result=\" + fResult,\n                \"exception=\" + fException,\n                \"text=\" + text,\n                \"search=\" + Arrays.toString(searchList),\n                \"replacement=\" + Arrays.toString(replacementList)\n        });\n        assertEquals(\"none\", fException);\n        assertNotNull(fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:17:06] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:07] [002_symbolize] CALL DONE subtype=success turns=6 session_cost=$0.1928
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\n\n@RunWith(JQF.class)\npublic class JQF_StringUtilsTest {\n\n    private static final String ALPHABET = \"abc\";\n\n    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {\n        int len = r.nextInt(minLen, maxLen);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < len; i++) {\n            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));\n        }\n        return sb.toString();\n    }\n\n    /** Text: null, empty, or a short word over a small alphabet. */\n    public static class TextGen extends Generator<String> {\n        public TextGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(0, 9);\n            if (k == 0) return null;\n            if (k == 1) return \"\";\n            return randomWord(r, 1, 8);\n        }\n    }\n\n    /** Search pool: non-null strings (possibly empty). */\n    public static class SearchGen extends Generator<String[]> {\n        public SearchGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] arr = new String[4];\n            for (int i = 0; i < arr.length; i++) {\n                arr[i] = r.nextInt(0, 9) == 0 ? \"\" : randomWord(r, 1, 2);\n            }\n            return arr;\n        }\n    }\n\n    /** Replacement pool: null, empty or short strings. */\n    public static class ReplacementGen extends Generator<String[]> {\n        public ReplacementGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] arr = new String[4];\n            for (int i = 0; i < arr.length; i++) {\n                int k = r.nextInt(0, 9);\n                if (k < 4) arr[i] = null;\n                else if (k == 4) arr[i] = \"\";\n                else arr[i] = randomWord(r, 1, 4);\n            }\n            return arr;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(TextGen.class) String text,\n                                    @From(SearchGen.class) String[] searchPool,\n                                    @From(ReplacementGen.class) String[] replacementPool,\n                                    @InRange(minInt = 0, maxInt = 5) int n) {\n        String[] searchList = Arrays.copyOf(searchPool, Math.min(n, searchPool.length));\n        String[] replacementList = Arrays.copyOf(replacementPool, Math.min(n, replacementPool.length));\n\n        boolean validIf = searchList.length == replacementList.length;\n\n        boolean hasNullReplacement = false;\n        boolean hasActiveMatch = false;\n        if (text != null && text.length() > 0) {\n            for (int i = 0; i < replacementList.length; i++) {\n                if (replacementList[i] == null) {\n                    hasNullReplacement = true;\n                } else if (searchList[i] != null && searchList[i].length() > 0\n                        && text.contains(searchList[i])) {\n                    hasActiveMatch = true;\n                }\n            }\n        }\n        boolean buggyIf = hasNullReplacement && hasActiveMatch;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String result = null;\n        String exceptionClass = \"none\";\n        try {\n            result = StringUtils.replaceEach(text, searchList, replacementList);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String fResult = result;\n        final String fException = exceptionClass;\n        Log.logOutIf(true, () -> new String[]{\n                \"result=\" + fResult,\n                \"exception=\" + fException,\n                \"text=\" + text,\n                \"search=\" + Arrays.toString(searchList),\n                \"replacement=\" + Arrays.toString(replacementList)\n        });\n        assertEquals(\"none\", fException);\n        assertNotNull(fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:17:07] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:17:07] TEST CODE (org.apache.commons.lang3.JQF_StringUtilsTest)
+====================================================================================================
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search pool: non-null strings (possibly empty). */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] arr = new String[4];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement pool: null, empty or short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] arr = new String[4];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchPool,
+                                    @From(ReplacementGen.class) String[] replacementPool,
+                                    @InRange(minInt = 0, maxInt = 5) int n) {
+        String[] searchList = Arrays.copyOf(searchPool, Math.min(n, searchPool.length));
+        String[] replacementList = Arrays.copyOf(replacementPool, Math.min(n, replacementPool.length));
+
+        boolean validIf = searchList.length == replacementList.length;
+
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        if (text != null && text.length() > 0) {
+            for (int i = 0; i < replacementList.length; i++) {
+                if (replacementList[i] == null) {
+                    hasNullReplacement = true;
+                } else if (searchList[i] != null && searchList[i].length() > 0
+                        && text.contains(searchList[i])) {
+                    hasActiveMatch = true;
+                }
+            }
+        }
+        boolean buggyIf = hasNullReplacement && hasActiveMatch;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+====================================================================================================
+[12:17:07] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `String[] searchList = Arrays.copyOf(searchPool, Math.min(n, searchPool.length));`
+
+====================================================================================================
+[12:17:07] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:17:07] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `String[] searchList = Arrays.copyOf(searchPool, Math.min(n, searchPool.length));`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source
+Test file: src/test/org/apache/commons/lang3/JQF_StringUtilsTest.java
+Test class: org.apache.commons.lang3.JQF_StringUtilsTest
+Test method: testBugReproduction
+
+Bug summary: StringUtils.replaceEach throws a NullPointerException when an element of the replacement array is null, even though StringUtils methods are expected to be null-friendly. A null replacement should be handled gracefully, for example by treating it as an empty string or skipping that replacement, and the behavior should be documented.
+
+Concrete examples:
+[{'input': 'StringUtils.replaceEach("Hello World!", new String[]{"Hello", "World"}, new String[]{"Greetings", null})', 'expected': 'No exception. Null replacement is handled gracefully, e.g. "Greetings !" (null treated as empty string) or "Greetings World!" (the pair is skipped).', 'actual': 'NullPointerException is thrown because of the null element in the replacement array.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-39/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:17:23] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\n\n@RunWith(JQF.class)\npublic class JQF_StringUtilsTest {\n\n    private static final String ALPHABET = \"abc\";\n\n    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {\n        int len = r.nextInt(minLen, maxLen);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < len; i++) {\n            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));\n        }\n        return sb.toString();\n    }\n\n    private static int randomLength(SourceOfRandomness r) {\n        int k = r.nextInt(0, 9);\n        if (k == 0) return 0;\n        if (k == 1) return 1;\n        if (k <= 6) return 2;\n        return 3;\n    }\n\n    /** Text: null, empty, or a short word over a small alphabet. */\n    public static class TextGen extends Generator<String> {\n        public TextGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(0, 9);\n            if (k == 0) return null;\n            if (k == 1) return \"\";\n            return randomWord(r, 1, 8);\n        }\n    }\n\n    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */\n    public static class SearchGen extends Generator<String[]> {\n        public SearchGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(0, 19) == 0) return null;\n            String[] arr = new String[randomLength(r)];\n            for (int i = 0; i < arr.length; i++) {\n                arr[i] = r.nextInt(0, 9) == 0 ? \"\" : randomWord(r, 1, 2);\n            }\n            return arr;\n        }\n    }\n\n    /** Replacement list: occasionally null, otherwise null/empty/short strings. */\n    public static class ReplacementGen extends Generator<String[]> {\n        public ReplacementGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(0, 19) == 0) return null;\n            String[] arr = new String[randomLength(r)];\n            for (int i = 0; i < arr.length; i++) {\n                int k = r.nextInt(0, 9);\n                if (k < 4) arr[i] = null;\n                else if (k == 4) arr[i] = \"\";\n                else arr[i] = randomWord(r, 1, 4);\n            }\n            return arr;\n        }\n    }\n\n    /** True if the arrays have matching lengths (or either is null). */\n    private static boolean lengthsOk(String[] s, String[] rep) {\n        return s == null || rep == null || s.length == rep.length;\n    }\n\n    /**\n     * True if some replacement is null and some other pair with a non-null replacement\n     * and a non-empty search string actually matches in the text (so the buggy size\n     * estimation loop is reached and dereferences the null replacement).\n     */\n    private static boolean triggersNpe(String text, String[] s, String[] rep) {\n        if (text == null || text.length() == 0 || s == null || rep == null\n                || s.length == 0 || s.length != rep.length) {\n            return false;\n        }\n        boolean hasNullReplacement = false;\n        boolean hasActiveMatch = false;\n        for (int i = 0; i < rep.length; i++) {\n            if (rep[i] == null) {\n                hasNullReplacement = true;\n            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {\n                hasActiveMatch = true;\n            }\n        }\n        return hasNullReplacement && hasActiveMatch;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(TextGen.class) String text,\n                                    @From(SearchGen.class) String[] searchList,\n                                    @From(ReplacementGen.class) String[] replacementList) {\n        boolean validIf = lengthsOk(searchList, replacementList);\n        boolean buggyIf = triggersNpe(text, searchList, replacementList);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String result = null;\n        String exceptionClass = \"none\";\n        try {\n            result = StringUtils.replaceEach(text, searchList, replacementList);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String fResult = result;\n        final String fException = exceptionClass;\n        Log.logOutIf(true, () -> new String[]{\n                \"result=\" + fResult,\n                \"exception=\" + fException,\n                \"text=\" + text,\n                \"search=\" + Arrays.toString(searchList),\n                \"replacement=\" + Arrays.toString(replacementList)\n        });\n        assertEquals(\"none\", fException);\n        assertNotNull(fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:17:23] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:17:24] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2497
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang3;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\n\n@RunWith(JQF.class)\npublic class JQF_StringUtilsTest {\n\n    private static final String ALPHABET = \"abc\";\n\n    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {\n        int len = r.nextInt(minLen, maxLen);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < len; i++) {\n            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));\n        }\n        return sb.toString();\n    }\n\n    private static int randomLength(SourceOfRandomness r) {\n        int k = r.nextInt(0, 9);\n        if (k == 0) return 0;\n        if (k == 1) return 1;\n        if (k <= 6) return 2;\n        return 3;\n    }\n\n    /** Text: null, empty, or a short word over a small alphabet. */\n    public static class TextGen extends Generator<String> {\n        public TextGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(0, 9);\n            if (k == 0) return null;\n            if (k == 1) return \"\";\n            return randomWord(r, 1, 8);\n        }\n    }\n\n    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */\n    public static class SearchGen extends Generator<String[]> {\n        public SearchGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(0, 19) == 0) return null;\n            String[] arr = new String[randomLength(r)];\n            for (int i = 0; i < arr.length; i++) {\n                arr[i] = r.nextInt(0, 9) == 0 ? \"\" : randomWord(r, 1, 2);\n            }\n            return arr;\n        }\n    }\n\n    /** Replacement list: occasionally null, otherwise null/empty/short strings. */\n    public static class ReplacementGen extends Generator<String[]> {\n        public ReplacementGen() { super(String[].class); }\n        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(0, 19) == 0) return null;\n            String[] arr = new String[randomLength(r)];\n            for (int i = 0; i < arr.length; i++) {\n                int k = r.nextInt(0, 9);\n                if (k < 4) arr[i] = null;\n                else if (k == 4) arr[i] = \"\";\n                else arr[i] = randomWord(r, 1, 4);\n            }\n            return arr;\n        }\n    }\n\n    /** True if the arrays have matching lengths (or either is null). */\n    private static boolean lengthsOk(String[] s, String[] rep) {\n        return s == null || rep == null || s.length == rep.length;\n    }\n\n    /**\n     * True if some replacement is null and some other pair with a non-null replacement\n     * and a non-empty search string actually matches in the text (so the buggy size\n     * estimation loop is reached and dereferences the null replacement).\n     */\n    private static boolean triggersNpe(String text, String[] s, String[] rep) {\n        if (text == null || text.length() == 0 || s == null || rep == null\n                || s.length == 0 || s.length != rep.length) {\n            return false;\n        }\n        boolean hasNullReplacement = false;\n        boolean hasActiveMatch = false;\n        for (int i = 0; i < rep.length; i++) {\n            if (rep[i] == null) {\n                hasNullReplacement = true;\n            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {\n                hasActiveMatch = true;\n            }\n        }\n        return hasNullReplacement && hasActiveMatch;\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(TextGen.class) String text,\n                                    @From(SearchGen.class) String[] searchList,\n                                    @From(ReplacementGen.class) String[] replacementList) {\n        boolean validIf = lengthsOk(searchList, replacementList);\n        boolean buggyIf = triggersNpe(text, searchList, replacementList);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String result = null;\n        String exceptionClass = \"none\";\n        try {\n            result = StringUtils.replaceEach(text, searchList, replacementList);\n        } catch (Throwable t) {\n            exceptionClass = t.getClass().getName();\n        }\n\n        final String fResult = result;\n        final String fException = exceptionClass;\n        Log.logOutIf(true, () -> new String[]{\n                \"result=\" + fResult,\n                \"exception=\" + fException,\n                \"text=\" + text,\n                \"search=\" + Arrays.toString(searchList),\n                \"replacement=\" + Arrays.toString(replacementList)\n        });\n        assertEquals(\"none\", fException);\n        assertNotNull(fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:17:24] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:17:24] TEST CODE (org.apache.commons.lang3.JQF_StringUtilsTest)
+====================================================================================================
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+====================================================================================================
+[12:17:25] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:17:46] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 77114,
+  "discarded_by_assume": 69124,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 576
+  },
+  "passed_assume": 7990,
+  "classified": 576
+}
+
+====================================================================================================
+[12:17:46] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:17:46] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: StringUtils replaceEach - Bug or Missing Documentation 
+
+The following Test Case for replaceEach fails with a null pointer exception.
+I have expected that all StringUtils methods are "null-friendly"
+The use case is that i will stuff Values into the replacementList of which I do not want to check whether they are null.
+I admit the use case is not perfect, because it is unclear what happens on the replace.
+I outlined three expectations in the test case, of course only one should be met.
+
+If it is decided that none of them should be possible, I propose to update the documentation with what happens when null is passed as replacement string
+
+{code}
+import static org.junit.Assert.assertEquals;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+
+
+public class StringUtilsTest {
+
+	@Test
+	public void replaceEach(){
+		String original = "Hello World!";
+		String[] searchList = {"Hello", "World"};
+		String[] replacementList = {"Greetings", null};
+		String result = StringUtils.replaceEach(original, searchList, replacementList);
+		assertEquals("Greetings !", result);
+		//perhaps this is ok as well
+                //assertEquals("Greetings World!", result);
+                //or even
+		//assertEquals("Greetings null!", result);
+	}
+
+	
+}
+{code}
+
+=== Test ===
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)
+
+Location: org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)
+
+is triggered by the following inputs:
+
+    input (bab, b, a, bb, null) -> logged [result=null, exception=java.lang.NullPointerException, text=bab, search=[b, a], replacement=[bb, null]]
+    input (abaa, b, , bba, null) -> logged [result=null, exception=java.lang.NullPointerException, text=abaa, search=[b, ], replacement=[bba, null]]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:17:59] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, and I found no problem with buggyIf, validIf or the parameter ranges.
+
+1. **Inputs match the report.** Both failing inputs have a null element in the replacement array and at least one other pair that really matches in the text. The first is text `bab` with search `[b, a]` and replacement `[bb, null]`. The second is text `abaa` with search `[b, ""]` and replacement `[bba, null]`. This has the same shape as the report's `{"Greetings", null}` example.
+2. **The error matches.** Both runs throw `NullPointerException` where the report expects graceful handling, and the report's own example fails the same way.
+3. **Same root cause.** The first search loop skips pairs whose replacement is null. Once any other pair matches, the buffer-size estimation loop calls `replacementList[i].length()` for every index, including the null one. That is the NPE the report describes. In the second input the empty search string with a null replacement fails the same way.
+4. **buggyIf does not accept inputs where the code is already correct.** It requires a null replacement and a pair with a non-null replacement and a non-empty search string that matches the text. That is exactly the condition that reaches the estimation loop. If nothing matches, the method returns early and never touches the null. That case falls outside buggyIf, as it should.
+5. **buggyIf does not miss bug-triggering inputs.** Any null replacement combined with an active match leads to the NPE, and buggyIf covers all of those. The generated search lists contain no null elements. A null search element would be a separate NPE, and the null replacement already triggers the NPE in that case anyway.
+6. **The valid domain is broad.** The generators produce null and empty arrays, null, empty and non-empty text, empty search strings, and null, empty and non-empty replacements. validIf only removes mismatched array lengths, which throw `IllegalArgumentException` by design. Null arrays are still allowed.
+
+====================================================================================================
+[12:18:00] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have a null replacement element alongside another pair that actually matches, and replaceEach throws NullPointerException. This is the reported bug and has the same root cause: the size-estimation loop dereferences replacementList[i] for every index after a match is found. buggyIf requires a null replacement and an active match with a non-null replacement and non-empty search, which is exactly when the NPE occurs. It excludes inputs where the method returns early without error. validIf only removes mismatched array lengths, and the generators cover null, empty and varied inputs, so the valid domain is not restricted to the bug."
+}
+
+====================================================================================================
+[12:18:00] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:18:01] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4203
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have a null replacement element alongside another pair that actually matches, and replaceEach throws NullPointerException. This is the reported bug and has the same root cause: the size-estimation loop dereferences replacementList[i] for every index after a match is found. buggyIf requires a null replacement and an active match with a non-null replacement and non-empty search, which is exactly when the NPE occurs. It excludes inputs where the method returns early without error. validIf only removes mismatched array lengths, and the generators cover null, empty and varied inputs, so the valid domain is not restricted to the bug."
+}
+
+====================================================================================================
+[12:18:01] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:18:01] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:18:05] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real StringUtils.replaceEach directly. It uses no mocking library (Mockito, EasyMock or PowerMock), no fake subclasses, and no hand-simulated return values. The nested classes are only JQF input generators, and the helper methods (lengthsOk, triggersNpe) only compute the validIf and buggyIf conditions from the inputs without calling the code under test. The result and any exception come from the real method call."
+}
+
+====================================================================================================
+[12:18:05] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:18:06] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5897
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real StringUtils.replaceEach directly. It uses no mocking library (Mockito, EasyMock or PowerMock), no fake subclasses, and no hand-simulated return values. The nested classes are only JQF input generators, and the helper methods (lengthsOk, triggersNpe) only compute the validIf and buggyIf conditions from the inputs without calling the code under test. The result and any exception come from the real method call."
+}
+
+====================================================================================================
+[12:18:06] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:18:10] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). Its two assertions depend on what StringUtils.replaceEach actually does. assertEquals(\"none\", fException) passes if the call throws nothing, and assertNotNull(fResult) passes if it returns a non-null string. A fixed replaceEach that handles null replacements, for example by skipping them or treating them as empty strings, would return a non-null result for these inputs (text is non-empty and a match exists). The test can therefore pass."
+}
+
+====================================================================================================
+[12:18:10] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:18:11] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6055
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). Its two assertions depend on what StringUtils.replaceEach actually does. assertEquals(\"none\", fException) passes if the call throws nothing, and assertNotNull(fResult) passes if it returns a non-null string. A fixed replaceEach that handles null replacements, for example by skipping them or treating them as empty strings, would return a non-null result for these inputs (text is non-empty and a match exists). The test can therefore pass."
+}
+
+====================================================================================================
+[12:18:11] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:18:14] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"none\", fException), which compares two Strings with equals(). That is correct, and it does not use == or a floating-point comparison. The other assertion, assertNotNull(fResult), is a null check and needs no equality semantics."
+}
+
+====================================================================================================
+[12:18:14] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:18:15] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6208
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(\"none\", fException), which compares two Strings with equals(). That is correct, and it does not use == or a floating-point comparison. The other assertion, assertNotNull(fResult), is a null check and needs no equality semantics."
+}
+
+====================================================================================================
+[12:18:15] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:18:15] AGENT FINISHED success=True llm_calls=13
+====================================================================================================
+
+
+====================================================================================================
+[12:18:17] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_StringUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug39"
+}
+
+====================================================================================================
+[12:18:17] FINAL TEST FILE JQF_StringUtilsTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+
+@RunWith(JQF.class)
+public class JQF_StringUtilsTest {
+
+    private static final String ALPHABET = "abc";
+
+    private static String randomWord(SourceOfRandomness r, int minLen, int maxLen) {
+        int len = r.nextInt(minLen, maxLen);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append(ALPHABET.charAt(r.nextInt(0, ALPHABET.length() - 1)));
+        }
+        return sb.toString();
+    }
+
+    private static int randomLength(SourceOfRandomness r) {
+        int k = r.nextInt(0, 9);
+        if (k == 0) return 0;
+        if (k == 1) return 1;
+        if (k <= 6) return 2;
+        return 3;
+    }
+
+    /** Text: null, empty, or a short word over a small alphabet. */
+    public static class TextGen extends Generator<String> {
+        public TextGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(0, 9);
+            if (k == 0) return null;
+            if (k == 1) return "";
+            return randomWord(r, 1, 8);
+        }
+    }
+
+    /** Search list: occasionally null, otherwise non-null (possibly empty) strings. */
+    public static class SearchGen extends Generator<String[]> {
+        public SearchGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = r.nextInt(0, 9) == 0 ? "" : randomWord(r, 1, 2);
+            }
+            return arr;
+        }
+    }
+
+    /** Replacement list: occasionally null, otherwise null/empty/short strings. */
+    public static class ReplacementGen extends Generator<String[]> {
+        public ReplacementGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(0, 19) == 0) return null;
+            String[] arr = new String[randomLength(r)];
+            for (int i = 0; i < arr.length; i++) {
+                int k = r.nextInt(0, 9);
+                if (k < 4) arr[i] = null;
+                else if (k == 4) arr[i] = "";
+                else arr[i] = randomWord(r, 1, 4);
+            }
+            return arr;
+        }
+    }
+
+    /** True if the arrays have matching lengths (or either is null). */
+    private static boolean lengthsOk(String[] s, String[] rep) {
+        return s == null || rep == null || s.length == rep.length;
+    }
+
+    /**
+     * True if some replacement is null and some other pair with a non-null replacement
+     * and a non-empty search string actually matches in the text (so the buggy size
+     * estimation loop is reached and dereferences the null replacement).
+     */
+    private static boolean triggersNpe(String text, String[] s, String[] rep) {
+        if (text == null || text.length() == 0 || s == null || rep == null
+                || s.length == 0 || s.length != rep.length) {
+            return false;
+        }
+        boolean hasNullReplacement = false;
+        boolean hasActiveMatch = false;
+        for (int i = 0; i < rep.length; i++) {
+            if (rep[i] == null) {
+                hasNullReplacement = true;
+            } else if (s[i] != null && s[i].length() > 0 && text.contains(s[i])) {
+                hasActiveMatch = true;
+            }
+        }
+        return hasNullReplacement && hasActiveMatch;
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String result = null;
+        String exceptionClass = "none";
+        try {
+            result = StringUtils.replaceEach(text, searchList, replacementList);
+        } catch (Throwable t) {
+            exceptionClass = t.getClass().getName();
+        }
+
+        final String fResult = result;
+        final String fException = exceptionClass;
+        Log.logOutIf(true, () -> new String[]{
+                "result=" + fResult,
+                "exception=" + fException,
+                "text=" + text,
+                "search=" + Arrays.toString(searchList),
+                "replacement=" + Arrays.toString(replacementList)
+        });
+        assertEquals("none", fException);
+        assertNotNull(fResult);
+    }
+
+    @Fuzz
+    public void testReplace_StringStringArrayStringArray(@From(TextGen.class) String text,
+                                    @From(SearchGen.class) String[] searchList,
+                                    @From(ReplacementGen.class) String[] replacementList) {
+        boolean validIf = lengthsOk(searchList, replacementList);
+        boolean buggyIf = triggersNpe(text, searchList, replacementList);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            String result = null;
+            String exceptionClass = "none";
+            try {
+                result = StringUtils.replaceEach(text, searchList, replacementList);
+            } catch (Throwable t) {
+                exceptionClass = t.getClass().getName();
+            }
+
+            final String fResult = result;
+            final String fException = exceptionClass;
+            Log.logOutIf(preserveIf, () -> new String[]{
+                    "result=" + fResult,
+                    "exception=" + fException,
+                    "text=" + text,
+                    "search=" + Arrays.toString(searchList),
+                    "replacement=" + Arrays.toString(replacementList)
+            });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:20:09] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 10314,
+    "paired_inputs": 10314,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 10314
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 10314,
+      "failed_on_buggy": 10314,
+      "pass": 10314,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 10305,
+      "unique_failures": {}
+    }
+  }
+}

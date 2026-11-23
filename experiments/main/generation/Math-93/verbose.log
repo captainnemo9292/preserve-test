@@ -1,0 +1,2102 @@
+
+====================================================================================================
+[13:25:35] BUG Math-93: failing test org.apache.commons.math.util.MathUtilsTest::testFactorial -> org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-93/Math93b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source
+====================================================================================================
+Title: MathUtils.factorial(n) fails for n >= 17
+
+The result of MathUtils.factorial( n ) for n = 17, 18, 19 is wrong, probably because of rounding errors in the double calculations.
+
+Replace the first line of MathUtilsTest.testFactorial() by
+
+        for (int i = 1; i <= 20; i++) {
+
+to check all valid arguments for the long result and see the failure.
+
+I suggest implementing a simple loop to multiply the long result - or even using a precomputed long[] - instead of adding logarithms.
+
+====================================================================================================
+[13:25:35] HIDDEN FROM THE AGENT: 40 relevant test classes
+====================================================================================================
+org.apache.commons.math.analysis.solvers.LaguerreSolverTest
+org.apache.commons.math.analysis.solvers.MullerSolverTest
+org.apache.commons.math.analysis.solvers.RiddersSolverTest
+org.apache.commons.math.complex.ComplexTest
+org.apache.commons.math.distribution.BinomialDistributionTest
+org.apache.commons.math.distribution.HypergeometricDistributionTest
+org.apache.commons.math.distribution.PascalDistributionTest
+org.apache.commons.math.distribution.PoissonDistributionTest
+org.apache.commons.math.fraction.FractionFormatTest
+org.apache.commons.math.fraction.FractionTest
+org.apache.commons.math.geometry.RotationTest
+org.apache.commons.math.linear.DenseRealMatrixTest
+org.apache.commons.math.linear.RealMatrixImplTest
+org.apache.commons.math.linear.RealVectorImplTest
+org.apache.commons.math.linear.SparseRealMatrixTest
+org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest
+org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest
+org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.MultivariateSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.StatisticalSummaryValuesTest
+org.apache.commons.math.stat.descriptive.SummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest
+org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest
+org.apache.commons.math.stat.descriptive.moment.FirstMomentTest
+org.apache.commons.math.stat.descriptive.moment.FourthMomentTest
+org.apache.commons.math.stat.descriptive.moment.GeometricMeanTest
+org.apache.commons.math.stat.descriptive.moment.KurtosisTest
+org.apache.commons.math.stat.descriptive.moment.MeanTest
+org.apache.commons.math.stat.descriptive.moment.SecondMomentTest
+org.apache.commons.math.stat.descriptive.moment.SkewnessTest
+org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest
+org.apache.commons.math.stat.descriptive.moment.ThirdMomentTest
+org.apache.commons.math.stat.descriptive.moment.VarianceTest
+org.apache.commons.math.stat.descriptive.rank.MaxTest
+org.apache.commons.math.stat.descriptive.rank.MinTest
+org.apache.commons.math.stat.descriptive.summary.ProductTest
+org.apache.commons.math.stat.descriptive.summary.SumLogTest
+org.apache.commons.math.stat.descriptive.summary.SumSqTest
+org.apache.commons.math.stat.descriptive.summary.SumTest
+org.apache.commons.math.util.MathUtilsTest
+
+====================================================================================================
+[13:25:35] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:25:35] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: MathUtils.factorial(n) fails for n >= 17
+
+The result of MathUtils.factorial( n ) for n = 17, 18, 19 is wrong, probably because of rounding errors in the double calculations.
+
+Replace the first line of MathUtilsTest.testFactorial() by
+
+        for (int i = 1; i <= 20; i++) {
+
+to check all valid arguments for the long result and see the failure.
+
+I suggest implementing a simple loop to multiply the long result - or even using a precomputed long[] - instead of adding logarithms.
+
+====================================================================================================
+[13:25:40] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.",
+  "concrete_examples": [
+    {
+      "input": "MathUtils.factorial(17)",
+      "expected": "355687428096000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtils.factorial(18)",
+      "expected": "6402373705728000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtils.factorial(19)",
+      "expected": "121645100408832000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`",
+      "expected": "The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)",
+      "actual": "The test fails at i = 17, 18 and 19"
+    }
+  ]
+}
+
+====================================================================================================
+[13:25:40] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:25:41] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0080
+====================================================================================================
+{
+  "issue_gist": "MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.",
+  "concrete_examples": [
+    {
+      "input": "MathUtils.factorial(17)",
+      "expected": "355687428096000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtils.factorial(18)",
+      "expected": "6402373705728000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtils.factorial(19)",
+      "expected": "121645100408832000",
+      "actual": "An incorrect value that is off because of floating-point rounding in the log-based calculation"
+    },
+    {
+      "input": "MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`",
+      "expected": "The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)",
+      "actual": "The test fails at i = 17, 18 and 19"
+    }
+  ]
+}
+
+====================================================================================================
+[13:25:41] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:25:41] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source
+Test file: src/test/org/apache/commons/math/util/JQF_MathUtilsTest.java
+Test class: org.apache.commons.math.util.JQF_MathUtilsTest
+Test method: testBugReproduction
+
+Bug summary: MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.
+
+Concrete examples:
+[{'input': 'MathUtils.factorial(17)', 'expected': '355687428096000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(18)', 'expected': '6402373705728000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(19)', 'expected': '121645100408832000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`', 'expected': 'The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)', 'actual': 'The test fails at i = 17, 18 and 19'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:25:45] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "factorial",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source/src/java/org/apache/commons/math/util/MathUtils.java",
+  "output_mode": "content",
+  "-A": 12
+}
+
+====================================================================================================
+[13:25:46] [002_symbolize] TOOL RESULT
+====================================================================================================
+315:    /** All long-representable factorials */
+316:    private static final long[] factorials = new long[] 
+317-       {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800,
+318-        479001600, 6227020800l, 87178291200l, 1307674368000l, 20922789888000l,
+319-        355687428096000l, 6402373705728000l, 121645100408832000l,
+320-        2432902008176640000l};
+321-
+322-    /**
+323-     * Returns n!. Shorthand for <code>n</code> <a
+324-     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+325-     * product of the numbers <code>1,...,n</code>.
+326-     * <p>
+327-     * <Strong>Preconditions</strong>:
+328-     * <ul>
+--
+344:    public static long factorial(final int n) {
+345:        long result = Math.round(factorialDouble(n));
+346-        if (result == Long.MAX_VALUE) {
+347-            throw new ArithmeticException(
+348:                    "factorial value is too large to fit in a long");
+349-        }
+350:        return factorials[n];
+351-    }
+352-
+353-    /**
+354-     * Returns n!. Shorthand for <code>n</code> <a
+355-     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+356-     * product of the numbers <code>1,...,n</code> as a <code>double</code>.
+357-     * <p>
+358-     * <Strong>Preconditions</strong>:
+359-     * <ul>
+360-     * <li> <code>n >= 0</code> (otherwise
+361-     * <code>IllegalArgumentException</code> is thrown)</li>
+362-     * <li> The result is small enough to fit into a <code>double</code>. The
+--
+373:    public static double factorialDouble(final int n) {
+374-        if (n < 0) {
+375-            throw new IllegalArgumentException("must have n >= 0 for n!");
+376-        }
+377:        return Math.floor(Math.exp(factorialLog(n)) + 0.5);
+378-    }
+379-
+380-    /**
+381-     * Returns the natural logarithm of n!.
+382-     * <p>
+383-     * <Strong>Preconditions</strong>:
+384-     * <ul>
+385-     * <li> <code>n >= 0</code> (otherwise
+386-     * <code>IllegalArgumentException</code> is thrown)</li>
+387-     * </ul></p>
+388-     * 
+389-     * @param n argument
+--
+393:    public static double factorialLog(final int n) {
+394-        if (n < 0) {
+395-            throw new IllegalArgumentException("must have n > 0 for n!");
+396-        }
+397-        double logSum = 0;
+398-        for (int i = 2; i <= n; i++) {
+399-            logSum += Math.log((double)i);
+400-        }
+401-        return logSum;
+402-    }
+403-
+404-    /**
+405-     * <p>
+
+====================================================================================================
+[13:25:51] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "factorial",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source/src/test/org/apache/commons/math/util/MathUtilsTest.java",
+  "output_mode": "content",
+  "-C": 8
+}
+
+====================================================================================================
+[13:25:51] [002_symbolize] TOOL RESULT
+====================================================================================================
+Path does not exist: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source/src/test/org/apache/commons/math/util/MathUtilsTest.java. Note: your current working directory is /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source.
+
+====================================================================================================
+[13:25:52] [002_symbolize] TOOL CALL Glob
+====================================================================================================
+{
+  "pattern": "**/MathUtilsTest.java"
+}
+
+====================================================================================================
+[13:25:52] [002_symbolize] TOOL RESULT
+====================================================================================================
+No files found
+
+====================================================================================================
+[13:25:53] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source/src/java/org/apache/commons/math/util/MathUtils.java",
+  "offset": 325,
+  "limit": 55
+}
+
+====================================================================================================
+[13:25:53] [002_symbolize] TOOL RESULT
+====================================================================================================
+325	     * product of the numbers <code>1,...,n</code>.
+326	     * <p>
+327	     * <Strong>Preconditions</strong>:
+328	     * <ul>
+329	     * <li> <code>n >= 0</code> (otherwise
+330	     * <code>IllegalArgumentException</code> is thrown)</li>
+331	     * <li> The result is small enough to fit into a <code>long</code>. The
+332	     * largest value of <code>n</code> for which <code>n!</code> <
+333	     * Long.MAX_VALUE</code> is 20. If the computed value exceeds <code>Long.MAX_VALUE</code>
+334	     * an <code>ArithMeticException </code> is thrown.</li>
+335	     * </ul>
+336	     * </p>
+337	     * 
+338	     * @param n argument
+339	     * @return <code>n!</code>
+340	     * @throws ArithmeticException if the result is too large to be represented
+341	     *         by a long integer.
+342	     * @throws IllegalArgumentException if n < 0
+343	     */
+344	    public static long factorial(final int n) {
+345	        long result = Math.round(factorialDouble(n));
+346	        if (result == Long.MAX_VALUE) {
+347	            throw new ArithmeticException(
+348	                    "factorial value is too large to fit in a long");
+349	        }
+350	        return factorials[n];
+351	    }
+352	
+353	    /**
+354	     * Returns n!. Shorthand for <code>n</code> <a
+355	     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+356	     * product of the numbers <code>1,...,n</code> as a <code>double</code>.
+357	     * <p>
+358	     * <Strong>Preconditions</strong>:
+359	     * <ul>
+360	     * <li> <code>n >= 0</code> (otherwise
+361	     * <code>IllegalArgumentException</code> is thrown)</li>
+362	     * <li> The result is small enough to fit into a <code>double</code>. The
+363	     * largest value of <code>n</code> for which <code>n!</code> <
+364	     * Double.MAX_VALUE</code> is 170. If the computed value exceeds
+365	     * Double.MAX_VALUE, Double.POSITIVE_INFINITY is returned</li>
+366	     * </ul>
+367	     * </p>
+368	     * 
+369	     * @param n argument
+370	     * @return <code>n!</code>
+371	     * @throws IllegalArgumentException if n < 0
+372	     */
+373	    public static double factorialDouble(final int n) {
+374	        if (n < 0) {
+375	            throw new IllegalArgumentException("must have n >= 0 for n!");
+376	        }
+377	        return Math.floor(Math.exp(factorialLog(n)) + 0.5);
+378	    }
+379
+
+====================================================================================================
+[13:26:02] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: results for n = 17, 18, 19 are wrong\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long result = -1L;\n        String exception = \"none\";\n        try {\n            result = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final long fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fResult), fException });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:26:02] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:03] [002_symbolize] CALL DONE subtype=success turns=6 session_cost=$0.1679
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: results for n = 17, 18, 19 are wrong\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long result = -1L;\n        String exception = \"none\";\n        try {\n            result = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final long fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fResult), fException });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:26:03] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:26:03] TEST CODE (org.apache.commons.math.util.JQF_MathUtilsTest)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: results for n = 17, 18, 19 are wrong
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = -1L;
+        String exception = "none";
+        try {
+            result = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final long fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fResult), fException });
+        long expected = EXPECTED[n];
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+====================================================================================================
+[13:26:04] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:26:15] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 91559,
+  "passing": 409,
+  "failing_by_error": {},
+  "passed_assume": 8442,
+  "classified": 409
+}
+
+====================================================================================================
+[13:26:15] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:26:15] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The reproducer test passed, indicating it does not reproduce the bug.
+
+=== Execution Result ===
+All 409 checked inputs passed. Examples:
+    input (19) -> logged [121645100408832000, none]
+    input (19) -> logged [121645100408832000, none]
+    input (19) -> logged [121645100408832000, none]
+========================
+
+Revise the test to ensure it fails when the bug is triggered. The test must fail through an assertion on the logged values.
+
+For reference, here are the concrete examples extracted from the bug report (consider whether your test covers similar scenarios):
+
+Example 1:
+  Input: MathUtils.factorial(17)...
+  Expected: 355687428096000...
+  Actual (buggy): An incorrect value that is off because of floating-point rounding in the log-based calculation...
+
+Example 2:
+  Input: MathUtils.factorial(18)...
+  Expected: 6402373705728000...
+  Actual (buggy): An incorrect value that is off because of floating-point rounding in the log-based calculation...
+
+Example 3:
+  Input: MathUtils.factorial(19)...
+  Expected: 121645100408832000...
+  Actual (buggy): An incorrect value that is off because of floating-point rounding in the log-based calculation...
+
+Example 4:
+  Input: MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`...
+  Expected: The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)...
+  Actual (buggy): The test fails at i = 17, 18 and 19...
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source
+Test file: src/test/org/apache/commons/math/util/JQF_MathUtilsTest.java
+Test class: org.apache.commons.math.util.JQF_MathUtilsTest
+Test method: testBugReproduction
+
+Bug summary: MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.
+
+Concrete examples:
+[{'input': 'MathUtils.factorial(17)', 'expected': '355687428096000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(18)', 'expected': '6402373705728000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(19)', 'expected': '121645100408832000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`', 'expected': 'The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)', 'actual': 'The test fails at i = 17, 18 and 19'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:26:26] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: log-based computation gives wrong results for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fLongEx);\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals(expected, fLong);\n        assertEquals((double) expected, fDouble, 0.0);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:26:26] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:27] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2101
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: log-based computation gives wrong results for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fLongEx);\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals(expected, fLong);\n        assertEquals((double) expected, fDouble, 0.0);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:26:27] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:26:27] TEST CODE (org.apache.commons.math.util.JQF_MathUtilsTest)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: log-based computation gives wrong results for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fLongEx);
+        assertEquals("none", fDoubleEx);
+        assertEquals(expected, fLong);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+====================================================================================================
+[13:26:29] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:26:42] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 91372,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 455
+  },
+  "passed_assume": 8629,
+  "classified": 455
+}
+
+====================================================================================================
+[13:26:42] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:26:42] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: MathUtils.factorial(n) fails for n >= 17
+
+The result of MathUtils.factorial( n ) for n = 17, 18, 19 is wrong, probably because of rounding errors in the double calculations.
+
+Replace the first line of MathUtilsTest.testFactorial() by
+
+        for (int i = 1; i <= 20; i++) {
+
+to check all valid arguments for the long result and see the failure.
+
+I suggest implementing a simple loop to multiply the long result - or even using a precomputed long[] - instead of adding logarithms.
+
+=== Test ===
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: log-based computation gives wrong results for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fLongEx);
+        assertEquals("none", fDoubleEx);
+        assertEquals(expected, fLong);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<6.402373705728E15> but was:<6.402373705727994E15>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+is triggered by the following inputs:
+
+    input (19) -> logged [121645100408832000, none, 1.2164510040883208E17, none]
+    input (17) -> logged [355687428096000, none, 3.55687428096001E14, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:26:54] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.\n\nIn the logged output, the long results are correct: 355687428096000 for n=17 and 121645100408832000 for n=19. `factorial()` in this source ends with `return factorials[n]`, a precomputed table, so the long value is right. The log gives no sign that the long result is wrong for any input.\n\nThe stack trace points to line 58, which is the `assertEquals((double) expected, fDouble, 0.0)` check on `factorialDouble`. That check fails because of floating-point error in the log-based double calculation: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 3.55687428096001E14 for n=17. This is a different method from the one the report names.\n\nThe report is about the long result. The test's own long assertions pass, and the failure comes from an extra exact-equality assertion on a different API. That assertion is also stricter than the `factorialDouble` documentation, which only promises a double result.\n\nThe ranges look fine on the other criteria. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs. But the test fails for the wrong reason, so it does not reproduce the reported bug."
+}
+
+====================================================================================================
+[13:26:54] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:26:55] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3590
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.\n\nIn the logged output, the long results are correct: 355687428096000 for n=17 and 121645100408832000 for n=19. `factorial()` in this source ends with `return factorials[n]`, a precomputed table, so the long value is right. The log gives no sign that the long result is wrong for any input.\n\nThe stack trace points to line 58, which is the `assertEquals((double) expected, fDouble, 0.0)` check on `factorialDouble`. That check fails because of floating-point error in the log-based double calculation: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 3.55687428096001E14 for n=17. This is a different method from the one the report names.\n\nThe report is about the long result. The test's own long assertions pass, and the failure comes from an extra exact-equality assertion on a different API. That assertion is also stricter than the `factorialDouble` documentation, which only promises a double result.\n\nThe ranges look fine on the other criteria. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs. But the test fails for the wrong reason, so it does not reproduce the reported bug."
+}
+
+====================================================================================================
+[13:26:55] NODE 007 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:26:55] LLM CALL [007_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: expected:<6.402373705728E15> but was:<6.402373705727994E15>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+is triggered by the following inputs:
+
+    input (19) -> logged [121645100408832000, none, 1.2164510040883208E17, none]
+    input (17) -> logged [355687428096000, none, 3.55687428096001E14, none]
+
+Analysis: The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.
+
+In the logged output, the long results are correct: 355687428096000 for n=17 and 121645100408832000 for n=19. `factorial()` in this source ends with `return factorials[n]`, a precomputed table, so the long value is right. The log gives no sign that the long result is wrong for any input.
+
+The stack trace points to line 58, which is the `assertEquals((double) expected, fDouble, 0.0)` check on `factorialDouble`. That check fails because of floating-point error in the log-based double calculation: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 3.55687428096001E14 for n=17. This is a different method from the one the report names.
+
+The report is about the long result. The test's own long assertions pass, and the failure comes from an extra exact-equality assertion on a different API. That assertion is also stricter than the `factorialDouble` documentation, which only promises a double result.
+
+The ranges look fine on the other criteria. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs. But the test fails for the wrong reason, so it does not reproduce the reported bug.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source
+Test file: src/test/org/apache/commons/math/util/JQF_MathUtilsTest.java
+Test class: org.apache.commons.math.util.JQF_MathUtilsTest
+Test method: testBugReproduction
+
+Bug summary: MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.
+
+Concrete examples:
+[{'input': 'MathUtils.factorial(17)', 'expected': '355687428096000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(18)', 'expected': '6402373705728000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(19)', 'expected': '121645100408832000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`', 'expected': 'The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)', 'actual': 'The test fails at i = 17, 18 and 19'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:26:59] [007_symbolize] TOOL CALL Glob
+====================================================================================================
+{
+  "pattern": "**/MathUtils*.java"
+}
+
+====================================================================================================
+[13:26:59] [007_symbolize] TOOL RESULT
+====================================================================================================
+src/java/org/apache/commons/math/util/MathUtils.java
+
+====================================================================================================
+[13:26:59] [007_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "factorial",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source/src",
+  "output_mode": "count"
+}
+
+====================================================================================================
+[13:26:59] [007_symbolize] TOOL RESULT
+====================================================================================================
+src/java/org/apache/commons/math/distribution/PoissonDistributionImpl.java:1
+src/java/org/apache/commons/math/util/MathUtils.java:9
+src/site/xdoc/changes.xml:1
+src/site/xdoc/userguide/index.xml:1
+src/site/xdoc/userguide/overview.xml:1
+src/site/xdoc/userguide/utilities.xml:3
+
+Found 16 total occurrences across 6 files.
+
+====================================================================================================
+[13:27:11] [007_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: the log-based computation (exp of summed logs, rounded) is off for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // The log-based calculation underlying factorial(n) is factorialDouble(n)\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals(\"none\", fLongEx);\n        assertEquals((double) expected, fDouble, 0.0);\n        assertEquals(expected, (long) fDouble);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:27:11] [007_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:27:12] [007_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.6614
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: the log-based computation (exp of summed logs, rounded) is off for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // The log-based calculation underlying factorial(n) is factorialDouble(n)\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals(\"none\", fLongEx);\n        assertEquals((double) expected, fDouble, 0.0);\n        assertEquals(expected, (long) fDouble);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:27:12] NODE 008 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:27:12] TEST CODE (org.apache.commons.math.util.JQF_MathUtilsTest)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based computation (exp of summed logs, rounded) is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // The log-based calculation underlying factorial(n) is factorialDouble(n)
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals("none", fLongEx);
+        assertEquals((double) expected, fDouble, 0.0);
+        assertEquals(expected, (long) fDouble);
+    }
+}
+
+====================================================================================================
+[13:27:13] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:27:28] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 91547,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 406
+  },
+  "passed_assume": 8454,
+  "classified": 406
+}
+
+====================================================================================================
+[13:27:28] NODE 009 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:27:28] LLM CALL [009_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: MathUtils.factorial(n) fails for n >= 17
+
+The result of MathUtils.factorial( n ) for n = 17, 18, 19 is wrong, probably because of rounding errors in the double calculations.
+
+Replace the first line of MathUtilsTest.testFactorial() by
+
+        for (int i = 1; i <= 20; i++) {
+
+to check all valid arguments for the long result and see the failure.
+
+I suggest implementing a simple loop to multiply the long result - or even using a precomputed long[] - instead of adding logarithms.
+
+=== Test ===
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based computation (exp of summed logs, rounded) is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // The log-based calculation underlying factorial(n) is factorialDouble(n)
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals("none", fLongEx);
+        assertEquals((double) expected, fDouble, 0.0);
+        assertEquals(expected, (long) fDouble);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<3.55687428096E14> but was:<3.55687428096001E14>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+is triggered by the following inputs:
+
+    input (18) -> logged [6402373705728000, none, 6.402373705727994E15, none]
+    input (19) -> logged [121645100408832000, none, 1.2164510040883208E17, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:27:36] [009_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.\n\nThe logged output shows `factorial()` returns correct long values for the failing inputs: 6402373705728000 for n=18 and 121645100408832000 for n=19. The `assertEquals(\"none\", fLongEx)` check passes, and nothing in the log shows a wrong long result. In this source, `factorial()` ends with `return factorials[n]`, a precomputed table, so the long result is already right.\n\nThe failing assertion at line 58 is `assertEquals((double) expected, fDouble, 0.0)` on `factorialDouble(n)`. It fails on tiny floating-point differences: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 1.2164510040883208E17 for n=19. This is a different method from the one the report names. It also demands exact double equality, which is stricter than the documented contract of `factorialDouble`, a double approximation.\n\nSo the test fails on an extra assertion about a different API. The report's symptom, a wrong long result from `factorial(n)`, does not appear in the logged values. The test does not reproduce the reported bug.\n\nThe other criteria look fine. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs."
+}
+
+====================================================================================================
+[13:27:36] [009_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:27:37] [009_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.9220
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.\n\nThe logged output shows `factorial()` returns correct long values for the failing inputs: 6402373705728000 for n=18 and 121645100408832000 for n=19. The `assertEquals(\"none\", fLongEx)` check passes, and nothing in the log shows a wrong long result. In this source, `factorial()` ends with `return factorials[n]`, a precomputed table, so the long result is already right.\n\nThe failing assertion at line 58 is `assertEquals((double) expected, fDouble, 0.0)` on `factorialDouble(n)`. It fails on tiny floating-point differences: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 1.2164510040883208E17 for n=19. This is a different method from the one the report names. It also demands exact double equality, which is stricter than the documented contract of `factorialDouble`, a double approximation.\n\nSo the test fails on an extra assertion about a different API. The report's symptom, a wrong long result from `factorial(n)`, does not appear in the logged values. The test does not reproduce the reported bug.\n\nThe other criteria look fine. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs."
+}
+
+====================================================================================================
+[13:27:37] NODE 010 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:27:37] LLM CALL [010_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: expected:<3.55687428096E14> but was:<3.55687428096001E14>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:58)
+
+is triggered by the following inputs:
+
+    input (18) -> logged [6402373705728000, none, 6.402373705727994E15, none]
+    input (19) -> logged [121645100408832000, none, 1.2164510040883208E17, none]
+
+Analysis: The failure does not show the reported bug. The report says the long result of MathUtils.factorial(n) is wrong for n = 17, 18 and 19.
+
+The logged output shows `factorial()` returns correct long values for the failing inputs: 6402373705728000 for n=18 and 121645100408832000 for n=19. The `assertEquals("none", fLongEx)` check passes, and nothing in the log shows a wrong long result. In this source, `factorial()` ends with `return factorials[n]`, a precomputed table, so the long result is already right.
+
+The failing assertion at line 58 is `assertEquals((double) expected, fDouble, 0.0)` on `factorialDouble(n)`. It fails on tiny floating-point differences: 6.402373705727994E15 against 6.402373705728E15 for n=18, and 1.2164510040883208E17 for n=19. This is a different method from the one the report names. It also demands exact double equality, which is stricter than the documented contract of `factorialDouble`, a double approximation.
+
+So the test fails on an extra assertion about a different API. The report's symptom, a wrong long result from `factorial(n)`, does not appear in the logged values. The test does not reproduce the reported bug.
+
+The other criteria look fine. The parameter range of -5 to 29 together with validIf (0 to 20) covers the valid domain. buggyIf (17 to 19) matches the reported inputs.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source
+Test file: src/test/org/apache/commons/math/util/JQF_MathUtilsTest.java
+Test class: org.apache.commons.math.util.JQF_MathUtilsTest
+Test method: testBugReproduction
+
+Bug summary: MathUtils.factorial(n) computes the result using a sum of logarithms in doubles and then rounds. This loses precision, so the long results are wrong for n = 17, 18 and 19. Valid arguments go up to 20.
+
+Concrete examples:
+[{'input': 'MathUtils.factorial(17)', 'expected': '355687428096000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(18)', 'expected': '6402373705728000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtils.factorial(19)', 'expected': '121645100408832000', 'actual': 'An incorrect value that is off because of floating-point rounding in the log-based calculation'}, {'input': 'MathUtilsTest.testFactorial() with the loop changed to `for (int i = 1; i <= 20; i++)`', 'expected': 'The test passes for every i from 1 to 20 (20! = 2432902008176640000 fits in a long)', 'actual': 'The test fails at i = 17, 18 and 19'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-93/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:27:49] [010_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values\n        // is off for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must\n        // yield the exact integer n! for every n whose factorial fits in a long.\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals((double) expected, fDouble, 0.0);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:27:49] [010_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:27:50] [010_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.9895
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.util;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_MathUtilsTest {\n\n    private static final long[] EXPECTED = new long[] {\n        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,\n        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,\n        20922789888000L, 355687428096000L, 6402373705728000L,\n        121645100408832000L, 2432902008176640000L };\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {\n        // valid: n >= 0 and n! fits in a long (n <= 20)\n        boolean validIf = n >= 0 && n <= 20;\n        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values\n        // is off for n = 17, 18, 19\n        boolean buggyIf = n >= 17 && n <= 19;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must\n        // yield the exact integer n! for every n whose factorial fits in a long.\n        double doubleResult = -1.0;\n        String doubleException = \"none\";\n        try {\n            doubleResult = MathUtils.factorialDouble(n);\n        } catch (Throwable t) {\n            doubleException = t.getClass().getName();\n        }\n\n        long longResult = -1L;\n        String longException = \"none\";\n        try {\n            longResult = MathUtils.factorial(n);\n        } catch (Throwable t) {\n            longException = t.getClass().getName();\n        }\n\n        final long fLong = longResult;\n        final String fLongEx = longException;\n        final double fDouble = doubleResult;\n        final String fDoubleEx = doubleException;\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,\n                Double.valueOf(fDouble), fDoubleEx });\n        long expected = EXPECTED[n];\n        assertEquals(\"none\", fDoubleEx);\n        assertEquals((double) expected, fDouble, 0.0);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:27:50] NODE 011 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:27:50] TEST CODE (org.apache.commons.math.util.JQF_MathUtilsTest)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+====================================================================================================
+[13:27:52] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:28:06] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 91518,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 416
+  },
+  "passed_assume": 8483,
+  "classified": 416
+}
+
+====================================================================================================
+[13:28:06] NODE 012 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:28:06] LLM CALL [012_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: MathUtils.factorial(n) fails for n >= 17
+
+The result of MathUtils.factorial( n ) for n = 17, 18, 19 is wrong, probably because of rounding errors in the double calculations.
+
+Replace the first line of MathUtilsTest.testFactorial() by
+
+        for (int i = 1; i <= 20; i++) {
+
+to check all valid arguments for the long result and see the failure.
+
+I suggest implementing a simple loop to multiply the long result - or even using a precomputed long[] - instead of adding logarithms.
+
+=== Test ===
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<1.21645100408832E17> but was:<1.2164510040883208E17>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:59)
+
+Location: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:59)
+
+is triggered by the following inputs:
+
+    input (18) -> logged [6402373705728000, none, 6.402373705727994E15, none]
+    input (19) -> logged [121645100408832000, none, 1.2164510040883208E17, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:28:21] [012_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failure shows the root cause the report names: rounding error in the sum-of-logarithms calculation, which gives wrong integer factorials for n = 17, 18 and 19. I judge it relevant, though the symptom is not the one in the report.\n\n(1) The failing inputs are 18 and 19, inside the reported 17 to 19 range. n=17 failed in the earlier run (3.55687428096001E14).\n\n(2) `factorialDouble(n)` is the log-based calculation behind the report, `Math.floor(Math.exp(factorialLog(n)) + 0.5)`. It is meant to return an exact integer for these n, but it returns values that are off by whole units. For n=17 it returns 355687428096001 instead of 355687428096000. For n=18 it returns 6402373705727994 instead of 6402373705728000. For n=19 it returns 121645100408832080 instead of 121645100408832000. These are genuine integer errors from the log/exp rounding, not harmless noise.\n\n(3) The root cause matches: log-based double arithmetic loses precision for n >= 17. One caveat is that in this checkout `factorial(n)` already ends with `return factorials[n]`, so its long result is correct in the logs. The remaining visible symptom of the reported bug is therefore in `factorialDouble`. A fix that computes exactly, as the report suggests, would make this assertion pass.\n\n(4) buggyIf (17 to 19) does not accept inputs that already behave correctly. The test now has no long assertion that passes trivially. The only assertion is the exact-value check on the log-based result, and it fails for the inputs tested.\n\n(5) buggyIf does not appear to miss any bug-triggering input. The report names exactly 17, 18 and 19, and smaller n are exact.\n\n(6) The parameter range of -5 to 29 and validIf (0 to 20) cover the whole domain where the long result is valid, and not only the buggy inputs.\n\nThe weak point is that the failing assertion is on `factorialDouble`, not the long `factorial` the title names."
+}
+
+====================================================================================================
+[13:28:21] [012_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:28:22] [012_check_inputs] CALL DONE subtype=success turns=2 session_cost=$1.0522
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failure shows the root cause the report names: rounding error in the sum-of-logarithms calculation, which gives wrong integer factorials for n = 17, 18 and 19. I judge it relevant, though the symptom is not the one in the report.\n\n(1) The failing inputs are 18 and 19, inside the reported 17 to 19 range. n=17 failed in the earlier run (3.55687428096001E14).\n\n(2) `factorialDouble(n)` is the log-based calculation behind the report, `Math.floor(Math.exp(factorialLog(n)) + 0.5)`. It is meant to return an exact integer for these n, but it returns values that are off by whole units. For n=17 it returns 355687428096001 instead of 355687428096000. For n=18 it returns 6402373705727994 instead of 6402373705728000. For n=19 it returns 121645100408832080 instead of 121645100408832000. These are genuine integer errors from the log/exp rounding, not harmless noise.\n\n(3) The root cause matches: log-based double arithmetic loses precision for n >= 17. One caveat is that in this checkout `factorial(n)` already ends with `return factorials[n]`, so its long result is correct in the logs. The remaining visible symptom of the reported bug is therefore in `factorialDouble`. A fix that computes exactly, as the report suggests, would make this assertion pass.\n\n(4) buggyIf (17 to 19) does not accept inputs that already behave correctly. The test now has no long assertion that passes trivially. The only assertion is the exact-value check on the log-based result, and it fails for the inputs tested.\n\n(5) buggyIf does not appear to miss any bug-triggering input. The report names exactly 17, 18 and 19, and smaller n are exact.\n\n(6) The parameter range of -5 to 29 and validIf (0 to 20) cover the whole domain where the long result is valid, and not only the buggy inputs.\n\nThe weak point is that the failing assertion is on `factorialDouble`, not the long `factorial` the title names."
+}
+
+====================================================================================================
+[13:28:22] NODE 013 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:28:22] LLM CALL [013_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:28:26] [013_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real MathUtils.factorialDouble(n) and MathUtils.factorial(n) directly. It uses no mocking framework, no fake subclasses and no simulated return values. The EXPECTED array holds known correct factorial values used only as the oracle in the assertion. It does not stand in for the code under test."
+}
+
+====================================================================================================
+[13:28:26] [013_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:28:27] [013_validate] CALL DONE subtype=success turns=2 session_cost=$1.3497
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real MathUtils.factorialDouble(n) and MathUtils.factorial(n) directly. It uses no mocking framework, no fake subclasses and no simulated return values. The EXPECTED array holds known correct factorial values used only as the oracle in the assertion. It does not stand in for the code under test."
+}
+
+====================================================================================================
+[13:28:27] LLM CALL [013_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:28:31] [013_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false) and no assertEquals with constants that can never match. Both assertions compare the actual result of MathUtils.factorialDouble(n) to the expected factorial value taken from the EXPECTED table. They would pass if factorialDouble returned the exact value. The test can therefore pass once the bug is fixed."
+}
+
+====================================================================================================
+[13:28:31] [013_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:28:32] [013_validate] CALL DONE subtype=success turns=2 session_cost=$1.3642
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false) and no assertEquals with constants that can never match. Both assertions compare the actual result of MathUtils.factorialDouble(n) to the expected factorial value taken from the EXPECTED table. They would pass if factorialDouble returned the exact value. The test can therefore pass once the bug is fixed."
+}
+
+====================================================================================================
+[13:28:32] LLM CALL [013_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:28:38] [013_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are done correctly. `assertEquals(\"none\", fDoubleEx)` compares strings with equals, not `==`. `assertEquals((double) expected, fDouble, 0.0)` uses the three-argument double form with a delta. A delta of 0.0 means exact equality, which is intended here because the test wants the exact integer factorial. The cast `(double) expected` loses nothing for n = 17, 18 and 19. Each of those factorials is a power of two times a number below 2^53, so it is exactly representable as a double. Any failure would come from the log-based rounding error in the code, not from the comparison."
+}
+
+====================================================================================================
+[13:28:38] [013_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:28:39] [013_validate] CALL DONE subtype=success turns=2 session_cost=$1.3825
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are done correctly. `assertEquals(\"none\", fDoubleEx)` compares strings with equals, not `==`. `assertEquals((double) expected, fDouble, 0.0)` uses the three-argument double form with a delta. A delta of 0.0 means exact equality, which is intended here because the test wants the exact integer factorial. The cast `(double) expected` loses nothing for n = 17, 18 and 19. Each of those factorials is a power of two times a number below 2^53, so it is exactly representable as a double. Any failure would come from the log-based rounding error in the code, not from the comparison."
+}
+
+====================================================================================================
+[13:28:39] NODE 014 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:28:39] AGENT FINISHED success=True llm_calls=21
+====================================================================================================
+
+
+====================================================================================================
+[13:28:41] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_MathUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug93"
+}
+
+====================================================================================================
+[13:28:41] FINAL TEST FILE JQF_MathUtilsTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.util;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_MathUtilsTest {
+
+    private static final long[] EXPECTED = new long[] {
+        1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L,
+        39916800L, 479001600L, 6227020800L, 87178291200L, 1307674368000L,
+        20922789888000L, 355687428096000L, 6402373705728000L,
+        121645100408832000L, 2432902008176640000L };
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -5, maxInt = 30) int n) {
+        // valid: n >= 0 and n! fits in a long (n <= 20)
+        boolean validIf = n >= 0 && n <= 20;
+        // bug: the log-based calculation (exp of summed logs, rounded) used for factorial values
+        // is off for n = 17, 18, 19
+        boolean buggyIf = n >= 17 && n <= 19;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+        // yield the exact integer n! for every n whose factorial fits in a long.
+        double doubleResult = -1.0;
+        String doubleException = "none";
+        try {
+            doubleResult = MathUtils.factorialDouble(n);
+        } catch (Throwable t) {
+            doubleException = t.getClass().getName();
+        }
+
+        long longResult = -1L;
+        String longException = "none";
+        try {
+            longResult = MathUtils.factorial(n);
+        } catch (Throwable t) {
+            longException = t.getClass().getName();
+        }
+
+        final long fLong = longResult;
+        final String fLongEx = longException;
+        final double fDouble = doubleResult;
+        final String fDoubleEx = doubleException;
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                Double.valueOf(fDouble), fDoubleEx });
+        long expected = EXPECTED[n];
+        assertEquals("none", fDoubleEx);
+        assertEquals((double) expected, fDouble, 0.0);
+    }
+
+    @Fuzz
+    public void testFactorial(@InRange(minInt = -5, maxInt = 30) int n) {
+        boolean validIf = n >= 0 && n <= 20;
+        boolean buggyIf = n >= 17 && n <= 19;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            // factorialDouble(n) is the sum-of-logarithms computation from the report; it must
+            // yield the exact integer n! for every n whose factorial fits in a long.
+            double doubleResult = -1.0;
+            String doubleException = "none";
+            try {
+                doubleResult = MathUtils.factorialDouble(n);
+            } catch (Throwable t) {
+                doubleException = t.getClass().getName();
+            }
+
+            long longResult = -1L;
+            String longException = "none";
+            try {
+                longResult = MathUtils.factorial(n);
+            } catch (Throwable t) {
+                longException = t.getClass().getName();
+            }
+
+            final long fLong = longResult;
+            final String fLongEx = longException;
+            final double fDouble = doubleResult;
+            final String fDoubleEx = doubleException;
+            Log.logOutIf(preserveIf, () -> new Object[]{ Long.valueOf(fLong), fLongEx,
+                    Double.valueOf(fDouble), fDoubleEx });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:30:02] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 8392,
+    "paired_inputs": 8392,
+    "outcomes": {
+      "java.lang.AssertionError": 8392
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 8392,
+      "failed_on_buggy": 8392,
+      "pass": 8392,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 8644,
+      "unique_failures": {}
+    }
+  }
+}

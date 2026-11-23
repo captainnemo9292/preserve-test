@@ -1,0 +1,172 @@
+{
+  "bug": "Chart-9",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.5427,
+  "tokens": {
+    "input": 22,
+    "output": 6500,
+    "cache_write": 116786,
+    "cache_read": 104979
+  },
+  "seconds": 99.5,
+  "started_at": "2026-11-21T12:12:59",
+  "timing": {
+    "checkout": 11.5,
+    "agent": 88.0,
+    "derive": 1.5,
+    "validation": 84.7
+  },
+  "llm_seconds": 71.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 412,
+        "cache_write": 1965,
+        "cache_read": 0
+      },
+      "cost_usd": 0.011984,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 22.8,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2457,
+        "cache_write": 33062,
+        "cache_read": 539
+      },
+      "cost_usd": 0.15688,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 9.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1316,
+        "cache_write": 6689,
+        "cache_read": 26062
+      },
+      "cost_usd": 0.042526,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 19.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1766,
+        "cache_write": 34781,
+        "cache_read": 611
+      },
+      "cost_usd": 0.156849,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 195,
+        "cache_write": 37216,
+        "cache_read": 603
+      },
+      "cost_usd": 0.150882,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 187,
+        "cache_write": 1526,
+        "cache_read": 37819
+      },
+      "cost_usd": 0.011764,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 167,
+        "cache_write": 1547,
+        "cache_read": 39345
+      },
+      "cost_usd": 0.0118,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.jfree.data.time.junit.TimeSeriesTests::testBug1864222",
+  "jqf_class": "org.jfree.data.time.junit.JQF_TimeSeriesTests",
+  "hidden_tests": [
+    "org.jfree.chart.junit.JFreeChartTests",
+    "org.jfree.chart.plot.junit.XYPlotTests",
+    "org.jfree.data.time.junit.MovingAverageTests",
+    "org.jfree.data.time.junit.TimeSeriesCollectionTests",
+    "org.jfree.data.time.junit.TimeSeriesTests"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testBug1864222",
+  "issue_gist": "TimeSeries.createCopy(RegularTimePeriod start, RegularTimePeriod end) throws IllegalArgumentException \"Requires start <= end\" when the requested period range lies in a gap between existing items (no data points inside the range). The computed start/end indexes are wrong; an empty series should be returned instead.",
+  "failing_inputs_count": 285,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TimeSeriesTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug9",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 6243,
+      "paired_inputs": 6243,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 6243
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 6243,
+        "failed_on_buggy": 6243,
+        "pass": 6243,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 6064,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 185.7,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,81 @@
+{
+ "patch": "280_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Lang-58",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:08:40",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (8, 1, 0) -> logged [none, java.lang.Float, 8.0]\njava.lang.AssertionError: expected:<8> but was:<8.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang",
+    "input (2, 1, 1) -> logged [none, java.lang.Float, 2.0]\njava.lang.AssertionError: expected:<2> but was:<2.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang",
+    "input (4, 1, 0) -> logged [none, java.lang.Float, 4.0]\njava.lang.AssertionError: expected:<4> but was:<4.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 24812,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<5> but was:<5.0>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:118)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\nLocation: org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\nis triggered by the following inputs:\n\n    input (5, 1, 1) -> logged [none, java.lang.Float, 5.0]\n    input (1, 1, 1) -> logged [none, java.lang.Float, 1.0]"
+  },
+  "seconds": 51.3
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 200.4,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 197.7358922958374,
+  "time": {
+   "CHECKOUT_BUGGY": 3.6910033226013184,
+   "DELTA_BUGGY": 0.015842914581298828,
+   "COMPILE_BUGGY": 4.297775506973267,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.5447561740875244,
+   "PATCH": 0.013474464416503906,
+   "DELTA_PATCH": 0.021448373794555664,
+   "COMPILE_PATCH": 3.564234733581543,
+   "PATCH_TEST": 1.6484978199005127,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.3001515865326,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 265.7
+}

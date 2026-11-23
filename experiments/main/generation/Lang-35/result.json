@@ -1,0 +1,177 @@
+{
+  "bug": "Lang-35",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.4136,
+  "tokens": {
+    "input": 20,
+    "output": 3211,
+    "cache_write": 93713,
+    "cache_read": 65810
+  },
+  "seconds": 74.7,
+  "started_at": "2026-11-21T12:16:06",
+  "timing": {
+    "checkout": 9.1,
+    "agent": 65.6,
+    "derive": 1.3,
+    "validation": 202.8
+  },
+  "llm_seconds": 43.7,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 526,
+        "cache_write": 921,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009029,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 15.2,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1679,
+        "cache_write": 31446,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.14269,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 429,
+        "cache_write": 28561,
+        "cache_read": 611
+      },
+      "cost_usd": 0.118599,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 7.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 168,
+        "cache_write": 30108,
+        "cache_read": 603
+      },
+      "cost_usd": 0.12218,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 240,
+        "cache_write": 1288,
+        "cache_read": 30711
+      },
+      "cost_usd": 0.010631,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 169,
+        "cache_write": 1389,
+        "cache_read": 31999
+      },
+      "cost_usd": 0.010454,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.lang3.ArrayUtilsAddTest::testLANG571",
+  "jqf_class": "org.apache.commons.lang3.JQF_ArrayUtilsAddTest",
+  "hidden_tests": [
+    "org.apache.commons.lang3.ArrayUtilsAddTest",
+    "org.apache.commons.lang3.ArrayUtilsRemoveTest",
+    "org.apache.commons.lang3.ArrayUtilsTest",
+    "org.apache.commons.lang3.BooleanUtilsTest",
+    "org.apache.commons.lang3.CharEncodingTest",
+    "org.apache.commons.lang3.CharSetTest",
+    "org.apache.commons.lang3.CharSetUtilsTest",
+    "org.apache.commons.lang3.ClassUtilsTest",
+    "org.apache.commons.lang3.StringEscapeUtilsTest",
+    "org.apache.commons.lang3.StringUtilsEqualsIndexOfTest",
+    "org.apache.commons.lang3.StringUtilsSubstringTest",
+    "org.apache.commons.lang3.StringUtilsTest",
+    "org.apache.commons.lang3.ValidateTest",
+    "org.apache.commons.lang3.builder.CompareToBuilderTest",
+    "org.apache.commons.lang3.builder.EqualsBuilderTest",
+    "org.apache.commons.lang3.builder.HashCodeBuilderAndEqualsBuilderTest",
+    "org.apache.commons.lang3.builder.HashCodeBuilderTest",
+    "org.apache.commons.lang3.builder.ReflectionToStringBuilderExcludeTest",
+    "org.apache.commons.lang3.exception.ExceptionUtilsTest",
+    "org.apache.commons.lang3.reflect.ConstructorUtilsTest",
+    "org.apache.commons.lang3.reflect.FieldUtilsTest",
+    "org.apache.commons.lang3.reflect.MethodUtilsTest",
+    "org.apache.commons.lang3.text.StrBuilderTest",
+    "org.apache.commons.lang3.text.StrTokenizerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testLANG571",
+  "issue_gist": "ArrayUtils.add(T[] array, T element) returns an Object[] when both the array and element are null, since the component type can't be determined. Callers who assign the result to a typed array like String[] get an unexpected ClassCastException at runtime, with no compile-time warning.",
+  "failing_inputs_count": 2008,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ArrayUtilsAddTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug35",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 35888,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 89030,
+        "inside_buggyIf": 32196,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 278.8,
+  "paired_inputs_archived": true
+}

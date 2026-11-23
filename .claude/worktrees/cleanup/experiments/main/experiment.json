@@ -1,0 +1,267 @@
+[
+ {
+  "time": "2026-11-21T12:12:59",
+  "argv": [
+   "all",
+   "--datasets",
+   "apr",
+   "--model",
+   "sonnet",
+   "--gen-jobs",
+   "4",
+   "-j",
+   "12"
+  ],
+  "args": {
+   "stage": "all",
+   "out": "experiments/main",
+   "bugs": null,
+   "bug_file": null,
+   "jobs": 12,
+   "redo": false,
+   "gen_jobs": 4,
+   "model": "sonnet",
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr"
+   ],
+   "suites": [
+    "ours",
+    "poracle"
+   ],
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "b8296bf9cda7fa3dba64a4a6c627baf068911d78",
+  "git_dirty": true,
+  "claude_cli": "2.1.330 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:eaad4bbbf4a154a1981b6a54cbd5dff97621581a02f014d641a1d732fb6437dc",
+  "container_work": "/tmp/preserve-experiment/main-11df6b11",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785",
+   "tracerepair": "7d0e62971002af7fdc567fa94d922128a8dcd54ba96855740429ffb25813dac5"
+  }
+ },
+ {
+  "time": "2026-11-22T12:19:16",
+  "argv": [
+   "evaluate",
+   "--datasets",
+   "apr",
+   "--suites",
+   "poracle",
+   "-j",
+   "12"
+  ],
+  "args": {
+   "stage": "evaluate",
+   "out": "experiments/main",
+   "bugs": null,
+   "bug_file": null,
+   "jobs": 12,
+   "redo": false,
+   "gen_jobs": 2,
+   "model": null,
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr"
+   ],
+   "suites": [
+    "poracle"
+   ],
+   "poracle_container": "poracle-original",
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "d7873055e2d8ad2ef000283a8be99344819c4464",
+  "git_dirty": true,
+  "claude_cli": "2.1.330 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:eaad4bbbf4a154a1981b6a54cbd5dff97621581a02f014d641a1d732fb6437dc",
+  "container_work": "/tmp/preserve-experiment/main-11df6b11",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785",
+   "tracerepair": "7d0e62971002af7fdc567fa94d922128a8dcd54ba96855740429ffb25813dac5"
+  }
+ },
+ {
+  "time": "2026-11-22T13:54:45",
+  "argv": [
+   "report"
+  ],
+  "args": {
+   "stage": "report",
+   "out": "experiments/main",
+   "bugs": null,
+   "bug_file": null,
+   "jobs": 3,
+   "redo": false,
+   "gen_jobs": 2,
+   "model": null,
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr",
+    "tracerepair"
+   ],
+   "suites": [
+    "ours",
+    "poracle"
+   ],
+   "poracle_container": "poracle-original",
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "d7873055e2d8ad2ef000283a8be99344819c4464",
+  "git_dirty": true,
+  "claude_cli": "2.1.330 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:eaad4bbbf4a154a1981b6a54cbd5dff97621581a02f014d641a1d732fb6437dc",
+  "container_work": "/tmp/preserve-experiment/main-11df6b11",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785",
+   "tracerepair": "7d0e62971002af7fdc567fa94d922128a8dcd54ba96855740429ffb25813dac5"
+  }
+ },
+ {
+  "time": "2026-11-23T11:47:35",
+  "argv": [
+   "report",
+   "--out",
+   "experiments/main"
+  ],
+  "args": {
+   "stage": "report",
+   "out": "experiments/main",
+   "bugs": null,
+   "bug_file": null,
+   "jobs": 3,
+   "redo": false,
+   "gen_jobs": 2,
+   "model": null,
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr"
+   ],
+   "suites": [
+    "ours",
+    "poracle"
+   ],
+   "poracle_container": "poracle-original",
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "d02b4393ca501d2bc9d8d69a303296aa3561bcfe",
+  "git_dirty": true,
+  "claude_cli": "2.1.330 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:eaad4bbbf4a154a1981b6a54cbd5dff97621581a02f014d641a1d732fb6437dc",
+  "container_work": "/tmp/preserve-experiment/main-28b27e64",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785"
+  }
+ },
+ {
+  "time": "2026-11-23T11:47:55",
+  "argv": [
+   "report",
+   "--out",
+   "experiments/main"
+  ],
+  "args": {
+   "stage": "report",
+   "out": "experiments/main",
+   "bugs": null,
+   "bug_file": null,
+   "jobs": 3,
+   "redo": false,
+   "gen_jobs": 2,
+   "model": null,
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr"
+   ],
+   "suites": [
+    "ours",
+    "poracle"
+   ],
+   "poracle_container": "poracle-original",
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "d02b4393ca501d2bc9d8d69a303296aa3561bcfe",
+  "git_dirty": true,
+  "claude_cli": "2.1.330 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:eaad4bbbf4a154a1981b6a54cbd5dff97621581a02f014d641a1d732fb6437dc",
+  "container_work": "/tmp/preserve-experiment/main-28b27e64",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785"
+  }
+ }
+]

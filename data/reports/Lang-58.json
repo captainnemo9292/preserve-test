@@ -1,0 +1,6 @@
+{
+  "bug": "Lang-58",
+  "url": "https://issues.apache.org/jira/browse/LANG-300",
+  "title": "NumberUtils.createNumber throws NumberFormatException for one digit long",
+  "body": "NumberUtils.createNumber throws a NumberFormatException when parsing \"1l\", \"2l\" .. etc...\n\nIt works fine if you try to parse \"01l\" or \"02l\".  The condition isDigits(numeric.substring(1)), line 455 return false as numeric.substring(1) is an empty string for \"1l\""
+}

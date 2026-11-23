@@ -1,0 +1,91 @@
+{
+ "patch": "474_PFL_SimFix_Patch_5_5",
+ "dataset": "apr",
+ "bug": "Math-85",
+ "tool": "SimFix",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T15:56:50",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 9386,
+   "fail": 10614,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-9, 1.3998547373522003, 9, 0, 1, 0.8202150076189503) -> logged [5.5788706987414116E-14, -1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<-19.3998547373522> but was:<-1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.",
+    "input (-9, 1.0, 5, 0, 1, 0.16352330837647044) -> logged [9.865886441140503E-10, -1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<-15.0> but was:<-1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Deleg",
+    "input (1, 1.0, 3, 0, 1, 0.843010838030811) -> logged [3.167124183262038E-5, NaN, org.apache.commons.math.MathException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 26365,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2,
+    "java.lang.AssertionError": 1
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nis triggered by the following inputs:\n\n    input (-6, 4.422894628944516, 2, 1, 2, 0.38845700737260436) -> logged [0.7080879387609642, NaN, org.apache.commons.math.MathException]\n    input (-6, 1.0, 3, 0, 1, 0.6830413232852487) -> logged [3.167124183262038E-5, NaN, org.apache.commons.math.MathException]\n\nThe error:\n    java.lang.AssertionError: expected:<-9.0> but was:<-1.7976931348623157E308>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nis triggered by the following inputs:\n\n    input (-3, 1.0, 5, 0, 1, 0.3794694459133473) -> logged [9.865886441140503E-10, -1.7976931348623157E308, non"
+  },
+  "seconds": 72.9
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 41.5,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 39.2368586063385,
+  "time": {
+   "CHECKOUT_BUGGY": 3.756345272064209,
+   "DELTA_BUGGY": 0.0016803741455078125,
+   "COMPILE_BUGGY": 6.091120481491089,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.767911911010742,
+   "PATCH": 0.012226581573486328,
+   "DELTA_PATCH": 0.001745462417602539,
+   "COMPILE_PATCH": 7.598005294799805,
+   "PATCH_TEST": 2.4155220985412598,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.6179356575012207,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.6708669662475586,
+   "DELTA_FIX": 0.0015909671783447266,
+   "COMPILE_FIX": 7.609338283538818,
+   "REPRO_FOR_VALIDATE": 1.88653564453125,
+   "VALIDATE": 0.014863967895507812
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-474_PFL_SimFix_Patch_5_5/log/test1/1/ORG/id_000000021/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-474_PFL_SimFix_Patch_5_5/log/test1/1/ORG/id_000000021/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-474_PFL_SimFix_Patch_5_5/log/test1/1/PATCH/id_000000021/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-474_PFL_SimFix_Patch_5_5/validation/fix/test1/id_000000021/OUT.log",
+    "in_content": "7;1.0;7;0;2;0.8277549840561723",
+    "org_out_content": "0.9999999990134114;1.7976931348623157E308;none",
+    "patch_out_content": "0.9999999990134114;13.0;none",
+    "fix_out_content": "0.9999999990134114;13.0;none"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 115.3
+}

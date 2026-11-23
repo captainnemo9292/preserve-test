@@ -1,0 +1,81 @@
+{
+ "patch": "229_NFL_kPAR_Patch_2_1",
+ "dataset": "apr",
+ "bug": "Math-49",
+ "tool": "kPAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:58:25",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 14065,
+   "failed_on_buggy": 14065,
+   "pass": 0,
+   "fail": 14065,
+   "not_run": 0,
+   "failing_examples": [
+    "input (5, 6.95135644656445E-4, 2.0808291897858506, -9.460699283718963, -3.9733952095165765, 0.0, 0.0, 0.0, -3.69558340768185, 4.914292271755421E-9, -3.19444617881058, 0.0, 0.0, 0.0, -7.615597563729213, 3.6081330729706256, 0.49927490413477926, 2.5791023956095582) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [2.0808291897858506, -9.460699283718963, -3.9733952095165765, 0.0, 0.0], [-3.19444617881058, 0.0, 0.0, 0.0, -7.615597563729213]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho",
+    "input (8, 5.195551375795364E-4, 0.0, -5.424178327784097, 0.0, 0.0, 0.0, -7.2851830333199885, -6.414360559451435, 0.0, 0.0, 0.0, 0.4971937562379818, 4.102104737124774, 1.7092723351449344, 0.0, 3.7059140971200595, 0.0) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [0.0, -5.424178327784097, 0.0, 0.0, 0.0, -7.2851830333199885, -6.414360559451435, 0.0], [0.0, 0.0, 0.4971937562379818, 4.102104737124774, 1.7092723351449344, 0.0, 3.7059140971200595, 0.0]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho",
+    "input (6, 6.011828719591745E-4, 0.0, 0.8394875070017669, 4.952317539820086, -8.796091409504426, -4.269061380717448, -1.5462268707116387, -9.27777633287864, 0.0, 0.0, 8.552709576927533, -4.443080020599101, 0.0, 0.0, 6.092736423350868, 2.5353079064298694, 0.0) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [0.0, 0.8394875070017669, 4.952317539820086, -8.796091409504426, -4.269061380717448, -1.5462268707116387], [0.0, 8.552709576927533, -4.443080020599101, 0.0, 0.0, 6.092736423350868]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho"
+   ]
+  },
+  "fresh": {
+   "trials": 29159,
+   "inside_buggyIf": 13077,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\nLocation: org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\nis triggered by the following inputs:\n\n    input (8, 9.994054967951292E-4, -2.114957737024284E-9, 5.9330089035331585E-9, 4.6892300813038155, -4.667155325280728, 0.8909761667747791, -5.284250937832973E-10, -4.7033919308448695, 0.0, 3.5073347947693794, -3.739905250489608, -0.5588429025035175, 2.6859034740064303, -1.8543136183729175E-9, 0.0, -3.0725742128675515, -2.258190756741687) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [0.0, 0.0, 4.6892300813038155, -4.667155325280728, 0.8909761667747791, 0.0, -4.7033919308448695, 0.0], [3.5073347947693794, -3.739905250489608, -0.5588429025035175, 2.6859034740064303, 0.0, 0.0, -3.0725742128675515, -2.258190756741687]]\n    input (5, 2.477731379990111E-4, 1.9123048124700581, -1.3072670563360145E-10, 0.4544052492446067, -5.702124302525182, -0.3773102558637458, -9.437627940434608, 0.0, 0.0, 0.0, -9.324992019697564, 0.0, 0.0, 7.886414752883958, 3.3416648074173576, 0.0, 3.0255614629012406) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [1.9123"
+  },
+  "seconds": 106.7
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 206.0,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 203.74920010566711,
+  "time": {
+   "CHECKOUT_BUGGY": 3.7659711837768555,
+   "DELTA_BUGGY": 0.0016145706176757812,
+   "COMPILE_BUGGY": 5.9818878173828125,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.765303134918213,
+   "PATCH": 0.012020349502563477,
+   "DELTA_PATCH": 0.0015995502471923828,
+   "COMPILE_PATCH": 5.873025894165039,
+   "PATCH_TEST": 2.614626407623291,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.50610518455505,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 319.2
+}

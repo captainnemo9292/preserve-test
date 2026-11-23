@@ -1,0 +1,191 @@
+{
+  "bug": "Math-33",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 14,
+  "cost_usd": 1.0192,
+  "tokens": {
+    "input": 30,
+    "output": 10840,
+    "cache_write": 222399,
+    "cache_read": 211138
+  },
+  "seconds": 134.9,
+  "started_at": "2026-11-21T12:40:55",
+  "timing": {
+    "checkout": 10.9,
+    "agent": 124.0,
+    "derive": 1.7,
+    "validation": 107.3
+  },
+  "llm_seconds": 99.8,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 12.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1102,
+        "cache_write": 757,
+        "cache_read": 808
+      },
+      "cost_usd": 0.014133,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 24.5,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 3009,
+        "cache_write": 32049,
+        "cache_read": 25446
+      },
+      "cost_usd": 0.160843,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 15.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2023,
+        "cache_write": 7047,
+        "cache_read": 25916
+      },
+      "cost_usd": 0.051014,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_symbolize",
+      "seconds": 12.2,
+      "turns": 3,
+      "tokens": {
+        "input": 6,
+        "output": 1679,
+        "cache_write": 60477,
+        "cache_read": 33502
+      },
+      "cost_usd": 0.26206,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "008_check_inputs",
+      "seconds": 22.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2399,
+        "cache_write": 57854,
+        "cache_read": 611
+      },
+      "cost_usd": 0.255471,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_validate",
+      "seconds": 5.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 224,
+        "cache_write": 60624,
+        "cache_read": 603
+      },
+      "cost_usd": 0.244804,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "009_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 190,
+        "cache_write": 1798,
+        "cache_read": 61227
+      },
+      "cost_usd": 0.015223,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "009_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 214,
+        "cache_write": 1793,
+        "cache_read": 63025
+      },
+      "cost_usd": 0.015623,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math3.optimization.linear.SimplexSolverTest::testMath781",
+  "jqf_class": "org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.optimization.linear.SimplexSolverTest",
+    "org.apache.commons.math3.optimization.linear.SimplexTableauTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath781",
+  "issue_gist": "SimplexSolver.optimize in commons-math3 3.0 returns a wrong or non-optimal solution for a small LP that commons-math 2.2 solves correctly. The cause is likely in pivot selection: the minimum-ratio test in the simplex tableau mishandles near-zero or tied ratios.",
+  "failing_inputs_count": 568,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimplexSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug33",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 10989,
+      "paired_inputs": 10989,
+      "outcomes": {
+        "java.lang.AssertionError": 10989
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 10989,
+        "failed_on_buggy": 10989,
+        "pass": 0,
+        "fail": 10989,
+        "not_run": 0,
+        "failing_examples": [
+          "input (2, 6, 7, 1, 2, 1, -1, 1, 1, 2, -3, 1, 2, -1, -1, 1, 0) -> logged [none, 0.0, -1.0, 0.0, -6.0]\njava.lang.AssertionError: x1 should be > 0, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:80)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.r",
+          "input (2, 6, 7, 1, 2, 1, -1, 1, 1, 2, -3, 1, 2, -1, -1, 1, 0) -> logged [none, 0.0, -1.0, 0.0, -6.0]\njava.lang.AssertionError: x1 should be > 0, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:80)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.r",
+          "input (2, 6, 7, 1, 2, 1, -1, 1, 1, 2, -3, 1, 2, -1, -1, 1, 0) -> logged [none, 0.0, -1.0, 0.0, -6.0]\njava.lang.AssertionError: x1 should be > 0, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:80)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.r"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 11057,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: x1 should be > 0, was 0.0\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:80)\n\nLocation: org.apache.commons.math3.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:80)\n\nis triggered by the following inputs:\n\n    input (2, 6, 7, 1, 2, 1, -1, 1, 1, 2, -3, 1, 2, -1, -1, 1, 0) -> logged [none, 0.0, -1.0, 0.0, -6.0]\n    input (2, 6, 7, 1, 2, 1, -1, 1, 1, 2, -3, 1, 2, -1, -1, 1, 0) -> logged [none, 0.0, -1.0, 0.0, -6.0]"
+      }
+    }
+  },
+  "total_seconds": 243.9,
+  "paired_inputs_archived": true
+}

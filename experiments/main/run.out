@@ -1,0 +1,1059 @@
+=== all: experiment /home/byoungwoo/preserve-testing/experiments/main (container directory /tmp/preserve-experiment/main-11df6b11) ===
+generate: 77 of 77 bugs to do, 4 at a time; {'model': 'sonnet', 'fuzz_seconds': 15, 'max_llm_calls': 50}
+[1/77] Chart-7   no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[2/77] Chart-3   no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[3/77] Chart-13  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[4/77] Chart-14  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[5/77] Chart-15  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[6/77] Chart-17  valid          llm_calls=8 cost=$0.42 171s  
+[7/77] Chart-19  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[8/77] Chart-21  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[9/77] Chart-25  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[10/77] Chart-26  no bug report  llm_calls=0 cost=$0.00 0s  Defects4J lists no bug report for this bug, so the agent has no input
+[11/77] Chart-9   valid          llm_calls=10 cost=$0.54 186s  
+[12/77] Chart-5   valid          llm_calls=13 cost=$0.54 198s  
+[13/77] Chart-1   valid          llm_calls=15 cost=$1.08 328s  
+[14/77] Lang-24   valid          llm_calls=8 cost=$0.57 208s  
+[15/77] Lang-39   valid          llm_calls=13 cost=$0.62 231s  
+[16/77] Lang-35   valid          llm_calls=8 cost=$0.41 279s  
+[17/77] Lang-44   invalid        llm_calls=11 cost=$0.49 272s  some inputs inside buggyIf fail on the developer fix
+[18/77] Lang-46   valid          llm_calls=11 cost=$0.50 250s  
+[19/77] Lang-51   valid          llm_calls=11 cost=$0.59 261s  
+[20/77] Lang-53   invalid        llm_calls=11 cost=$0.60 319s  some inputs inside buggyIf fail on the developer fix
+[21/77] Lang-57   valid          llm_calls=10 cost=$0.50 250s  
+[22/77] Lang-58   valid          llm_calls=10 cost=$0.48 212s  
+[23/77] Lang-55   valid          llm_calls=11 cost=$0.63 416s  
+[24/77] Math-2    valid          llm_calls=12 cost=$0.55 307s  
+[25/77] Math-3    valid          llm_calls=8 cost=$0.42 230s  
+[26/77] Math-4    valid          llm_calls=12 cost=$0.56 277s  
+[27/77] Math-5    valid          llm_calls=8 cost=$0.38 233s  
+[28/77] Math-7    invalid        llm_calls=20 cost=$1.04 326s  some inputs inside buggyIf pass on the buggy version
+[29/77] Math-22   valid          llm_calls=10 cost=$0.44 270s  
+[30/77] Math-8    valid          llm_calls=16 cost=$0.81 368s  
+[31/77] Math-24   invalid        llm_calls=20 cost=$1.23 423s  some inputs inside buggyIf fail on the developer fix
+[32/77] Math-25   invalid        llm_calls=12 cost=$0.74 322s  some inputs inside buggyIf fail on the developer fix
+[33/77] Math-33   invalid        llm_calls=14 cost=$1.02 244s  some inputs inside buggyIf fail on the developer fix
+[34/77] Math-34   valid          llm_calls=14 cost=$0.56 290s  
+[35/77] Math-32   no test        llm_calls=50 cost=$5.27 650s  LLM call budget exhausted (50 calls)
+[36/77] Math-35   valid          llm_calls=9 cost=$0.41 265s  
+[37/77] Math-39   valid          llm_calls=17 cost=$1.45 328s  
+[38/77] Math-28   no test        llm_calls=50 cost=$5.50 913s  LLM call budget exhausted (50 calls)
+[39/77] Math-41   valid          llm_calls=16 cost=$0.88 295s  
+[40/77] Math-40   valid          llm_calls=29 cost=$1.76 460s  
+[41/77] Math-42   valid          llm_calls=9 cost=$0.44 275s  
+[42/77] Math-44   valid          llm_calls=12 cost=$0.66 318s  
+[43/77] Math-49   valid          llm_calls=16 cost=$0.73 327s  
+[44/77] Math-53   valid          llm_calls=10 cost=$0.51 281s  
+[45/77] Math-50   invalid        llm_calls=17 cost=$0.81 411s  some inputs inside buggyIf fail on the developer fix
+[46/77] Math-57   valid          llm_calls=14 cost=$0.57 324s  
+[47/77] Math-70   valid          llm_calls=10 cost=$0.50 164s  
+[48/77] Math-71   invalid        llm_calls=7 cost=$0.19 189s  some inputs inside buggyIf fail on the developer fix
+[49/77] Math-69   valid          llm_calls=13 cost=$0.79 368s  
+[50/77] Math-58   no test        llm_calls=53 cost=$8.18 568s  LLM call budget exhausted (after 53/50 LLM calls)
+[51/77] Math-61   no test        llm_calls=50 cost=$2.90 540s  The failures do not reproduce the bug: These failures do not reproduce the reported bug, and the result is the same as in every earlier round.
+
+The report is ab
+[52/77] Math-73   valid          llm_calls=13 cost=$0.57 188s  
+[53/77] Math-78   valid          llm_calls=11 cost=$0.56 304s  
+[54/77] Math-80   valid          llm_calls=15 cost=$1.47 371s  
+[55/77] Math-81   invalid        llm_calls=9 cost=$0.30 291s  some inputs inside buggyIf fail on the developer fix
+[56/77] Math-84   invalid        llm_calls=13 cost=$0.65 303s  some inputs inside buggyIf fail on the developer fix
+[57/77] Math-87   invalid        llm_calls=12 cost=$0.72 354s  some inputs inside buggyIf fail on the developer fix
+[58/77] Math-88   invalid        llm_calls=9 cost=$0.59 310s  some inputs inside buggyIf fail on the developer fix
+[59/77] Math-85   valid          llm_calls=32 cost=$2.24 596s  
+[60/77] Math-82   no test        llm_calls=50 cost=$3.79 795s  LLM call budget exhausted (50 calls)
+[61/77] Math-89   valid          llm_calls=10 cost=$0.50 290s  
+[62/77] Math-95   valid          llm_calls=8 cost=$0.41 236s  
+[63/77] Math-97   valid          llm_calls=13 cost=$0.57 201s  
+[64/77] Math-93   valid          llm_calls=21 cost=$1.38 277s  
+[65/77] Math-90   invalid        llm_calls=24 cost=$2.25 484s  some inputs inside buggyIf fail on the developer fix
+[66/77] Math-99   invalid        llm_calls=8 cost=$0.41 221s  some inputs inside buggyIf fail on the developer fix
+[67/77] Math-105  valid          llm_calls=19 cost=$1.63 269s  
+[68/77] Time-4    valid          llm_calls=11 cost=$0.61 256s  
+[69/77] Time-7    valid          llm_calls=14 cost=$0.66 330s  
+[70/77] Time-11   valid          llm_calls=10 cost=$0.50 306s  
+[71/77] Math-104  valid          llm_calls=33 cost=$4.15 647s  
+[72/77] Time-12   valid          llm_calls=8 cost=$0.41 273s  
+[73/77] Time-15   valid          llm_calls=7 cost=$0.15 149s  
+[74/77] Time-14   invalid        llm_calls=16 cost=$1.32 341s  some inputs inside buggyIf fail on the developer fix
+[75/77] Time-18   valid          llm_calls=7 cost=$0.20 174s  
+[76/77] Time-16   valid          llm_calls=8 cost=$0.42 253s  
+[77/77] Time-19   valid          llm_calls=14 cost=$0.70 296s  
+generate: done in 5647s, $74.44 this run; tests of the 77 bugs: valid 48, invalid 15, no bug report 9, no test 5
+evaluate: our test is used for 48 of 77 bugs (valid 48, invalid 15, no bug report 9, no test 5)
+evaluate apr: 458 patches, 733 runs to do (ours + poracle, 1 repetition(s)), differential fuzzing 3m, 12 at a time
+  Chart-5: paired inputs present
+  Chart-9: paired inputs present
+  Lang-46: paired inputs present
+  Lang-55: paired inputs present
+  Chart-17: paired inputs present
+  Lang-39: paired inputs present
+  Chart-1: paired inputs present
+  Lang-58: paired inputs present
+  Lang-24: paired inputs present
+  Lang-57: paired inputs present
+  Lang-35: paired inputs present
+  Lang-51: paired inputs present
+  Math-2: paired inputs present
+  Math-3: paired inputs present
+  Math-5: paired inputs present
+  Math-4: paired inputs present
+  Math-39: paired inputs present
+  Math-8: paired inputs present
+  Math-40: paired inputs present
+  Math-34: paired inputs present
+  Math-22: paired inputs present
+  Math-41: paired inputs present
+  Math-35: paired inputs present
+  Math-42: paired inputs present
+  Math-70: paired inputs present
+  Math-49: paired inputs present
+  Math-80: paired inputs present
+  Math-53: paired inputs present
+  Math-44: paired inputs present
+  Math-57: paired inputs present
+  Math-93: paired inputs present
+  Math-73: paired inputs present
+  Math-69: paired inputs present
+  Math-85: paired inputs present
+  Math-78: paired inputs present
+  Math-89: paired inputs present
+  Math-95: paired inputs present
+  Math-105: paired inputs present
+  Math-97: paired inputs present
+  Time-15: paired inputs present
+  Time-18: paired inputs present
+  Time-4: paired inputs present
+  Math-104: paired inputs present
+  Time-11: paired inputs present
+  Time-12: paired inputs present
+  Time-7: paired inputs present
+  Time-19: paired inputs present
+  Time-16: paired inputs present
+[1/733] apr rep1 Chart-5   Patch7                               Incorrect poracle preserve=R -> R  53s  (about 670 min left) 
+[2/733] apr rep1 Chart-5   Patch5                               Incorrect poracle preserve=R -> R  54s  (about 336 min left) 
+[3/733] apr rep1 Chart-5   Patch6                               Incorrect poracle preserve=R -> R  55s  (about 230 min left) 
+[4/733] apr rep1 Chart-5   Patch6                               Incorrect ours    repro=pass preserve=R -> R  86s  (about 264 min left) 
+[5/733] apr rep1 Chart-5   Patch5                               Incorrect ours    repro=pass preserve=R -> R  87s  (about 213 min left) 
+[6/733] apr rep1 Chart-5   Patch7                               Incorrect ours    repro=pass preserve=R -> R  88s  (about 179 min left) 
+[7/733] apr rep1 Chart-13  Patch10                              Incorrect poracle preserve=R -> R  42s  (about 171 min left) 
+[8/733] apr rep1 Chart-13  Patch9                               Incorrect poracle preserve=R -> R  26s  (about 174 min left) 
+[9/733] apr rep1 Chart-13  Patch11                              Incorrect poracle preserve=R -> R  42s  (about 174 min left) 
+[10/733] apr rep1 Chart-13  Patch89                              Incorrect poracle preserve=R -> R  42s  (about 157 min left) 
+[11/733] apr rep1 Chart-15  Patch12                              Incorrect poracle preserve=R -> R  40s  (about 171 min left) 
+[12/733] apr rep1 Chart-15  Patch13                              Incorrect poracle preserve=R -> R  38s  (about 169 min left) 
+[13/733] apr rep1 Chart-1   Patch2                               Incorrect poracle preserve=A -> A  219s  (about 203 min left) 
+[14/733] apr rep1 Chart-1   Patch1                               Incorrect poracle preserve=A -> A  219s  (about 189 min left) 
+[15/733] apr rep1 Chart-3   Patch4                               Incorrect poracle preserve=A -> A  219s  (about 176 min left) 
+[16/733] apr rep1 Chart-7   Patch8                               Incorrect poracle preserve=A -> A  219s  (about 166 min left) 
+[17/733] apr rep1 Chart-21  Patch14                              Incorrect poracle preserve=R -> R  37s  (about 181 min left) 
+[18/733] apr rep1 Chart-21  Patch91                              Incorrect poracle preserve=R -> R  38s  (about 172 min left) 
+[19/733] apr rep1 Chart-25  Patch15                              Incorrect poracle preserve=R -> R  40s  (about 164 min left) 
+[20/733] apr rep1 Chart-25  Patch16                              Incorrect poracle preserve=R -> R  40s  (about 156 min left) 
+[21/733] apr rep1 Chart-9   Patch88                              Incorrect poracle preserve=A -> A  208s  (about 153 min left) 
+[22/733] apr rep1 Chart-9   Patch88                              Incorrect ours    repro=fail preserve=A -> R  242s  (about 160 min left) 
+[23/733] apr rep1 Chart-25  Patch17                              Incorrect poracle preserve=R -> R  39s  (about 153 min left) 
+[24/733] apr rep1 Chart-25  Patch92                              Incorrect poracle preserve=R -> R  40s  (about 148 min left) 
+[25/733] apr rep1 Chart-26  Patch19                              Incorrect poracle preserve=R -> R  40s  (about 143 min left) 
+[26/733] apr rep1 Chart-14  Patch188                             Correct   poracle preserve=A -> A  208s  (about 140 min left) 
+[27/733] apr rep1 Chart-26  Patch93                              Incorrect poracle preserve=R -> R  40s  (about 135 min left) 
+[28/733] apr rep1 Chart-1   Patch2                               Incorrect ours    repro=fail preserve=A -> R  320s  (about 135 min left) 
+[29/733] apr rep1 Chart-1   Patch1                               Incorrect ours    repro=fail preserve=A -> R  321s  (about 130 min left) 
+[30/733] apr rep1 Chart-17  Patch90                              Incorrect poracle preserve=A -> A  203s  (about 142 min left) 
+[31/733] apr rep1 Chart-19  Patch189                             Correct   poracle preserve=A -> A  202s  (about 140 min left) 
+[32/733] apr rep1 Chart-17  Patch90                              Incorrect ours    repro=pass preserve=A -> A  242s  (about 136 min left) 
+[33/733] apr rep1 Chart-26  Patch18                              Incorrect poracle preserve=A -> A  204s  (about 165 min left) 
+[34/733] apr rep1 Lang-24   162_PFL_kPAR_Patch_247_247           Correct   poracle preserve=A -> A  201s  (about 171 min left) 
+[35/733] apr rep1 Lang-24   236_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  201s  (about 168 min left) 
+[36/733] apr rep1 Lang-24   291_PFL_TBar_Patch_12_12             Correct   poracle preserve=A -> A  203s  (about 166 min left) 
+[37/733] apr rep1 Lang-24   322_NFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  201s  (about 164 min left) 
+[38/733] apr rep1 Lang-35   Patch192                             Incorrect poracle preserve=R -> R  30s  (about 163 min left) 
+[39/733] apr rep1 Lang-24   162_PFL_kPAR_Patch_247_247           Correct   ours    repro=pass preserve=A -> A  244s  (about 160 min left) 
+[40/733] apr rep1 Lang-24   236_PFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  245s  (about 158 min left) 
+[41/733] apr rep1 Lang-24   291_PFL_TBar_Patch_12_12             Correct   ours    repro=pass preserve=A -> A  246s  (about 156 min left) 
+[42/733] apr rep1 Lang-24   322_NFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  245s  (about 155 min left) 
+[43/733] apr rep1 Lang-24   361_NFL_TBar_Patch_2414_1931         Incorrect poracle preserve=A -> A  201s  (about 153 min left) 
+[44/733] apr rep1 Lang-24   361_NFL_TBar_Patch_2414_1931         Incorrect ours    repro=pass preserve=A -> A  242s  (about 158 min left) 
+[45/733] apr rep1 Lang-24   Patch191                             Correct   ours    repro=pass preserve=A -> A  240s  (about 156 min left) 
+[46/733] apr rep1 Lang-35   Patch192                             Incorrect ours    repro=pass preserve=R -> R  117s  (about 153 min left) 
+[47/733] apr rep1 Lang-24   Patch191                             Correct   poracle preserve=A -> A  198s  (about 162 min left) 
+[48/733] apr rep1 Lang-39   254_PFL_TBar_Patch_7_4               Correct   poracle preserve=A -> A  200s  (about 172 min left) 
+[49/733] apr rep1 Lang-39   408_NFL_TBar_Patch_1350_1039         Incorrect poracle preserve=A -> A  199s  (about 173 min left) 
+[50/733] apr rep1 Lang-39   254_PFL_TBar_Patch_7_4               Correct   ours    repro=pass preserve=A -> A  240s  (about 172 min left) 
+[51/733] apr rep1 Lang-39   444_PFL_SimFix_Patch_17_17           Correct   poracle preserve=A -> A  201s  (about 171 min left) 
+[52/733] apr rep1 Lang-39   Patch193                             Incorrect poracle preserve=R -> R  31s  (about 169 min left) 
+[53/733] apr rep1 Lang-39   408_NFL_TBar_Patch_1350_1039         Incorrect ours    repro=pass preserve=A -> A  242s  (about 166 min left) 
+[54/733] apr rep1 Lang-39   547_NFL_SimFix_Patch_2275_2275       Correct   poracle preserve=A -> A  200s  (about 164 min left) 
+[55/733] apr rep1 Lang-39   444_PFL_SimFix_Patch_17_17           Correct   ours    repro=pass preserve=A -> A  246s  (about 163 min left) 
+[56/733] apr rep1 Lang-39   Patch20                              Incorrect poracle preserve=R -> R  32s  (about 161 min left) 
+[57/733] apr rep1 Lang-39   Patch193                             Incorrect ours    repro=fail preserve=R -> R  78s  (about 159 min left) 
+[58/733] apr rep1 Lang-44   268_NFL_kPAR_Patch_3382_1595         Incorrect poracle preserve=R -> R  31s  (about 156 min left) 
+[59/733] apr rep1 Lang-39   547_NFL_SimFix_Patch_2275_2275       Correct   ours    repro=pass preserve=A -> A  247s  (about 155 min left) 
+[60/733] apr rep1 Lang-39   65_PFL_AVATAR_Patch_13_1             Incorrect poracle preserve=A -> A  200s  (about 152 min left) 
+[61/733] apr rep1 Lang-44   412_NFL_TBar_Patch_4046_2567         Incorrect poracle preserve=R -> R  33s  (about 150 min left) 
+[62/733] apr rep1 Lang-44   Patch150                             Incorrect poracle preserve=R -> R  34s  (about 149 min left) 
+[63/733] apr rep1 Lang-39   65_PFL_AVATAR_Patch_13_1             Incorrect ours    repro=pass preserve=A -> A  240s  (about 150 min left) 
+[64/733] apr rep1 Lang-39   83_NFL_AVATAR_Patch_525_180          Incorrect ours    repro=pass preserve=A -> A  237s  (about 149 min left) 
+[65/733] apr rep1 Lang-39   83_NFL_AVATAR_Patch_525_180          Incorrect poracle preserve=A -> A  199s  (about 148 min left) 
+[66/733] apr rep1 Lang-44   298_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  200s  (about 165 min left) 
+[67/733] apr rep1 Lang-39   Patch20                              Incorrect ours    repro=pass preserve=A -> A  245s  (about 165 min left) 
+[68/733] apr rep1 Lang-44   Patch21                              Correct   poracle preserve=A -> A  201s  (about 163 min left) 
+[69/733] apr rep1 Lang-46   111_PFL_DynaMoth_Patch_1_1           Correct   poracle preserve=A -> A  202s  (about 164 min left) 
+[70/733] apr rep1 Lang-46   Patch22                              Incorrect poracle preserve=R -> R  19s  (about 161 min left) 
+[71/733] apr rep1 Lang-46   203_PFL_Nopol_Patch_1_1              Correct   poracle preserve=A -> A  201s  (about 160 min left) 
+[72/733] apr rep1 Lang-46   269_NFL_Nopol_Patch_1_1              Correct   poracle preserve=A -> A  199s  (about 159 min left) 
+[73/733] apr rep1 Lang-46   111_PFL_DynaMoth_Patch_1_1           Correct   ours    repro=pass preserve=A -> A  256s  (about 159 min left) 
+[74/733] apr rep1 Lang-51   Patch151                             Incorrect poracle preserve=R -> R  40s  (about 158 min left) 
+[75/733] apr rep1 Lang-46   343_PFL_ARJA_Patch_5_5               Correct   poracle preserve=A -> A  200s  (about 156 min left) 
+[76/733] apr rep1 Lang-46   203_PFL_Nopol_Patch_1_1              Correct   ours    repro=pass preserve=A -> A  255s  (about 154 min left) 
+[77/733] apr rep1 Lang-46   269_NFL_Nopol_Patch_1_1              Correct   ours    repro=pass preserve=A -> A  256s  (about 153 min left) 
+[78/733] apr rep1 Lang-51   Patch23                              Incorrect poracle preserve=R -> R  45s  (about 152 min left) 
+[79/733] apr rep1 Lang-51   Patch151                             Incorrect ours    repro=pass preserve=R -> R  69s  (about 150 min left) 
+[80/733] apr rep1 Lang-46   Patch22                              Incorrect ours    repro=fail preserve=R -> R  93s  (about 149 min left) 
+[81/733] apr rep1 Lang-46   343_PFL_ARJA_Patch_5_5               Correct   ours    repro=pass preserve=A -> A  251s  (about 147 min left) 
+[82/733] apr rep1 Lang-51   Patch23                              Incorrect ours    repro=pass preserve=R -> R  69s  (about 145 min left) 
+[83/733] apr rep1 Lang-46   408_PFL_RSRepair-A_Patch_1738_1089   Correct   ours    repro=pass preserve=A -> A  250s  (about 146 min left) 
+[84/733] apr rep1 Lang-46   408_PFL_RSRepair-A_Patch_1738_1089   Correct   poracle preserve=A -> A  199s  (about 153 min left) 
+[85/733] apr rep1 Lang-55   113_PFL_DynaMoth_Patch_1_1           Correct   ours    repro=pass preserve=R -> R  164s  (about 157 min left) 
+[86/733] apr rep1 Lang-55   206_PFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  163s  (about 157 min left) 
+[87/733] apr rep1 Lang-55   285_NFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  162s  (about 156 min left) 
+[88/733] apr rep1 Lang-53   225_NFL_kPAR_Patch_1593_845          Incorrect poracle preserve=A -> A  200s  (about 154 min left) 
+[89/733] apr rep1 Lang-53   279_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  202s  (about 153 min left) 
+[90/733] apr rep1 Lang-53   Patch152                             Incorrect poracle preserve=A -> A  201s  (about 151 min left) 
+[91/733] apr rep1 Lang-53   Patch24                              Incorrect poracle preserve=A -> A  201s  (about 150 min left) 
+[92/733] apr rep1 Lang-55   Patch25                              Correct   ours    repro=pass preserve=R -> R  162s  (about 148 min left) 
+[93/733] apr rep1 Lang-55   113_PFL_DynaMoth_Patch_1_1           Correct   poracle preserve=A -> A  200s  (about 148 min left) 
+[94/733] apr rep1 Lang-58   115_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  32s  (about 147 min left) 
+[95/733] apr rep1 Lang-55   206_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  199s  (about 145 min left) 
+[96/733] apr rep1 Lang-55   285_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  199s  (about 144 min left) 
+[97/733] apr rep1 Lang-58   157_PFL_kPAR_Patch_1_1               Incorrect poracle preserve=R -> R  33s  (about 143 min left) 
+[98/733] apr rep1 Lang-58   204_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  34s  (about 142 min left) 
+[99/733] apr rep1 Lang-58   227_NFL_kPAR_Patch_1889_735          Incorrect poracle preserve=R -> R  35s  (about 142 min left) 
+[100/733] apr rep1 Lang-58   286_PFL_TBar_Patch_9_9               Incorrect poracle preserve=R -> R  33s  (about 142 min left) 
+[101/733] apr rep1 Lang-55   Patch25                              Correct   poracle preserve=A -> A  198s  (about 145 min left) 
+[102/733] apr rep1 Lang-57   PatchHDRepair1                       Correct   poracle preserve=A -> A  199s  (about 150 min left) 
+[103/733] apr rep1 Lang-57   PatchHDRepair1                       Correct   ours    repro=pass preserve=A -> A  239s  (about 150 min left) 
+[104/733] apr rep1 Lang-58   375_NFL_TBar_Patch_1789_1078         Incorrect poracle preserve=R -> R  28s  (about 149 min left) 
+[105/733] apr rep1 Lang-58   115_PFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=A -> A  245s  (about 150 min left) 
+[106/733] apr rep1 Lang-58   280_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  203s  (about 148 min left) 
+[107/733] apr rep1 Lang-58   157_PFL_kPAR_Patch_1_1               Incorrect ours    repro=pass preserve=A -> A  245s  (about 147 min left) 
+[108/733] apr rep1 Lang-58   204_PFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=A -> A  246s  (about 146 min left) 
+[109/733] apr rep1 Lang-58   227_NFL_kPAR_Patch_1889_735          Incorrect ours    repro=pass preserve=A -> A  246s  (about 146 min left) 
+[110/733] apr rep1 Lang-58   534_PFL_FixMiner_Patch_1_1           Incorrect poracle preserve=R -> R  30s  (about 146 min left) 
+[111/733] apr rep1 Lang-58   286_PFL_TBar_Patch_9_9               Incorrect ours    repro=pass preserve=A -> A  246s  (about 145 min left) 
+[112/733] apr rep1 Lang-58   280_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  266s  (about 144 min left) 
+[113/733] apr rep1 Lang-58   29_PFL_AVATAR_Patch_5_5              Incorrect poracle preserve=A -> A  201s  (about 143 min left) 
+[114/733] apr rep1 Lang-58   29_PFL_AVATAR_Patch_5_5              Incorrect ours    repro=pass preserve=A -> A  248s  (about 143 min left) 
+[115/733] apr rep1 Lang-58   Patch153                             Incorrect poracle preserve=R -> R  32s  (about 143 min left) 
+[116/733] apr rep1 Lang-58   Patch26                              Incorrect poracle preserve=R -> R  29s  (about 143 min left) 
+[117/733] apr rep1 Lang-58   375_NFL_TBar_Patch_1789_1078         Incorrect ours    repro=pass preserve=A -> A  234s  (about 142 min left) 
+[118/733] apr rep1 Lang-58   457_PFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  198s  (about 147 min left) 
+[119/733] apr rep1 Lang-58   47_NFL_AVATAR_Patch_999_513          Incorrect poracle preserve=A -> A  200s  (about 147 min left) 
+[120/733] apr rep1 Lang-58   457_PFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  248s  (about 147 min left) 
+[121/733] apr rep1 Lang-58   47_NFL_AVATAR_Patch_999_513          Incorrect ours    repro=pass preserve=A -> A  240s  (about 147 min left) 
+[122/733] apr rep1 Lang-58   562_NFL_SimFix_Patch_1138_1138       Correct   poracle preserve=A -> A  202s  (about 147 min left) 
+[123/733] apr rep1 Lang-58   534_PFL_FixMiner_Patch_1_1           Incorrect ours    repro=pass preserve=A -> A  252s  (about 146 min left) 
+[124/733] apr rep1 Math-2    27_NFL_AVATAR_Patch_367_117          Incorrect poracle preserve=R -> R  46s  (about 145 min left) 
+[125/733] apr rep1 Lang-58   562_NFL_SimFix_Patch_1138_1138       Correct   ours    repro=pass preserve=A -> A  249s  (about 145 min left) 
+[126/733] apr rep1 Lang-58   Patch26                              Incorrect ours    repro=fail preserve=A -> R  248s  (about 145 min left) 
+[127/733] apr rep1 Lang-58   Patch153                             Incorrect ours    repro=fail preserve=A -> R  258s  (about 144 min left) 
+[128/733] apr rep1 Math-2    202_NFL_kPAR_Patch_155_56            Incorrect poracle preserve=A -> A  207s  (about 143 min left) 
+[129/733] apr rep1 Math-2    272_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  208s  (about 148 min left) 
+[130/733] apr rep1 Math-2    202_NFL_kPAR_Patch_155_56            Incorrect ours    repro=fail preserve=A -> R  307s  (about 147 min left) 
+[131/733] apr rep1 Math-2    272_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  303s  (about 147 min left) 
+[132/733] apr rep1 Math-2    345_NFL_TBar_Patch_468_285           Incorrect poracle preserve=A -> A  208s  (about 150 min left) 
+[133/733] apr rep1 Math-2    474_NFL_GenProg-A_Patch_35_11        Incorrect poracle preserve=A -> A  210s  (about 149 min left) 
+[134/733] apr rep1 Math-2    27_NFL_AVATAR_Patch_367_117          Incorrect ours    repro=fail preserve=A -> R  308s  (about 150 min left) 
+[135/733] apr rep1 Math-2    87_NFL_Kali-A_Patch_6_6              Incorrect poracle preserve=A -> A  209s  (about 149 min left) 
+[136/733] apr rep1 Math-2    Patch154                             Incorrect poracle preserve=A -> A  210s  (about 148 min left) 
+[137/733] apr rep1 Math-2    345_NFL_TBar_Patch_468_285           Incorrect ours    repro=fail preserve=A -> R  306s  (about 149 min left) 
+[138/733] apr rep1 Math-2    474_NFL_GenProg-A_Patch_35_11        Incorrect ours    repro=fail preserve=A -> R  308s  (about 149 min left) 
+[139/733] apr rep1 Math-2    87_NFL_Kali-A_Patch_6_6              Incorrect ours    repro=fail preserve=A -> R  309s  (about 149 min left) 
+[140/733] apr rep1 Math-2    Patch27                              Incorrect poracle preserve=A -> A  207s  (about 149 min left) 
+[141/733] apr rep1 Math-2    Patch154                             Incorrect ours    repro=fail preserve=A -> R  308s  (about 148 min left) 
+[142/733] apr rep1 Math-4    178_PFL_kPAR_Patch_4_2               Incorrect poracle preserve=R -> R  26s  (about 148 min left) 
+[143/733] apr rep1 Math-4    179_PFL_kPAR_Patch_2_1               Incorrect poracle preserve=R -> R  25s  (about 148 min left) 
+[144/733] apr rep1 Math-2    Patch28                              Incorrect poracle preserve=A -> A  206s  (about 148 min left) 
+[145/733] apr rep1 Math-2    Patch27                              Incorrect ours    repro=fail preserve=A -> R  306s  (about 149 min left) 
+[146/733] apr rep1 Math-4    178_PFL_kPAR_Patch_4_2               Incorrect ours    repro=fail preserve=R -> R  120s  (about 148 min left) 
+[147/733] apr rep1 Math-3    248_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  209s  (about 148 min left) 
+[148/733] apr rep1 Math-2    Patch28                              Incorrect ours    repro=fail preserve=A -> R  304s  (about 147 min left) 
+[149/733] apr rep1 Math-3    335_NFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  208s  (about 146 min left) 
+[150/733] apr rep1 Math-4    179_PFL_kPAR_Patch_2_1               Incorrect ours    repro=fail preserve=R -> R  120s  (about 145 min left) 
+[151/733] apr rep1 Math-3    248_PFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  260s  (about 144 min left) 
+[152/733] apr rep1 Math-4    294_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  28s  (about 143 min left) 
+[153/733] apr rep1 Math-4    322_PFL_TBar_Patch_28_12             Incorrect poracle preserve=R -> R  32s  (about 143 min left) 
+[154/733] apr rep1 Math-3    Patch194                             Correct   poracle preserve=A -> A  206s  (about 143 min left) 
+[155/733] apr rep1 Math-3    335_NFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  261s  (about 142 min left) 
+[156/733] apr rep1 Math-3    Patch194                             Correct   ours    repro=pass preserve=A -> A  257s  (about 142 min left) 
+[157/733] apr rep1 Math-4    566_PFL_FixMiner_Patch_41_9          Incorrect poracle preserve=R -> R  30s  (about 141 min left) 
+[158/733] apr rep1 Math-4    294_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=R -> R  127s  (about 141 min left) 
+[159/733] apr rep1 Math-4    322_PFL_TBar_Patch_28_12             Incorrect ours    repro=fail preserve=R -> R  132s  (about 142 min left) 
+[160/733] apr rep1 Math-4    243_PFL_ACS_Patch_2_2                Correct   poracle preserve=A -> A  206s  (about 142 min left) 
+[161/733] apr rep1 Math-4    566_PFL_FixMiner_Patch_41_9          Incorrect ours    repro=fail preserve=R -> R  129s  (about 142 min left) 
+[162/733] apr rep1 Math-4    59_PFL_AVATAR_Patch_40_11            Incorrect poracle preserve=R -> R  28s  (about 142 min left) 
+[163/733] apr rep1 Math-4    Patch155                             Incorrect poracle preserve=R -> R  27s  (about 142 min left) 
+[164/733] apr rep1 Math-4    323_PFL_TBar_Patch_16_6              Incorrect poracle preserve=A -> A  212s  (about 142 min left) 
+[165/733] apr rep1 Math-4    243_PFL_ACS_Patch_2_2                Correct   ours    repro=pass preserve=A -> A  296s  (about 141 min left) 
+[166/733] apr rep1 Math-4    330_NFL_ACS_Patch_2_2                Correct   poracle preserve=A -> A  214s  (about 140 min left) 
+[167/733] apr rep1 Math-4    59_PFL_AVATAR_Patch_40_11            Incorrect ours    repro=fail preserve=R -> R  128s  (about 140 min left) 
+[168/733] apr rep1 Math-4    323_PFL_TBar_Patch_16_6              Incorrect ours    repro=pass preserve=R -> R  259s  (about 140 min left) 
+[169/733] apr rep1 Math-4    Patch155                             Incorrect ours    repro=fail preserve=R -> R  125s  (about 140 min left) 
+[170/733] apr rep1 Math-4    567_PFL_FixMiner_Patch_24_6          Incorrect poracle preserve=A -> A  210s  (about 139 min left) 
+[171/733] apr rep1 Math-4    58_PFL_AVATAR_Patch_24_6             Incorrect poracle preserve=A -> A  211s  (about 139 min left) 
+[172/733] apr rep1 Math-4    330_NFL_ACS_Patch_2_2                Correct   ours    repro=pass preserve=A -> A  307s  (about 139 min left) 
+[173/733] apr rep1 Math-4    Patch195                             Correct   ours    repro=pass preserve=R -> R  133s  (about 139 min left) 
+[174/733] apr rep1 Math-4    567_PFL_FixMiner_Patch_24_6          Incorrect ours    repro=pass preserve=A -> A  300s  (about 138 min left) 
+[175/733] apr rep1 Math-4    58_PFL_AVATAR_Patch_24_6             Incorrect ours    repro=pass preserve=A -> A  302s  (about 139 min left) 
+[176/733] apr rep1 Math-4    Patch195                             Correct   poracle preserve=A -> A  210s  (about 140 min left) 
+[177/733] apr rep1 Math-5    247_PFL_ACS_Patch_2_1                Correct   poracle preserve=A -> A  210s  (about 140 min left) 
+[178/733] apr rep1 Math-5    334_NFL_ACS_Patch_2_1                Correct   poracle preserve=A -> A  207s  (about 141 min left) 
+[179/733] apr rep1 Math-5    341_PFL_TBar_Patch_2_2               Correct   poracle preserve=A -> A  207s  (about 141 min left) 
+[180/733] apr rep1 Math-5    247_PFL_ACS_Patch_2_1                Correct   ours    repro=pass preserve=A -> A  305s  (about 141 min left) 
+[181/733] apr rep1 Math-5    413_NFL_TBar_Patch_2_2               Correct   poracle preserve=A -> A  209s  (about 141 min left) 
+[182/733] apr rep1 Math-5    334_NFL_ACS_Patch_2_1                Correct   ours    repro=pass preserve=A -> A  300s  (about 140 min left) 
+[183/733] apr rep1 Math-5    440_PFL_RSRepair-A_Patch_510_172     Correct   poracle preserve=A -> A  208s  (about 140 min left) 
+[184/733] apr rep1 Math-5    341_PFL_TBar_Patch_2_2               Correct   ours    repro=pass preserve=A -> A  300s  (about 140 min left) 
+[185/733] apr rep1 Math-5    413_NFL_TBar_Patch_2_2               Correct   ours    repro=pass preserve=A -> A  302s  (about 140 min left) 
+[186/733] apr rep1 Math-5    440_PFL_RSRepair-A_Patch_510_172     Correct   ours    repro=pass preserve=A -> A  298s  (about 141 min left) 
+[187/733] apr rep1 Math-5    491_PFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  206s  (about 140 min left) 
+[188/733] apr rep1 Math-5    491_PFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  297s  (about 140 min left) 
+[189/733] apr rep1 Math-5    611_NFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  206s  (about 141 min left) 
+[190/733] apr rep1 Math-8    155_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  40s  (about 140 min left) 
+[191/733] apr rep1 Math-8    143_PFL_kPAR_Patch_14_3              Incorrect ours    repro=fail preserve=R -> R  122s  (about 140 min left) 
+[192/733] apr rep1 Math-5    Patch196                             Correct   poracle preserve=A -> A  208s  (about 140 min left) 
+[193/733] apr rep1 Math-5    611_NFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  304s  (about 139 min left) 
+[194/733] apr rep1 Math-5    Patch29                              Correct   poracle preserve=A -> A  207s  (about 139 min left) 
+[195/733] apr rep1 Math-7    247_NFL_kPAR_Patch_405_243           Incorrect poracle preserve=A -> A  207s  (about 138 min left) 
+[196/733] apr rep1 Math-8    155_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=R -> R  131s  (about 137 min left) 
+[197/733] apr rep1 Math-7    291_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  207s  (about 137 min left) 
+[198/733] apr rep1 Math-8    356_NFL_TBar_Patch_47_16             Incorrect poracle preserve=R -> R  46s  (about 136 min left) 
+[199/733] apr rep1 Math-5    Patch196                             Correct   ours    repro=pass preserve=A -> A  301s  (about 136 min left) 
+[200/733] apr rep1 Math-8    449_PFL_SimFix_Patch_78_78           Incorrect poracle preserve=R -> R  46s  (about 135 min left) 
+[201/733] apr rep1 Math-8    550_NFL_SimFix_Patch_78_78           Incorrect poracle preserve=R -> R  47s  (about 135 min left) 
+[202/733] apr rep1 Math-8    210_NFL_kPAR_Patch_41_6              Incorrect ours    repro=fail preserve=R -> R  134s  (about 134 min left) 
+[203/733] apr rep1 Math-5    Patch29                              Correct   ours    repro=pass preserve=A -> A  298s  (about 134 min left) 
+[204/733] apr rep1 Math-8    143_PFL_kPAR_Patch_14_3              Incorrect poracle preserve=A -> A  206s  (about 133 min left) 
+[205/733] apr rep1 Math-8    Patch30                              Incorrect poracle preserve=R -> R  50s  (about 132 min left) 
+[206/733] apr rep1 Math-8    Patch31                              Incorrect poracle preserve=R -> R  50s  (about 132 min left) 
+[207/733] apr rep1 Math-8    356_NFL_TBar_Patch_47_16             Incorrect ours    repro=pass preserve=R -> R  145s  (about 132 min left) 
+[208/733] apr rep1 Math-22   572_PFL_FixMiner_Patch_2_2           Incorrect poracle preserve=R -> R  34s  (about 131 min left) 
+[209/733] apr rep1 Math-8    449_PFL_SimFix_Patch_78_78           Incorrect ours    repro=pass preserve=R -> R  146s  (about 131 min left) 
+[210/733] apr rep1 Math-8    550_NFL_SimFix_Patch_78_78           Incorrect ours    repro=pass preserve=R -> R  146s  (about 131 min left) 
+[211/733] apr rep1 Math-8    210_NFL_kPAR_Patch_41_6              Incorrect poracle preserve=A -> A  208s  (about 130 min left) 
+[212/733] apr rep1 Math-8    Patch30                              Incorrect ours    repro=pass preserve=R -> R  145s  (about 130 min left) 
+[213/733] apr rep1 Math-24   Patch157                             Incorrect poracle preserve=R -> R  46s  (about 129 min left) 
+[214/733] apr rep1 Math-8    Patch31                              Incorrect ours    repro=pass preserve=R -> R  146s  (about 129 min left) 
+[215/733] apr rep1 Math-22   572_PFL_FixMiner_Patch_2_2           Incorrect ours    repro=fail preserve=R -> R  136s  (about 129 min left) 
+[216/733] apr rep1 Math-28   120_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  49s  (about 128 min left) 
+[217/733] apr rep1 Math-28   324_NFL_ACS_Patch_2_1                Incorrect poracle preserve=R -> R  47s  (about 128 min left) 
+[218/733] apr rep1 Math-28   365_PFL_ARJA_Patch_2_1               Incorrect poracle preserve=R -> R  45s  (about 127 min left) 
+[219/733] apr rep1 Math-28   398_PFL_GenProg-A_Patch_5_2          Incorrect poracle preserve=R -> R  43s  (about 127 min left) 
+[220/733] apr rep1 Math-28   430_PFL_RSRepair-A_Patch_4_1         Incorrect poracle preserve=R -> R  42s  (about 127 min left) 
+[221/733] apr rep1 Math-28   456_NFL_ARJA_Patch_6_6               Incorrect poracle preserve=R -> R  41s  (about 126 min left) 
+[222/733] apr rep1 Math-28   49_PFL_AVATAR_Patch_29               Incorrect poracle preserve=R -> R  41s  (about 125 min left) 
+[223/733] apr rep1 Math-22   375_PFL_ARJA_Patch_27_22             Correct   poracle preserve=A -> A  215s  (about 125 min left) 
+[224/733] apr rep1 Math-28   526_NFL_RSRepair-A_Patch_28_11       Incorrect poracle preserve=R -> R  42s  (about 125 min left) 
+[225/733] apr rep1 Math-28   550_PFL_FixMiner_Patch_8_6           Incorrect poracle preserve=R -> R  42s  (about 124 min left) 
+[226/733] apr rep1 Math-28   97_PFL_Kali-A_Patch_1_1              Incorrect poracle preserve=R -> R  42s  (about 124 min left) 
+[227/733] apr rep1 Math-22   573_PFL_FixMiner_Patch_1_1           Incorrect poracle preserve=A -> A  212s  (about 123 min left) 
+[228/733] apr rep1 Math-28   Patch158                             Incorrect poracle preserve=R -> R  44s  (about 122 min left) 
+[229/733] apr rep1 Math-28   Patch198                             Incorrect poracle preserve=R -> R  44s  (about 122 min left) 
+[230/733] apr rep1 Math-22   PatchHDRepair3                       Incorrect poracle preserve=A -> A  212s  (about 121 min left) 
+[231/733] apr rep1 Math-28   Patch32                              Incorrect poracle preserve=R -> R  45s  (about 121 min left) 
+[232/733] apr rep1 Math-28   Patch33                              Incorrect poracle preserve=R -> R  44s  (about 120 min left) 
+[233/733] apr rep1 Math-25   245_PFL_ACS_Patch_2_2                Correct   poracle preserve=A -> A  211s  (about 120 min left) 
+[234/733] apr rep1 Math-22   375_PFL_ARJA_Patch_27_22             Correct   ours    repro=pass preserve=A -> A  312s  (about 120 min left) 
+[235/733] apr rep1 Math-25   Patch197                             Correct   poracle preserve=A -> A  215s  (about 119 min left) 
+[236/733] apr rep1 Math-22   573_PFL_FixMiner_Patch_1_1           Incorrect ours    repro=pass preserve=A -> A  310s  (about 119 min left) 
+[237/733] apr rep1 Math-22   PatchHDRepair3                       Incorrect ours    repro=pass preserve=A -> A  304s  (about 119 min left) 
+[238/733] apr rep1 Math-32   116_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  208s  (about 122 min left) 
+[239/733] apr rep1 Math-32   120_NFL_Kali-A_Patch_2_2             Incorrect poracle preserve=A -> A  210s  (about 121 min left) 
+[240/733] apr rep1 Math-32   164_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  209s  (about 121 min left) 
+[241/733] apr rep1 Math-32   89_PFL_Kali-A_Patch_2_2              Incorrect poracle preserve=A -> A  210s  (about 120 min left) 
+[242/733] apr rep1 Math-32   Patch34                              Incorrect poracle preserve=A -> A  210s  (about 120 min left) 
+[243/733] apr rep1 Math-33   205_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  207s  (about 119 min left) 
+[244/733] apr rep1 Math-33   284_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  206s  (about 119 min left) 
+[245/733] apr rep1 Math-33   480_PFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  204s  (about 118 min left) 
+[246/733] apr rep1 Math-33   520_NFL_RSRepair-A_Patch_8_3         Incorrect poracle preserve=A -> A  206s  (about 118 min left) 
+[247/733] apr rep1 Math-33   559_PFL_FixMiner_Patch_64_17         Correct   poracle preserve=A -> A  205s  (about 117 min left) 
+[248/733] apr rep1 Math-33   56_PFL_AVATAR_Patch_40               Correct   poracle preserve=A -> A  204s  (about 117 min left) 
+[249/733] apr rep1 Math-33   Patch159                             Incorrect poracle preserve=A -> A  203s  (about 117 min left) 
+[250/733] apr rep1 Math-35   416_NFL_ARJA_Patch_303_303           Correct   ours    repro=pass preserve=R -> R  129s  (about 119 min left) 
+[251/733] apr rep1 Math-33   Patch36                              Incorrect poracle preserve=A -> A  204s  (about 119 min left) 
+[252/733] apr rep1 Math-34   561_PFL_FixMiner_Patch_2_1           Correct   poracle preserve=A -> A  206s  (about 119 min left) 
+[253/733] apr rep1 Math-34   PatchHDRepair4                       Correct   poracle preserve=A -> A  207s  (about 118 min left) 
+[254/733] apr rep1 Math-35   228_PFL_ACS_Patch_8_8                Correct   poracle preserve=A -> A  206s  (about 118 min left) 
+[255/733] apr rep1 Math-35   511_PFL_FixMiner_Patch_1_1           Incorrect poracle preserve=R -> R  24s  (about 118 min left) 
+[256/733] apr rep1 Math-35   314_NFL_ACS_Patch_11_11              Correct   poracle preserve=A -> A  208s  (about 118 min left) 
+[257/733] apr rep1 Math-35   416_NFL_ARJA_Patch_303_303           Correct   poracle preserve=A -> A  206s  (about 117 min left) 
+[258/733] apr rep1 Math-34   561_PFL_FixMiner_Patch_2_1           Correct   ours    repro=pass preserve=A -> A  302s  (about 117 min left) 
+[259/733] apr rep1 Math-34   PatchHDRepair4                       Correct   ours    repro=pass preserve=A -> A  303s  (about 117 min left) 
+[260/733] apr rep1 Math-35   228_PFL_ACS_Patch_8_8                Correct   ours    repro=pass preserve=A -> A  298s  (about 117 min left) 
+[261/733] apr rep1 Math-35   511_PFL_FixMiner_Patch_1_1           Incorrect ours    repro=fail preserve=R -> R  118s  (about 116 min left) 
+[262/733] apr rep1 Math-35   314_NFL_ACS_Patch_11_11              Correct   ours    repro=pass preserve=A -> A  299s  (about 116 min left) 
+[263/733] apr rep1 Math-40   248_NFL_kPAR_Patch_452_264           Incorrect poracle preserve=R -> R  41s  (about 116 min left) 
+[264/733] apr rep1 Math-40   248_NFL_kPAR_Patch_452_264           Incorrect ours    repro=pass preserve=R -> R  68s  (about 116 min left) 
+[265/733] apr rep1 Math-40   454_NFL_ARJA_Patch_195_167           Incorrect poracle preserve=R -> R  42s  (about 115 min left) 
+[266/733] apr rep1 Math-35   445_PFL_SimFix_Patch_19_19           Correct   poracle preserve=A -> A  205s  (about 115 min left) 
+[267/733] apr rep1 Math-35   445_PFL_SimFix_Patch_19_19           Correct   ours    repro=pass preserve=A -> A  301s  (about 114 min left) 
+[268/733] apr rep1 Math-39   Patch160                             Incorrect ours    repro=fail preserve=R -> R  121s  (about 113 min left) 
+[269/733] apr rep1 Math-40   454_NFL_ARJA_Patch_195_167           Incorrect ours    repro=pass preserve=R -> R  72s  (about 113 min left) 
+[270/733] apr rep1 Math-35   510_PFL_FixMiner_Patch_2_2           Correct   poracle preserve=A -> A  205s  (about 113 min left) 
+[271/733] apr rep1 Math-40   490_NFL_GenProg-A_Patch_1241_726     Incorrect poracle preserve=R -> R  50s  (about 112 min left) 
+[272/733] apr rep1 Math-40   490_NFL_GenProg-A_Patch_1241_726     Incorrect ours    repro=pass preserve=R -> R  76s  (about 112 min left) 
+[273/733] apr rep1 Math-40   525_NFL_RSRepair-A_Patch_146_63      Incorrect poracle preserve=R -> R  50s  (about 111 min left) 
+[274/733] apr rep1 Math-40   Patch161                             Incorrect poracle preserve=R -> R  51s  (about 111 min left) 
+[275/733] apr rep1 Math-35   Patch199                             Correct   poracle preserve=A -> A  206s  (about 111 min left) 
+[276/733] apr rep1 Math-40   525_NFL_RSRepair-A_Patch_146_63      Incorrect ours    repro=pass preserve=R -> R  84s  (about 110 min left) 
+[277/733] apr rep1 Math-40   Patch37                              Incorrect poracle preserve=R -> R  58s  (about 110 min left) 
+[278/733] apr rep1 Math-40   Patch161                             Incorrect ours    repro=pass preserve=R -> R  86s  (about 109 min left) 
+[279/733] apr rep1 Math-40   Patch38                              Incorrect poracle preserve=R -> R  51s  (about 109 min left) 
+[280/733] apr rep1 Math-35   510_PFL_FixMiner_Patch_2_2           Correct   ours    repro=fail preserve=A -> R  298s  (about 108 min left) 
+[281/733] apr rep1 Math-40   Patch37                              Incorrect ours    repro=pass preserve=R -> R  85s  (about 108 min left) 
+[282/733] apr rep1 Math-39   Patch160                             Incorrect poracle preserve=A -> A  206s  (about 107 min left) 
+[283/733] apr rep1 Math-40   Patch38                              Incorrect ours    repro=pass preserve=R -> R  87s  (about 107 min left) 
+[284/733] apr rep1 Math-35   Patch199                             Correct   ours    repro=pass preserve=A -> A  300s  (about 108 min left) 
+[285/733] apr rep1 Math-41   482_PFL_SimFix_Patch_15_15           Correct   ours    repro=pass preserve=R -> R  109s  (about 108 min left) 
+[286/733] apr rep1 Math-42   209_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  40s  (about 107 min left) 
+[287/733] apr rep1 Math-42   209_PFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=R -> R  133s  (about 108 min left) 
+[288/733] apr rep1 Math-41   160_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  212s  (about 108 min left) 
+[289/733] apr rep1 Math-41   277_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  215s  (about 108 min left) 
+[290/733] apr rep1 Math-41   482_PFL_SimFix_Patch_15_15           Correct   poracle preserve=A -> A  214s  (about 107 min left) 
+[291/733] apr rep1 Math-42   290_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  39s  (about 107 min left) 
+[292/733] apr rep1 Math-41   598_NFL_SimFix_Patch_797_797         Correct   poracle preserve=A -> A  215s  (about 107 min left) 
+[293/733] apr rep1 Math-42   243_NFL_kPAR_Patch_3449_1703         Incorrect ours    repro=fail preserve=R -> R  133s  (about 106 min left) 
+[294/733] apr rep1 Math-41   Patch162                             Incorrect poracle preserve=A -> A  212s  (about 106 min left) 
+[295/733] apr rep1 Math-41   160_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=fail preserve=A -> R  285s  (about 105 min left) 
+[296/733] apr rep1 Math-42   Patch163                             Incorrect poracle preserve=R -> R  43s  (about 105 min left) 
+[297/733] apr rep1 Math-41   277_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  284s  (about 105 min left) 
+[298/733] apr rep1 Math-49   112_NFL_Kali-A_Patch_7_7             Incorrect poracle preserve=R -> R  46s  (about 104 min left) 
+[299/733] apr rep1 Math-41   598_NFL_SimFix_Patch_797_797         Correct   ours    repro=pass preserve=R -> R  281s  (about 104 min left) 
+[300/733] apr rep1 Math-41   Patch162                             Incorrect ours    repro=fail preserve=A -> R  278s  (about 103 min left) 
+[301/733] apr rep1 Math-49   162_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  49s  (about 103 min left) 
+[302/733] apr rep1 Math-42   290_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=R -> R  136s  (about 103 min left) 
+[303/733] apr rep1 Math-42   243_NFL_kPAR_Patch_3449_1703         Incorrect poracle preserve=A -> A  205s  (about 103 min left) 
+[304/733] apr rep1 Math-49   281_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  47s  (about 102 min left) 
+[305/733] apr rep1 Math-42   Patch163                             Incorrect ours    repro=fail preserve=R -> R  139s  (about 102 min left) 
+[306/733] apr rep1 Math-49   112_NFL_Kali-A_Patch_7_7             Incorrect ours    repro=fail preserve=R -> R  151s  (about 102 min left) 
+[307/733] apr rep1 Math-49   Patch165                             Incorrect poracle preserve=R -> R  46s  (about 102 min left) 
+[308/733] apr rep1 Math-49   162_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=fail preserve=R -> R  151s  (about 101 min left) 
+[309/733] apr rep1 Math-44   578_NFL_SimFix_Patch_4783_4783       Incorrect poracle preserve=A -> A  209s  (about 102 min left) 
+[310/733] apr rep1 Math-49   281_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=R -> R  153s  (about 101 min left) 
+[311/733] apr rep1 Math-49   Patch165                             Incorrect ours    repro=fail preserve=R -> R  147s  (about 101 min left) 
+[312/733] apr rep1 Math-49   229_NFL_kPAR_Patch_2_1               Incorrect poracle preserve=A -> A  210s  (about 101 min left) 
+[313/733] apr rep1 Math-49   356_PFL_ARJA_Patch_130_99            Incorrect poracle preserve=A -> A  210s  (about 101 min left) 
+[314/733] apr rep1 Math-44   578_NFL_SimFix_Patch_4783_4783       Incorrect ours    repro=fail preserve=A -> R  314s  (about 101 min left) 
+[315/733] apr rep1 Math-50   104_PFL_Kali-A_Patch_2_2             Correct   poracle preserve=A -> A  210s  (about 101 min left) 
+[316/733] apr rep1 Math-49   229_NFL_kPAR_Patch_2_1               Incorrect ours    repro=fail preserve=A -> R  319s  (about 101 min left) 
+[317/733] apr rep1 Math-50   123_PFL_DynaMoth_Patch_1_1           Correct   poracle preserve=A -> A  208s  (about 101 min left) 
+[318/733] apr rep1 Math-50   143_NFL_Kali-A_Patch_2_2             Correct   poracle preserve=A -> A  209s  (about 100 min left) 
+[319/733] apr rep1 Math-49   356_PFL_ARJA_Patch_130_99            Incorrect ours    repro=pass preserve=A -> A  311s  (about 100 min left) 
+[320/733] apr rep1 Math-50   170_NFL_DynaMoth_Patch_1_1           Correct   poracle preserve=A -> A  209s  (about 99 min left) 
+[321/733] apr rep1 Math-50   191_PFL_kPAR_Patch_2_2               Correct   poracle preserve=A -> A  204s  (about 100 min left) 
+[322/733] apr rep1 Math-50   211_PFL_Nopol_Patch_1_1              Correct   poracle preserve=A -> A  205s  (about 99 min left) 
+[323/733] apr rep1 Math-50   288_PFL_TBar_Patch_4_4               Incorrect poracle preserve=A -> A  204s  (about 99 min left) 
+[324/733] apr rep1 Math-50   Patch166                             Incorrect poracle preserve=R -> R  38s  (about 99 min left) 
+[325/733] apr rep1 Math-50   31_PFL_AVATAR_Patch_2_2              Incorrect poracle preserve=A -> A  204s  (about 99 min left) 
+[326/733] apr rep1 Math-50   373_PFL_ARJA_Patch_3_3               Correct   poracle preserve=A -> A  204s  (about 99 min left) 
+[327/733] apr rep1 Math-50   377_NFL_TBar_Patch_1_1               Incorrect poracle preserve=A -> A  204s  (about 98 min left) 
+[328/733] apr rep1 Math-50   405_PFL_GenProg-A_Patch_2_2          Correct   poracle preserve=A -> A  205s  (about 98 min left) 
+[329/733] apr rep1 Math-50   437_PFL_RSRepair-A_Patch_2_2         Correct   poracle preserve=A -> A  205s  (about 99 min left) 
+[330/733] apr rep1 Math-50   463_PFL_SimFix_Patch_18_18           Incorrect poracle preserve=A -> A  207s  (about 98 min left) 
+[331/733] apr rep1 Math-50   50_NFL_AVATAR_Patch_8_7              Incorrect poracle preserve=A -> A  207s  (about 98 min left) 
+[332/733] apr rep1 Math-50   569_NFL_SimFix_Patch_18_18           Incorrect poracle preserve=A -> A  207s  (about 98 min left) 
+[333/733] apr rep1 Math-50   536_PFL_FixMiner_Patch_2_2           Incorrect poracle preserve=A -> A  207s  (about 97 min left) 
+[334/733] apr rep1 Math-50   645_NFL_FixMiner_Patch_26_20         Incorrect poracle preserve=A -> A  204s  (about 97 min left) 
+[335/733] apr rep1 Math-50   Patch44                              Correct   poracle preserve=A -> A  205s  (about 97 min left) 
+[336/733] apr rep1 Math-50   Patch45                              Correct   poracle preserve=A -> A  204s  (about 97 min left) 
+[337/733] apr rep1 Math-50   Patch46                              Correct   poracle preserve=A -> A  204s  (about 97 min left) 
+[338/733] apr rep1 Math-50   PatchHDRepair5                       Incorrect poracle preserve=A -> A  205s  (about 96 min left) 
+[339/733] apr rep1 Math-53   PatchHDRepair6                       Incorrect poracle preserve=R -> R  33s  (about 97 min left) 
+[340/733] apr rep1 Math-53   357_PFL_ARJA_Patch_61_50             Incorrect poracle preserve=A -> A  202s  (about 96 min left) 
+[341/733] apr rep1 Math-53   421_PFL_RSRepair-A_Patch_4_3         Incorrect poracle preserve=A -> A  205s  (about 97 min left) 
+[342/733] apr rep1 Math-53   357_PFL_ARJA_Patch_61_50             Incorrect ours    repro=pass preserve=A -> A  292s  (about 96 min left) 
+[343/733] apr rep1 Math-53   473_PFL_SimFix_Patch_2_2             Correct   poracle preserve=A -> A  205s  (about 96 min left) 
+[344/733] apr rep1 Math-53   PatchHDRepair6                       Incorrect ours    repro=fail preserve=R -> R  128s  (about 95 min left) 
+[345/733] apr rep1 Math-53   584_NFL_SimFix_Patch_2_2             Correct   poracle preserve=A -> A  202s  (about 95 min left) 
+[346/733] apr rep1 Math-53   421_PFL_RSRepair-A_Patch_4_3         Incorrect ours    repro=pass preserve=A -> A  290s  (about 95 min left) 
+[347/733] apr rep1 Math-53   Patch47                              Correct   poracle preserve=A -> A  203s  (about 95 min left) 
+[348/733] apr rep1 Math-53   473_PFL_SimFix_Patch_2_2             Correct   ours    repro=pass preserve=A -> A  300s  (about 95 min left) 
+[349/733] apr rep1 Math-53   584_NFL_SimFix_Patch_2_2             Correct   ours    repro=pass preserve=A -> A  301s  (about 94 min left) 
+[350/733] apr rep1 Math-57   26_NFL_AVATAR_Patch_447_97           Incorrect poracle preserve=A -> A  209s  (about 95 min left) 
+[351/733] apr rep1 Math-53   Patch47                              Correct   ours    repro=pass preserve=A -> A  290s  (about 94 min left) 
+[352/733] apr rep1 Math-57   333_PFL_TBar_Patch_1_1               Correct   poracle preserve=A -> A  203s  (about 95 min left) 
+[353/733] apr rep1 Math-57   410_NFL_TBar_Patch_16_7              Correct   poracle preserve=A -> A  203s  (about 95 min left) 
+[354/733] apr rep1 Math-57   486_PFL_SimFix_Patch_16_16           Correct   poracle preserve=A -> A  202s  (about 95 min left) 
+[355/733] apr rep1 Math-57   Patch167                             Incorrect poracle preserve=R -> R  55s  (about 94 min left) 
+[356/733] apr rep1 Math-57   333_PFL_TBar_Patch_1_1               Correct   ours    repro=pass preserve=A -> A  301s  (about 94 min left) 
+[357/733] apr rep1 Math-57   574_PFL_FixMiner_Patch_1_1           Correct   poracle preserve=A -> A  206s  (about 94 min left) 
+[358/733] apr rep1 Math-57   Patch48                              Incorrect poracle preserve=R -> R  37s  (about 93 min left) 
+[359/733] apr rep1 Math-58   171_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  38s  (about 93 min left) 
+[360/733] apr rep1 Math-57   410_NFL_TBar_Patch_16_7              Correct   ours    repro=pass preserve=A -> A  302s  (about 93 min left) 
+[361/733] apr rep1 Math-57   486_PFL_SimFix_Patch_16_16           Correct   ours    repro=pass preserve=A -> A  296s  (about 92 min left) 
+[362/733] apr rep1 Math-57   605_NFL_SimFix_Patch_169_169         Correct   poracle preserve=A -> A  203s  (about 92 min left) 
+[363/733] apr rep1 Math-57   574_PFL_FixMiner_Patch_1_1           Correct   ours    repro=pass preserve=A -> A  297s  (about 92 min left) 
+[364/733] apr rep1 Math-57   605_NFL_SimFix_Patch_169_169         Correct   ours    repro=pass preserve=A -> A  297s  (about 92 min left) 
+[365/733] apr rep1 Math-58   543_NFL_RSRepair-A_Patch_4_3         Incorrect poracle preserve=R -> R  34s  (about 92 min left) 
+[366/733] apr rep1 Math-57   Patch167                             Incorrect ours    repro=fail preserve=A -> R  300s  (about 92 min left) 
+[367/733] apr rep1 Math-58   176_PFL_kPAR_Patch_3_3               Correct   poracle preserve=A -> A  204s  (about 92 min left) 
+[368/733] apr rep1 Math-58   249_NFL_kPAR_Patch_130_85            Correct   poracle preserve=A -> A  207s  (about 92 min left) 
+[369/733] apr rep1 Math-58   309_PFL_TBar_Patch_2_1               Correct   poracle preserve=A -> A  208s  (about 91 min left) 
+[370/733] apr rep1 Math-58   299_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  211s  (about 91 min left) 
+[371/733] apr rep1 Math-58   364_PFL_ARJA_Patch_1_1               Correct   poracle preserve=A -> A  207s  (about 91 min left) 
+[372/733] apr rep1 Math-57   Patch48                              Incorrect ours    repro=fail preserve=A -> R  304s  (about 90 min left) 
+[373/733] apr rep1 Math-58   429_PFL_RSRepair-A_Patch_25_7        Correct   poracle preserve=A -> A  202s  (about 90 min left) 
+[374/733] apr rep1 Math-69   576_NFL_SimFix_Patch_63_63           Incorrect poracle preserve=R -> R  26s  (about 89 min left) 
+[375/733] apr rep1 Math-69   286_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  40s  (about 89 min left) 
+[376/733] apr rep1 Math-58   455_NFL_ARJA_Patch_184_149           Correct   poracle preserve=A -> A  202s  (about 89 min left) 
+[377/733] apr rep1 Math-69   Patch169                             Incorrect poracle preserve=R -> R  40s  (about 88 min left) 
+[378/733] apr rep1 Math-58   Patch49                              Incorrect poracle preserve=R -> R  170s  (about 88 min left) 
+[379/733] apr rep1 Math-58   Patch168                             Incorrect poracle preserve=A -> A  204s  (about 88 min left) 
+[380/733] apr rep1 Math-69   576_NFL_SimFix_Patch_63_63           Incorrect ours    repro=fail preserve=R -> R  111s  (about 88 min left) 
+[381/733] apr rep1 Math-61   230_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  200s  (about 88 min left) 
+[382/733] apr rep1 Math-61   316_NFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  202s  (about 88 min left) 
+[383/733] apr rep1 Math-70   134_PFL_kPAR_Patch_16_16             Correct   poracle preserve=A -> A  206s  (about 88 min left) 
+[384/733] apr rep1 Math-70   134_PFL_kPAR_Patch_16_16             Correct   ours    repro=pass preserve=A -> A  230s  (about 88 min left) 
+[385/733] apr rep1 Math-70   251_PFL_TBar_Patch_28_28             Correct   poracle preserve=A -> A  207s  (about 88 min left) 
+[386/733] apr rep1 Math-70   251_PFL_TBar_Patch_28_28             Correct   ours    repro=pass preserve=A -> A  232s  (about 87 min left) 
+[387/733] apr rep1 Math-69   286_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  297s  (about 87 min left) 
+[388/733] apr rep1 Math-70   344_PFL_ARJA_Patch_16_14             Correct   poracle preserve=A -> A  206s  (about 87 min left) 
+[389/733] apr rep1 Math-70   344_PFL_ARJA_Patch_16_14             Correct   ours    repro=pass preserve=A -> A  231s  (about 86 min left) 
+[390/733] apr rep1 Math-69   Patch169                             Incorrect ours    repro=fail preserve=A -> R  299s  (about 86 min left) 
+[391/733] apr rep1 Math-70   379_PFL_GenProg-A_Patch_39_7         Correct   ours    repro=pass preserve=A -> A  224s  (about 86 min left) 
+[392/733] apr rep1 Math-70   379_PFL_GenProg-A_Patch_39_7         Correct   poracle preserve=A -> A  202s  (about 86 min left) 
+[393/733] apr rep1 Math-70   409_PFL_RSRepair-A_Patch_25_7        Correct   ours    repro=pass preserve=A -> A  221s  (about 86 min left) 
+[394/733] apr rep1 Math-70   409_PFL_RSRepair-A_Patch_25_7        Correct   poracle preserve=A -> A  202s  (about 86 min left) 
+[395/733] apr rep1 Math-71   172_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  22s  (about 86 min left) 
+[396/733] apr rep1 Math-70   443_PFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  204s  (about 86 min left) 
+[397/733] apr rep1 Math-70   508_PFL_FixMiner_Patch_4_2           Correct   poracle preserve=A -> A  207s  (about 85 min left) 
+[398/733] apr rep1 Math-70   443_PFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  230s  (about 85 min left) 
+[399/733] apr rep1 Math-71   481_PFL_SimFix_Patch_91_91           Correct   poracle preserve=R -> R  34s  (about 85 min left) 
+[400/733] apr rep1 Math-70   508_PFL_FixMiner_Patch_4_2           Correct   ours    repro=pass preserve=A -> A  229s  (about 84 min left) 
+[401/733] apr rep1 Math-70   546_NFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  207s  (about 84 min left) 
+[402/733] apr rep1 Math-71   597_NFL_SimFix_Patch_899_899         Correct   poracle preserve=R -> R  38s  (about 83 min left) 
+[403/733] apr rep1 Math-70   546_NFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  230s  (about 83 min left) 
+[404/733] apr rep1 Math-71   Patch53                              Incorrect poracle preserve=R -> R  42s  (about 83 min left) 
+[405/733] apr rep1 Math-70   Patch51                              Correct   poracle preserve=A -> A  204s  (about 82 min left) 
+[406/733] apr rep1 Math-70   Patch51                              Correct   ours    repro=pass preserve=A -> A  228s  (about 82 min left) 
+[407/733] apr rep1 Math-73   238_PFL_ACS_Patch_1_1                Incorrect poracle preserve=R -> R  37s  (about 81 min left) 
+[408/733] apr rep1 Math-73   293_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  41s  (about 81 min left) 
+[409/733] apr rep1 Math-73   325_NFL_ACS_Patch_1_1                Incorrect poracle preserve=R -> R  43s  (about 81 min left) 
+[410/733] apr rep1 Math-70   PatchHDRepair7                       Correct   ours    repro=pass preserve=A -> A  222s  (about 81 min left) 
+[411/733] apr rep1 Math-73   476_PFL_SimFix_Patch_4_4             Incorrect poracle preserve=R -> R  42s  (about 80 min left) 
+[412/733] apr rep1 Math-73   590_NFL_SimFix_Patch_4_4             Incorrect poracle preserve=R -> R  43s  (about 80 min left) 
+[413/733] apr rep1 Math-73   Patch170                             Incorrect poracle preserve=R -> R  42s  (about 80 min left) 
+[414/733] apr rep1 Math-70   PatchHDRepair7                       Correct   poracle preserve=A -> A  202s  (about 79 min left) 
+[415/733] apr rep1 Math-73   Patch201                             Incorrect poracle preserve=R -> R  39s  (about 79 min left) 
+[416/733] apr rep1 Math-73   Patch54                              Incorrect poracle preserve=R -> R  36s  (about 79 min left) 
+[417/733] apr rep1 Math-73   Patch55                              Incorrect poracle preserve=R -> R  36s  (about 79 min left) 
+[418/733] apr rep1 Math-78   288_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  34s  (about 79 min left) 
+[419/733] apr rep1 Math-73   238_PFL_ACS_Patch_1_1                Incorrect ours    repro=fail preserve=A -> R  249s  (about 79 min left) 
+[420/733] apr rep1 Math-73   293_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  249s  (about 78 min left) 
+[421/733] apr rep1 Math-78   60_NFL_AVATAR_Patch_525_329          Incorrect poracle preserve=R -> R  35s  (about 78 min left) 
+[422/733] apr rep1 Math-73   325_NFL_ACS_Patch_1_1                Incorrect ours    repro=fail preserve=A -> R  258s  (about 78 min left) 
+[423/733] apr rep1 Math-73   476_PFL_SimFix_Patch_4_4             Incorrect ours    repro=pass preserve=A -> A  248s  (about 77 min left) 
+[424/733] apr rep1 Math-73   590_NFL_SimFix_Patch_4_4             Incorrect ours    repro=pass preserve=A -> A  254s  (about 77 min left) 
+[425/733] apr rep1 Math-73   Patch170                             Incorrect ours    repro=fail preserve=A -> R  248s  (about 77 min left) 
+[426/733] apr rep1 Math-78   Patch171                             Incorrect poracle preserve=R -> R  38s  (about 77 min left) 
+[427/733] apr rep1 Math-78   Patch58                              Incorrect poracle preserve=R -> R  37s  (about 76 min left) 
+[428/733] apr rep1 Math-73   Patch201                             Incorrect ours    repro=fail preserve=A -> R  246s  (about 76 min left) 
+[429/733] apr rep1 Math-73   Patch54                              Incorrect ours    repro=pass preserve=A -> A  245s  (about 75 min left) 
+[430/733] apr rep1 Math-73   Patch55                              Incorrect ours    repro=fail preserve=A -> R  240s  (about 75 min left) 
+[431/733] apr rep1 Math-80   121_NFL_Kali-A_Patch_13_13           Incorrect ours    repro=pass preserve=R -> R  141s  (about 76 min left) 
+[432/733] apr rep1 Math-78   288_NFL_Nopol_Patch_1_1              Incorrect ours    repro=fail preserve=A -> R  296s  (about 76 min left) 
+[433/733] apr rep1 Math-80   165_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=R -> R  142s  (about 75 min left) 
+[434/733] apr rep1 Math-80   287_NFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  142s  (about 75 min left) 
+[435/733] apr rep1 Math-78   60_NFL_AVATAR_Patch_525_329          Incorrect ours    repro=fail preserve=A -> R  302s  (about 75 min left) 
+[436/733] apr rep1 Math-80   296_PFL_TBar_Patch_7_1               Incorrect ours    repro=pass preserve=R -> R  139s  (about 74 min left) 
+[437/733] apr rep1 Math-80   121_NFL_Kali-A_Patch_13_13           Incorrect poracle preserve=A -> A  205s  (about 74 min left) 
+[438/733] apr rep1 Math-80   165_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  207s  (about 74 min left) 
+[439/733] apr rep1 Math-80   287_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  205s  (about 74 min left) 
+[440/733] apr rep1 Math-78   Patch171                             Incorrect ours    repro=fail preserve=A -> R  297s  (about 73 min left) 
+[441/733] apr rep1 Math-78   Patch58                              Incorrect ours    repro=fail preserve=A -> R  300s  (about 73 min left) 
+[442/733] apr rep1 Math-80   36_PFL_AVATAR_Patch_15_2             Incorrect ours    repro=pass preserve=R -> R  140s  (about 73 min left) 
+[443/733] apr rep1 Math-80   383_NFL_TBar_Patch_931_596           Incorrect ours    repro=pass preserve=R -> R  139s  (about 73 min left) 
+[444/733] apr rep1 Math-80   393_PFL_GenProg-A_Patch_1644_339     Incorrect ours    repro=pass preserve=R -> R  138s  (about 73 min left) 
+[445/733] apr rep1 Math-80   296_PFL_TBar_Patch_7_1               Incorrect poracle preserve=A -> A  205s  (about 72 min left) 
+[446/733] apr rep1 Math-80   36_PFL_AVATAR_Patch_15_2             Incorrect poracle preserve=A -> A  204s  (about 72 min left) 
+[447/733] apr rep1 Math-80   424_PFL_RSRepair-A_Patch_353_69      Incorrect ours    repro=pass preserve=R -> R  140s  (about 72 min left) 
+[448/733] apr rep1 Math-80   447_NFL_ARJA_Patch_12_11             Incorrect ours    repro=pass preserve=R -> R  142s  (about 72 min left) 
+[449/733] apr rep1 Math-80   383_NFL_TBar_Patch_931_596           Incorrect poracle preserve=A -> A  203s  (about 71 min left) 
+[450/733] apr rep1 Math-80   393_PFL_GenProg-A_Patch_1644_339     Incorrect poracle preserve=A -> A  204s  (about 71 min left) 
+[451/733] apr rep1 Math-80   469_PFL_SimFix_Patch_6_6             Incorrect ours    repro=pass preserve=R -> R  139s  (about 71 min left) 
+[452/733] apr rep1 Math-80   424_PFL_RSRepair-A_Patch_353_69      Incorrect poracle preserve=A -> A  205s  (about 70 min left) 
+[453/733] apr rep1 Math-80   486_NFL_GenProg-A_Patch_9_2          Incorrect ours    repro=pass preserve=R -> R  140s  (about 70 min left) 
+[454/733] apr rep1 Math-80   447_NFL_ARJA_Patch_12_11             Incorrect poracle preserve=A -> A  205s  (about 70 min left) 
+[455/733] apr rep1 Math-80   521_NFL_RSRepair-A_Patch_9_7         Incorrect ours    repro=pass preserve=R -> R  139s  (about 70 min left) 
+[456/733] apr rep1 Math-80   469_PFL_SimFix_Patch_6_6             Incorrect poracle preserve=A -> A  203s  (about 70 min left) 
+[457/733] apr rep1 Math-80   541_PFL_FixMiner_Patch_51_24         Incorrect ours    repro=pass preserve=R -> R  142s  (about 69 min left) 
+[458/733] apr rep1 Math-80   486_NFL_GenProg-A_Patch_9_2          Incorrect poracle preserve=A -> A  203s  (about 69 min left) 
+[459/733] apr rep1 Math-80   577_NFL_SimFix_Patch_1091_1091       Incorrect ours    repro=pass preserve=R -> R  142s  (about 69 min left) 
+[460/733] apr rep1 Math-80   521_NFL_RSRepair-A_Patch_9_7         Incorrect poracle preserve=A -> A  204s  (about 69 min left) 
+[461/733] apr rep1 Math-80   649_NFL_FixMiner_Patch_4341_2826     Incorrect ours    repro=pass preserve=R -> R  141s  (about 68 min left) 
+[462/733] apr rep1 Math-80   541_PFL_FixMiner_Patch_51_24         Incorrect poracle preserve=A -> A  205s  (about 68 min left) 
+[463/733] apr rep1 Math-81   104_NFL_Kali-A_Patch_3_3             Incorrect poracle preserve=R -> R  35s  (about 68 min left) 
+[464/733] apr rep1 Math-81   114_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  37s  (about 67 min left) 
+[465/733] apr rep1 Math-80   577_NFL_SimFix_Patch_1091_1091       Incorrect poracle preserve=A -> A  204s  (about 67 min left) 
+[466/733] apr rep1 Math-80   90_PFL_Kali-A_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  144s  (about 67 min left) 
+[467/733] apr rep1 Math-81   151_PFL_kPAR_Patch_166_147           Incorrect poracle preserve=R -> R  40s  (about 66 min left) 
+[468/733] apr rep1 Math-81   158_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  39s  (about 66 min left) 
+[469/733] apr rep1 Math-80   Patch172                             Incorrect ours    repro=pass preserve=R -> R  148s  (about 66 min left) 
+[470/733] apr rep1 Math-81   232_PFL_ACS_Patch_28_1               Incorrect poracle preserve=R -> R  41s  (about 65 min left) 
+[471/733] apr rep1 Math-81   26_PFL_AVATAR_Patch_412_146          Incorrect poracle preserve=R -> R  42s  (about 65 min left) 
+[472/733] apr rep1 Math-81   276_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  43s  (about 65 min left) 
+[473/733] apr rep1 Math-80   649_NFL_FixMiner_Patch_4341_2826     Incorrect poracle preserve=A -> A  206s  (about 65 min left) 
+[474/733] apr rep1 Math-81   277_PFL_TBar_Patch_844_620           Incorrect poracle preserve=R -> R  44s  (about 64 min left) 
+[475/733] apr rep1 Math-80   Patch59                              Incorrect ours    repro=pass preserve=R -> R  148s  (about 64 min left) 
+[476/733] apr rep1 Math-81   318_NFL_ACS_Patch_11_1               Incorrect poracle preserve=R -> R  40s  (about 63 min left) 
+[477/733] apr rep1 Math-81   352_PFL_ARJA_Patch_31_27             Incorrect poracle preserve=R -> R  43s  (about 63 min left) 
+[478/733] apr rep1 Math-81   365_NFL_TBar_Patch_75_45             Incorrect poracle preserve=R -> R  44s  (about 63 min left) 
+[479/733] apr rep1 Math-80   90_PFL_Kali-A_Patch_1_1              Incorrect poracle preserve=A -> A  205s  (about 62 min left) 
+[480/733] apr rep1 Math-81   385_PFL_GenProg-A_Patch_5_5          Incorrect poracle preserve=R -> R  42s  (about 62 min left) 
+[481/733] apr rep1 Math-81   417_PFL_RSRepair-A_Patch_6_5         Incorrect poracle preserve=R -> R  45s  (about 62 min left) 
+[482/733] apr rep1 Math-81   42_NFL_AVATAR_Patch_108_32           Incorrect poracle preserve=R -> R  44s  (about 61 min left) 
+[483/733] apr rep1 Math-81   433_NFL_ARJA_Patch_6_5               Incorrect poracle preserve=R -> R  44s  (about 61 min left) 
+[484/733] apr rep1 Math-81   454_PFL_SimFix_Patch_3039_3039       Incorrect poracle preserve=R -> R  47s  (about 61 min left) 
+[485/733] apr rep1 Math-81   482_NFL_GenProg-A_Patch_1_1          Incorrect poracle preserve=R -> R  46s  (about 60 min left) 
+[486/733] apr rep1 Math-80   Patch172                             Incorrect poracle preserve=A -> A  205s  (about 60 min left) 
+[487/733] apr rep1 Math-81   513_NFL_RSRepair-A_Patch_2_1         Incorrect poracle preserve=R -> R  45s  (about 60 min left) 
+[488/733] apr rep1 Math-81   526_PFL_FixMiner_Patch_291_217       Incorrect poracle preserve=R -> R  45s  (about 60 min left) 
+[489/733] apr rep1 Math-81   558_NFL_SimFix_Patch_642_642         Incorrect poracle preserve=R -> R  48s  (about 59 min left) 
+[490/733] apr rep1 Math-81   641_NFL_FixMiner_Patch_19_8          Incorrect poracle preserve=R -> R  47s  (about 59 min left) 
+[491/733] apr rep1 Math-80   Patch59                              Incorrect poracle preserve=A -> A  205s  (about 58 min left) 
+[492/733] apr rep1 Math-81   80_PFL_Kali-A_Patch_4_4              Incorrect poracle preserve=R -> R  47s  (about 58 min left) 
+[493/733] apr rep1 Math-81   Patch173                             Incorrect poracle preserve=R -> R  49s  (about 58 min left) 
+[494/733] apr rep1 Math-81   Patch202                             Incorrect poracle preserve=R -> R  48s  (about 58 min left) 
+[495/733] apr rep1 Math-81   Patch62                              Incorrect poracle preserve=R -> R  48s  (about 57 min left) 
+[496/733] apr rep1 Math-81   Patch63                              Incorrect poracle preserve=R -> R  50s  (about 57 min left) 
+[497/733] apr rep1 Math-81   Patch64                              Incorrect poracle preserve=A -> A  214s  (about 58 min left) 
+[498/733] apr rep1 Math-82   154_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  214s  (about 58 min left) 
+[499/733] apr rep1 Math-82   187_PFL_kPAR_Patch_1_1               Correct   poracle preserve=A -> A  214s  (about 57 min left) 
+[500/733] apr rep1 Math-82   207_NFL_kPAR_Patch_646_317           Incorrect poracle preserve=A -> A  214s  (about 57 min left) 
+[501/733] apr rep1 Math-82   244_PFL_ACS_Patch_10_3               Correct   poracle preserve=A -> A  213s  (about 57 min left) 
+[502/733] apr rep1 Math-82   273_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  213s  (about 56 min left) 
+[503/733] apr rep1 Math-82   327_PFL_TBar_Patch_5_5               Correct   poracle preserve=A -> A  212s  (about 56 min left) 
+[504/733] apr rep1 Math-82   331_NFL_ACS_Patch_125_18             Correct   poracle preserve=A -> A  208s  (about 56 min left) 
+[505/733] apr rep1 Math-82   34_NFL_AVATAR_Patch_600_284          Incorrect poracle preserve=A -> A  206s  (about 55 min left) 
+[506/733] apr rep1 Math-82   353_NFL_TBar_Patch_1326_709          Incorrect poracle preserve=A -> A  205s  (about 55 min left) 
+[507/733] apr rep1 Math-82   421_NFL_ARJA_Patch_83_49             Incorrect poracle preserve=A -> A  205s  (about 55 min left) 
+[508/733] apr rep1 Math-84   144_PFL_kPAR_Patch_1_1               Incorrect poracle preserve=R -> R  37s  (about 55 min left) 
+[509/733] apr rep1 Math-84   348_PFL_ARJA_Patch_53_43             Incorrect poracle preserve=R -> R  37s  (about 54 min left) 
+[510/733] apr rep1 Math-84   357_NFL_TBar_Patch_114_72            Incorrect poracle preserve=R -> R  33s  (about 54 min left) 
+[511/733] apr rep1 Math-84   412_PFL_RSRepair-A_Patch_62_43       Incorrect poracle preserve=R -> R  34s  (about 54 min left) 
+[512/733] apr rep1 Math-84   423_NFL_ARJA_Patch_520_355           Incorrect poracle preserve=R -> R  34s  (about 54 min left) 
+[513/733] apr rep1 Math-84   450_PFL_SimFix_Patch_2_2             Incorrect poracle preserve=R -> R  33s  (about 53 min left) 
+[514/733] apr rep1 Math-84   505_NFL_RSRepair-A_Patch_867_312     Incorrect poracle preserve=R -> R  34s  (about 53 min left) 
+[515/733] apr rep1 Math-84   522_PFL_FixMiner_Patch_1_1           Incorrect poracle preserve=R -> R  34s  (about 53 min left) 
+[516/733] apr rep1 Math-82   448_PFL_SimFix_Patch_5_5             Incorrect poracle preserve=A -> A  203s  (about 53 min left) 
+[517/733] apr rep1 Math-82   549_NFL_SimFix_Patch_2356_2356       Incorrect poracle preserve=A -> A  204s  (about 52 min left) 
+[518/733] apr rep1 Math-84   551_NFL_SimFix_Patch_26_26           Incorrect poracle preserve=R -> R  33s  (about 52 min left) 
+[519/733] apr rep1 Math-84   638_NFL_FixMiner_Patch_93_43         Incorrect poracle preserve=R -> R  34s  (about 52 min left) 
+[520/733] apr rep1 Math-82   569_PFL_FixMiner_Patch_1_1           Correct   poracle preserve=A -> A  205s  (about 51 min left) 
+[521/733] apr rep1 Math-82   61_PFL_AVATAR_Patch_1_1              Correct   poracle preserve=A -> A  206s  (about 51 min left) 
+[522/733] apr rep1 Math-82   Patch203                             Correct   poracle preserve=A -> A  208s  (about 51 min left) 
+[523/733] apr rep1 Math-82   Patch65                              Incorrect poracle preserve=A -> A  209s  (about 50 min left) 
+[524/733] apr rep1 Math-82   Patch66                              Incorrect poracle preserve=A -> A  208s  (about 50 min left) 
+[525/733] apr rep1 Math-82   Patch67                              Incorrect poracle preserve=A -> A  207s  (about 50 min left) 
+[526/733] apr rep1 Math-82   PatchHDRepair8                       Incorrect poracle preserve=A -> A  207s  (about 50 min left) 
+[527/733] apr rep1 Math-84   73_PFL_Kali-A_Patch_1_1              Incorrect poracle preserve=R -> R  40s  (about 49 min left) 
+[528/733] apr rep1 Math-84   91_NFL_Kali-A_Patch_3_3              Incorrect poracle preserve=R -> R  40s  (about 49 min left) 
+[529/733] apr rep1 Math-84   Patch68                              Incorrect poracle preserve=R -> R  43s  (about 49 min left) 
+[530/733] apr rep1 Math-84   Patch69                              Incorrect poracle preserve=R -> R  45s  (about 48 min left) 
+[531/733] apr rep1 Math-85   118_PFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=R -> R  109s  (about 48 min left) 
+[532/733] apr rep1 Math-85   167_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=R -> R  114s  (about 48 min left) 
+[533/733] apr rep1 Math-85   182_PFL_kPAR_Patch_1_1               Correct   ours    repro=pass preserve=R -> R  113s  (about 48 min left) 
+[534/733] apr rep1 Math-85   207_PFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  114s  (about 48 min left) 
+[535/733] apr rep1 Math-85   240_PFL_ACS_Patch_21_1               Correct   ours    repro=pass preserve=R -> R  109s  (about 47 min left) 
+[536/733] apr rep1 Math-85   316_PFL_TBar_Patch_5_5               Correct   ours    repro=pass preserve=R -> R  106s  (about 47 min left) 
+[537/733] apr rep1 Math-85   118_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  213s  (about 47 min left) 
+[538/733] apr rep1 Math-85   327_NFL_ACS_Patch_15_1               Correct   ours    repro=pass preserve=R -> R  96s  (about 47 min left) 
+[539/733] apr rep1 Math-85   167_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  214s  (about 47 min left) 
+[540/733] apr rep1 Math-85   360_PFL_ARJA_Patch_1_1               Incorrect ours    repro=pass preserve=R -> R  97s  (about 46 min left) 
+[541/733] apr rep1 Math-85   182_PFL_kPAR_Patch_1_1               Correct   poracle preserve=A -> A  215s  (about 46 min left) 
+[542/733] apr rep1 Math-85   387_NFL_TBar_Patch_3_1               Incorrect ours    repro=pass preserve=R -> R  93s  (about 46 min left) 
+[543/733] apr rep1 Math-85   207_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  214s  (about 45 min left) 
+[544/733] apr rep1 Math-85   240_PFL_ACS_Patch_21_1               Correct   poracle preserve=A -> A  212s  (about 45 min left) 
+[545/733] apr rep1 Math-85   394_PFL_GenProg-A_Patch_2_1          Incorrect ours    repro=pass preserve=R -> R  99s  (about 45 min left) 
+[546/733] apr rep1 Math-85   316_PFL_TBar_Patch_5_5               Correct   poracle preserve=A -> A  211s  (about 45 min left) 
+[547/733] apr rep1 Math-85   425_PFL_RSRepair-A_Patch_3_1         Incorrect ours    repro=pass preserve=R -> R  101s  (about 45 min left) 
+[548/733] apr rep1 Math-85   327_NFL_ACS_Patch_15_1               Correct   poracle preserve=A -> A  208s  (about 44 min left) 
+[549/733] apr rep1 Math-85   450_NFL_ARJA_Patch_22_11             Incorrect ours    repro=pass preserve=R -> R  99s  (about 44 min left) 
+[550/733] apr rep1 Math-85   360_PFL_ARJA_Patch_1_1               Incorrect poracle preserve=A -> A  207s  (about 44 min left) 
+[551/733] apr rep1 Math-85   474_PFL_SimFix_Patch_5_5             Incorrect poracle preserve=R -> R  43s  (about 43 min left) 
+[552/733] apr rep1 Math-85   474_PFL_SimFix_Patch_5_5             Incorrect ours    repro=fail preserve=R -> R  115s  (about 43 min left) 
+[553/733] apr rep1 Math-85   487_NFL_GenProg-A_Patch_220_40       Incorrect ours    repro=pass preserve=R -> R  97s  (about 43 min left) 
+[554/733] apr rep1 Math-85   387_NFL_TBar_Patch_3_1               Incorrect poracle preserve=A -> A  208s  (about 43 min left) 
+[555/733] apr rep1 Math-85   522_NFL_RSRepair-A_Patch_26_4        Incorrect ours    repro=pass preserve=R -> R  98s  (about 43 min left) 
+[556/733] apr rep1 Math-85   394_PFL_GenProg-A_Patch_2_1          Incorrect poracle preserve=A -> A  209s  (about 42 min left) 
+[557/733] apr rep1 Math-85   53_PFL_AVATAR_Patch_1_1              Correct   ours    repro=pass preserve=R -> R  100s  (about 42 min left) 
+[558/733] apr rep1 Math-85   425_PFL_RSRepair-A_Patch_3_1         Incorrect poracle preserve=A -> A  210s  (about 42 min left) 
+[559/733] apr rep1 Math-85   450_NFL_ARJA_Patch_22_11             Incorrect poracle preserve=A -> A  209s  (about 41 min left) 
+[560/733] apr rep1 Math-85   556_PFL_FixMiner_Patch_1_1           Correct   ours    repro=pass preserve=R -> R  100s  (about 41 min left) 
+[561/733] apr rep1 Math-85   585_NFL_SimFix_Patch_5_5             Incorrect poracle preserve=R -> R  44s  (about 41 min left) 
+[562/733] apr rep1 Math-85   91_PFL_Kali-A_Patch_2_2              Incorrect ours    repro=pass preserve=R -> R  100s  (about 41 min left) 
+[563/733] apr rep1 Math-85   585_NFL_SimFix_Patch_5_5             Incorrect ours    repro=fail preserve=R -> R  113s  (about 41 min left) 
+[564/733] apr rep1 Math-85   487_NFL_GenProg-A_Patch_220_40       Incorrect poracle preserve=A -> A  210s  (about 40 min left) 
+[565/733] apr rep1 Math-85   Patch174                             Incorrect ours    repro=pass preserve=R -> R  99s  (about 40 min left) 
+[566/733] apr rep1 Math-85   522_NFL_RSRepair-A_Patch_26_4        Incorrect poracle preserve=A -> A  210s  (about 40 min left) 
+[567/733] apr rep1 Math-85   Patch204                             Correct   ours    repro=pass preserve=R -> R  99s  (about 40 min left) 
+[568/733] apr rep1 Math-85   53_PFL_AVATAR_Patch_1_1              Correct   poracle preserve=A -> A  206s  (about 39 min left) 
+[569/733] apr rep1 Math-85   556_PFL_FixMiner_Patch_1_1           Correct   poracle preserve=A -> A  206s  (about 39 min left) 
+[570/733] apr rep1 Math-85   PatchHDRepair9                       Incorrect ours    repro=fail preserve=R -> R  108s  (about 39 min left) 
+[571/733] apr rep1 Math-85   91_PFL_Kali-A_Patch_2_2              Incorrect poracle preserve=A -> A  210s  (about 39 min left) 
+[572/733] apr rep1 Math-85   Patch174                             Incorrect poracle preserve=A -> A  210s  (about 38 min left) 
+[573/733] apr rep1 Math-85   Patch72                              Incorrect ours    repro=fail preserve=R -> R  126s  (about 38 min left) 
+[574/733] apr rep1 Math-85   Patch204                             Correct   poracle preserve=A -> A  205s  (about 38 min left) 
+[575/733] apr rep1 Math-85   Patch72                              Incorrect poracle preserve=A -> A  208s  (about 38 min left) 
+[576/733] apr rep1 Math-85   PatchHDRepair9                       Incorrect poracle preserve=A -> A  209s  (about 38 min left) 
+[577/733] apr rep1 Math-87   270_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  209s  (about 37 min left) 
+[578/733] apr rep1 Math-87   Patch175                             Incorrect poracle preserve=A -> A  207s  (about 37 min left) 
+[579/733] apr rep1 Math-87   Patch73                              Incorrect poracle preserve=A -> A  206s  (about 37 min left) 
+[580/733] apr rep1 Math-88   122_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  204s  (about 37 min left) 
+[581/733] apr rep1 Math-88   183_PFL_kPAR_Patch_99_66             Incorrect poracle preserve=A -> A  205s  (about 37 min left) 
+[582/733] apr rep1 Math-88   210_PFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  204s  (about 36 min left) 
+[583/733] apr rep1 Math-88   257_NFL_kPAR_Patch_269_135           Incorrect poracle preserve=A -> A  205s  (about 36 min left) 
+[584/733] apr rep1 Math-88   320_PFL_TBar_Patch_198_105           Incorrect poracle preserve=A -> A  205s  (about 36 min left) 
+[585/733] apr rep1 Math-88   Patch74                              Incorrect poracle preserve=R -> R  25s  (about 35 min left) 
+[586/733] apr rep1 Math-88   369_PFL_ARJA_Patch_317_260           Incorrect poracle preserve=A -> A  203s  (about 35 min left) 
+[587/733] apr rep1 Math-88   404_NFL_TBar_Patch_593_301           Incorrect poracle preserve=A -> A  204s  (about 35 min left) 
+[588/733] apr rep1 Math-88   433_PFL_RSRepair-A_Patch_67_37       Incorrect poracle preserve=A -> A  206s  (about 35 min left) 
+[589/733] apr rep1 Math-88   563_PFL_FixMiner_Patch_9909_5900     Incorrect poracle preserve=A -> A  205s  (about 35 min left) 
+[590/733] apr rep1 Math-88   57_PFL_AVATAR_Patch_117_64           Incorrect poracle preserve=A -> A  205s  (about 34 min left) 
+[591/733] apr rep1 Math-88   596_NFL_SimFix_Patch_4565_4565       Incorrect poracle preserve=A -> A  204s  (about 34 min left) 
+[592/733] apr rep1 Math-88   Patch176                             Incorrect poracle preserve=A -> A  203s  (about 34 min left) 
+[593/733] apr rep1 Math-89   147_PFL_kPAR_Patch_12_11             Correct   poracle preserve=A -> A  206s  (about 34 min left) 
+[594/733] apr rep1 Math-89   231_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  205s  (about 34 min left) 
+[595/733] apr rep1 Math-89   147_PFL_kPAR_Patch_12_11             Correct   ours    repro=pass preserve=A -> A  292s  (about 34 min left) 
+[596/733] apr rep1 Math-89   231_PFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  295s  (about 33 min left) 
+[597/733] apr rep1 Math-89   24_PFL_AVATAR_Patch_6_6              Correct   poracle preserve=A -> A  205s  (about 33 min left) 
+[598/733] apr rep1 Math-89   274_PFL_TBar_Patch_14_12             Correct   poracle preserve=A -> A  207s  (about 33 min left) 
+[599/733] apr rep1 Math-89   24_PFL_AVATAR_Patch_6_6              Correct   ours    repro=pass preserve=A -> A  294s  (about 32 min left) 
+[600/733] apr rep1 Math-89   360_NFL_TBar_Patch_14_12             Correct   poracle preserve=A -> A  205s  (about 32 min left) 
+[601/733] apr rep1 Math-89   274_PFL_TBar_Patch_14_12             Correct   ours    repro=pass preserve=A -> A  294s  (about 32 min left) 
+[602/733] apr rep1 Math-89   360_NFL_TBar_Patch_14_12             Correct   ours    repro=pass preserve=A -> A  293s  (about 32 min left) 
+[603/733] apr rep1 Math-89   Patch205                             Correct   poracle preserve=A -> A  204s  (about 32 min left) 
+[604/733] apr rep1 Math-90   239_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  204s  (about 31 min left) 
+[605/733] apr rep1 Math-89   Patch205                             Correct   ours    repro=pass preserve=A -> A  289s  (about 31 min left) 
+[606/733] apr rep1 Math-95   131_NFL_Kali-A_Patch_27_27           Incorrect poracle preserve=R -> R  34s  (about 31 min left) 
+[607/733] apr rep1 Math-90   326_NFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  204s  (about 31 min left) 
+[608/733] apr rep1 Math-95   131_NFL_Kali-A_Patch_27_27           Incorrect ours    repro=pass preserve=R -> R  85s  (about 31 min left) 
+[609/733] apr rep1 Math-95   310_PFL_TBar_Patch_43_16             Incorrect poracle preserve=R -> R  34s  (about 30 min left) 
+[610/733] apr rep1 Math-90   Patch206                             Correct   poracle preserve=A -> A  205s  (about 30 min left) 
+[611/733] apr rep1 Math-93   237_PFL_ACS_Patch_5_5                Incorrect poracle preserve=A -> A  205s  (about 30 min left) 
+[612/733] apr rep1 Math-93   237_PFL_ACS_Patch_5_5                Incorrect ours    repro=pass preserve=A -> A  229s  (about 29 min left) 
+[613/733] apr rep1 Math-93   323_NFL_ACS_Patch_5_5                Incorrect poracle preserve=A -> A  204s  (about 29 min left) 
+[614/733] apr rep1 Math-95   310_PFL_TBar_Patch_43_16             Incorrect ours    repro=pass preserve=R -> R  88s  (about 29 min left) 
+[615/733] apr rep1 Math-93   323_NFL_ACS_Patch_5_5                Incorrect ours    repro=pass preserve=A -> A  228s  (about 29 min left) 
+[616/733] apr rep1 Math-95   366_PFL_ARJA_Patch_25_18             Incorrect poracle preserve=R -> R  37s  (about 28 min left) 
+[617/733] apr rep1 Math-95   397_NFL_TBar_Patch_56_20             Incorrect poracle preserve=R -> R  37s  (about 28 min left) 
+[618/733] apr rep1 Math-95   399_PFL_GenProg-A_Patch_1122_956     Incorrect poracle preserve=R -> R  40s  (about 28 min left) 
+[619/733] apr rep1 Math-95   431_PFL_RSRepair-A_Patch_20_5        Incorrect poracle preserve=R -> R  39s  (about 28 min left) 
+[620/733] apr rep1 Math-95   457_NFL_ARJA_Patch_179_153           Incorrect poracle preserve=R -> R  39s  (about 27 min left) 
+[621/733] apr rep1 Math-95   366_PFL_ARJA_Patch_25_18             Incorrect ours    repro=pass preserve=R -> R  95s  (about 27 min left) 
+[622/733] apr rep1 Math-93   Patch207                             Correct   poracle preserve=A -> A  202s  (about 27 min left) 
+[623/733] apr rep1 Math-95   397_NFL_TBar_Patch_56_20             Incorrect ours    repro=pass preserve=R -> R  98s  (about 27 min left) 
+[624/733] apr rep1 Math-95   492_NFL_GenProg-A_Patch_817_386      Incorrect poracle preserve=R -> R  39s  (about 26 min left) 
+[625/733] apr rep1 Math-93   Patch207                             Correct   ours    repro=pass preserve=A -> A  226s  (about 26 min left) 
+[626/733] apr rep1 Math-95   399_PFL_GenProg-A_Patch_1122_956     Incorrect ours    repro=pass preserve=R -> R  100s  (about 26 min left) 
+[627/733] apr rep1 Math-95   431_PFL_RSRepair-A_Patch_20_5        Incorrect ours    repro=pass preserve=R -> R  100s  (about 25 min left) 
+[628/733] apr rep1 Math-95   527_NFL_RSRepair-A_Patch_167_36      Incorrect poracle preserve=R -> R  43s  (about 25 min left) 
+[629/733] apr rep1 Math-95   457_NFL_ARJA_Patch_179_153           Incorrect ours    repro=pass preserve=R -> R  104s  (about 25 min left) 
+[630/733] apr rep1 Math-95   551_PFL_FixMiner_Patch_59_19         Incorrect poracle preserve=R -> R  43s  (about 25 min left) 
+[631/733] apr rep1 Math-95   69_NFL_AVATAR_Patch_53_25            Incorrect poracle preserve=R -> R  41s  (about 24 min left) 
+[632/733] apr rep1 Math-95   492_NFL_GenProg-A_Patch_817_386      Incorrect ours    repro=pass preserve=R -> R  104s  (about 24 min left) 
+[633/733] apr rep1 Math-95   98_PFL_Kali-A_Patch_1_1              Incorrect poracle preserve=R -> R  43s  (about 24 min left) 
+[634/733] apr rep1 Math-95   Patch75                              Incorrect poracle preserve=R -> R  43s  (about 24 min left) 
+[635/733] apr rep1 Math-95   527_NFL_RSRepair-A_Patch_167_36      Incorrect ours    repro=pass preserve=R -> R  101s  (about 23 min left) 
+[636/733] apr rep1 Math-95   Patch76                              Incorrect poracle preserve=R -> R  43s  (about 23 min left) 
+[637/733] apr rep1 Math-95   551_PFL_FixMiner_Patch_59_19         Incorrect ours    repro=pass preserve=R -> R  105s  (about 23 min left) 
+[638/733] apr rep1 Math-95   69_NFL_AVATAR_Patch_53_25            Incorrect ours    repro=pass preserve=R -> R  105s  (about 23 min left) 
+[639/733] apr rep1 Math-95   98_PFL_Kali-A_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  104s  (about 22 min left) 
+[640/733] apr rep1 Math-95   Patch75                              Incorrect ours    repro=pass preserve=R -> R  108s  (about 22 min left) 
+[641/733] apr rep1 Math-97   242_PFL_ACS_Patch_13_13              Incorrect ours    repro=pass preserve=R -> R  84s  (about 22 min left) 
+[642/733] apr rep1 Math-95   Patch76                              Incorrect ours    repro=pass preserve=R -> R  103s  (about 22 min left) 
+[643/733] apr rep1 Math-97   Patch77                              Incorrect poracle preserve=R -> R  22s  (about 21 min left) 
+[644/733] apr rep1 Math-97   Patch208                             Incorrect ours    repro=pass preserve=R -> R  74s  (about 21 min left) 
+[645/733] apr rep1 Math-97   328_NFL_ACS_Patch_13_13              Incorrect ours    repro=pass preserve=R -> R  112s  (about 21 min left) 
+[646/733] apr rep1 Math-97   Patch77                              Incorrect ours    repro=fail preserve=R -> R  63s  (about 21 min left) 
+[647/733] apr rep1 Math-97   121_PFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=A -> A  206s  (about 21 min left) 
+[648/733] apr rep1 Math-97   242_PFL_ACS_Patch_13_13              Incorrect poracle preserve=A -> A  206s  (about 20 min left) 
+[649/733] apr rep1 Math-97   121_PFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=A -> A  244s  (about 20 min left) 
+[650/733] apr rep1 Math-97   328_NFL_ACS_Patch_13_13              Incorrect poracle preserve=A -> A  206s  (about 20 min left) 
+[651/733] apr rep1 Math-97   562_PFL_FixMiner_Patch_72_40         Incorrect poracle preserve=A -> A  205s  (about 20 min left) 
+[652/733] apr rep1 Math-97   562_PFL_FixMiner_Patch_72_40         Incorrect ours    repro=pass preserve=A -> A  240s  (about 19 min left) 
+[653/733] apr rep1 Math-97   Patch208                             Incorrect poracle preserve=A -> A  202s  (about 19 min left) 
+[654/733] apr rep1 Math-105  156_NFL_DynaMoth_Patch_1_1           Incorrect poracle preserve=R -> R  33s  (about 19 min left) 
+[655/733] apr rep1 Math-105  156_NFL_DynaMoth_Patch_1_1           Incorrect ours    repro=pass preserve=R -> R  68s  (about 19 min left) 
+[656/733] apr rep1 Math-99   234_PFL_ACS_Patch_3_3                Correct   poracle preserve=A -> A  202s  (about 18 min left) 
+[657/733] apr rep1 Math-57   26_NFL_AVATAR_Patch_447_97           Incorrect ours    repro=unknown preserve=None -> ?  4392s  (about 18 min left) 
+[658/733] apr rep1 Math-105  274_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=R -> R  34s  (about 18 min left) 
+[659/733] apr rep1 Math-99   320_NFL_ACS_Patch_3_3                Correct   poracle preserve=A -> A  202s  (about 18 min left) 
+[660/733] apr rep1 Math-99   Patch209                             Correct   poracle preserve=A -> A  202s  (about 17 min left) 
+[661/733] apr rep1 Time-4    146_PFL_kPAR_Patch_12_10             Incorrect poracle preserve=R -> R  36s  (about 17 min left) 
+[662/733] apr rep1 Math-104  251_NFL_kPAR_Patch_485_406           Incorrect poracle preserve=A -> A  204s  (about 17 min left) 
+[663/733] apr rep1 Math-105  Patch177                             Incorrect poracle preserve=R -> R  101s  (about 17 min left) 
+[664/733] apr rep1 Time-4    273_PFL_TBar_Patch_85_21             Incorrect poracle preserve=R -> R  37s  (about 16 min left) 
+[665/733] apr rep1 Math-105  274_NFL_Nopol_Patch_1_1              Incorrect ours    repro=pass preserve=R -> R  137s  (about 16 min left) 
+[666/733] apr rep1 Math-105  Patch79                              Incorrect poracle preserve=R -> R  102s  (about 16 min left) 
+[667/733] apr rep1 Math-105  Patch177                             Incorrect ours    repro=pass preserve=R -> R  139s  (about 16 min left) 
+[668/733] apr rep1 Math-104  Patch78                              Incorrect poracle preserve=A -> A  206s  (about 15 min left) 
+[669/733] apr rep1 Math-104  251_NFL_kPAR_Patch_485_406           Incorrect ours    repro=fail preserve=A -> R  294s  (about 15 min left) 
+[670/733] apr rep1 Math-105  Patch79                              Incorrect ours    repro=pass preserve=R -> R  144s  (about 15 min left) 
+[671/733] apr rep1 Time-4    Patch180                             Incorrect poracle preserve=R -> R  51s  (about 15 min left) 
+[672/733] apr rep1 Time-4    Patch80                              Incorrect poracle preserve=R -> R  51s  (about 14 min left) 
+[673/733] apr rep1 Time-4    Patch81                              Incorrect poracle preserve=R -> R  52s  (about 14 min left) 
+[674/733] apr rep1 Time-4    Patch80                              Incorrect ours    repro=fail preserve=R -> R  127s  (about 14 min left) 
+[675/733] apr rep1 Time-4    Patch81                              Incorrect ours    repro=fail preserve=R -> R  125s  (about 14 min left) 
+[676/733] apr rep1 Time-4    146_PFL_kPAR_Patch_12_10             Incorrect ours    repro=pass preserve=A -> A  262s  (about 14 min left) 
+[677/733] apr rep1 Math-104  Patch78                              Incorrect ours    repro=fail preserve=A -> R  375s  (about 13 min left) 
+[678/733] apr rep1 Time-4    273_PFL_TBar_Patch_85_21             Incorrect ours    repro=pass preserve=A -> A  262s  (about 13 min left) 
+[679/733] apr rep1 Time-7    201_PFL_kPAR_Patch_8_6               Correct   poracle preserve=A -> A  214s  (about 13 min left) 
+[680/733] apr rep1 Time-7    338_PFL_TBar_Patch_167_35            Correct   poracle preserve=A -> A  214s  (about 13 min left) 
+[681/733] apr rep1 Time-4    Patch180                             Incorrect ours    repro=fail preserve=A -> R  289s  (about 12 min left) 
+[682/733] apr rep1 Time-7    488_PFL_SimFix_Patch_1_1             Correct   poracle preserve=A -> A  212s  (about 12 min left) 
+[683/733] apr rep1 Time-11   151_NFL_DynaMoth_Patch_15_15         Incorrect poracle preserve=R -> R  46s  (about 12 min left) 
+[684/733] apr rep1 Time-7    578_PFL_FixMiner_Patch_13_1          Correct   poracle preserve=A -> A  208s  (about 12 min left) 
+[685/733] apr rep1 Time-7    201_PFL_kPAR_Patch_8_6               Correct   ours    repro=pass preserve=A -> A  312s  (about 11 min left) 
+[686/733] apr rep1 Time-7    338_PFL_TBar_Patch_167_35            Correct   ours    repro=pass preserve=A -> A  310s  (about 11 min left) 
+[687/733] apr rep1 Time-7    488_PFL_SimFix_Patch_1_1             Correct   ours    repro=pass preserve=A -> A  313s  (about 11 min left) 
+[688/733] apr rep1 Time-11   Patch182                             Incorrect poracle preserve=R -> R  48s  (about 11 min left) 
+[689/733] apr rep1 Time-7    68_PFL_AVATAR_Patch_115              Correct   poracle preserve=A -> A  206s  (about 11 min left) 
+[690/733] apr rep1 Time-11   Patch82                              Incorrect poracle preserve=R -> R  28s  (about 10 min left) 
+[691/733] apr rep1 Time-11   Patch83                              Incorrect poracle preserve=R -> R  27s  (about 10 min left) 
+[692/733] apr rep1 Time-7    578_PFL_FixMiner_Patch_13_1          Correct   ours    repro=pass preserve=A -> A  299s  (about 10 min left) 
+[693/733] apr rep1 Time-7    Patch181                             Incorrect poracle preserve=A -> A  207s  (about 10 min left) 
+[694/733] apr rep1 Time-11   Patch84                              Incorrect poracle preserve=R -> R  46s  (about 9 min left) 
+[695/733] apr rep1 Time-7    68_PFL_AVATAR_Patch_115              Correct   ours    repro=pass preserve=A -> A  302s  (about 9 min left) 
+[696/733] apr rep1 Time-12   Patch183                             Incorrect poracle preserve=R -> R  22s  (about 9 min left) 
+[697/733] apr rep1 Time-7    Patch181                             Incorrect ours    repro=pass preserve=A -> A  302s  (about 9 min left) 
+[698/733] apr rep1 Time-11   Patch82                              Incorrect ours    repro=fail preserve=R -> R  138s  (about 8 min left) 
+[699/733] apr rep1 Time-14   Patch184                             Incorrect poracle preserve=R -> R  39s  (about 8 min left) 
+[700/733] apr rep1 Time-11   Patch83                              Incorrect ours    repro=fail preserve=R -> R  133s  (about 8 min left) 
+[701/733] apr rep1 Time-11   633_NFL_FixMiner_Patch_5839_1807     Incorrect poracle preserve=A -> A  210s  (about 8 min left) 
+[702/733] apr rep1 Time-12   Patch183                             Incorrect ours    repro=fail preserve=R -> R  116s  (about 7 min left) 
+[703/733] apr rep1 Time-11   151_NFL_DynaMoth_Patch_15_15         Incorrect ours    repro=fail preserve=A -> R  293s  (about 7 min left) 
+[704/733] apr rep1 Time-11   633_NFL_FixMiner_Patch_5839_1807     Incorrect ours    repro=pass preserve=A -> A  291s  (about 7 min left) 
+[705/733] apr rep1 Time-11   Patch182                             Incorrect ours    repro=pass preserve=A -> A  296s  (about 7 min left) 
+[706/733] apr rep1 Time-14   296_NFL_Nopol_Patch_1_1              Incorrect poracle preserve=A -> A  204s  (about 6 min left) 
+[707/733] apr rep1 Time-15   246_PFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  203s  (about 6 min left) 
+[708/733] apr rep1 Time-15   246_PFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  245s  (about 6 min left) 
+[709/733] apr rep1 Time-15   333_NFL_ACS_Patch_1_1                Correct   poracle preserve=A -> A  204s  (about 6 min left) 
+[710/733] apr rep1 Time-11   Patch84                              Incorrect ours    repro=pass preserve=A -> A  339s  (about 6 min left) 
+[711/733] apr rep1 Time-18   Patch186                             Incorrect poracle preserve=R -> R  33s  (about 5 min left) 
+[712/733] apr rep1 Time-15   333_NFL_ACS_Patch_1_1                Correct   ours    repro=pass preserve=A -> A  245s  (about 5 min left) 
+[713/733] apr rep1 Time-15   Patch210                             Correct   poracle preserve=A -> A  204s  (about 5 min left) 
+[714/733] apr rep1 Time-16   Patch185                             Incorrect poracle preserve=A -> A  202s  (about 5 min left) 
+[715/733] apr rep1 Time-15   Patch210                             Correct   ours    repro=pass preserve=A -> A  242s  (about 4 min left) 
+[716/733] apr rep1 Time-18   12_PFL_AVATAR_Patch_109              Incorrect ours    repro=pass preserve=A -> A  228s  (about 4 min left) 
+[717/733] apr rep1 Time-16   Patch185                             Incorrect ours    repro=pass preserve=A -> A  290s  (about 4 min left) 
+[718/733] apr rep1 Time-18   12_PFL_AVATAR_Patch_109              Incorrect poracle preserve=A -> A  200s  (about 4 min left) 
+[719/733] apr rep1 Time-18   Patch186                             Incorrect ours    repro=pass preserve=A -> A  221s  (about 3 min left) 
+[720/733] apr rep1 Time-19   170_PFL_kPAR_Patch_1_1               Correct   poracle preserve=A -> A  201s  (about 3 min left) 
+[721/733] apr rep1 Time-19   300_PFL_TBar_Patch_5_5               Correct   poracle preserve=A -> A  202s  (about 3 min left) 
+[722/733] apr rep1 Time-19   39_PFL_AVATAR_Patch_1                Correct   poracle preserve=A -> A  203s  (about 3 min left) 
+[723/733] apr rep1 Time-19   478_PFL_SimFix_Patch_26_26           Incorrect poracle preserve=A -> A  202s  (about 2 min left) 
+[724/733] apr rep1 Time-19   170_PFL_kPAR_Patch_1_1               Correct   ours    repro=pass preserve=A -> A  279s  (about 2 min left) 
+[725/733] apr rep1 Time-19   300_PFL_TBar_Patch_5_5               Correct   ours    repro=pass preserve=A -> A  279s  (about 2 min left) 
+[726/733] apr rep1 Time-19   39_PFL_AVATAR_Patch_1                Correct   ours    repro=pass preserve=A -> A  279s  (about 2 min left) 
+[727/733] apr rep1 Time-19   543_PFL_FixMiner_Patch_1_1           Correct   poracle preserve=A -> A  202s  (about 1 min left) 
+[728/733] apr rep1 Time-19   478_PFL_SimFix_Patch_26_26           Incorrect ours    repro=pass preserve=A -> A  279s  (about 1 min left) 
+[729/733] apr rep1 Time-19   543_PFL_FixMiner_Patch_1_1           Correct   ours    repro=pass preserve=A -> A  275s  (about 1 min left) 
+[730/733] apr rep1 Time-19   Patch187                             Incorrect poracle preserve=A -> A  200s  (about 1 min left) 
+[731/733] apr rep1 Time-19   Patch187                             Incorrect ours    repro=pass preserve=A -> A  269s  (about 0 min left) 
+[732/733] apr rep1 Time-19   PatchHDRepair10                      Correct   poracle preserve=A -> A  199s  (about 0 min left) 
+[733/733] apr rep1 Time-19   PatchHDRepair10                      Correct   ours    repro=pass preserve=A -> A  267s  (about 0 min left) 
+# Experiment main
+
+Written 2026-11-21T16:44:56 from `/home/byoungwoo/preserve-testing/experiments/main`.
+
+## Test generation: 77 bugs
+
+| generated test | bugs |
+|---|---|
+| valid | 48 |
+| invalid | 15 |
+| no bug report | 9 |
+| no test | 5 |
+
+LLM calls 1073, cost $74.44, tokens {'input': 2078, 'output': 816580, 'cache_write': 15872481, 'cache_read': 27808473}, time 6.1 h (of which the LLM 2.2 h). Per bug: report/generation.csv.
+
+valid: every input inside buggyIf fails on the buggy version and passes on the developer fix. Only valid tests are used on patches unless the evaluation ran with --no-gate.
+
+| bug | generated test | why |
+|---|---|---|
+| Chart-3 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-7 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-13 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-14 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-15 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-19 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-21 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-25 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Chart-26 | no bug report | Defects4J lists no bug report for this bug, so the agent has no input |
+| Lang-44 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Lang-53 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-7 | invalid | some inputs inside buggyIf pass on the buggy version |
+| Math-24 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-25 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-28 | no test | LLM call budget exhausted (50 calls) |
+| Math-32 | no test | LLM call budget exhausted (50 calls) |
+| Math-33 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-50 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-58 | no test | LLM call budget exhausted (after 53/50 LLM calls) |
+| Math-61 | no test | The failures do not reproduce the bug: These failures do not reproduce the reported bug, and the result is the same as in every earlier round. The report is about the constructor PoissonDistributionIm |
+| Math-71 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-81 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-82 | no test | LLM call budget exhausted (50 calls) |
+| Math-84 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-87 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-88 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-90 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Math-99 | invalid | some inputs inside buggyIf fail on the developer fix |
+| Time-14 | invalid | some inputs inside buggyIf fail on the developer fix |
+
+
+## APR patches (labelled): 458 patches of 77 bugs
+
+A test is right on a patch when it rejects an Incorrect patch (R: the test fails) and accepts a Correct one (A: the test passes).
+
+### Baseline comparison, preservation tests only (valid generated tests)
+
+The 259 patches (47 bugs) that both our preservation test and Poracle's test fuzzed and gave a verdict for. Left out: the patches that fail a trigger test of their bug (15). Poracle rejects those before any fuzzing, whichever preservation test it is given, so they say nothing about either test.
+
+| tests | incorrect patches rejected | correct patches accepted | right | no verdict |
+|---|---|---|---|---|
+| ours: preserve | 92/170 | 76/89 | 168/259 (64.9%) | 0 |
+| Poracle's test | 85/170 | 89/89 | 174/259 (67.2%) | 0 |
+
+Both right 126, only ours 42, only Poracle's 48, neither 43.
+
+### Repro + preserve (valid generated tests)
+
+The 274 patches (48 bugs) our tests gave a verdict for. Repro + preserve rejects a patch when the repro test fails on it or the preservation test finds a difference. The preserve rows include the patches rejected before fuzzing for failing a trigger test (15).
+
+| tests | incorrect patches rejected | correct patches accepted | right | no verdict |
+|---|---|---|---|---|
+| ours: repro | 72/185 | 88/89 | 160/274 (58.4%) | 0 |
+| ours: preserve | 107/185 | 76/89 | 183/274 (66.8%) | 0 |
+| ours: repro + preserve | 145/185 | 75/89 | 220/274 (80.3%) | 0 |
+| Poracle's test | 100/185 | 89/89 | 189/274 (69.0%) | 0 |
+
+### All patches of the dataset
+
+Every patch; one whose bug has no usable generated test, or that was not run, has no verdict.
+
+| tests | incorrect patches rejected | correct patches accepted | right | no verdict |
+|---|---|---|---|---|
+| ours: preserve | 107/185 | 76/89 | 183/274 (66.8%) | 184 |
+| ours: repro | 72/185 | 88/89 | 160/274 (58.4%) | 184 |
+| ours: repro + preserve | 145/185 | 75/89 | 220/274 (80.3%) | 184 |
+| Poracle's test | 180/326 | 130/132 | 310/458 (67.7%) | 0 |
+| Poracle's test, its published runs | 214/214 | 69/71 | 283/285 (99.3%) | 173 |
+
+### Per bug
+
+| bug | generated test | patches (incorrect / correct) | ours: preserve right | ours: repro + preserve right | Poracle's right |
+|---|---|---|---|---|---|
+| Chart-1 | valid | 2 (2 / 0) | 0/2 | 2/2 | 0/2 |
+| Chart-3 | no bug report | 1 (1 / 0) | - | - | 0/1 |
+| Chart-5 | valid | 3 (3 / 0) | 3/3 | 3/3 | 3/3 |
+| Chart-7 | no bug report | 1 (1 / 0) | - | - | 0/1 |
+| Chart-9 | valid | 1 (1 / 0) | 0/1 | 1/1 | 0/1 |
+| Chart-13 | no bug report | 4 (4 / 0) | - | - | 4/4 |
+| Chart-14 | no bug report | 1 (0 / 1) | - | - | 1/1 |
+| Chart-15 | no bug report | 2 (2 / 0) | - | - | 2/2 |
+| Chart-17 | valid | 1 (1 / 0) | 0/1 | 0/1 | 0/1 |
+| Chart-19 | no bug report | 1 (0 / 1) | - | - | 1/1 |
+| Chart-21 | no bug report | 2 (2 / 0) | - | - | 2/2 |
+| Chart-25 | no bug report | 4 (4 / 0) | - | - | 4/4 |
+| Chart-26 | no bug report | 3 (3 / 0) | - | - | 2/3 |
+| Lang-24 | valid | 6 (1 / 5) | 5/6 | 5/6 | 5/6 |
+| Lang-35 | valid | 1 (1 / 0) | 1/1 | 1/1 | 1/1 |
+| Lang-39 | valid | 8 (5 / 3) | 4/8 | 4/8 | 5/8 |
+| Lang-44 | invalid | 5 (4 / 1) | - | - | 4/5 |
+| Lang-46 | valid | 6 (1 / 5) | 6/6 | 6/6 | 6/6 |
+| Lang-51 | valid | 2 (2 / 0) | 2/2 | 2/2 | 2/2 |
+| Lang-53 | invalid | 4 (4 / 0) | - | - | 0/4 |
+| Lang-55 | valid | 4 (2 / 2) | 2/4 | 2/4 | 2/4 |
+| Lang-57 | valid | 1 (0 / 1) | 1/1 | 1/1 | 1/1 |
+| Lang-58 | valid | 14 (12 / 2) | 2/14 | 5/14 | 11/14 |
+| Math-2 | valid | 9 (9 / 0) | 0/9 | 9/9 | 1/9 |
+| Math-3 | valid | 3 (0 / 3) | 3/3 | 3/3 | 3/3 |
+| Math-4 | valid | 13 (10 / 3) | 10/13 | 10/13 | 10/13 |
+| Math-5 | valid | 9 (0 / 9) | 9/9 | 9/9 | 9/9 |
+| Math-7 | invalid | 2 (2 / 0) | - | - | 0/2 |
+| Math-8 | valid | 8 (8 / 0) | 8/8 | 8/8 | 6/8 |
+| Math-22 | valid | 4 (3 / 1) | 2/4 | 2/4 | 2/4 |
+| Math-24 | invalid | 1 (1 / 0) | - | - | 1/1 |
+| Math-25 | invalid | 2 (0 / 2) | - | - | 2/2 |
+| Math-28 | no test | 14 (14 / 0) | - | - | 14/14 |
+| Math-32 | no test | 5 (5 / 0) | - | - | 0/5 |
+| Math-33 | invalid | 8 (5 / 3) | - | - | 3/8 |
+| Math-34 | valid | 2 (0 / 2) | 2/2 | 2/2 | 2/2 |
+| Math-35 | valid | 7 (1 / 6) | 6/7 | 5/7 | 7/7 |
+| Math-39 | valid | 1 (1 / 0) | 1/1 | 1/1 | 0/1 |
+| Math-40 | valid | 7 (7 / 0) | 7/7 | 7/7 | 7/7 |
+| Math-41 | valid | 5 (3 / 2) | 0/5 | 3/5 | 2/5 |
+| Math-42 | valid | 4 (4 / 0) | 4/4 | 4/4 | 3/4 |
+| Math-44 | valid | 1 (1 / 0) | 0/1 | 1/1 | 0/1 |
+| Math-49 | valid | 6 (6 / 0) | 4/6 | 5/6 | 4/6 |
+| Math-50 | invalid | 22 (10 / 12) | - | - | 13/22 |
+| Math-53 | valid | 6 (3 / 3) | 4/6 | 4/6 | 4/6 |
+| Math-57 | valid | 8 (3 / 5) | 5/7 | 7/7 | 7/8 |
+| Math-58 | no test | 11 (5 / 6) | - | - | 9/11 |
+| Math-61 | no test | 2 (0 / 2) | - | - | 2/2 |
+| Math-69 | valid | 3 (3 / 0) | 1/3 | 3/3 | 3/3 |
+| Math-70 | valid | 10 (0 / 10) | 10/10 | 10/10 | 10/10 |
+| Math-71 | invalid | 4 (2 / 2) | - | - | 2/4 |
+| Math-73 | valid | 9 (9 / 0) | 0/9 | 6/9 | 9/9 |
+| Math-78 | valid | 4 (4 / 0) | 0/4 | 4/4 | 4/4 |
+| Math-80 | valid | 18 (18 / 0) | 18/18 | 18/18 | 0/18 |
+| Math-81 | invalid | 27 (27 / 0) | - | - | 26/27 |
+| Math-82 | no test | 19 (12 / 7) | - | - | 7/19 |
+| Math-84 | invalid | 14 (14 / 0) | - | - | 14/14 |
+| Math-85 | valid | 23 (16 / 7) | 16/23 | 16/23 | 9/23 |
+| Math-87 | invalid | 3 (3 / 0) | - | - | 0/3 |
+| Math-88 | invalid | 13 (13 / 0) | - | - | 1/13 |
+| Math-89 | valid | 6 (0 / 6) | 6/6 | 6/6 | 6/6 |
+| Math-90 | invalid | 3 (0 / 3) | - | - | 3/3 |
+| Math-93 | valid | 3 (2 / 1) | 1/3 | 1/3 | 1/3 |
+| Math-95 | valid | 14 (14 / 0) | 14/14 | 14/14 | 14/14 |
+| Math-97 | valid | 6 (6 / 0) | 4/6 | 4/6 | 1/6 |
+| Math-99 | invalid | 3 (0 / 3) | - | - | 3/3 |
+| Math-104 | valid | 2 (2 / 0) | 0/2 | 2/2 | 0/2 |
+| Math-105 | valid | 4 (4 / 0) | 4/4 | 4/4 | 4/4 |
+| Time-4 | valid | 5 (5 / 0) | 2/5 | 3/5 | 5/5 |
+| Time-7 | valid | 6 (1 / 5) | 5/6 | 5/6 | 5/6 |
+| Time-11 | valid | 6 (6 / 0) | 2/6 | 3/6 | 5/6 |
+| Time-12 | valid | 1 (1 / 0) | 1/1 | 1/1 | 1/1 |
+| Time-14 | invalid | 2 (2 / 0) | - | - | 1/2 |
+| Time-15 | valid | 3 (0 / 3) | 3/3 | 3/3 | 3/3 |
+| Time-16 | valid | 1 (1 / 0) | 0/1 | 0/1 | 0/1 |
+| Time-18 | valid | 2 (2 / 0) | 0/2 | 0/2 | 1/2 |
+| Time-19 | valid | 7 (2 / 5) | 5/7 | 5/7 | 5/7 |
+
+Runs done: {'ours': 275, 'poracle': 458}; machine time 17.0 h (ours), 17.9 h (Poracle's). Per patch: report/apr_patches.csv.
+
+## TraceRepair patches (all claimed correct): 56 patches
+
+Nothing to score here: a patch that fails a test is either overfitting or the test is wrong, which is for manual inspection (report/tracerepair_inspection.md).
+
+| tests | patches that fail | patches run |
+|---|---|---|
+| ours: preserve | 0 | 0 |
+| ours: repro | 0 | 0 |
+| ours: repro + preserve | 0 | 0 |
+| Poracle's test | 0 | 0 |
+
+Patches that fail at least one test: 0
+
+| bug | patch | same as the developer fix | generated test | ours: repro | ours: preserve | Poracle's test |
+|---|---|---|---|---|---|---|
+
+"output differs / same vs the fix": on the input where the preservation test found the difference, the patched version's output differs from the developer fix's too (points to the patch), or is the same (points to the test).
+
+
+Runs done: {'ours': 0, 'poracle': 0}; machine time 0 min (ours), 0 min (Poracle's). Per patch: report/tracerepair_patches.csv.
+
+report: /home/byoungwoo/preserve-testing/experiments/main/report/summary.md, stats.json, generation.csv, *_patches.csv, tracerepair_inspection.md

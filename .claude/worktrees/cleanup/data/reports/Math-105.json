@@ -1,0 +1,6 @@
+{
+  "bug": "Math-105",
+  "url": "https://issues.apache.org/jira/browse/MATH-85",
+  "title": "[math]  SimpleRegression getSumSquaredErrors",
+  "body": "getSumSquaredErrors returns -ve value. See test below:\n\npublic void testSimpleRegression() {\n\t\tdouble[] y = {  8915.102, 8919.302, 8923.502};\n\t\tdouble[] x = { 1.107178495, 1.107264895, 1.107351295};\n\t\tdouble[] x2 = { 1.107178495E2, 1.107264895E2, 1.107351295E2};\n\t\tSimpleRegression reg = new SimpleRegression();\n\t\tfor (int i = 0; i < x.length; i++) {\n\t\t\treg.addData(x[i],y[i]);\n\t\t}\n\t\tassertTrue(reg.getSumSquaredErrors() >= 0.0); // OK\n\t\treg.clear();\n\t\tfor (int i = 0; i < x.length; i++) {\n\t\t\treg.addData(x2[i],y[i]);\n\t\t}\n\t\tassertTrue(reg.getSumSquaredErrors() >= 0.0); // FAIL\n\t\t\n\t}"
+}

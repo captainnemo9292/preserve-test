@@ -1,0 +1,197 @@
+{
+  "bug": "Math-69",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.7913,
+  "tokens": {
+    "input": 26,
+    "output": 12136,
+    "cache_write": 162075,
+    "cache_read": 215607
+  },
+  "seconds": 169.7,
+  "started_at": "2026-11-21T13:03:03",
+  "timing": {
+    "checkout": 10.8,
+    "agent": 158.8,
+    "derive": 1.8,
+    "validation": 196.1
+  },
+  "llm_seconds": 114.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 511,
+        "cache_write": 1190,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009955,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 22.1,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2734,
+        "cache_write": 36108,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.171888,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 9.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1440,
+        "cache_write": 7231,
+        "cache_read": 29378
+      },
+      "cost_usd": 0.046266,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 14.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1547,
+        "cache_write": 38630,
+        "cache_read": 611
+      },
+      "cost_usd": 0.170055,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 27.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3421,
+        "cache_write": 10886,
+        "cache_read": 36609
+      },
+      "cost_usd": 0.081419,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 16.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1633,
+        "cache_write": 12190,
+        "cache_read": 39241
+      },
+      "cost_usd": 0.069018,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 8.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 201,
+        "cache_write": 52116,
+        "cache_read": 603
+      },
+      "cost_usd": 0.210542,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 4.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 214,
+        "cache_write": 1841,
+        "cache_read": 52719
+      },
+      "cost_usd": 0.014784,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 435,
+        "cache_write": 1883,
+        "cache_read": 54560
+      },
+      "cost_usd": 0.017346,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math.stat.correlation.PearsonsCorrelationTest::testPValueNearZero",
+  "jqf_class": "org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest",
+  "hidden_tests": [
+    "org.apache.commons.math.stat.correlation.PearsonsCorrelationTest",
+    "org.apache.commons.math.stat.correlation.SpearmansRankCorrelationTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testPValueNearZero",
+  "issue_gist": "PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.",
+  "failing_inputs_count": 2642,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_PearsonsCorrelationTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug69",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 49452,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 60759,
+        "inside_buggyIf": 30051,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 367.6,
+  "paired_inputs_archived": true
+}

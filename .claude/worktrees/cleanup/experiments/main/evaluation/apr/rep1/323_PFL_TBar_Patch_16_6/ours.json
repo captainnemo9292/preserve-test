@@ -1,0 +1,82 @@
+{
+ "patch": "323_PFL_TBar_Patch_16_6",
+ "dataset": "apr",
+ "bug": "Math-4",
+ "tool": "TBar",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:24:21",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 20000,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 99720,
+   "unique_failures": {}
+  },
+  "seconds": 92.8
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 164.3,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 161.80363988876343,
+  "time": {
+   "CHECKOUT_BUGGY": 3.7394073009490967,
+   "DELTA_BUGGY": 0.00267791748046875,
+   "COMPILE_BUGGY": 8.639429569244385,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.8599307537078857,
+   "PATCH": 0.01354074478149414,
+   "DELTA_PATCH": 0.0016171932220458984,
+   "COMPILE_PATCH": 8.145070791244507,
+   "PATCH_TEST": 2.611783981323242,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 120.37496519088745,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.8564445972442627,
+   "DELTA_FIX": 0.001744985580444336,
+   "COMPILE_FIX": 7.620153903961182,
+   "REPRO_FOR_VALIDATE": 1.9144554138183594,
+   "VALIDATE": 0.013768196105957031
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-323_PFL_TBar_Patch_16_6/log/test1/1/ORG/id_000001493/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-323_PFL_TBar_Patch_16_6/log/test1/1/ORG/id_000001493/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-323_PFL_TBar_Patch_16_6/log/test1/1/PATCH/id_000001493/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-323_PFL_TBar_Patch_16_6/validation/fix/test1/id_000001493/OUT.log",
+    "in_content": "-4490;-4490;-1716;-4490;-4490;-4490;658;-4490;-4490;1240;-4490;3402;1",
+    "org_out_content": "java.lang.NullPointerException;null",
+    "patch_out_content": "none;null",
+    "fix_out_content": "none;null"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 258.6
+}

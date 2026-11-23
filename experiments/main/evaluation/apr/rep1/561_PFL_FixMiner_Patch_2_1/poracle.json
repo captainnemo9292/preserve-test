@@ -1,0 +1,58 @@
+{
+ "patch": "561_PFL_FixMiner_Patch_2_1",
+ "dataset": "apr",
+ "bug": "Math-34",
+ "tool": "FixMiner",
+ "label": "Correct",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-22T12:49:28",
+ "container": "poracle-original",
+ "preserve": {
+  "container": "poracle-original",
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 206.9,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 204.80665040016174,
+  "time": {
+   "CHECKOUT_BUGGY": 3.6754183769226074,
+   "DELTA_BUGGY": 0.0013895034790039062,
+   "COMPILE_BUGGY": 5.983473300933838,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.8006553649902344,
+   "PATCH": 0.012675762176513672,
+   "DELTA_PATCH": 0.0018396377563476562,
+   "COMPILE_PATCH": 6.484225034713745,
+   "PATCH_TEST": 3.444955825805664,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.5829210281372,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 206.9
+}

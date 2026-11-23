@@ -1,0 +1,184 @@
+{
+  "bug": "Time-4",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 11,
+  "cost_usd": 0.6134,
+  "tokens": {
+    "input": 22,
+    "output": 8511,
+    "cache_write": 129104,
+    "cache_read": 118167
+  },
+  "seconds": 110.7,
+  "started_at": "2026-11-21T13:32:34",
+  "timing": {
+    "checkout": 9.7,
+    "agent": 101.0,
+    "derive": 1.9,
+    "validation": 143.1
+  },
+  "llm_seconds": 78.3,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 582,
+        "cache_write": 1158,
+        "cache_read": 808
+      },
+      "cost_usd": 0.010537,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 29.4,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3688,
+        "cache_write": 35514,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.179052,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 12.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1828,
+        "cache_write": 8011,
+        "cache_read": 28701
+      },
+      "cost_usd": 0.053198,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 17.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1805,
+        "cache_write": 38870,
+        "cache_read": 611
+      },
+      "cost_usd": 0.173595,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 4.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 204,
+        "cache_write": 41603,
+        "cache_read": 603
+      },
+      "cost_usd": 0.16852,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 215,
+        "cache_write": 1954,
+        "cache_read": 42206
+      },
+      "cost_usd": 0.014195,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 189,
+        "cache_write": 1994,
+        "cache_read": 44160
+      },
+      "cost_usd": 0.01429,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.joda.time.TestPartial_Basics::testWith3",
+  "jqf_class": "org.joda.time.JQF_TestPartial_Basics",
+  "hidden_tests": [
+    "org.joda.time.TestBaseSingleFieldPeriod",
+    "org.joda.time.TestDateTimeUtils",
+    "org.joda.time.TestLocalDateTime_Basics",
+    "org.joda.time.TestLocalDate_Basics",
+    "org.joda.time.TestLocalTime_Basics",
+    "org.joda.time.TestMonthDay_Basics",
+    "org.joda.time.TestPartial_Basics",
+    "org.joda.time.TestPartial_Constructors",
+    "org.joda.time.TestPartial_Match",
+    "org.joda.time.TestPartial_Properties",
+    "org.joda.time.TestPeriod_Constructors",
+    "org.joda.time.TestTimeOfDay_Basics",
+    "org.joda.time.TestYearMonthDay_Basics",
+    "org.joda.time.TestYearMonth_Basics",
+    "org.joda.time.chrono.TestISOChronology",
+    "org.joda.time.format.TestISODateTimeFormat",
+    "org.joda.time.format.TestISODateTimeFormat_Fields"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testWith3",
+  "issue_gist": "Partial.with(...) doesn't validate duplicate-duration/overlapping field types (e.g. clockhourOfDay and hourOfDay), so it creates an invalid Partial, while the Partial(DateTimeFieldType[], int[]) constructor rejects the same combination with \"Types array must not contain duplicate\". The invalid Partial then causes isEqual to throw \"objects must have matching field types\".",
+  "failing_inputs_count": 1943,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestPartial_Basics.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug4",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 34219,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 34544,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 255.7,
+  "paired_inputs_archived": true
+}

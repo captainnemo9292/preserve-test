@@ -1,0 +1,155 @@
+{
+  "bug": "Math-42",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 9,
+  "cost_usd": 0.4382,
+  "tokens": {
+    "input": 22,
+    "output": 5050,
+    "cache_write": 94617,
+    "cache_read": 91864
+  },
+  "seconds": 93.8,
+  "started_at": "2026-11-21T12:52:21",
+  "timing": {
+    "checkout": 11.1,
+    "agent": 82.7,
+    "derive": 1.6,
+    "validation": 179.9
+  },
+  "llm_seconds": 60.7,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 299,
+        "cache_write": 890,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006635,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 25.7,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 2428,
+        "cache_write": 31796,
+        "cache_read": 25807
+      },
+      "cost_usd": 0.154057,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 17.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1725,
+        "cache_write": 28709,
+        "cache_read": 611
+      },
+      "cost_usd": 0.132151,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 192,
+        "cache_write": 30823,
+        "cache_read": 603
+      },
+      "cost_usd": 0.12528,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 196,
+        "cache_write": 1183,
+        "cache_read": 31426
+      },
+      "cost_usd": 0.009843,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 210,
+        "cache_write": 1216,
+        "cache_read": 32609
+      },
+      "cost_usd": 0.010233,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.optimization.linear.SimplexSolverTest::testMath713NegativeVariable",
+  "jqf_class": "org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.optimization.linear.SimplexSolverTest",
+    "org.apache.commons.math.optimization.linear.SimplexTableauTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath713NegativeVariable",
+  "issue_gist": "SimplexSolver.optimize with restrictToNonNegative=true can return a negative value for a variable whose objective coefficient is 0 (and which appears only with 0 coefficients in constraints), so the non-negativity restriction is ignored for that variable.",
+  "failing_inputs_count": 4709,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimplexSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug42",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 52372,
+      "inside_buggyIf": 47665,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 55455,
+        "inside_buggyIf": 50285,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 275.4,
+  "paired_inputs_archived": true
+}

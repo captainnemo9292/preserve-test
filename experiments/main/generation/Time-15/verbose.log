@@ -1,0 +1,976 @@
+
+====================================================================================================
+[13:39:48] BUG Time-15: failing test org.joda.time.field.TestFieldUtils::testSafeMultiplyLongInt -> org.joda.time.field.JQF_TestFieldUtils.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Time-15/Time15b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-15/source
+====================================================================================================
+Title: possibly a bug in org.joda.time.field.FieldUtils.safeMultipl
+
+It seems to me that as currently written in joda-time-2.1.jar
+org.joda.time.field.FieldUtils.safeMultiply(long val1, int scalar)
+doesn't detect the overflow if the long val1 == Long.MIN_VALUE and the int scalar == -1.
+
+The attached file demonstrates what I think is the bug and suggests a patch.
+
+I looked at the Joda Time bugs list in SourceForge but couldn't see anything that looked relevant: my apologies if I've missed something, or if I'm making a mistake with this bug report.
+
+Colin Bartlett
+
+====================================================================================================
+[13:39:48] HIDDEN FROM THE AGENT: 108 relevant test classes
+====================================================================================================
+org.joda.time.TestAbstractPartial
+org.joda.time.TestBasePartial
+org.joda.time.TestBaseSingleFieldPeriod
+org.joda.time.TestChronology
+org.joda.time.TestDateMidnight_Basics
+org.joda.time.TestDateMidnight_Constructors
+org.joda.time.TestDateMidnight_Properties
+org.joda.time.TestDateTimeComparator
+org.joda.time.TestDateTimeFieldType
+org.joda.time.TestDateTimeUtils
+org.joda.time.TestDateTimeZone
+org.joda.time.TestDateTimeZoneCutover
+org.joda.time.TestDateTime_Basics
+org.joda.time.TestDateTime_Constructors
+org.joda.time.TestDateTime_Properties
+org.joda.time.TestDays
+org.joda.time.TestDurationField
+org.joda.time.TestDurationFieldType
+org.joda.time.TestDuration_Basics
+org.joda.time.TestDuration_Constructors
+org.joda.time.TestHours
+org.joda.time.TestIllegalFieldValueException
+org.joda.time.TestInstant_Basics
+org.joda.time.TestInstant_Constructors
+org.joda.time.TestInterval_Basics
+org.joda.time.TestInterval_Constructors
+org.joda.time.TestLocalDateTime_Basics
+org.joda.time.TestLocalDateTime_Constructors
+org.joda.time.TestLocalDateTime_Properties
+org.joda.time.TestLocalDate_Basics
+org.joda.time.TestLocalDate_Constructors
+org.joda.time.TestLocalDate_Properties
+org.joda.time.TestLocalTime_Basics
+org.joda.time.TestLocalTime_Constructors
+org.joda.time.TestLocalTime_Properties
+org.joda.time.TestMinutes
+org.joda.time.TestMonthDay_Basics
+org.joda.time.TestMonthDay_Constructors
+org.joda.time.TestMonthDay_Properties
+org.joda.time.TestMonths
+org.joda.time.TestMutableDateTime_Adds
+org.joda.time.TestMutableDateTime_Basics
+org.joda.time.TestMutableDateTime_Constructors
+org.joda.time.TestMutableDateTime_Properties
+org.joda.time.TestMutableDateTime_Sets
+org.joda.time.TestMutableInterval_Basics
+org.joda.time.TestMutableInterval_Constructors
+org.joda.time.TestMutableInterval_Updates
+org.joda.time.TestMutablePeriod_Basics
+org.joda.time.TestMutablePeriod_Constructors
+org.joda.time.TestMutablePeriod_Updates
+org.joda.time.TestPartial_Basics
+org.joda.time.TestPartial_Match
+org.joda.time.TestPartial_Properties
+org.joda.time.TestPeriod_Basics
+org.joda.time.TestPeriod_Constructors
+org.joda.time.TestSeconds
+org.joda.time.TestSerialization
+org.joda.time.TestStringConvert
+org.joda.time.TestTimeOfDay_Basics
+org.joda.time.TestTimeOfDay_Constructors
+org.joda.time.TestTimeOfDay_Properties
+org.joda.time.TestWeeks
+org.joda.time.TestYearMonthDay_Basics
+org.joda.time.TestYearMonthDay_Constructors
+org.joda.time.TestYearMonthDay_Properties
+org.joda.time.TestYearMonth_Basics
+org.joda.time.TestYearMonth_Constructors
+org.joda.time.TestYearMonth_Properties
+org.joda.time.TestYears
+org.joda.time.chrono.TestBuddhistChronology
+org.joda.time.chrono.TestCopticChronology
+org.joda.time.chrono.TestEthiopicChronology
+org.joda.time.chrono.TestGJChronology
+org.joda.time.chrono.TestGregorianChronology
+org.joda.time.chrono.TestISOChronology
+org.joda.time.chrono.TestIslamicChronology
+org.joda.time.chrono.TestLenientChronology
+org.joda.time.convert.TestCalendarConverter
+org.joda.time.convert.TestConverterManager
+org.joda.time.convert.TestDateConverter
+org.joda.time.convert.TestLongConverter
+org.joda.time.convert.TestNullConverter
+org.joda.time.convert.TestReadableDurationConverter
+org.joda.time.convert.TestReadableInstantConverter
+org.joda.time.convert.TestReadableIntervalConverter
+org.joda.time.convert.TestReadablePartialConverter
+org.joda.time.convert.TestReadablePeriodConverter
+org.joda.time.convert.TestStringConverter
+org.joda.time.field.TestBaseDateTimeField
+org.joda.time.field.TestFieldUtils
+org.joda.time.field.TestMillisDurationField
+org.joda.time.field.TestOffsetDateTimeField
+org.joda.time.field.TestPreciseDateTimeField
+org.joda.time.field.TestPreciseDurationDateTimeField
+org.joda.time.field.TestPreciseDurationField
+org.joda.time.field.TestScaledDurationField
+org.joda.time.field.TestUnsupportedDateTimeField
+org.joda.time.format.TestDateTimeFormat
+org.joda.time.format.TestDateTimeFormatStyle
+org.joda.time.format.TestDateTimeFormatter
+org.joda.time.format.TestDateTimeFormatterBuilder
+org.joda.time.format.TestISODateTimeFormat
+org.joda.time.format.TestISODateTimeFormatParsing
+org.joda.time.format.TestPeriodFormatter
+org.joda.time.format.TestTextFields
+org.joda.time.tz.TestBuilder
+org.joda.time.tz.TestCompiler
+
+====================================================================================================
+[13:39:48] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:39:48] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: possibly a bug in org.joda.time.field.FieldUtils.safeMultipl
+
+It seems to me that as currently written in joda-time-2.1.jar
+org.joda.time.field.FieldUtils.safeMultiply(long val1, int scalar)
+doesn't detect the overflow if the long val1 == Long.MIN_VALUE and the int scalar == -1.
+
+The attached file demonstrates what I think is the bug and suggests a patch.
+
+I looked at the Joda Time bugs list in SourceForge but couldn't see anything that looked relevant: my apologies if I've missed something, or if I'm making a mistake with this bug report.
+
+Colin Bartlett
+
+====================================================================================================
+[13:39:51] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "FieldUtils.safeMultiply(long, int) fails to detect overflow when val1 == Long.MIN_VALUE and scalar == -1. The true result, 2^63, doesn't fit in a long, but the method returns Long.MIN_VALUE instead of throwing ArithmeticException.",
+  "concrete_examples": [
+    {
+      "input": "FieldUtils.safeMultiply(Long.MIN_VALUE, -1)",
+      "expected": "throws ArithmeticException (overflow: result 9223372036854775808 exceeds Long.MAX_VALUE)",
+      "actual": "returns Long.MIN_VALUE (-9223372036854775808) silently with no exception"
+    },
+    {
+      "input": "FieldUtils.safeMultiply(Long.MIN_VALUE, 1)",
+      "expected": "returns Long.MIN_VALUE (no overflow)",
+      "actual": "returns Long.MIN_VALUE (correct; shows only the -1 case is broken)"
+    }
+  ]
+}
+
+====================================================================================================
+[13:39:51] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:39:52] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0076
+====================================================================================================
+{
+  "issue_gist": "FieldUtils.safeMultiply(long, int) fails to detect overflow when val1 == Long.MIN_VALUE and scalar == -1. The true result, 2^63, doesn't fit in a long, but the method returns Long.MIN_VALUE instead of throwing ArithmeticException.",
+  "concrete_examples": [
+    {
+      "input": "FieldUtils.safeMultiply(Long.MIN_VALUE, -1)",
+      "expected": "throws ArithmeticException (overflow: result 9223372036854775808 exceeds Long.MAX_VALUE)",
+      "actual": "returns Long.MIN_VALUE (-9223372036854775808) silently with no exception"
+    },
+    {
+      "input": "FieldUtils.safeMultiply(Long.MIN_VALUE, 1)",
+      "expected": "returns Long.MIN_VALUE (no overflow)",
+      "actual": "returns Long.MIN_VALUE (correct; shows only the -1 case is broken)"
+    }
+  ]
+}
+
+====================================================================================================
+[13:39:52] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:39:52] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-15/source
+Test file: src/test/java/org/joda/time/field/JQF_TestFieldUtils.java
+Test class: org.joda.time.field.JQF_TestFieldUtils
+Test method: testBugReproduction
+
+Bug summary: FieldUtils.safeMultiply(long, int) fails to detect overflow when val1 == Long.MIN_VALUE and scalar == -1. The true result, 2^63, doesn't fit in a long, but the method returns Long.MIN_VALUE instead of throwing ArithmeticException.
+
+Concrete examples:
+[{'input': 'FieldUtils.safeMultiply(Long.MIN_VALUE, -1)', 'expected': 'throws ArithmeticException (overflow: result 9223372036854775808 exceeds Long.MAX_VALUE)', 'actual': 'returns Long.MIN_VALUE (-9223372036854775808) silently with no exception'}, {'input': 'FieldUtils.safeMultiply(Long.MIN_VALUE, 1)', 'expected': 'returns Long.MIN_VALUE (no overflow)', 'actual': 'returns Long.MIN_VALUE (correct; shows only the -1 case is broken)'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-15/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:40:00] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.joda.time.field;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_TestFieldUtils {\n\n    public static class LongGen extends Generator<Long> {\n        public LongGen() { super(Long.class); }\n        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(10);\n            if (c < 4) return Long.MIN_VALUE;\n            if (c == 4) return Long.MAX_VALUE;\n            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);\n            if (c == 6) return (long) r.nextInt(-100, 100);\n            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);\n        }\n    }\n\n    public static class IntGen extends Generator<Integer> {\n        public IntGen() { super(Integer.class); }\n        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(10);\n            if (c < 4) return -1;\n            if (c == 4) return Integer.MIN_VALUE;\n            if (c == 5) return Integer.MAX_VALUE;\n            if (c == 6) return r.nextInt(-3, 4);\n            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LongGen.class) long val1,\n                                    @From(IntGen.class) int scalar) {\n        boolean validIf = true;\n        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long result = 0;\n        String exc = \"none\";\n        try {\n            result = FieldUtils.safeMultiply(val1, scalar);\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n        final long fr = result;\n        final String fe = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ fr, fe });\n        String expected = \"java.lang.ArithmeticException\";\n        assertEquals(expected, fe);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:40:00] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:01] [002_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.0458
+====================================================================================================
+{
+  "pbt": "package org.joda.time.field;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_TestFieldUtils {\n\n    public static class LongGen extends Generator<Long> {\n        public LongGen() { super(Long.class); }\n        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(10);\n            if (c < 4) return Long.MIN_VALUE;\n            if (c == 4) return Long.MAX_VALUE;\n            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);\n            if (c == 6) return (long) r.nextInt(-100, 100);\n            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);\n        }\n    }\n\n    public static class IntGen extends Generator<Integer> {\n        public IntGen() { super(Integer.class); }\n        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {\n            int c = r.nextInt(10);\n            if (c < 4) return -1;\n            if (c == 4) return Integer.MIN_VALUE;\n            if (c == 5) return Integer.MAX_VALUE;\n            if (c == 6) return r.nextInt(-3, 4);\n            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LongGen.class) long val1,\n                                    @From(IntGen.class) int scalar) {\n        boolean validIf = true;\n        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        long result = 0;\n        String exc = \"none\";\n        try {\n            result = FieldUtils.safeMultiply(val1, scalar);\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n        final long fr = result;\n        final String fe = exc;\n\n        Log.logOutIf(true, () -> new Object[]{ fr, fe });\n        String expected = \"java.lang.ArithmeticException\";\n        assertEquals(expected, fe);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:40:01] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:40:01] TEST CODE (org.joda.time.field.JQF_TestFieldUtils)
+====================================================================================================
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+}
+
+====================================================================================================
+[13:40:03] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:40:18] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 100001,
+  "discarded_by_assume": 81969,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 915
+  },
+  "passed_assume": 18032,
+  "classified": 915
+}
+
+====================================================================================================
+[13:40:18] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:40:18] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: possibly a bug in org.joda.time.field.FieldUtils.safeMultipl
+
+It seems to me that as currently written in joda-time-2.1.jar
+org.joda.time.field.FieldUtils.safeMultiply(long val1, int scalar)
+doesn't detect the overflow if the long val1 == Long.MIN_VALUE and the int scalar == -1.
+
+The attached file demonstrates what I think is the bug and suggests a patch.
+
+I looked at the Joda Time bugs list in SourceForge but couldn't see anything that looked relevant: my apologies if I've missed something, or if I'm making a mistake with this bug report.
+
+Colin Bartlett
+
+=== Test ===
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[none]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.joda.time.field.JQF_TestFieldUtils.testBugReproduction(JQF_TestFieldUtils.java:61)
+
+Location: org.joda.time.field.JQF_TestFieldUtils.testBugReproduction(JQF_TestFieldUtils.java:61)
+
+is triggered by the following inputs:
+
+    input (-9223372036854775808, -1) -> logged [-9223372036854775808, none]
+    input (-9223372036854775808, -1) -> logged [-9223372036854775808, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:40:26] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are (Long.MIN_VALUE, -1). This is exactly the case in the report. The expected result is an ArithmeticException, because 2^63 overflows a long. The buggy code instead returned Long.MIN_VALUE and threw nothing (logged [-9223372036854775808, none]), so the symptom and root cause match the report.\n\n(4) buggyIf is `val1 == Long.MIN_VALUE && scalar == -1`. This is the only input pair where safeMultiply(long, int) silently overflows, so buggyIf accepts no input where the code already behaves correctly.\n\n(5) buggyIf misses no bug-triggering input. The report names only this one combination.\n\n(6) The generators cover the whole long and int domains, including the extremes, and validIf is true. The valid domain is therefore not restricted to the bug-triggering inputs.\n\nThe assertion is correct for every input buggyIf accepts. The test fails on the reported bug and would pass once it is fixed."
+}
+
+====================================================================================================
+[13:40:26] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:27] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.0879
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are (Long.MIN_VALUE, -1). This is exactly the case in the report. The expected result is an ArithmeticException, because 2^63 overflows a long. The buggy code instead returned Long.MIN_VALUE and threw nothing (logged [-9223372036854775808, none]), so the symptom and root cause match the report.\n\n(4) buggyIf is `val1 == Long.MIN_VALUE && scalar == -1`. This is the only input pair where safeMultiply(long, int) silently overflows, so buggyIf accepts no input where the code already behaves correctly.\n\n(5) buggyIf misses no bug-triggering input. The report names only this one combination.\n\n(6) The generators cover the whole long and int domains, including the extremes, and validIf is true. The valid domain is therefore not restricted to the bug-triggering inputs.\n\nThe assertion is correct for every input buggyIf accepts. The test fails on the reported bug and would pass once it is fixed."
+}
+
+====================================================================================================
+[13:40:27] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:40:27] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:40:30] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real FieldUtils.safeMultiply(long, int) directly. It uses no mocking libraries, fake subclasses or simulated return values. The nested generators only produce input values. The try/catch records the real exception class, and the assertion checks the actual behavior."
+}
+
+====================================================================================================
+[13:40:30] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:31] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.1336
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real FieldUtils.safeMultiply(long, int) directly. It uses no mocking libraries, fake subclasses or simulated return values. The nested generators only produce input values. The try/catch records the real exception class, and the assertion checks the actual behavior."
+}
+
+====================================================================================================
+[13:40:31] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:40:34] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). The only assertion compares the exception class name that the real call produced with \"java.lang.ArithmeticException\". The assertion can pass: once safeMultiply(Long.MIN_VALUE, -1) throws ArithmeticException, as it should after a fix, the recorded name matches and the test passes. It fails only on the buggy code, which returns normally."
+}
+
+====================================================================================================
+[13:40:34] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:35] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.1420
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. It has no fail(), assertTrue(false) or assertEquals(1, 0). The only assertion compares the exception class name that the real call produced with \"java.lang.ArithmeticException\". The assertion can pass: once safeMultiply(Long.MIN_VALUE, -1) throws ArithmeticException, as it should after a fix, the recorded name matches and the test passes. It fails only on the buggy code, which returns normally."
+}
+
+====================================================================================================
+[13:40:35] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:40:38] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(expected, fe), which compares two Strings: the expected exception class name and the recorded one. assertEquals uses equals() for Strings, so this is correct. There is no == on objects, no double comparison that needs a delta, and no array comparison."
+}
+
+====================================================================================================
+[13:40:38] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:39] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.1502
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The only equality check is assertEquals(expected, fe), which compares two Strings: the expected exception class name and the recorded one. assertEquals uses equals() for Strings, so this is correct. There is no == on objects, no double comparison that needs a delta, and no array comparison."
+}
+
+====================================================================================================
+[13:40:39] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:40:39] AGENT FINISHED success=True llm_calls=7
+====================================================================================================
+
+
+====================================================================================================
+[13:40:41] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestFieldUtils.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug15"
+}
+
+====================================================================================================
+[13:40:41] FINAL TEST FILE JQF_TestFieldUtils.java (repro method + derived preservation method)
+====================================================================================================
+package org.joda.time.field;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_TestFieldUtils {
+
+    public static class LongGen extends Generator<Long> {
+        public LongGen() { super(Long.class); }
+        @Override public Long generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return Long.MIN_VALUE;
+            if (c == 4) return Long.MAX_VALUE;
+            if (c == 5) return Long.MIN_VALUE + r.nextInt(3);
+            if (c == 6) return (long) r.nextInt(-100, 100);
+            return r.nextLong(Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+    }
+
+    public static class IntGen extends Generator<Integer> {
+        public IntGen() { super(Integer.class); }
+        @Override public Integer generate(SourceOfRandomness r, GenerationStatus status) {
+            int c = r.nextInt(10);
+            if (c < 4) return -1;
+            if (c == 4) return Integer.MIN_VALUE;
+            if (c == 5) return Integer.MAX_VALUE;
+            if (c == 6) return r.nextInt(-3, 4);
+            return r.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        long result = 0;
+        String exc = "none";
+        try {
+            result = FieldUtils.safeMultiply(val1, scalar);
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+        final long fr = result;
+        final String fe = exc;
+
+        Log.logOutIf(true, () -> new Object[]{ fr, fe });
+        String expected = "java.lang.ArithmeticException";
+        assertEquals(expected, fe);
+    }
+
+    @Fuzz
+    public void testSafeMultiplyLongInt(@From(LongGen.class) long val1,
+                                    @From(IntGen.class) int scalar) {
+        boolean validIf = true;
+        boolean buggyIf = val1 == Long.MIN_VALUE && scalar == -1;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            long result = 0;
+            String exc = "none";
+            try {
+                result = FieldUtils.safeMultiply(val1, scalar);
+            } catch (Throwable t) {
+                exc = t.getClass().getName();
+            }
+            final long fr = result;
+            final String fe = exc;
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ fr, fe });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:42:08] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 17904,
+    "paired_inputs": 17904,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 17904
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 17904,
+      "failed_on_buggy": 17904,
+      "pass": 17904,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 17928,
+      "unique_failures": {}
+    }
+  }
+}

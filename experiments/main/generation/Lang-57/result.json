@@ -1,0 +1,168 @@
+{
+  "bug": "Lang-57",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.4984,
+  "tokens": {
+    "input": 22,
+    "output": 5927,
+    "cache_write": 107297,
+    "cache_read": 99309
+  },
+  "seconds": 98.0,
+  "started_at": "2026-11-21T12:23:30",
+  "timing": {
+    "checkout": 9.3,
+    "agent": 88.8,
+    "derive": 1.4,
+    "validation": 151.1
+  },
+  "llm_seconds": 66.4,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 381,
+        "cache_write": 814,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007151,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 16.8,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1813,
+        "cache_write": 30192,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.139014,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 14.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1663,
+        "cache_write": 6103,
+        "cache_read": 24126
+      },
+      "cost_usd": 0.043459,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 15.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1389,
+        "cache_write": 32341,
+        "cache_read": 611
+      },
+      "cost_usd": 0.143319,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 248,
+        "cache_write": 34642,
+        "cache_read": 603
+      },
+      "cost_usd": 0.141116,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 238,
+        "cache_write": 1593,
+        "cache_read": 35245
+      },
+      "cost_usd": 0.012284,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 195,
+        "cache_write": 1612,
+        "cache_read": 36838
+      },
+      "cost_usd": 0.01209,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.lang.LocaleUtilsTest::testIsAvailableLocale",
+  "jqf_class": "org.apache.commons.lang.JQF_LocaleUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang.LocaleUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIsAvailableLocale",
+  "issue_gist": "LocaleUtils.isAvailableLocale(Locale) uses the static field cAvailableLocaleSet directly. The field is only initialized when availableLocaleSet() is called, so calling isAvailableLocale first throws a NullPointerException.",
+  "failing_inputs_count": 2730,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_LocaleUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug57",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 49746,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 49821,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 250.5,
+  "paired_inputs_archived": true
+}

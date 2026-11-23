@@ -1,0 +1,81 @@
+{
+ "patch": "Patch1",
+ "dataset": "apr",
+ "bug": "Chart-1",
+ "tool": "jGenprog",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T13:47:07",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 8303,
+   "fail": 11697,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1, 5, 0, 64.54584309368417, 0) -> logged [java.lang.NullPointerException, -1, , 0]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.M",
+    "input (1, 4, 4, 56.35378146828122, 0) -> logged [java.lang.NullPointerException, -1, , 0]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.M",
+    "input (1, 1, 2, 14.675983223762312, 1) -> logged [java.lang.NullPointerException, -1, , 0]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.M"
+   ]
+  },
+  "fresh": {
+   "trials": 44094,
+   "inside_buggyIf": 37825,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)\n\nLocation: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)\n\nis triggered by the following inputs:\n\n    input (1, 2, 4, 70.94498898409712, 1) -> logged [java.lang.NullPointerException, -1, , 0]\n    input (1, 6, 3, 20.189465952831, 1) -> logged [java.lang.NullPointerException, -1, , 0]"
+  },
+  "seconds": 111.8
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 207.2,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 204.97609210014343,
+  "time": {
+   "CHECKOUT_BUGGY": 3.7008111476898193,
+   "DELTA_BUGGY": 0.001897573471069336,
+   "COMPILE_BUGGY": 8.508013486862183,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.540423631668091,
+   "PATCH": 0.013165712356567383,
+   "DELTA_PATCH": 0.0014081001281738281,
+   "COMPILE_PATCH": 6.085813760757446,
+   "PATCH_TEST": 2.008260726928711,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.53853678703308,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 321.1
+}

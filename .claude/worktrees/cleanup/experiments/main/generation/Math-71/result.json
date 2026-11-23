@@ -1,0 +1,184 @@
+{
+  "bug": "Math-71",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 7,
+  "cost_usd": 0.1915,
+  "tokens": {
+    "input": 18,
+    "output": 4430,
+    "cache_write": 35986,
+    "cache_read": 32210
+  },
+  "seconds": 82.1,
+  "started_at": "2026-11-21T13:05:54",
+  "timing": {
+    "checkout": 10.9,
+    "agent": 71.2,
+    "derive": 1.7,
+    "validation": 105.3
+  },
+  "llm_seconds": 49.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 397,
+        "cache_write": 1142,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008623,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 17.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2126,
+        "cache_write": 7006,
+        "cache_read": 539
+      },
+      "cost_usd": 0.049342,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 13.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1297,
+        "cache_write": 11045,
+        "cache_read": 611
+      },
+      "cost_usd": 0.057215,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 219,
+        "cache_write": 13373,
+        "cache_read": 603
+      },
+      "cost_usd": 0.05575,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 216,
+        "cache_write": 1697,
+        "cache_read": 13976
+      },
+      "cost_usd": 0.010354,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 175,
+        "cache_write": 1723,
+        "cache_read": 15673
+      },
+      "cost_usd": 0.010217,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaIntegratorTest::testMissedEndEvent",
+  "jqf_class": "org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest",
+  "hidden_tests": [
+    "org.apache.commons.math.ode.ContinuousOutputModelTest",
+    "org.apache.commons.math.ode.FirstOrderConverterTest",
+    "org.apache.commons.math.ode.jacobians.FirstOrderIntegratorWithJacobiansTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.EulerIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.EulerStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.GillIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.GillStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.MidpointIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.MidpointStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.ThreeEighthesIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ThreeEighthesStepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.NordsieckStepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.StepNormalizerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMissedEndEvent",
+  "issue_gist": "The adaptive-step ODE integrator (e.g., DormandPrince853) treats the end of the integration range as an event, but numerical inaccuracy in event detection can cause the end event to be missed. The integrator then runs well past the requested end time, e.g. covering 160s instead of 60s.",
+  "failing_inputs_count": 779,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ClassicalRungeKuttaIntegratorTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug71",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 15079,
+      "paired_inputs": 15079,
+      "outcomes": {
+        "java.lang.AssertionError": 15079
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 15079,
+        "failed_on_buggy": 15079,
+        "pass": 0,
+        "fail": 15079,
+        "not_run": 0,
+        "failing_examples": [
+          "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.08697389191357818) -> logged [1.878250379999994E9, none, 1.000060001791214]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250379999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati",
+          "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.7082367887768565) -> logged [1.878250379999994E9, none, 1.000060001791214]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250379999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati",
+          "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.5466341962054745) -> logged [1.878250379999994E9, none, 1.000060001791214]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250379999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 15057,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250379999994E9>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\nLocation: org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\nis triggered by the following inputs:\n\n    input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.8199450212065968) -> logged [1.878250379999994E9, none, 1.000060001791214]\n    input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.4287303065718646) -> logged [1.878250379999994E9, none, 1.000060001791214]"
+      }
+    }
+  },
+  "total_seconds": 189.1,
+  "paired_inputs_archived": true
+}

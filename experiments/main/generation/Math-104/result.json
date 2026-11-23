@@ -1,0 +1,380 @@
+{
+  "bug": "Math-104",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 33,
+  "cost_usd": 4.1454,
+  "tokens": {
+    "input": 62,
+    "output": 28785,
+    "cache_write": 935466,
+    "cache_read": 1155285
+  },
+  "seconds": 453.5,
+  "started_at": "2026-11-21T13:29:37",
+  "timing": {
+    "checkout": 10.4,
+    "agent": 443.1,
+    "derive": 2.5,
+    "validation": 190.8
+  },
+  "llm_seconds": 292.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 500,
+        "cache_write": 813,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008337,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 22.8,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 2330,
+        "cache_write": 33631,
+        "cache_read": 25417
+      },
+      "cost_usd": 0.160378,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 18.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1990,
+        "cache_write": 30020,
+        "cache_read": 611
+      },
+      "cost_usd": 0.140045,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 24.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2795,
+        "cache_write": 11827,
+        "cache_read": 27326
+      },
+      "cost_usd": 0.077995,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_check_inputs",
+      "seconds": 10.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 892,
+        "cache_write": 10625,
+        "cache_read": 30631
+      },
+      "cost_usd": 0.054487,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "008_symbolize",
+      "seconds": 17.7,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1972,
+        "cache_write": 78994,
+        "cache_read": 39692
+      },
+      "cost_usd": 0.339673,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_check_inputs",
+      "seconds": 9.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 880,
+        "cache_write": 69157,
+        "cache_read": 611
+      },
+      "cost_usd": 0.285493,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "011_symbolize",
+      "seconds": 26.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2915,
+        "cache_write": 11649,
+        "cache_read": 68128
+      },
+      "cost_usd": 0.082563,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_check_inputs",
+      "seconds": 9.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 908,
+        "cache_write": 10819,
+        "cache_read": 69768
+      },
+      "cost_usd": 0.059337,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "014_symbolize",
+      "seconds": 15.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1590,
+        "cache_write": 12141,
+        "cache_read": 79777
+      },
+      "cost_usd": 0.072446,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "016_check_inputs",
+      "seconds": 10.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 828,
+        "cache_write": 9882,
+        "cache_read": 80587
+      },
+      "cost_usd": 0.055871,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "017_symbolize",
+      "seconds": 32.7,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 3495,
+        "cache_write": 129984,
+        "cache_read": 92457
+      },
+      "cost_usd": 0.56414,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "019_check_inputs",
+      "seconds": 13.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1302,
+        "cache_write": 119718,
+        "cache_read": 611
+      },
+      "cost_usd": 0.491957,
+      "outcome": "success"
+    },
+    {
+      "call": 14,
+      "step": "020_validate",
+      "seconds": 6.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 231,
+        "cache_write": 119842,
+        "cache_read": 603
+      },
+      "cost_usd": 0.481746,
+      "outcome": "success"
+    },
+    {
+      "call": 15,
+      "step": "020_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 201,
+        "cache_write": 1691,
+        "cache_read": 120445
+      },
+      "cost_usd": 0.020827,
+      "outcome": "success"
+    },
+    {
+      "call": 16,
+      "step": "020_validate",
+      "seconds": 7.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 513,
+        "cache_write": 1690,
+        "cache_read": 122136
+      },
+      "cost_usd": 0.024112,
+      "outcome": "success"
+    },
+    {
+      "call": 17,
+      "step": "021_filter_passing",
+      "seconds": 29.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3533,
+        "cache_write": 134764,
+        "cache_read": 539
+      },
+      "cost_usd": 0.574444,
+      "outcome": "success"
+    },
+    {
+      "call": 18,
+      "step": "023_check_inputs",
+      "seconds": 12.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1225,
+        "cache_write": 133423,
+        "cache_read": 611
+      },
+      "cost_usd": 0.546007,
+      "outcome": "success"
+    },
+    {
+      "call": 19,
+      "step": "024_validate",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 239,
+        "cache_write": 10429,
+        "cache_read": 123826
+      },
+      "cost_usd": 0.056497,
+      "outcome": "success"
+    },
+    {
+      "call": 20,
+      "step": "024_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 195,
+        "cache_write": 2191,
+        "cache_read": 134255
+      },
+      "cost_usd": 0.024147,
+      "outcome": "success"
+    },
+    {
+      "call": 21,
+      "step": "024_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 251,
+        "cache_write": 2176,
+        "cache_read": 136446
+      },
+      "cost_usd": 0.024867,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 7,
+  "failing_test": "org.apache.commons.math.special.GammaTest::testRegularizedGammaPositivePositive",
+  "jqf_class": "org.apache.commons.math.special.JQF_GammaTest",
+  "hidden_tests": [
+    "org.apache.commons.math.distribution.BinomialDistributionTest",
+    "org.apache.commons.math.distribution.ChiSquareDistributionTest",
+    "org.apache.commons.math.distribution.FDistributionTest",
+    "org.apache.commons.math.distribution.GammaDistributionTest",
+    "org.apache.commons.math.distribution.NormalDistributionTest",
+    "org.apache.commons.math.distribution.PascalDistributionTest",
+    "org.apache.commons.math.distribution.PoissonDistributionTest",
+    "org.apache.commons.math.distribution.TDistributionTest",
+    "org.apache.commons.math.special.BetaTest",
+    "org.apache.commons.math.special.ErfTest",
+    "org.apache.commons.math.special.GammaTest",
+    "org.apache.commons.math.stat.inference.ChiSquareFactoryTest",
+    "org.apache.commons.math.stat.inference.ChiSquareTestTest",
+    "org.apache.commons.math.stat.inference.TTestFactoryTest",
+    "org.apache.commons.math.stat.inference.TTestTest",
+    "org.apache.commons.math.stat.inference.TestUtilsTest",
+    "org.apache.commons.math.stat.regression.SimpleRegressionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testRegularizedGammaPositivePositive",
+  "issue_gist": "The default convergence epsilon in the Gamma and Beta special functions (regularizedGammaP/Q, regularizedBeta, etc.) is 10e-9 (1e-8), far coarser than double precision allows, so results are less accurate than expected. The default should be about 1e-15, as erf already uses.",
+  "failing_inputs_count": 3023,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_GammaTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug104",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 70496,
+      "inside_buggyIf": 37365,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 73114,
+        "inside_buggyIf": 38802,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 646.8,
+  "paired_inputs_archived": true
+}

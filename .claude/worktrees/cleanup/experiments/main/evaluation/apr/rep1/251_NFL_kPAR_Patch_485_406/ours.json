@@ -1,0 +1,81 @@
+{
+ "patch": "251_NFL_kPAR_Patch_485_406",
+ "dataset": "apr",
+ "bug": "Math-104",
+ "tool": "kPAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T16:20:38",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (46.874857063912, 21.765354036647054) -> logged [2.0406289249426455E-6, 2.0406291225902714E-6, none]\njava.lang.AssertionError: expected:<2.0406291225902714E-6> but was:<2.0406289249426455E-6>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.special.JQF_GammaTest.testBugReproduction(JQF_GammaTest.java:121)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAcces",
+    "input (12.47334980047036, 16.91645383853532) -> logged [0.8898409596998169, 0.889840959670109, none]\njava.lang.AssertionError: expected:<0.889840959670109> but was:<0.8898409596998169>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.special.JQF_GammaTest.testBugReproduction(JQF_GammaTest.java:121)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl",
+    "input (39.546548395310786, 56.12559613039291) -> logged [0.9915633082540695, 0.9915633082629708, none]\njava.lang.AssertionError: expected:<0.9915633082629708> but was:<0.9915633082540695>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.special.JQF_GammaTest.testBugReproduction(JQF_GammaTest.java:121)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImp"
+   ]
+  },
+  "fresh": {
+   "trials": 71966,
+   "inside_buggyIf": 38427,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<6.467970169377062E-26> but was:<6.467969851343281E-26>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.special.JQF_GammaTest.testBugReproduction(JQF_GammaTest.java:121)\n\nLocation: org.apache.commons.math.special.JQF_GammaTest.testBugReproduction(JQF_GammaTest.java:121)\n\nis triggered by the following inputs:\n\n    input (48.22680355198495, 6.444746947957592) -> logged [6.467969851343281E-26, 6.467970169377062E-26, none]\n    input (24.46299901199988, 3.570810351043152) -> logged [3.9715019754555726E-13, 3.971501997720602E-13, none]"
+  },
+  "seconds": 88.4
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 204.2,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 202.2365701198578,
+  "time": {
+   "CHECKOUT_BUGGY": 2.5424623489379883,
+   "DELTA_BUGGY": 0.001116037368774414,
+   "COMPILE_BUGGY": 6.0726659297943115,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 2.5253140926361084,
+   "PATCH": 0.013432979583740234,
+   "DELTA_PATCH": 0.0014426708221435547,
+   "COMPILE_PATCH": 6.131103038787842,
+   "PATCH_TEST": 3.7672576904296875,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.4245047569275,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 294.4
+}

@@ -1,0 +1,252 @@
+{
+  "bug": "Math-105",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 19,
+  "cost_usd": 1.6278,
+  "tokens": {
+    "input": 44,
+    "output": 11093,
+    "cache_write": 372117,
+    "cache_read": 283180
+  },
+  "seconds": 173.6,
+  "started_at": "2026-11-21T13:30:03",
+  "timing": {
+    "checkout": 10.0,
+    "agent": 163.6,
+    "derive": 2.4,
+    "validation": 92.9
+  },
+  "llm_seconds": 104.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 457,
+        "cache_write": 1018,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008727,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 15.2,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1738,
+        "cache_write": 31097,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.141884,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 11.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1551,
+        "cache_write": 6057,
+        "cache_read": 24667
+      },
+      "cost_usd": 0.042209,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_symbolize",
+      "seconds": 8.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 1187,
+        "cache_write": 4786,
+        "cache_read": 30724
+      },
+      "cost_usd": 0.034094,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "008_check_inputs",
+      "seconds": 14.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1633,
+        "cache_write": 36817,
+        "cache_read": 611
+      },
+      "cost_usd": 0.163663,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_validate",
+      "seconds": 3.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 170,
+        "cache_write": 38955,
+        "cache_read": 603
+      },
+      "cost_usd": 0.157588,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "009_validate",
+      "seconds": 3.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 187,
+        "cache_write": 1327,
+        "cache_read": 39558
+      },
+      "cost_usd": 0.011142,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "009_validate",
+      "seconds": 3.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 147,
+        "cache_write": 1373,
+        "cache_read": 40885
+      },
+      "cost_usd": 0.011058,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_filter_passing",
+      "seconds": 18.9,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2503,
+        "cache_write": 109647,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.463734,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "012_check_inputs",
+      "seconds": 7.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 754,
+        "cache_write": 67772,
+        "cache_read": 611
+      },
+      "cost_usd": 0.278693,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "013_validate",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 433,
+        "cache_write": 69337,
+        "cache_read": 603
+      },
+      "cost_usd": 0.281746,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "013_validate",
+      "seconds": 3.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 187,
+        "cache_write": 2074,
+        "cache_read": 69940
+      },
+      "cost_usd": 0.017168,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "013_validate",
+      "seconds": 3.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 146,
+        "cache_write": 1857,
+        "cache_read": 72014
+      },
+      "cost_usd": 0.016097,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 4,
+  "failing_test": "org.apache.commons.math.stat.regression.SimpleRegressionTest::testSSENonNegative",
+  "jqf_class": "org.apache.commons.math.stat.regression.JQF_SimpleRegressionTest",
+  "hidden_tests": [
+    "org.apache.commons.math.stat.regression.SimpleRegressionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testSSENonNegative",
+  "issue_gist": "SimpleRegression.getSumSquaredErrors() can return a negative value because it is computed as sumYY - sumXY^2/sumXX, which suffers from floating-point cancellation when x values are large and close together. The sum of squared errors should never be negative.",
+  "failing_inputs_count": 730,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimpleRegressionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug105",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 14483,
+      "paired_inputs": 14483,
+      "outcomes": {
+        "java.lang.AssertionError": 14483
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 14483,
+        "failed_on_buggy": 14483,
+        "pass": 14483,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 14597,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 268.9,
+  "paired_inputs_archived": true
+}

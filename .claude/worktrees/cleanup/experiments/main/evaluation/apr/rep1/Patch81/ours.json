@@ -1,0 +1,90 @@
+{
+ "patch": "Patch81",
+ "dataset": "apr",
+ "bug": "Time-4",
+ "tool": "jKali",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T16:25:08",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (3, 2, 7, 2) -> logged [none, org.joda.time.IllegalFieldValueException]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgument]Exception> but was:<[org.joda.time.IllegalFieldValue]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.",
+    "input (2, 3, 5, 5) -> logged [none, org.joda.time.IllegalFieldValueException]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgument]Exception> but was:<[org.joda.time.IllegalFieldValue]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.",
+    "input (0, 1, 6, 7) -> logged [none, org.joda.time.IllegalFieldValueException]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgument]Exception> but was:<[org.joda.time.IllegalFieldValue]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect."
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 34283,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgument]Exception> but was:<[org.joda.time.IllegalFieldValue]Exception>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\nLocation: org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\nis triggered by the following inputs:\n\n    input (3, 2, 1, 1) -> logged [none, org.joda.time.IllegalFieldValueException]\n    input (2, 3, 8, 7) -> logged [none, org.joda.time.IllegalFieldValueException]"
+  },
+  "seconds": 80.7
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 43.4,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 40.91271901130676,
+  "time": {
+   "CHECKOUT_BUGGY": 1.4827611446380615,
+   "DELTA_BUGGY": 0.0013461112976074219,
+   "COMPILE_BUGGY": 10.580187559127808,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.5157718658447266,
+   "PATCH": 0.033600568771362305,
+   "DELTA_PATCH": 0.0014464855194091797,
+   "COMPILE_PATCH": 9.148457050323486,
+   "PATCH_TEST": 2.794196128845215,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 2.895479440689087,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 1.3552217483520508,
+   "DELTA_FIX": 0.0014908313751220703,
+   "COMPILE_FIX": 8.595225811004639,
+   "REPRO_FOR_VALIDATE": 1.9380133152008057,
+   "VALIDATE": 0.015729427337646484
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch81/log/test1/1/ORG/id_000000006/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch81/log/test1/1/ORG/id_000000006/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch81/log/test1/1/PATCH/id_000000006/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch81/validation/fix/test1/id_000000006/OUT.log",
+    "in_content": "3;0;9;3",
+    "org_out_content": "[clockhourOfDay=3, hourOfHalfday=9];none",
+    "patch_out_content": "none;org.joda.time.IllegalFieldValueException",
+    "fix_out_content": "[clockhourOfDay=3, hourOfHalfday=9];none"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 125.0
+}

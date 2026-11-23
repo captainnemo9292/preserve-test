@@ -1,0 +1,191 @@
+{
+  "bug": "Time-12",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.4081,
+  "tokens": {
+    "input": 20,
+    "output": 4232,
+    "cache_write": 89842,
+    "cache_read": 64054
+  },
+  "seconds": 78.8,
+  "started_at": "2026-11-21T13:36:51",
+  "timing": {
+    "checkout": 8.0,
+    "agent": 70.8,
+    "derive": 2.1,
+    "validation": 192.1
+  },
+  "llm_seconds": 48.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 454,
+        "cache_write": 714,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007481,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 12.6,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1333,
+        "cache_write": 30263,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.134498,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 15.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1715,
+        "cache_write": 27211,
+        "cache_read": 611
+      },
+      "cost_usd": 0.126059,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 226,
+        "cache_write": 29292,
+        "cache_read": 603
+      },
+      "cost_usd": 0.119496,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 231,
+        "cache_write": 1164,
+        "cache_read": 29895
+      },
+      "cost_usd": 0.009964,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 273,
+        "cache_write": 1198,
+        "cache_read": 31059
+      },
+      "cost_usd": 0.010636,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.joda.time.TestLocalDate_Constructors::testFactory_fromCalendarFields_beforeYearZero1",
+  "jqf_class": "org.joda.time.JQF_TestLocalDate_Constructors",
+  "hidden_tests": [
+    "org.joda.time.TestBaseSingleFieldPeriod",
+    "org.joda.time.TestDateMidnight_Basics",
+    "org.joda.time.TestDateTimeZone",
+    "org.joda.time.TestDateTimeZoneCutover",
+    "org.joda.time.TestDateTime_Basics",
+    "org.joda.time.TestDays",
+    "org.joda.time.TestHours",
+    "org.joda.time.TestInterval_Basics",
+    "org.joda.time.TestLocalDateTime_Basics",
+    "org.joda.time.TestLocalDateTime_Constructors",
+    "org.joda.time.TestLocalDateTime_Properties",
+    "org.joda.time.TestLocalDate_Basics",
+    "org.joda.time.TestLocalDate_Constructors",
+    "org.joda.time.TestLocalDate_Properties",
+    "org.joda.time.TestLocalTime_Basics",
+    "org.joda.time.TestLocalTime_Constructors",
+    "org.joda.time.TestMinutes",
+    "org.joda.time.TestMonthDay_Basics",
+    "org.joda.time.TestMonthDay_Constructors",
+    "org.joda.time.TestMonths",
+    "org.joda.time.TestMutableDateTime_Basics",
+    "org.joda.time.TestMutableInterval_Basics",
+    "org.joda.time.TestPartial_Basics",
+    "org.joda.time.TestPartial_Match",
+    "org.joda.time.TestPeriod_Constructors",
+    "org.joda.time.TestSeconds",
+    "org.joda.time.TestSerialization",
+    "org.joda.time.TestStringConvert",
+    "org.joda.time.TestTimeOfDay_Basics",
+    "org.joda.time.TestWeeks",
+    "org.joda.time.TestYearMonthDay_Basics",
+    "org.joda.time.TestYearMonth_Basics",
+    "org.joda.time.TestYearMonth_Constructors",
+    "org.joda.time.TestYears",
+    "org.joda.time.format.TestDateTimeFormatter",
+    "org.joda.time.format.TestDateTimeFormatterBuilder",
+    "org.joda.time.tz.TestCachedDateTimeZone",
+    "org.joda.time.tz.TestCompiler"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testFactory_fromCalendarFields_beforeYearZero1",
+  "issue_gist": "LocalDate.fromCalendarFields (and likely LocalDateTime.fromCalendarFields) ignores Calendar.ERA, so a BC-era GregorianCalendar date is treated as an AD year instead of being converted to the proper Joda year (e.g. year 0 or negative).",
+  "failing_inputs_count": 2711,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestLocalDate_Constructors.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug12",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 77639,
+      "inside_buggyIf": 38796,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 77597,
+        "inside_buggyIf": 38871,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 273.0,
+  "paired_inputs_archived": true
+}

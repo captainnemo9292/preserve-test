@@ -1,0 +1,172 @@
+{
+ "experiment": "experiments/main",
+ "time": "2026-11-23T11:47:55",
+ "generation": {
+  "bugs": 77,
+  "status": {
+   "valid": 48,
+   "no bug report": 9,
+   "invalid": 15,
+   "no test": 5
+  },
+  "cost_usd": 74.44,
+  "llm_calls": 1073,
+  "tokens": {
+   "input": 2078,
+   "output": 816580,
+   "cache_write": 15872481,
+   "cache_read": 27808473
+  },
+  "seconds": 22061.2,
+  "llm_seconds": 7832.7
+ },
+ "apr": {
+  "patches": 458,
+  "baseline (valid generated tests)": {
+   "ours_preserve": {
+    "patches": 259,
+    "no_verdict": 0,
+    "incorrect": 170,
+    "incorrect_right": 92,
+    "correct": 89,
+    "correct_right": 76,
+    "with_verdict": 259,
+    "right": 168,
+    "accuracy": 0.6486
+   },
+   "poracle": {
+    "patches": 259,
+    "no_verdict": 0,
+    "incorrect": 170,
+    "incorrect_right": 86,
+    "correct": 89,
+    "correct_right": 89,
+    "with_verdict": 259,
+    "right": 175,
+    "accuracy": 0.6757
+   },
+   "patches": 259,
+   "both_right": 127,
+   "only_ours": 41,
+   "only_poracle": 48,
+   "neither": 43,
+   "rejected_before_fuzzing": 15
+  },
+  "repro + preserve (valid generated tests)": {
+   "ours_repro": {
+    "patches": 274,
+    "no_verdict": 0,
+    "incorrect": 185,
+    "incorrect_right": 72,
+    "correct": 89,
+    "correct_right": 88,
+    "with_verdict": 274,
+    "right": 160,
+    "accuracy": 0.5839
+   },
+   "ours_preserve": {
+    "patches": 274,
+    "no_verdict": 0,
+    "incorrect": 185,
+    "incorrect_right": 107,
+    "correct": 89,
+    "correct_right": 76,
+    "with_verdict": 274,
+    "right": 183,
+    "accuracy": 0.6679
+   },
+   "ours_combined": {
+    "patches": 274,
+    "no_verdict": 0,
+    "incorrect": 185,
+    "incorrect_right": 145,
+    "correct": 89,
+    "correct_right": 75,
+    "with_verdict": 274,
+    "right": 220,
+    "accuracy": 0.8029
+   },
+   "poracle": {
+    "patches": 274,
+    "no_verdict": 0,
+    "incorrect": 185,
+    "incorrect_right": 101,
+    "correct": 89,
+    "correct_right": 89,
+    "with_verdict": 274,
+    "right": 190,
+    "accuracy": 0.6934
+   },
+   "patches": 274,
+   "rejected_before_fuzzing": 15
+  },
+  "all patches": {
+   "ours_preserve": {
+    "patches": 458,
+    "no_verdict": 184,
+    "incorrect": 185,
+    "incorrect_right": 107,
+    "correct": 89,
+    "correct_right": 76,
+    "with_verdict": 274,
+    "right": 183,
+    "accuracy": 0.6679
+   },
+   "ours_repro": {
+    "patches": 458,
+    "no_verdict": 184,
+    "incorrect": 185,
+    "incorrect_right": 72,
+    "correct": 89,
+    "correct_right": 88,
+    "with_verdict": 274,
+    "right": 160,
+    "accuracy": 0.5839
+   },
+   "ours_combined": {
+    "patches": 458,
+    "no_verdict": 184,
+    "incorrect": 185,
+    "incorrect_right": 145,
+    "correct": 89,
+    "correct_right": 75,
+    "with_verdict": 274,
+    "right": 220,
+    "accuracy": 0.8029
+   },
+   "poracle": {
+    "patches": 458,
+    "no_verdict": 0,
+    "incorrect": 326,
+    "incorrect_right": 181,
+    "correct": 132,
+    "correct_right": 130,
+    "with_verdict": 458,
+    "right": 311,
+    "accuracy": 0.679
+   },
+   "poracle_stored": {
+    "patches": 458,
+    "no_verdict": 173,
+    "incorrect": 214,
+    "incorrect_right": 214,
+    "correct": 71,
+    "correct_right": 69,
+    "with_verdict": 285,
+    "right": 283,
+    "accuracy": 0.993
+   }
+  },
+  "evaluation_seconds": {
+   "ours": 61022.1,
+   "poracle": 66589.6
+  },
+  "poracle_containers": {
+   "poracle-original": 458
+  },
+  "runs": {
+   "ours": 275,
+   "poracle": 458
+  }
+ }
+}

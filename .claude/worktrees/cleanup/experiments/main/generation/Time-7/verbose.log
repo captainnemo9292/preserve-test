@@ -1,0 +1,1797 @@
+
+====================================================================================================
+[13:33:15] BUG Time-7: failing test org.joda.time.format.TestDateTimeFormatter::testParseInto_monthDay_feb29_tokyo_endOfYear -> org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Time-7/Time7b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source
+====================================================================================================
+Title: DateTimeFormat.parseInto sometimes miscalculates year (2.2)
+
+There appears to be a bug in the fix to http://sourceforge.net/p/joda-time/bugs/148 (which I also reported).
+
+The following code (which can be added to org.joda.time.format.TestDateTimeFormatter) breaks, because the input mutable date time's millis appear to be mishandled and the year for the parse is changed to 1999:
+
+``` java
+    public void testParseInto_monthDay_feb29_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2000, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+```
+
+====================================================================================================
+[13:33:15] HIDDEN FROM THE AGENT: 64 relevant test classes
+====================================================================================================
+org.joda.time.TestChronology
+org.joda.time.TestDateMidnight_Basics
+org.joda.time.TestDateMidnight_Constructors
+org.joda.time.TestDateMidnight_Properties
+org.joda.time.TestDateTimeComparator
+org.joda.time.TestDateTimeUtils
+org.joda.time.TestDateTimeZone
+org.joda.time.TestDateTimeZoneCutover
+org.joda.time.TestDateTime_Basics
+org.joda.time.TestDateTime_Constructors
+org.joda.time.TestDateTime_Properties
+org.joda.time.TestDays
+org.joda.time.TestDuration_Basics
+org.joda.time.TestIllegalFieldValueException
+org.joda.time.TestInstant_Basics
+org.joda.time.TestInstant_Constructors
+org.joda.time.TestInterval_Basics
+org.joda.time.TestInterval_Constructors
+org.joda.time.TestLocalDateTime_Basics
+org.joda.time.TestLocalDateTime_Constructors
+org.joda.time.TestLocalDate_Basics
+org.joda.time.TestLocalDate_Constructors
+org.joda.time.TestLocalTime_Basics
+org.joda.time.TestLocalTime_Constructors
+org.joda.time.TestMonthDay_Basics
+org.joda.time.TestMonthDay_Constructors
+org.joda.time.TestMonthDay_Properties
+org.joda.time.TestMonths
+org.joda.time.TestMutableDateTime_Adds
+org.joda.time.TestMutableDateTime_Basics
+org.joda.time.TestMutableDateTime_Constructors
+org.joda.time.TestMutableDateTime_Properties
+org.joda.time.TestMutableDateTime_Sets
+org.joda.time.TestMutableInterval_Basics
+org.joda.time.TestMutableInterval_Constructors
+org.joda.time.TestMutableInterval_Updates
+org.joda.time.TestMutablePeriod_Basics
+org.joda.time.TestMutablePeriod_Updates
+org.joda.time.TestPartial_Basics
+org.joda.time.TestPeriodType
+org.joda.time.TestPeriod_Basics
+org.joda.time.TestSerialization
+org.joda.time.TestStringConvert
+org.joda.time.TestTimeOfDay_Basics
+org.joda.time.TestTimeOfDay_Constructors
+org.joda.time.TestYearMonthDay_Basics
+org.joda.time.TestYearMonthDay_Constructors
+org.joda.time.TestYearMonth_Basics
+org.joda.time.TestYearMonth_Constructors
+org.joda.time.chrono.TestGJChronology
+org.joda.time.chrono.TestISOChronology
+org.joda.time.chrono.TestLenientChronology
+org.joda.time.convert.TestStringConverter
+org.joda.time.format.TestDateTimeFormat
+org.joda.time.format.TestDateTimeFormatStyle
+org.joda.time.format.TestDateTimeFormatter
+org.joda.time.format.TestDateTimeFormatterBuilder
+org.joda.time.format.TestISODateTimeFormat
+org.joda.time.format.TestISODateTimeFormatParsing
+org.joda.time.format.TestISODateTimeFormat_Fields
+org.joda.time.format.TestTextFields
+org.joda.time.tz.TestBuilder
+org.joda.time.tz.TestCachedDateTimeZone
+org.joda.time.tz.TestCompiler
+
+====================================================================================================
+[13:33:15] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:33:15] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: DateTimeFormat.parseInto sometimes miscalculates year (2.2)
+
+There appears to be a bug in the fix to http://sourceforge.net/p/joda-time/bugs/148 (which I also reported).
+
+The following code (which can be added to org.joda.time.format.TestDateTimeFormatter) breaks, because the input mutable date time's millis appear to be mishandled and the year for the parse is changed to 1999:
+
+``` java
+    public void testParseInto_monthDay_feb29_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2000, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+```
+
+====================================================================================================
+[13:33:19] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "DateTimeFormatter.parseInto with a month/day-only pattern (\"M d\") mishandles the input MutableDateTime's millis when computing the default year, so parsing \"2 29\" on a mutable date of 2000-01-01 in a time zone like New York yields year 1999 instead of keeping 2000 (a leap year, so Feb 29 is valid).",
+  "concrete_examples": [
+    {
+      "input": "DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK); MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK); f.parseInto(result, \"2 29\", 0);",
+      "expected": "parseInto returns 4 and result equals 2000-02-29T00:00:00.000 in NEWYORK (year stays 2000).",
+      "actual": "The year used for the parse is wrongly changed to 1999 (the input millis are mishandled, likely due to zone offset), so the result is not 2000-02-29 and the test fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:33:19] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:33:20] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0085
+====================================================================================================
+{
+  "issue_gist": "DateTimeFormatter.parseInto with a month/day-only pattern (\"M d\") mishandles the input MutableDateTime's millis when computing the default year, so parsing \"2 29\" on a mutable date of 2000-01-01 in a time zone like New York yields year 1999 instead of keeping 2000 (a leap year, so Feb 29 is valid).",
+  "concrete_examples": [
+    {
+      "input": "DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK); MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK); f.parseInto(result, \"2 29\", 0);",
+      "expected": "parseInto returns 4 and result equals 2000-02-29T00:00:00.000 in NEWYORK (year stays 2000).",
+      "actual": "The year used for the parse is wrongly changed to 1999 (the input millis are mishandled, likely due to zone offset), so the result is not 2000-02-29 and the test fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:33:20] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:33:20] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source
+Test file: src/test/java/org/joda/time/format/JQF_TestDateTimeFormatter.java
+Test class: org.joda.time.format.JQF_TestDateTimeFormatter
+Test method: testBugReproduction
+
+Bug summary: DateTimeFormatter.parseInto with a month/day-only pattern ("M d") mishandles the input MutableDateTime's millis when computing the default year, so parsing "2 29" on a mutable date of 2000-01-01 in a time zone like New York yields year 1999 instead of keeping 2000 (a leap year, so Feb 29 is valid).
+
+Concrete examples:
+[{'input': 'DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK); MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK); f.parseInto(result, "2 29", 0);', 'expected': 'parseInto returns 4 and result equals 2000-02-29T00:00:00.000 in NEWYORK (year stays 2000).', 'actual': 'The year used for the parse is wrongly changed to 1999 (the input millis are mishandled, likely due to zone offset), so the result is not 2000-02-29 and the test fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:33:24] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public int parseInto\\(ReadWritableInstant",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source/src/main/java/org/joda/time/format/DateTimeFormatter.java",
+  "output_mode": "content",
+  "-A": 30
+}
+
+====================================================================================================
+[13:33:24] [002_symbolize] TOOL RESULT
+====================================================================================================
+700:    public int parseInto(ReadWritableInstant instant, String text, int position) {
+701-        DateTimeParser parser = requireParser();
+702-        if (instant == null) {
+703-            throw new IllegalArgumentException("Instant must not be null");
+704-        }
+705-        
+706-        long instantMillis = instant.getMillis();
+707-        Chronology chrono = instant.getChronology();
+708-        long instantLocal = instantMillis + chrono.getZone().getOffset(instantMillis);
+709-        chrono = selectChronology(chrono);
+710-        int defaultYear = chrono.year().get(instantLocal);
+711-        
+712-        DateTimeParserBucket bucket = new DateTimeParserBucket(
+713-            instantLocal, chrono, iLocale, iPivotYear, defaultYear);
+714-        int newPos = parser.parseInto(bucket, text, position);
+715-        instant.setMillis(bucket.computeMillis(false, text));
+716-        if (iOffsetParsed && bucket.getOffsetInteger() != null) {
+717-            int parsedOffset = bucket.getOffsetInteger();
+718-            DateTimeZone parsedZone = DateTimeZone.forOffsetMillis(parsedOffset);
+719-            chrono = chrono.withZone(parsedZone);
+720-        } else if (bucket.getZone() != null) {
+721-            chrono = chrono.withZone(bucket.getZone());
+722-        }
+723-        instant.setChronology(chrono);
+724-        if (iZone != null) {
+725-            instant.setZone(iZone);
+726-        }
+727-        return newPos;
+728-    }
+729-
+730-    /**
+
+====================================================================================================
+[13:33:25] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public long computeMillis\\(boolean resetFields, String",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source/src/main/java/org/joda/time/format/DateTimeParserBucket.java",
+  "output_mode": "content",
+  "-B": 3,
+  "-A": 40
+}
+
+====================================================================================================
+[13:33:25] [002_symbolize] TOOL RESULT
+====================================================================================================
+341-     * @throws IllegalArgumentException if any field is out of range
+342-     * @since 1.3
+343-     */
+344:    public long computeMillis(boolean resetFields, String text) {
+345-        SavedField[] savedFields = iSavedFields;
+346-        int count = iSavedFieldsCount;
+347-        if (iSavedFieldsShared) {
+348-            iSavedFields = savedFields = (SavedField[])iSavedFields.clone();
+349-            iSavedFieldsShared = false;
+350-        }
+351-        sort(savedFields, count);
+352-        if (count > 0) {
+353-            // alter base year for parsing if first field is month or day
+354-            DurationField months = DurationFieldType.months().getField(iChrono);
+355-            DurationField days = DurationFieldType.days().getField(iChrono);
+356-            DurationField first = savedFields[0].iField.getDurationField();
+357-            if (compareReverse(first, months) >= 0 && compareReverse(first, days) <= 0) {
+358-                saveField(DateTimeFieldType.year(), iDefaultYear);
+359-                return computeMillis(resetFields, text);
+360-            }
+361-        }
+362-
+363-        long millis = iMillis;
+364-        try {
+365-            for (int i = 0; i < count; i++) {
+366-                millis = savedFields[i].set(millis, resetFields);
+367-            }
+368-            if (resetFields) {
+369-                for (int i = 0; i < count; i++) {
+370-                    millis = savedFields[i].set(millis, i == (count - 1));
+371-                }
+372-            }
+373-        } catch (IllegalFieldValueException e) {
+374-            if (text != null) {
+375-                e.prependMessage("Cannot parse \"" + text + '"');
+376-            }
+377-            throw e;
+378-        }
+379-        
+380-        if (iOffset != null) {
+381-            millis -= iOffset;
+382-        } else if (iZone != null) {
+383-            int offset = iZone.getOffsetFromLocal(millis);
+384-            millis -= offset;
+
+====================================================================================================
+[13:33:30] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public DateTimeParserBucket\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source/src/main/java/org/joda/time/format/DateTimeParserBucket.java",
+  "output_mode": "content",
+  "-A": 22
+}
+
+====================================================================================================
+[13:33:30] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source/src/main/java/org/joda/time/format/DateTimeParserBucket.java",
+  "offset": 378,
+  "limit": 25
+}
+
+====================================================================================================
+[13:33:30] [002_symbolize] TOOL RESULT
+====================================================================================================
+88:    public DateTimeParserBucket(long instantLocal, Chronology chrono, Locale locale) {
+89-        this(instantLocal, chrono, locale, null, 2000);
+90-    }
+91-
+92-    /**
+93-     * Constructs a bucket, with the option of specifying the pivot year for
+94-     * two-digit year parsing.
+95-     *
+96-     * @param instantLocal  the initial millis from 1970-01-01T00:00:00, local time
+97-     * @param chrono  the chronology to use
+98-     * @param locale  the locale to use
+99-     * @param pivotYear  the pivot year to use when parsing two-digit years
+100-     * @since 1.1
+101-     * @deprecated Use longer constructor
+102-     */
+103-    @Deprecated
+104:    public DateTimeParserBucket(long instantLocal, Chronology chrono, Locale locale, Integer pivotYear) {
+105-        this(instantLocal, chrono, locale, pivotYear, 2000);
+106-    }
+107-
+108-    /**
+109-     * Constructs a bucket, with the option of specifying the pivot year for
+110-     * two-digit year parsing.
+111-     *
+112-     * @param instantLocal  the initial millis from 1970-01-01T00:00:00, local time
+113-     * @param chrono  the chronology to use
+114-     * @param locale  the locale to use
+115-     * @param pivotYear  the pivot year to use when parsing two-digit years
+116-     * @since 2.0
+117-     */
+118:    public DateTimeParserBucket(long instantLocal, Chronology chrono,
+119-            Locale locale, Integer pivotYear, int defaultYear) {
+120-        super();
+121-        chrono = DateTimeUtils.getChronology(chrono);
+122-        iMillis = instantLocal;
+123-        iZone = chrono.getZone();
+124-        iChrono = chrono.withUTC();
+125-        iLocale = (locale == null ? Locale.getDefault() : locale);
+126-        iPivotYear = pivotYear;
+127-        iDefaultYear = defaultYear;
+128-    }
+129-
+130-    //-----------------------------------------------------------------------
+131-    /**
+132-     * Gets the chronology of the bucket, which will be a local (UTC) chronology.
+133-     */
+134-    public Chronology getChronology() {
+135-        return iChrono;
+136-    }
+137-
+138-    //-----------------------------------------------------------------------
+139-    /**
+140-     * Returns the locale to be used during parsing.
+
+====================================================================================================
+[13:33:30] [002_symbolize] TOOL RESULT
+====================================================================================================
+378	        }
+379	        
+380	        if (iOffset != null) {
+381	            millis -= iOffset;
+382	        } else if (iZone != null) {
+383	            int offset = iZone.getOffsetFromLocal(millis);
+384	            millis -= offset;
+385	            if (offset != iZone.getOffset(millis)) {
+386	                String message = "Illegal instant due to time zone offset transition (" + iZone + ')';
+387	                if (text != null) {
+388	                    message = "Cannot parse \"" + text + "\": " + message;
+389	                }
+390	                throw new IllegalInstantException(message);
+391	            }
+392	        }
+393	        
+394	        return millis;
+395	    }
+396	    
+397	    /**
+398	     * Sorts elements [0,high). Calling java.util.Arrays isn't always the right
+399	     * choice since it always creates an internal copy of the array, even if it
+400	     * doesn't need to. If the array slice is small enough, an insertion sort
+401	     * is chosen instead, but it doesn't need a copy!
+402	     * <p>
+
+====================================================================================================
+[13:33:34] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "compareReverse|compareTo|long set\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source/src/main/java/org/joda/time/format/DateTimeParserBucket.java",
+  "output_mode": "content",
+  "-A": 12
+}
+
+====================================================================================================
+[13:33:34] [002_symbolize] TOOL RESULT
+====================================================================================================
+357:            if (compareReverse(first, months) >= 0 && compareReverse(first, days) <= 0) {
+358-                saveField(DateTimeFieldType.year(), iDefaultYear);
+359-                return computeMillis(resetFields, text);
+360-            }
+361-        }
+362-
+363-        long millis = iMillis;
+364-        try {
+365-            for (int i = 0; i < count; i++) {
+366-                millis = savedFields[i].set(millis, resetFields);
+367-            }
+368-            if (resetFields) {
+369-                for (int i = 0; i < count; i++) {
+--
+420:                for (int j=i; j>0 && (array[j-1]).compareTo(array[j])>0; j--) {
+421-                    SavedField t = array[j];
+422-                    array[j] = array[j-1];
+423-                    array[j-1] = t;
+424-                }
+425-            }
+426-        }
+427-    }
+428-
+429-    class SavedState {
+430-        final DateTimeZone iZone;
+431-        final Integer iOffset;
+432-        final SavedField[] iSavedFields;
+--
+481:        long set(long millis, boolean reset) {
+482-            if (iText == null) {
+483-                millis = iField.set(millis, iValue);
+484-            } else {
+485-                millis = iField.set(millis, iText, iLocale);
+486-            }
+487-            if (reset) {
+488-                millis = iField.roundFloor(millis);
+489-            }
+490-            return millis;
+491-        }
+492-        
+493-        /**
+--
+498:        public int compareTo(SavedField obj) {
+499-            DateTimeField other = obj.iField;
+500:            int result = compareReverse
+501-                (iField.getRangeDurationField(), other.getRangeDurationField());
+502-            if (result != 0) {
+503-                return result;
+504-            }
+505:            return compareReverse
+506-                (iField.getDurationField(), other.getDurationField());
+507-        }
+508-    }
+509-
+510:    static int compareReverse(DurationField a, DurationField b) {
+511-        if (a == null || !a.isSupported()) {
+512-            if (b == null || !b.isSupported()) {
+513-                return 0;
+514-            }
+515-            return -1;
+516-        }
+517-        if (b == null || !b.isSupported()) {
+518-            return 1;
+519-        }
+520:        return -a.compareTo(b);
+521-    }
+522-}
+
+====================================================================================================
+[13:34:06] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Locale;\n\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    static int daysIn(int year, int month) {\n        switch (month) {\n            case 2:\n                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);\n                return leap ? 29 : 28;\n            case 4: case 6: case 9: case 11:\n                return 30;\n            default:\n                return 31;\n        }\n    }\n\n    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */\n    public static class CaseGen extends Generator<int[]> {\n        public CaseGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int year = r.nextInt(1900, 2100);\n            int off = r.nextInt(-12, 14);\n            int im, id, hour;\n            int mode = r.nextInt(0, 9);\n            if (mode <= 2) {\n                // start of year, negative offset\n                off = r.nextInt(-12, -1);\n                im = 1;\n                id = 1;\n                hour = r.nextInt(0, -off - 1);\n            } else if (mode <= 4) {\n                // end of year, positive offset\n                off = r.nextInt(1, 14);\n                im = 12;\n                id = 31;\n                hour = r.nextInt(24 - off, 23);\n            } else {\n                im = r.nextInt(1, 12);\n                id = r.nextInt(1, 31);\n                hour = r.nextInt(0, 23);\n            }\n            int minute = r.nextInt(0, 59);\n            int pm = r.nextInt(1, 12);\n            int pd = r.nextInt(1, 31);\n            if (r.nextInt(0, 3) == 0) {\n                pm = 2;\n                pd = 29;\n            }\n            return new int[] {year, off, im, id, hour, minute, pm, pd};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(CaseGen.class) int[] c) {\n        int year = c[0];\n        int off = c[1];\n        int im = c[2];\n        int id = c[3];\n        int hour = c[4];\n        int minute = c[5];\n        int pm = c[6];\n        int pd = c[7];\n\n        boolean validIf = year >= 1900 && year <= 2100\n                && off >= -12 && off <= 14\n                && im >= 1 && im <= 12\n                && id >= 1 && id <= daysIn(year, im)\n                && hour >= 0 && hour <= 23\n                && minute >= 0 && minute <= 59\n                && pm >= 1 && pm <= 12\n                && pd >= 1 && pd <= daysIn(year, pm);\n        boolean buggyIf = (off < 0 && im == 1 && id == 1 && hour < -off)\n                || (off > 0 && im == 12 && id == 31 && hour >= 24 - off);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeZone zone = DateTimeZone.forOffsetHours(off);\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK);\n        MutableDateTime result = new MutableDateTime(year, im, id, hour, minute, 0, 0, zone);\n        String text = pm + \" \" + pd;\n        int ret = -1;\n        String exc = \"none\";\n        try {\n            ret = f.parseInto(result, text, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final int fret = ret;\n        final String fexc = exc;\n        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });\n\n        MutableDateTime expected = new MutableDateTime(year, pm, pd, hour, minute, 0, 0, zone);\n        assertEquals(\"none\", fexc);\n        assertEquals(text.length(), fret);\n        assertEquals(year, result.getYear());\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:34:06] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:34:07] [002_symbolize] CALL DONE subtype=success turns=7 session_cost=$0.2123
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Locale;\n\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    static int daysIn(int year, int month) {\n        switch (month) {\n            case 2:\n                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);\n                return leap ? 29 : 28;\n            case 4: case 6: case 9: case 11:\n                return 30;\n            default:\n                return 31;\n        }\n    }\n\n    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */\n    public static class CaseGen extends Generator<int[]> {\n        public CaseGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int year = r.nextInt(1900, 2100);\n            int off = r.nextInt(-12, 14);\n            int im, id, hour;\n            int mode = r.nextInt(0, 9);\n            if (mode <= 2) {\n                // start of year, negative offset\n                off = r.nextInt(-12, -1);\n                im = 1;\n                id = 1;\n                hour = r.nextInt(0, -off - 1);\n            } else if (mode <= 4) {\n                // end of year, positive offset\n                off = r.nextInt(1, 14);\n                im = 12;\n                id = 31;\n                hour = r.nextInt(24 - off, 23);\n            } else {\n                im = r.nextInt(1, 12);\n                id = r.nextInt(1, 31);\n                hour = r.nextInt(0, 23);\n            }\n            int minute = r.nextInt(0, 59);\n            int pm = r.nextInt(1, 12);\n            int pd = r.nextInt(1, 31);\n            if (r.nextInt(0, 3) == 0) {\n                pm = 2;\n                pd = 29;\n            }\n            return new int[] {year, off, im, id, hour, minute, pm, pd};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(CaseGen.class) int[] c) {\n        int year = c[0];\n        int off = c[1];\n        int im = c[2];\n        int id = c[3];\n        int hour = c[4];\n        int minute = c[5];\n        int pm = c[6];\n        int pd = c[7];\n\n        boolean validIf = year >= 1900 && year <= 2100\n                && off >= -12 && off <= 14\n                && im >= 1 && im <= 12\n                && id >= 1 && id <= daysIn(year, im)\n                && hour >= 0 && hour <= 23\n                && minute >= 0 && minute <= 59\n                && pm >= 1 && pm <= 12\n                && pd >= 1 && pd <= daysIn(year, pm);\n        boolean buggyIf = (off < 0 && im == 1 && id == 1 && hour < -off)\n                || (off > 0 && im == 12 && id == 31 && hour >= 24 - off);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeZone zone = DateTimeZone.forOffsetHours(off);\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK);\n        MutableDateTime result = new MutableDateTime(year, im, id, hour, minute, 0, 0, zone);\n        String text = pm + \" \" + pd;\n        int ret = -1;\n        String exc = \"none\";\n        try {\n            ret = f.parseInto(result, text, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final int fret = ret;\n        final String fexc = exc;\n        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });\n\n        MutableDateTime expected = new MutableDateTime(year, pm, pd, hour, minute, 0, 0, zone);\n        assertEquals(\"none\", fexc);\n        assertEquals(text.length(), fret);\n        assertEquals(year, result.getYear());\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:34:07] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:34:07] TEST CODE (org.joda.time.format.JQF_TestDateTimeFormatter)
+====================================================================================================
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                // start of year, negative offset
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                // end of year, positive offset
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, 31);
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, 31);
+            if (r.nextInt(0, 3) == 0) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        int year = c[0];
+        int off = c[1];
+        int im = c[2];
+        int id = c[3];
+        int hour = c[4];
+        int minute = c[5];
+        int pm = c[6];
+        int pd = c[7];
+
+        boolean validIf = year >= 1900 && year <= 2100
+                && off >= -12 && off <= 14
+                && im >= 1 && im <= 12
+                && id >= 1 && id <= daysIn(year, im)
+                && hour >= 0 && hour <= 23
+                && minute >= 0 && minute <= 59
+                && pm >= 1 && pm <= 12
+                && pd >= 1 && pd <= daysIn(year, pm);
+        boolean buggyIf = (off < 0 && im == 1 && id == 1 && hour < -off)
+                || (off > 0 && im == 12 && id == 31 && hour >= 24 - off);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(off);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(year, im, id, hour, minute, 0, 0, zone);
+        String text = pm + " " + pd;
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(year, pm, pd, hour, minute, 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(year, result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+====================================================================================================
+[13:34:07] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `int year = c[0];`
+
+====================================================================================================
+[13:34:07] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:34:07] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `int year = c[0];`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source
+Test file: src/test/java/org/joda/time/format/JQF_TestDateTimeFormatter.java
+Test class: org.joda.time.format.JQF_TestDateTimeFormatter
+Test method: testBugReproduction
+
+Bug summary: DateTimeFormatter.parseInto with a month/day-only pattern ("M d") mishandles the input MutableDateTime's millis when computing the default year, so parsing "2 29" on a mutable date of 2000-01-01 in a time zone like New York yields year 1999 instead of keeping 2000 (a leap year, so Feb 29 is valid).
+
+Concrete examples:
+[{'input': 'DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK); MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK); f.parseInto(result, "2 29", 0);', 'expected': 'parseInto returns 4 and result equals 2000-02-29T00:00:00.000 in NEWYORK (year stays 2000).', 'actual': 'The year used for the parse is wrongly changed to 1999 (the input millis are mishandled, likely due to zone offset), so the result is not 2000-02-29 and the test fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-7/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:34:19] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Locale;\n\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    static int daysIn(int year, int month) {\n        switch (month) {\n            case 2:\n                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);\n                return leap ? 29 : 28;\n            case 4: case 6: case 9: case 11:\n                return 30;\n            default:\n                return 31;\n        }\n    }\n\n    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */\n    public static class CaseGen extends Generator<int[]> {\n        public CaseGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int year = r.nextInt(1900, 2100);\n            int off = r.nextInt(-12, 14);\n            int im, id, hour;\n            int mode = r.nextInt(0, 9);\n            if (mode <= 2) {\n                off = r.nextInt(-12, -1);\n                im = 1;\n                id = 1;\n                hour = r.nextInt(0, -off - 1);\n            } else if (mode <= 4) {\n                off = r.nextInt(1, 14);\n                im = 12;\n                id = 31;\n                hour = r.nextInt(24 - off, 23);\n            } else {\n                im = r.nextInt(1, 12);\n                id = r.nextInt(1, daysIn(year, im));\n                hour = r.nextInt(0, 23);\n            }\n            int minute = r.nextInt(0, 59);\n            int pm = r.nextInt(1, 12);\n            int pd = r.nextInt(1, daysIn(year, pm));\n            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {\n                pm = 2;\n                pd = 29;\n            }\n            return new int[] {year, off, im, id, hour, minute, pm, pd};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(CaseGen.class) int[] c) {\n        boolean validIf = c != null && c.length == 8\n                && c[0] >= 1900 && c[0] <= 2100\n                && c[1] >= -12 && c[1] <= 14\n                && c[2] >= 1 && c[2] <= 12\n                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])\n                && c[4] >= 0 && c[4] <= 23\n                && c[5] >= 0 && c[5] <= 59\n                && c[6] >= 1 && c[6] <= 12\n                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);\n        boolean buggyIf = c != null && c.length == 8\n                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])\n                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK);\n        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);\n        String text = c[6] + \" \" + c[7];\n        int ret = -1;\n        String exc = \"none\";\n        try {\n            ret = f.parseInto(result, text, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final int fret = ret;\n        final String fexc = exc;\n        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });\n\n        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);\n        assertEquals(\"none\", fexc);\n        assertEquals(text.length(), fret);\n        assertEquals(c[0], result.getYear());\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:34:19] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:34:19] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2694
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Locale;\n\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    static int daysIn(int year, int month) {\n        switch (month) {\n            case 2:\n                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);\n                return leap ? 29 : 28;\n            case 4: case 6: case 9: case 11:\n                return 30;\n            default:\n                return 31;\n        }\n    }\n\n    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */\n    public static class CaseGen extends Generator<int[]> {\n        public CaseGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int year = r.nextInt(1900, 2100);\n            int off = r.nextInt(-12, 14);\n            int im, id, hour;\n            int mode = r.nextInt(0, 9);\n            if (mode <= 2) {\n                off = r.nextInt(-12, -1);\n                im = 1;\n                id = 1;\n                hour = r.nextInt(0, -off - 1);\n            } else if (mode <= 4) {\n                off = r.nextInt(1, 14);\n                im = 12;\n                id = 31;\n                hour = r.nextInt(24 - off, 23);\n            } else {\n                im = r.nextInt(1, 12);\n                id = r.nextInt(1, daysIn(year, im));\n                hour = r.nextInt(0, 23);\n            }\n            int minute = r.nextInt(0, 59);\n            int pm = r.nextInt(1, 12);\n            int pd = r.nextInt(1, daysIn(year, pm));\n            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {\n                pm = 2;\n                pd = 29;\n            }\n            return new int[] {year, off, im, id, hour, minute, pm, pd};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(CaseGen.class) int[] c) {\n        boolean validIf = c != null && c.length == 8\n                && c[0] >= 1900 && c[0] <= 2100\n                && c[1] >= -12 && c[1] <= 14\n                && c[2] >= 1 && c[2] <= 12\n                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])\n                && c[4] >= 0 && c[4] <= 23\n                && c[5] >= 0 && c[5] <= 59\n                && c[6] >= 1 && c[6] <= 12\n                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);\n        boolean buggyIf = c != null && c.length == 8\n                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])\n                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"M d\").withLocale(Locale.UK);\n        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);\n        String text = c[6] + \" \" + c[7];\n        int ret = -1;\n        String exc = \"none\";\n        try {\n            ret = f.parseInto(result, text, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final int fret = ret;\n        final String fexc = exc;\n        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });\n\n        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);\n        assertEquals(\"none\", fexc);\n        assertEquals(text.length(), fret);\n        assertEquals(c[0], result.getYear());\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:34:19] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:34:19] TEST CODE (org.joda.time.format.JQF_TestDateTimeFormatter)
+====================================================================================================
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+====================================================================================================
+[13:34:21] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:34:43] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 22095,
+  "discarded_by_assume": 9861,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2848,
+    "org.junit.ComparisonFailure": 220
+  },
+  "passed_assume": 12234,
+  "classified": 3068
+}
+
+====================================================================================================
+[13:34:43] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:34:43] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: DateTimeFormat.parseInto sometimes miscalculates year (2.2)
+
+There appears to be a bug in the fix to http://sourceforge.net/p/joda-time/bugs/148 (which I also reported).
+
+The following code (which can be added to org.joda.time.format.TestDateTimeFormatter) breaks, because the input mutable date time's millis appear to be mishandled and the year for the parse is changed to 1999:
+
+``` java
+    public void testParseInto_monthDay_feb29_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2000, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+```
+
+=== Test ===
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<1925> but was:<1924>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:105)
+
+Location: org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:105)
+
+is triggered by the following inputs:
+
+    input (1935, 12, 12, 31, 18, 46, 2, 7) -> logged [3, none, 1936-02-07T18:46:00.000+12:00, -1069780440000, 1936]
+    input (1936, 12, 12, 31, 12, 29, 4, 16) -> logged [4, none, 1937-04-16T12:29:00.000+12:00, -1032305460000, 1937]
+
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.joda.time.IllegalFieldValueException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:103)
+
+Location: org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:103)
+
+is triggered by the following inputs:
+
+    input (2040, 3, 12, 31, 22, 3, 2, 29) -> logged [-1, org.joda.time.IllegalFieldValueException, 2040-12-31T22:03:00.000+03:00, 2240593380000, 2040]
+    input (1972, -3, 1, 1, 0, 2, 2, 29) -> logged [-1, org.joda.time.IllegalFieldValueException, 1972-01-01T00:02:00.000-03:00, 63082920000, 1972]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:35:10] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug.
+
+**Same root cause.** The report describes a month/day-only pattern ("M d") on a `MutableDateTime` near a year boundary in a non-UTC zone. The default year is then miscalculated because the input millis are mishandled by the zone offset. In the report, 2000-01-01T00:00 in New York is parsed as year 1999.
+
+- **Failures 3 and 4:** (1972, -3, 1, 1, 0, 2, 2, 29) is the report's scenario with a different year and offset. It is 00:02 on Jan 1 in a negative-offset zone, parsing "2 29". The default year is shifted back to 1971, which is not a leap year, so Feb 29 throws `IllegalFieldValueException`. (2040, +3, Dec 31, 22:03) is the mirror case. The year shifts forward to 2041, which is not a leap year, so Feb 29 throws.
+- **Failures 1 and 2:** (1935, +12, Dec 31, 18:46, "2 7") and (1936, +12, Dec 31, 12:29, "4 16") finish without an exception, but the result's year is 1936 and 1937 instead of 1935 and 1936. This is the same year-shift symptom.
+
+**Checks on the test conditions:**
+- **(4) `buggyIf` is not too wide.** The condition is a negative offset with local time on Jan 1 and hour < −offset, or a positive offset with local time on Dec 31 and hour ≥ 24 − offset. That matches the case where applying the offset a second time pushes the instant across a year boundary. In those cases the year is always wrong, so the year assertion is valid there. The expected value is built with the same year, hour and minute as the input, so the assertions are sound.
+- **(5) `buggyIf` does not look too narrow.** Offsets here are whole hours, so minutes cannot affect whether the year boundary is crossed. Both directions are covered.
+- **(6) The domain is not restricted to the bug.** The generator also produces non-boundary dates, all offsets from −12 to +14, and years from 1900 to 2100. `validIf` only removes impossible calendar dates.
+
+The failures have different assertion messages, but they come from one defect: the year is computed from a wrongly offset instant.
+
+====================================================================================================
+[13:35:13] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures match the reported bug: with a month/day-only pattern (\"M d\") on a MutableDateTime near a year boundary in a non-UTC zone, the default year is miscalculated because the input millis are mishandled by the zone offset. The report shows 2000-01-01T00:00 in New York parsed as 1999. Inputs like (1972, -3, Jan 1 00:02, \"2 29\") are the same scenario: the year shifts back to 1971, which is not a leap year, so Feb 29 throws IllegalFieldValueException. Inputs like (2040, +3, Dec 31 22:03, \"2 29\") are the mirror case, with the year shifting forward to 2041 and the same exception. The positive-offset Dec 31 inputs that parse without error end up in the wrong year (1936 instead of 1935, 1937 instead of 1936). buggyIf (negative offset, Jan 1, hour < -offset; or positive offset, Dec 31, hour >= 24 - offset) is the condition where applying the offset a second time crosses a year boundary, and in those cases the year assertion is correct. Neither the offset range nor the date range appears to be restricted to bug inputs: the generator also produces non-boundary dates, offsets from -12 to +14 and years 1900-2100, and validIf only removes impossible calendar dates. I found no case where buggyIf accepts correct behavior or misses bug-triggering inputs."
+}
+
+====================================================================================================
+[13:35:13] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:35:14] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4601
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures match the reported bug: with a month/day-only pattern (\"M d\") on a MutableDateTime near a year boundary in a non-UTC zone, the default year is miscalculated because the input millis are mishandled by the zone offset. The report shows 2000-01-01T00:00 in New York parsed as 1999. Inputs like (1972, -3, Jan 1 00:02, \"2 29\") are the same scenario: the year shifts back to 1971, which is not a leap year, so Feb 29 throws IllegalFieldValueException. Inputs like (2040, +3, Dec 31 22:03, \"2 29\") are the mirror case, with the year shifting forward to 2041 and the same exception. The positive-offset Dec 31 inputs that parse without error end up in the wrong year (1936 instead of 1935, 1937 instead of 1936). buggyIf (negative offset, Jan 1, hour < -offset; or positive offset, Dec 31, hour >= 24 - offset) is the condition where applying the offset a second time crosses a year boundary, and in those cases the year assertion is correct. Neither the offset range nor the date range appears to be restricted to bug inputs: the generator also produces non-boundary dates, offsets from -12 to +14 and years 1900-2100, and validIf only removes impossible calendar dates. I found no case where buggyIf accepts correct behavior or misses bug-triggering inputs."
+}
+
+====================================================================================================
+[13:35:14] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:35:14] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:35:18] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds real DateTimeZone, DateTimeFormatter and MutableDateTime objects and calls the real DateTimeFormatter.parseInto. The generator only produces input values. The expected MutableDateTime is built with the real constructor and is only used in assertions, not to replace any code under test. The test calls the actual code and checks its real output."
+}
+
+====================================================================================================
+[13:35:18] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:35:19] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6301
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds real DateTimeZone, DateTimeFormatter and MutableDateTime objects and calls the real DateTimeFormatter.parseInto. The generator only produces input values. The expected MutableDateTime is built with the real constructor and is only used in assertions, not to replace any code under test. The test calls the actual code and checks its real output."
+}
+
+====================================================================================================
+[13:35:19] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:35:22] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no assertEquals on constants that can never match. Every assertion compares a value derived from the real parseInto call with the expected value built from the inputs: the exception name is \"none\", the return value equals the text length, the year equals the input year, and the result equals the expected MutableDateTime. A fixed parseInto would satisfy all of them, so the test can pass."
+}
+
+====================================================================================================
+[13:35:22] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:35:23] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6447
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no assertEquals on constants that can never match. Every assertion compares a value derived from the real parseInto call with the expected value built from the inputs: the exception name is \"none\", the return value equals the text length, the year equals the input year, and the result equals the expected MutableDateTime. A fixed parseInto would satisfy all of them, so the test can pass."
+}
+
+====================================================================================================
+[13:35:23] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:35:29] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All the equality checks are done correctly. The string comparison uses assertEquals, which calls equals(), not ==. The int comparisons (return value and year) use assertEquals on primitives. The MutableDateTime comparison uses assertEquals, which calls equals(); AbstractInstant.equals compares millis and chronology, and both objects use the same zone. This is the same comparison the bug report uses. No doubles or arrays are compared, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[13:35:29] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:35:30] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6618
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All the equality checks are done correctly. The string comparison uses assertEquals, which calls equals(), not ==. The int comparisons (return value and year) use assertEquals on primitives. The MutableDateTime comparison uses assertEquals, which calls equals(); AbstractInstant.equals compares millis and chronology, and both objects use the same zone. This is the same comparison the bug report uses. No doubles or arrays are compared, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[13:35:30] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:35:30] AGENT FINISHED success=True llm_calls=14
+====================================================================================================
+
+
+====================================================================================================
+[13:35:32] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestDateTimeFormatter.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug7"
+}
+
+====================================================================================================
+[13:35:32] FINAL TEST FILE JQF_TestDateTimeFormatter.java (repro method + derived preservation method)
+====================================================================================================
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Locale;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    static int daysIn(int year, int month) {
+        switch (month) {
+            case 2:
+                boolean leap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+                return leap ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    }
+
+    /** Produces {year, offsetHours, instMonth, instDay, hour, minute, parseMonth, parseDay}. */
+    public static class CaseGen extends Generator<int[]> {
+        public CaseGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int year = r.nextInt(1900, 2100);
+            int off = r.nextInt(-12, 14);
+            int im, id, hour;
+            int mode = r.nextInt(0, 9);
+            if (mode <= 2) {
+                off = r.nextInt(-12, -1);
+                im = 1;
+                id = 1;
+                hour = r.nextInt(0, -off - 1);
+            } else if (mode <= 4) {
+                off = r.nextInt(1, 14);
+                im = 12;
+                id = 31;
+                hour = r.nextInt(24 - off, 23);
+            } else {
+                im = r.nextInt(1, 12);
+                id = r.nextInt(1, daysIn(year, im));
+                hour = r.nextInt(0, 23);
+            }
+            int minute = r.nextInt(0, 59);
+            int pm = r.nextInt(1, 12);
+            int pd = r.nextInt(1, daysIn(year, pm));
+            if (r.nextInt(0, 3) == 0 && daysIn(year, 2) == 29) {
+                pm = 2;
+                pd = 29;
+            }
+            return new int[] {year, off, im, id, hour, minute, pm, pd};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+        String text = c[6] + " " + c[7];
+        int ret = -1;
+        String exc = "none";
+        try {
+            ret = f.parseInto(result, text, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final int fret = ret;
+        final String fexc = exc;
+        Log.logOutIf(true, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+
+        MutableDateTime expected = new MutableDateTime(c[0], c[6], c[7], c[4], c[5], 0, 0, zone);
+        assertEquals("none", fexc);
+        assertEquals(text.length(), fret);
+        assertEquals(c[0], result.getYear());
+        assertEquals(expected, result);
+    }
+
+    @Fuzz
+    public void testParseInto_monthDay_feb29_tokyo_endOfYear(@From(CaseGen.class) int[] c) {
+        boolean validIf = c != null && c.length == 8
+                && c[0] >= 1900 && c[0] <= 2100
+                && c[1] >= -12 && c[1] <= 14
+                && c[2] >= 1 && c[2] <= 12
+                && c[3] >= 1 && c[3] <= daysIn(c[0], c[2])
+                && c[4] >= 0 && c[4] <= 23
+                && c[5] >= 0 && c[5] <= 59
+                && c[6] >= 1 && c[6] <= 12
+                && c[7] >= 1 && c[7] <= daysIn(c[0], c[6]);
+        boolean buggyIf = c != null && c.length == 8
+                && ((c[1] < 0 && c[2] == 1 && c[3] == 1 && c[4] < -c[1])
+                || (c[1] > 0 && c[2] == 12 && c[3] == 31 && c[4] >= 24 - c[1]));
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            DateTimeZone zone = DateTimeZone.forOffsetHours(c[1]);
+            DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+            MutableDateTime result = new MutableDateTime(c[0], c[2], c[3], c[4], c[5], 0, 0, zone);
+            String text = c[6] + " " + c[7];
+            int ret = -1;
+            String exc = "none";
+            try {
+                ret = f.parseInto(result, text, 0);
+            } catch (Exception e) {
+                exc = e.getClass().getName();
+            }
+            final int fret = ret;
+            final String fexc = exc;
+            Log.logOutIf(preserveIf, () -> new Object[]{ fret, fexc, result.toString(), result.getMillis(), result.getYear() });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:38:34] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 44491,
+    "inside_buggyIf": 24706,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 18312,
+      "org.junit.ComparisonFailure": 1688
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 46524,
+      "inside_buggyIf": 25932,
+      "unique_failures": {}
+    }
+  }
+}

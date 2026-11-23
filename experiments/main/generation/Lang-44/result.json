@@ -1,0 +1,162 @@
+{
+  "bug": "Lang-44",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 11,
+  "cost_usd": 0.4851,
+  "tokens": {
+    "input": 24,
+    "output": 4138,
+    "cache_write": 107606,
+    "cache_read": 132954
+  },
+  "seconds": 81.6,
+  "started_at": "2026-11-21T12:18:29",
+  "timing": {
+    "checkout": 9.6,
+    "agent": 72.0,
+    "derive": 1.4,
+    "validation": 188.9
+  },
+  "llm_seconds": 50.7,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 280,
+        "cache_write": 785,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006025,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 19.8,
+      "turns": 6,
+      "tokens": {
+        "input": 8,
+        "output": 2227,
+        "cache_write": 36318,
+        "cache_read": 58727
+      },
+      "cost_usd": 0.173431,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 10.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1074,
+        "cache_write": 33211,
+        "cache_read": 611
+      },
+      "cost_usd": 0.143649,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 7.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 170,
+        "cache_write": 34930,
+        "cache_read": 603
+      },
+      "cost_usd": 0.141488,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 225,
+        "cache_write": 1139,
+        "cache_read": 35533
+      },
+      "cost_usd": 0.010367,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 3.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 162,
+        "cache_write": 1223,
+        "cache_read": 36672
+      },
+      "cost_usd": 0.010187,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.lang.NumberUtilsTest::testLang457",
+  "jqf_class": "org.apache.commons.lang.JQF_NumberUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang.NumberUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testLang457",
+  "issue_gist": "NumberUtils.createNumber(\"l\") or \"L\" (a lone long-type suffix with no digits) throws StringIndexOutOfBoundsException instead of a NumberFormatException, because the code strips the suffix and then indexes into an empty string.",
+  "failing_inputs_count": 2171,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_NumberUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug44",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 40654,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M",
+          "input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M",
+          "input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 40454,
+        "unique_failures": {
+          "org.junit.ComparisonFailure": 2
+        },
+        "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\nLocation: org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\nis triggered by the following inputs:\n\n    input (l) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\n    input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]"
+      }
+    }
+  },
+  "total_seconds": 271.8,
+  "paired_inputs_archived": true
+}

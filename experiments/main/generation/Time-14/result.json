@@ -1,0 +1,319 @@
+{
+  "bug": "Time-14",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 16,
+  "cost_usd": 1.3238,
+  "tokens": {
+    "input": 28,
+    "output": 13445,
+    "cache_write": 292201,
+    "cache_read": 205020
+  },
+  "seconds": 173.5,
+  "started_at": "2026-11-21T13:38:35",
+  "timing": {
+    "checkout": 8.4,
+    "agent": 165.1,
+    "derive": 2.0,
+    "validation": 165.7
+  },
+  "llm_seconds": 122.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 643,
+        "cache_write": 1445,
+        "cache_read": 808
+      },
+      "cost_usd": 0.012295,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 27.4,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3223,
+        "cache_write": 34232,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.169274,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 8.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1203,
+        "cache_write": 7134,
+        "cache_read": 26996
+      },
+      "cost_usd": 0.04327,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 27.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3168,
+        "cache_write": 35645,
+        "cache_read": 611
+      },
+      "cost_usd": 0.174325,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 18.9,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 2294,
+        "cache_write": 74087,
+        "cache_read": 34669
+      },
+      "cost_usd": 0.322763,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 20.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2276,
+        "cache_write": 68203,
+        "cache_read": 611
+      },
+      "cost_usd": 0.295637,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 5.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 209,
+        "cache_write": 68486,
+        "cache_read": 603
+      },
+      "cost_usd": 0.276102,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 217,
+        "cache_write": 1466,
+        "cache_read": 69089
+      },
+      "cost_usd": 0.014951,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 212,
+        "cache_write": 1503,
+        "cache_read": 70555
+      },
+      "cost_usd": 0.015195,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.joda.time.TestMonthDay_Basics::testPlusMonths_int_fromLeap",
+  "jqf_class": "org.joda.time.JQF_TestMonthDay_Basics",
+  "hidden_tests": [
+    "org.joda.time.TestAbstractPartial",
+    "org.joda.time.TestBasePartial",
+    "org.joda.time.TestBaseSingleFieldPeriod",
+    "org.joda.time.TestChronology",
+    "org.joda.time.TestDateMidnight_Basics",
+    "org.joda.time.TestDateMidnight_Constructors",
+    "org.joda.time.TestDateMidnight_Properties",
+    "org.joda.time.TestDateTimeComparator",
+    "org.joda.time.TestDateTimeFieldType",
+    "org.joda.time.TestDateTimeUtils",
+    "org.joda.time.TestDateTimeZone",
+    "org.joda.time.TestDateTimeZoneCutover",
+    "org.joda.time.TestDateTime_Basics",
+    "org.joda.time.TestDateTime_Constructors",
+    "org.joda.time.TestDateTime_Properties",
+    "org.joda.time.TestDays",
+    "org.joda.time.TestDurationField",
+    "org.joda.time.TestDurationFieldType",
+    "org.joda.time.TestDuration_Basics",
+    "org.joda.time.TestDuration_Constructors",
+    "org.joda.time.TestHours",
+    "org.joda.time.TestIllegalFieldValueException",
+    "org.joda.time.TestInstant_Basics",
+    "org.joda.time.TestInstant_Constructors",
+    "org.joda.time.TestInterval_Basics",
+    "org.joda.time.TestInterval_Constructors",
+    "org.joda.time.TestLocalDateTime_Basics",
+    "org.joda.time.TestLocalDateTime_Constructors",
+    "org.joda.time.TestLocalDateTime_Properties",
+    "org.joda.time.TestLocalDate_Basics",
+    "org.joda.time.TestLocalDate_Constructors",
+    "org.joda.time.TestLocalDate_Properties",
+    "org.joda.time.TestLocalTime_Basics",
+    "org.joda.time.TestLocalTime_Constructors",
+    "org.joda.time.TestLocalTime_Properties",
+    "org.joda.time.TestMinutes",
+    "org.joda.time.TestMonthDay_Basics",
+    "org.joda.time.TestMonthDay_Constructors",
+    "org.joda.time.TestMonthDay_Properties",
+    "org.joda.time.TestMonths",
+    "org.joda.time.TestMutableDateTime_Adds",
+    "org.joda.time.TestMutableDateTime_Basics",
+    "org.joda.time.TestMutableDateTime_Constructors",
+    "org.joda.time.TestMutableDateTime_Properties",
+    "org.joda.time.TestMutableDateTime_Sets",
+    "org.joda.time.TestMutableInterval_Basics",
+    "org.joda.time.TestMutableInterval_Constructors",
+    "org.joda.time.TestMutableInterval_Updates",
+    "org.joda.time.TestMutablePeriod_Basics",
+    "org.joda.time.TestMutablePeriod_Constructors",
+    "org.joda.time.TestMutablePeriod_Updates",
+    "org.joda.time.TestPartial_Basics",
+    "org.joda.time.TestPartial_Constructors",
+    "org.joda.time.TestPartial_Match",
+    "org.joda.time.TestPartial_Properties",
+    "org.joda.time.TestPeriodType",
+    "org.joda.time.TestPeriod_Basics",
+    "org.joda.time.TestPeriod_Constructors",
+    "org.joda.time.TestSeconds",
+    "org.joda.time.TestSerialization",
+    "org.joda.time.TestStringConvert",
+    "org.joda.time.TestTimeOfDay_Basics",
+    "org.joda.time.TestTimeOfDay_Constructors",
+    "org.joda.time.TestTimeOfDay_Properties",
+    "org.joda.time.TestWeeks",
+    "org.joda.time.TestYearMonthDay_Basics",
+    "org.joda.time.TestYearMonthDay_Constructors",
+    "org.joda.time.TestYearMonthDay_Properties",
+    "org.joda.time.TestYearMonth_Basics",
+    "org.joda.time.TestYearMonth_Constructors",
+    "org.joda.time.TestYearMonth_Properties",
+    "org.joda.time.TestYears",
+    "org.joda.time.chrono.TestBuddhistChronology",
+    "org.joda.time.chrono.TestCopticChronology",
+    "org.joda.time.chrono.TestEthiopicChronology",
+    "org.joda.time.chrono.TestGJChronology",
+    "org.joda.time.chrono.TestGregorianChronology",
+    "org.joda.time.chrono.TestISOChronology",
+    "org.joda.time.chrono.TestIslamicChronology",
+    "org.joda.time.chrono.TestJulianChronology",
+    "org.joda.time.chrono.TestLenientChronology",
+    "org.joda.time.convert.TestCalendarConverter",
+    "org.joda.time.convert.TestConverterManager",
+    "org.joda.time.convert.TestDateConverter",
+    "org.joda.time.convert.TestLongConverter",
+    "org.joda.time.convert.TestNullConverter",
+    "org.joda.time.convert.TestReadableDurationConverter",
+    "org.joda.time.convert.TestReadableInstantConverter",
+    "org.joda.time.convert.TestReadableIntervalConverter",
+    "org.joda.time.convert.TestReadablePartialConverter",
+    "org.joda.time.convert.TestReadablePeriodConverter",
+    "org.joda.time.convert.TestStringConverter",
+    "org.joda.time.field.TestBaseDateTimeField",
+    "org.joda.time.field.TestMillisDurationField",
+    "org.joda.time.field.TestOffsetDateTimeField",
+    "org.joda.time.field.TestPreciseDateTimeField",
+    "org.joda.time.field.TestPreciseDurationDateTimeField",
+    "org.joda.time.field.TestPreciseDurationField",
+    "org.joda.time.field.TestScaledDurationField",
+    "org.joda.time.field.TestUnsupportedDateTimeField",
+    "org.joda.time.format.TestDateTimeFormat",
+    "org.joda.time.format.TestDateTimeFormatStyle",
+    "org.joda.time.format.TestDateTimeFormatter",
+    "org.joda.time.format.TestDateTimeFormatterBuilder",
+    "org.joda.time.format.TestISODateTimeFormat",
+    "org.joda.time.format.TestISODateTimeFormatParsing",
+    "org.joda.time.format.TestISODateTimeFormat_Fields",
+    "org.joda.time.format.TestISOPeriodFormat",
+    "org.joda.time.format.TestISOPeriodFormatParsing",
+    "org.joda.time.format.TestPeriodFormat",
+    "org.joda.time.format.TestPeriodFormatParsing",
+    "org.joda.time.format.TestPeriodFormatter",
+    "org.joda.time.format.TestPeriodFormatterBuilder",
+    "org.joda.time.format.TestTextFields",
+    "org.joda.time.tz.TestBuilder",
+    "org.joda.time.tz.TestCompiler"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testPlusMonths_int_fromLeap",
+  "issue_gist": "Joda-Time's MonthDay.withFieldAdded (used by plusDays, minusDays, plusMonths, minusMonths) throws IllegalFieldValueException when the MonthDay is Feb 29 (ISO leap date). The month field's add sets the day on a non-leap reference year, so day 29 is rejected as out of range [1,28].",
+  "failing_inputs_count": 1999,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestMonthDay_Basics.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug14",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 91990,
+      "inside_buggyIf": 33262,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 13429,
+        "fail": 6571,
+        "not_run": 0,
+        "failing_examples": [
+          "input (2, 29, 0, 32) -> logged [--02-29, --03-01, none]\norg.junit.ComparisonFailure: expected:<--0[4]-01> but was:<--0[3]-01>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:70)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$",
+          "input (2, 29, 1, -36) -> logged [--02-29, --02-29, none]\norg.junit.ComparisonFailure: expected:<--02-2[8]> but was:<--02-2[9]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:70)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$",
+          "input (2, 29, 0, -86) -> logged [--02-29, --01-05, none]\norg.junit.ComparisonFailure: expected:<--[12]-05> but was:<--[01]-05>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:70)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 35898,
+        "unique_failures": {
+          "org.junit.ComparisonFailure": 2
+        },
+        "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<--0[5-15]> but was:<--0[3-14]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:70)\n\nLocation: org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:70)\n\nis triggered by the following inputs:\n\n    input (2, 29, 0, 76) -> logged [--02-29, --03-14, none]\n    input (2, 29, 1, -84) -> logged [--02-29, --02-29, none]"
+      }
+    }
+  },
+  "total_seconds": 341.2,
+  "paired_inputs_archived": true
+}

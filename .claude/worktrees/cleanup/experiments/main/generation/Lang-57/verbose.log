@@ -1,0 +1,1316 @@
+
+====================================================================================================
+[12:23:39] BUG Lang-57: failing test org.apache.commons.lang.LocaleUtilsTest::testIsAvailableLocale -> org.apache.commons.lang.JQF_LocaleUtilsTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Lang-57/Lang57b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source
+====================================================================================================
+Title: NullPointerException in isAvailableLocale(Locale)
+
+FindBugs pointed out:
+
+   UwF: Field not initialized in constructor: org.apache.commons.lang.LocaleUtils.cAvailableLocaleSet
+
+cAvailableSet is used directly once in the source - and if availableLocaleSet() hasn't been called it will cause a NullPointerException.
+
+====================================================================================================
+[12:23:39] HIDDEN FROM THE AGENT: 1 relevant test classes
+====================================================================================================
+org.apache.commons.lang.LocaleUtilsTest
+
+====================================================================================================
+[12:23:39] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:23:39] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: NullPointerException in isAvailableLocale(Locale)
+
+FindBugs pointed out:
+
+   UwF: Field not initialized in constructor: org.apache.commons.lang.LocaleUtils.cAvailableLocaleSet
+
+cAvailableSet is used directly once in the source - and if availableLocaleSet() hasn't been called it will cause a NullPointerException.
+
+====================================================================================================
+[12:23:44] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "LocaleUtils.isAvailableLocale(Locale) uses the static field cAvailableLocaleSet directly. The field is only initialized when availableLocaleSet() is called, so calling isAvailableLocale first throws a NullPointerException.",
+  "concrete_examples": [
+    {
+      "input": "In a fresh JVM, call LocaleUtils.isAvailableLocale(Locale.US) without first calling LocaleUtils.availableLocaleSet()",
+      "expected": "Returns true, because Locale.US is an available locale",
+      "actual": "Throws NullPointerException because cAvailableLocaleSet is null"
+    },
+    {
+      "input": "In a fresh JVM, call LocaleUtils.isAvailableLocale(new Locale(\"xx\", \"YY\")) as the first LocaleUtils call",
+      "expected": "Returns false, because the locale is not available",
+      "actual": "Throws NullPointerException because cAvailableLocaleSet is null"
+    }
+  ]
+}
+
+====================================================================================================
+[12:23:44] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:23:45] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0072
+====================================================================================================
+{
+  "issue_gist": "LocaleUtils.isAvailableLocale(Locale) uses the static field cAvailableLocaleSet directly. The field is only initialized when availableLocaleSet() is called, so calling isAvailableLocale first throws a NullPointerException.",
+  "concrete_examples": [
+    {
+      "input": "In a fresh JVM, call LocaleUtils.isAvailableLocale(Locale.US) without first calling LocaleUtils.availableLocaleSet()",
+      "expected": "Returns true, because Locale.US is an available locale",
+      "actual": "Throws NullPointerException because cAvailableLocaleSet is null"
+    },
+    {
+      "input": "In a fresh JVM, call LocaleUtils.isAvailableLocale(new Locale(\"xx\", \"YY\")) as the first LocaleUtils call",
+      "expected": "Returns false, because the locale is not available",
+      "actual": "Throws NullPointerException because cAvailableLocaleSet is null"
+    }
+  ]
+}
+
+====================================================================================================
+[12:23:45] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:23:45] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source
+Test file: src/test/org/apache/commons/lang/JQF_LocaleUtilsTest.java
+Test class: org.apache.commons.lang.JQF_LocaleUtilsTest
+Test method: testBugReproduction
+
+Bug summary: LocaleUtils.isAvailableLocale(Locale) uses the static field cAvailableLocaleSet directly. The field is only initialized when availableLocaleSet() is called, so calling isAvailableLocale first throws a NullPointerException.
+
+Concrete examples:
+[{'input': 'In a fresh JVM, call LocaleUtils.isAvailableLocale(Locale.US) without first calling LocaleUtils.availableLocaleSet()', 'expected': 'Returns true, because Locale.US is an available locale', 'actual': 'Throws NullPointerException because cAvailableLocaleSet is null'}, {'input': 'In a fresh JVM, call LocaleUtils.isAvailableLocale(new Locale("xx", "YY")) as the first LocaleUtils call', 'expected': 'Returns false, because the locale is not available', 'actual': 'Throws NullPointerException because cAvailableLocaleSet is null'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:23:48] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "cAvailableLocaleSet|public static",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source/src/java/org/apache/commons/lang/LocaleUtils.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:23:48] [002_symbolize] TOOL RESULT
+====================================================================================================
+45:    private static Set cAvailableLocaleSet;
+94:    public static Locale toLocale(String str) {
+142:    public static List localeLookupList(Locale locale) {
+164:    public static List localeLookupList(Locale locale, Locale defaultLocale) {
+191:    public static List availableLocaleList() {
+205:    public static Set availableLocaleSet() {
+206:        Set set = cAvailableLocaleSet;
+210:            cAvailableLocaleSet = set;
+222:    public static boolean isAvailableLocale(Locale locale) {
+223:        return cAvailableLocaleSet.contains(locale);
+236:    public static List languagesByCountry(String countryCode) {
+268:    public static List countriesByLanguage(String languageCode) {
+
+====================================================================================================
+[12:24:01] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\nimport java.util.HashSet;\nimport java.util.Locale;\nimport java.util.Set;\n\n@RunWith(JQF.class)\npublic class JQF_LocaleUtilsTest {\n\n    public static class LocaleGen extends Generator<Locale> {\n        public LocaleGen() { super(Locale.class); }\n\n        @Override\n        public Locale generate(SourceOfRandomness r, GenerationStatus status) {\n            int kind = r.nextInt(10);\n            if (kind == 0) {\n                return null;\n            }\n            if (kind <= 4) {\n                Locale[] avail = Locale.getAvailableLocales();\n                return avail[r.nextInt(avail.length)];\n            }\n            if (kind == 5) {\n                return Locale.US;\n            }\n            StringBuilder lang = new StringBuilder();\n            int ll = 2 + r.nextInt(2);\n            for (int i = 0; i < ll; i++) {\n                lang.append((char) ('a' + r.nextInt(26)));\n            }\n            String country = \"\";\n            if (r.nextBoolean()) {\n                StringBuilder c = new StringBuilder();\n                for (int i = 0; i < 2; i++) {\n                    c.append((char) ('A' + r.nextInt(26)));\n                }\n                country = c.toString();\n            }\n            return new Locale(lang.toString(), country);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LocaleGen.class) Locale locale) {\n        boolean validIf = true;\n        // isAvailableLocale is called without availableLocaleSet() ever being called\n        boolean buggyIf = true;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        boolean result = false;\n        String exception = \"none\";\n        try {\n            result = LocaleUtils.isAvailableLocale(locale);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final boolean fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });\n\n        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));\n        boolean expected = locale != null && expectedSet.contains(locale);\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:24:01] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:24:02] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1462
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Arrays;\nimport java.util.HashSet;\nimport java.util.Locale;\nimport java.util.Set;\n\n@RunWith(JQF.class)\npublic class JQF_LocaleUtilsTest {\n\n    public static class LocaleGen extends Generator<Locale> {\n        public LocaleGen() { super(Locale.class); }\n\n        @Override\n        public Locale generate(SourceOfRandomness r, GenerationStatus status) {\n            int kind = r.nextInt(10);\n            if (kind == 0) {\n                return null;\n            }\n            if (kind <= 4) {\n                Locale[] avail = Locale.getAvailableLocales();\n                return avail[r.nextInt(avail.length)];\n            }\n            if (kind == 5) {\n                return Locale.US;\n            }\n            StringBuilder lang = new StringBuilder();\n            int ll = 2 + r.nextInt(2);\n            for (int i = 0; i < ll; i++) {\n                lang.append((char) ('a' + r.nextInt(26)));\n            }\n            String country = \"\";\n            if (r.nextBoolean()) {\n                StringBuilder c = new StringBuilder();\n                for (int i = 0; i < 2; i++) {\n                    c.append((char) ('A' + r.nextInt(26)));\n                }\n                country = c.toString();\n            }\n            return new Locale(lang.toString(), country);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LocaleGen.class) Locale locale) {\n        boolean validIf = true;\n        // isAvailableLocale is called without availableLocaleSet() ever being called\n        boolean buggyIf = true;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        boolean result = false;\n        String exception = \"none\";\n        try {\n            result = LocaleUtils.isAvailableLocale(locale);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final boolean fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });\n\n        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));\n        boolean expected = locale != null && expectedSet.contains(locale);\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:24:02] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:24:02] TEST CODE (org.apache.commons.lang.JQF_LocaleUtilsTest)
+====================================================================================================
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale) {
+        boolean validIf = true;
+        // isAvailableLocale is called without availableLocaleSet() ever being called
+        boolean buggyIf = true;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+====================================================================================================
+[12:24:02] STRUCTURE CHECK FAILED
+====================================================================================================
+buggyIf must be an expression over the parameters that is false for the valid inputs that do not trigger the bug; it is a constant here. Add parameters (e.g. for the configuration or state the bug depends on) so that the test also generates valid inputs that do NOT trigger the bug
+
+====================================================================================================
+[12:24:02] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:24:02] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- buggyIf must be an expression over the parameters that is false for the valid inputs that do not trigger the bug; it is a constant here. Add parameters (e.g. for the configuration or state the bug depends on) so that the test also generates valid inputs that do NOT trigger the bug
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source
+Test file: src/test/org/apache/commons/lang/JQF_LocaleUtilsTest.java
+Test class: org.apache.commons.lang.JQF_LocaleUtilsTest
+Test method: testBugReproduction
+
+Bug summary: LocaleUtils.isAvailableLocale(Locale) uses the static field cAvailableLocaleSet directly. The field is only initialized when availableLocaleSet() is called, so calling isAvailableLocale first throws a NullPointerException.
+
+Concrete examples:
+[{'input': 'In a fresh JVM, call LocaleUtils.isAvailableLocale(Locale.US) without first calling LocaleUtils.availableLocaleSet()', 'expected': 'Returns true, because Locale.US is an available locale', 'actual': 'Throws NullPointerException because cAvailableLocaleSet is null'}, {'input': 'In a fresh JVM, call LocaleUtils.isAvailableLocale(new Locale("xx", "YY")) as the first LocaleUtils call', 'expected': 'Returns false, because the locale is not available', 'actual': 'Throws NullPointerException because cAvailableLocaleSet is null'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-57/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:24:15] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.lang.reflect.Field;\nimport java.util.Arrays;\nimport java.util.HashSet;\nimport java.util.Locale;\nimport java.util.Set;\n\n@RunWith(JQF.class)\npublic class JQF_LocaleUtilsTest {\n\n    public static class LocaleGen extends Generator<Locale> {\n        public LocaleGen() { super(Locale.class); }\n\n        @Override\n        public Locale generate(SourceOfRandomness r, GenerationStatus status) {\n            int kind = r.nextInt(10);\n            if (kind == 0) {\n                return null;\n            }\n            if (kind <= 4) {\n                Locale[] avail = Locale.getAvailableLocales();\n                return avail[r.nextInt(avail.length)];\n            }\n            if (kind == 5) {\n                return Locale.US;\n            }\n            StringBuilder lang = new StringBuilder();\n            int ll = 2 + r.nextInt(2);\n            for (int i = 0; i < ll; i++) {\n                lang.append((char) ('a' + r.nextInt(26)));\n            }\n            String country = \"\";\n            if (r.nextBoolean()) {\n                StringBuilder c = new StringBuilder();\n                for (int i = 0; i < 2; i++) {\n                    c.append((char) ('A' + r.nextInt(26)));\n                }\n                country = c.toString();\n            }\n            return new Locale(lang.toString(), country);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LocaleGen.class) Locale locale,\n                                    boolean availableSetAlreadyInitialized) {\n        boolean validIf = true;\n        // bug: isAvailableLocale is called while the cached set has not been initialized\n        boolean buggyIf = !availableSetAlreadyInitialized;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // Reset the lazily-initialized cache to emulate a fresh JVM state\n        try {\n            Field f = LocaleUtils.class.getDeclaredField(\"cAvailableLocaleSet\");\n            f.setAccessible(true);\n            f.set(null, null);\n        } catch (Exception e) {\n            // field absent: nothing to reset\n        }\n        if (availableSetAlreadyInitialized) {\n            LocaleUtils.availableLocaleSet();\n        }\n\n        boolean result = false;\n        String exception = \"none\";\n        try {\n            result = LocaleUtils.isAvailableLocale(locale);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final boolean fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });\n\n        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));\n        boolean expected = locale != null && expectedSet.contains(locale);\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:24:15] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:24:16] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.1896
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.lang.reflect.Field;\nimport java.util.Arrays;\nimport java.util.HashSet;\nimport java.util.Locale;\nimport java.util.Set;\n\n@RunWith(JQF.class)\npublic class JQF_LocaleUtilsTest {\n\n    public static class LocaleGen extends Generator<Locale> {\n        public LocaleGen() { super(Locale.class); }\n\n        @Override\n        public Locale generate(SourceOfRandomness r, GenerationStatus status) {\n            int kind = r.nextInt(10);\n            if (kind == 0) {\n                return null;\n            }\n            if (kind <= 4) {\n                Locale[] avail = Locale.getAvailableLocales();\n                return avail[r.nextInt(avail.length)];\n            }\n            if (kind == 5) {\n                return Locale.US;\n            }\n            StringBuilder lang = new StringBuilder();\n            int ll = 2 + r.nextInt(2);\n            for (int i = 0; i < ll; i++) {\n                lang.append((char) ('a' + r.nextInt(26)));\n            }\n            String country = \"\";\n            if (r.nextBoolean()) {\n                StringBuilder c = new StringBuilder();\n                for (int i = 0; i < 2; i++) {\n                    c.append((char) ('A' + r.nextInt(26)));\n                }\n                country = c.toString();\n            }\n            return new Locale(lang.toString(), country);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(LocaleGen.class) Locale locale,\n                                    boolean availableSetAlreadyInitialized) {\n        boolean validIf = true;\n        // bug: isAvailableLocale is called while the cached set has not been initialized\n        boolean buggyIf = !availableSetAlreadyInitialized;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        // Reset the lazily-initialized cache to emulate a fresh JVM state\n        try {\n            Field f = LocaleUtils.class.getDeclaredField(\"cAvailableLocaleSet\");\n            f.setAccessible(true);\n            f.set(null, null);\n        } catch (Exception e) {\n            // field absent: nothing to reset\n        }\n        if (availableSetAlreadyInitialized) {\n            LocaleUtils.availableLocaleSet();\n        }\n\n        boolean result = false;\n        String exception = \"none\";\n        try {\n            result = LocaleUtils.isAvailableLocale(locale);\n        } catch (Throwable t) {\n            exception = t.getClass().getName();\n        }\n\n        final boolean fResult = result;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });\n\n        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));\n        boolean expected = locale != null && expectedSet.contains(locale);\n        assertEquals(\"none\", fException);\n        assertEquals(expected, fResult);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:24:16] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:24:16] TEST CODE (org.apache.commons.lang.JQF_LocaleUtilsTest)
+====================================================================================================
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+====================================================================================================
+[12:24:17] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:24:38] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 48794,
+  "discarded_by_assume": 24317,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 2730
+  },
+  "passed_assume": 24477,
+  "classified": 2730
+}
+
+====================================================================================================
+[12:24:38] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:24:38] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: NullPointerException in isAvailableLocale(Locale)
+
+FindBugs pointed out:
+
+   UwF: Field not initialized in constructor: org.apache.commons.lang.LocaleUtils.cAvailableLocaleSet
+
+cAvailableSet is used directly once in the source - and if availableLocaleSet() hasn't been called it will cause a NullPointerException.
+
+=== Test ===
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.apache.commons.lang.JQF_LocaleUtilsTest.testBugReproduction(JQF_LocaleUtilsTest.java:91)
+
+Location: org.apache.commons.lang.JQF_LocaleUtilsTest.testBugReproduction(JQF_LocaleUtilsTest.java:91)
+
+is triggered by the following inputs:
+
+    input (es_CU, 1) -> logged [false, java.lang.NullPointerException]
+    input (zh_SG, 1) -> logged [false, java.lang.NullPointerException]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:24:50] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, so I'm marking them relevant.
+
+- **Inputs and error (1, 2):** The test resets `cAvailableLocaleSet` to null by reflection and then calls `isAvailableLocale(locale)` without calling `availableLocaleSet()`. This is the state the report describes. The failure is a `NullPointerException` where the correct result is a normal true or false answer. The logged output `[false, java.lang.NullPointerException]` confirms it.
+- **Root cause (3):** The NPE comes from `isAvailableLocale` dereferencing the uninitialized static field directly (`cAvailableLocaleSet.contains(locale)`). That is the same cause the report names.
+- **buggyIf too wide (4):** `buggyIf = !availableSetAlreadyInitialized` is true only when the cache is uninitialized. When the flag is true, the test calls `availableLocaleSet()` first and the code behaves correctly, so those inputs are excluded. The assertion on the expected value is correct for any locale, including null.
+- **buggyIf too narrow (5):** The bug fires whenever the field is null, whatever the locale (available, unavailable or null). `buggyIf` is true for all of those cases, so no triggering input is missed.
+- **Valid domain (6):** The locale generator produces null, available locales, `Locale.US` and random locales. The boolean parameter covers both initialized and uninitialized states. `validIf` is true, so the domain is not restricted to the bug-triggering inputs.
+
+The failing inputs show the boolean as `1`, which looks inconsistent with `buggyIf` requiring it to be false. It is probably just how the harness prints the boolean. The log line is only reached when the assumptions pass, and it shows an NPE, so the call must have run with the cache uninitialized.
+
+====================================================================================================
+[12:24:53] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test resets the static cache to null and calls isAvailableLocale without calling availableLocaleSet(). This gives a NullPointerException where the correct behavior is a true/false result, which is exactly the reported bug and the same root cause (direct dereference of the uninitialized cAvailableLocaleSet). buggyIf (!availableSetAlreadyInitialized) is true only when the cache is uninitialized, so it excludes inputs where the code already works. It also covers every locale, including null, so no triggering input is missed. The generated domain covers many kinds of locale and both initialization states, so the valid domain is not restricted to the bug-triggering inputs. The failing inputs show the boolean as 1, which looks inconsistent with buggyIf. I take that to be the harness's display of the boolean, because the log line is only reached when the assumptions pass."
+}
+
+====================================================================================================
+[12:24:53] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:24:54] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3329
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test resets the static cache to null and calls isAvailableLocale without calling availableLocaleSet(). This gives a NullPointerException where the correct behavior is a true/false result, which is exactly the reported bug and the same root cause (direct dereference of the uninitialized cAvailableLocaleSet). buggyIf (!availableSetAlreadyInitialized) is true only when the cache is uninitialized, so it excludes inputs where the code already works. It also covers every locale, including null, so no triggering input is missed. The generated domain covers many kinds of locale and both initialization states, so the valid domain is not restricted to the bug-triggering inputs. The failing inputs show the boolean as 1, which looks inconsistent with buggyIf. I take that to be the harness's display of the boolean, because the log line is only reached when the assumptions pass."
+}
+
+====================================================================================================
+[12:24:54] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:24:54] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:24:58] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework, fake subclasses or simulated return values. It calls the real LocaleUtils.isAvailableLocale and LocaleUtils.availableLocaleSet. The only manipulation is a reflective reset of the private static cache field to null. That recreates the fresh-JVM state in which the bug occurs, and the NullPointerException comes from the real code. It does not fake the behavior of the code under test. The expected value is computed independently from Locale.getAvailableLocales() and is used only in the assertion."
+}
+
+====================================================================================================
+[12:24:58] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:24:59] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.4741
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework, fake subclasses or simulated return values. It calls the real LocaleUtils.isAvailableLocale and LocaleUtils.availableLocaleSet. The only manipulation is a reflective reset of the private static cache field to null. That recreates the fresh-JVM state in which the bug occurs, and the NullPointerException comes from the real code. It does not fake the behavior of the code under test. The expected value is computed independently from Locale.getAvailableLocales() and is used only in the assertion."
+}
+
+====================================================================================================
+[12:24:59] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:25:03] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, assertTrue(false) or assertEquals(1, 0). Both assertions depend on what the real code does. The first is assertEquals(\"none\", fException), which passes when no exception is thrown. The second is assertEquals(expected, fResult), where expected is computed from Locale.getAvailableLocales(). Once isAvailableLocale initializes the cache lazily, the exception is \"none\" and the result matches the expected value, so the test can pass."
+}
+
+====================================================================================================
+[12:25:03] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:25:04] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.4863
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, assertTrue(false) or assertEquals(1, 0). Both assertions depend on what the real code does. The first is assertEquals(\"none\", fException), which passes when no exception is thrown. The second is assertEquals(expected, fResult), where expected is computed from Locale.getAvailableLocales(). Once isAvailableLocale initializes the cache lazily, the exception is \"none\" and the result matches the expected value, so the test can pass."
+}
+
+====================================================================================================
+[12:25:04] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:25:07] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. assertEquals(\"none\", fException) compares two Strings with equals(), not ==. assertEquals(expected, fResult) compares two primitive booleans, which are boxed to Boolean and compared with equals(). No doubles, arrays or reference-identity comparisons are involved, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[12:25:07] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:25:08] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.4984
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. assertEquals(\"none\", fException) compares two Strings with equals(), not ==. assertEquals(expected, fResult) compares two primitive booleans, which are boxed to Boolean and compared with equals(). No doubles, arrays or reference-identity comparisons are involved, so no delta or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[12:25:08] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:25:08] AGENT FINISHED success=True llm_calls=10
+====================================================================================================
+
+
+====================================================================================================
+[12:25:09] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_LocaleUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug57"
+}
+
+====================================================================================================
+[12:25:09] FINAL TEST FILE JQF_LocaleUtilsTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.lang;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+@RunWith(JQF.class)
+public class JQF_LocaleUtilsTest {
+
+    public static class LocaleGen extends Generator<Locale> {
+        public LocaleGen() { super(Locale.class); }
+
+        @Override
+        public Locale generate(SourceOfRandomness r, GenerationStatus status) {
+            int kind = r.nextInt(10);
+            if (kind == 0) {
+                return null;
+            }
+            if (kind <= 4) {
+                Locale[] avail = Locale.getAvailableLocales();
+                return avail[r.nextInt(avail.length)];
+            }
+            if (kind == 5) {
+                return Locale.US;
+            }
+            StringBuilder lang = new StringBuilder();
+            int ll = 2 + r.nextInt(2);
+            for (int i = 0; i < ll; i++) {
+                lang.append((char) ('a' + r.nextInt(26)));
+            }
+            String country = "";
+            if (r.nextBoolean()) {
+                StringBuilder c = new StringBuilder();
+                for (int i = 0; i < 2; i++) {
+                    c.append((char) ('A' + r.nextInt(26)));
+                }
+                country = c.toString();
+            }
+            return new Locale(lang.toString(), country);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        // bug: isAvailableLocale is called while the cached set has not been initialized
+        boolean buggyIf = !availableSetAlreadyInitialized;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        // Reset the lazily-initialized cache to emulate a fresh JVM state
+        try {
+            Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+            f.setAccessible(true);
+            f.set(null, null);
+        } catch (Exception e) {
+            // field absent: nothing to reset
+        }
+        if (availableSetAlreadyInitialized) {
+            LocaleUtils.availableLocaleSet();
+        }
+
+        boolean result = false;
+        String exception = "none";
+        try {
+            result = LocaleUtils.isAvailableLocale(locale);
+        } catch (Throwable t) {
+            exception = t.getClass().getName();
+        }
+
+        final boolean fResult = result;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new String[]{ String.valueOf(fResult), fException });
+
+        Set expectedSet = new HashSet(Arrays.asList(Locale.getAvailableLocales()));
+        boolean expected = locale != null && expectedSet.contains(locale);
+        assertEquals("none", fException);
+        assertEquals(expected, fResult);
+    }
+
+    @Fuzz
+    public void testIsAvailableLocale(@From(LocaleGen.class) Locale locale,
+                                    boolean availableSetAlreadyInitialized) {
+        boolean validIf = true;
+        boolean buggyIf = !availableSetAlreadyInitialized;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            // Reset the lazily-initialized cache to emulate a fresh JVM state
+            try {
+                Field f = LocaleUtils.class.getDeclaredField("cAvailableLocaleSet");
+                f.setAccessible(true);
+                f.set(null, null);
+            } catch (Exception e) {
+                // field absent: nothing to reset
+            }
+            if (availableSetAlreadyInitialized) {
+                LocaleUtils.availableLocaleSet();
+            }
+
+            boolean result = false;
+            String exception = "none";
+            try {
+                result = LocaleUtils.isAvailableLocale(locale);
+            } catch (Throwable t) {
+                exception = t.getClass().getName();
+            }
+
+            final boolean fResult = result;
+            final String fException = exception;
+            Log.logOutIf(preserveIf, () -> new String[]{ String.valueOf(fResult), fException });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:27:40] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 49746,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 49821,
+      "unique_failures": {}
+    }
+  }
+}

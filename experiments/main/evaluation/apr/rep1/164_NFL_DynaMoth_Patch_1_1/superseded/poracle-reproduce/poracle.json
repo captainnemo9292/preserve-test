@@ -1,0 +1,55 @@
+{
+ "patch": "164_NFL_DynaMoth_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-32",
+ "tool": "DynaMoth",
+ "label": "Incorrect",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:42:22",
+ "preserve": {
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 208.9,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 206.59894275665283,
+  "time": {
+   "CHECKOUT_BUGGY": 3.629765272140503,
+   "DELTA_BUGGY": 0.0016345977783203125,
+   "COMPILE_BUGGY": 7.461649417877197,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.748134136199951,
+   "PATCH": 0.013865470886230469,
+   "DELTA_PATCH": 0.0016872882843017578,
+   "COMPILE_PATCH": 7.970370292663574,
+   "PATCH_TEST": 2.319523572921753,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.61198329925537,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 208.9
+}

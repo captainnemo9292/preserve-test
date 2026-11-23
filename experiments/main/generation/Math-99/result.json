@@ -1,0 +1,202 @@
+{
+  "bug": "Math-99",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.4144,
+  "tokens": {
+    "input": 20,
+    "output": 2866,
+    "cache_write": 94773,
+    "cache_read": 66101
+  },
+  "seconds": 73.7,
+  "started_at": "2026-11-21T13:29:23",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 63.4,
+    "derive": 1.7,
+    "validation": 145.5
+  },
+  "llm_seconds": 41.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 490,
+        "cache_write": 817,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008253,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 13.5,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1344,
+        "cache_write": 32437,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.143304,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 9.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 510,
+        "cache_write": 29038,
+        "cache_read": 611
+      },
+      "cost_usd": 0.121317,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 162,
+        "cache_write": 30393,
+        "cache_read": 603
+      },
+      "cost_usd": 0.12326,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 203,
+        "cache_write": 1009,
+        "cache_read": 30996
+      },
+      "cost_usd": 0.009174,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 3.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 157,
+        "cache_write": 1079,
+        "cache_read": 32005
+      },
+      "cost_usd": 0.009095,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.util.MathUtilsTest::testGcd",
+  "jqf_class": "org.apache.commons.math.util.JQF_MathUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.polynomials.PolynomialsUtilsTest",
+    "org.apache.commons.math.analysis.solvers.LaguerreSolverTest",
+    "org.apache.commons.math.analysis.solvers.MullerSolverTest",
+    "org.apache.commons.math.analysis.solvers.RiddersSolverTest",
+    "org.apache.commons.math.complex.ComplexTest",
+    "org.apache.commons.math.distribution.BinomialDistributionTest",
+    "org.apache.commons.math.distribution.HypergeometricDistributionTest",
+    "org.apache.commons.math.distribution.PascalDistributionTest",
+    "org.apache.commons.math.distribution.PoissonDistributionTest",
+    "org.apache.commons.math.fraction.FractionFormatTest",
+    "org.apache.commons.math.fraction.FractionTest",
+    "org.apache.commons.math.geometry.RotationTest",
+    "org.apache.commons.math.linear.DenseRealMatrixTest",
+    "org.apache.commons.math.linear.RealMatrixImplTest",
+    "org.apache.commons.math.linear.RealVectorImplTest",
+    "org.apache.commons.math.linear.SparseRealMatrixTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math.stat.descriptive.DescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.MultivariateSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.StatisticalSummaryValuesTest",
+    "org.apache.commons.math.stat.descriptive.SummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest",
+    "org.apache.commons.math.stat.descriptive.moment.FirstMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.FourthMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.GeometricMeanTest",
+    "org.apache.commons.math.stat.descriptive.moment.KurtosisTest",
+    "org.apache.commons.math.stat.descriptive.moment.MeanTest",
+    "org.apache.commons.math.stat.descriptive.moment.SecondMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.SkewnessTest",
+    "org.apache.commons.math.stat.descriptive.moment.StandardDeviationTest",
+    "org.apache.commons.math.stat.descriptive.moment.ThirdMomentTest",
+    "org.apache.commons.math.stat.descriptive.moment.VarianceTest",
+    "org.apache.commons.math.stat.descriptive.rank.MaxTest",
+    "org.apache.commons.math.stat.descriptive.rank.MinTest",
+    "org.apache.commons.math.stat.descriptive.summary.ProductTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumLogTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumSqTest",
+    "org.apache.commons.math.stat.descriptive.summary.SumTest",
+    "org.apache.commons.math.util.MathUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testGcd",
+  "issue_gist": "MathUtils.gcd(Integer.MIN_VALUE, 0) returns Integer.MIN_VALUE (a negative number) instead of throwing an ArithmeticException, since the true result 2^31 can't be represented as a nonnegative int. This is inconsistent with gcd(Integer.MIN_VALUE, Integer.MIN_VALUE), which already throws.",
+  "failing_inputs_count": 1942,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_MathUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug99",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 39512,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo",
+          "input (-2147483648, 0) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo",
+          "input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\norg.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invo"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 39753,
+        "unique_failures": {
+          "org.junit.ComparisonFailure": 2
+        },
+        "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[java.lang.ArithmeticException]> but was:<[org.apache.commons.math.MathRuntimeException$1]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\nLocation: org.apache.commons.math.util.JQF_MathUtilsTest.testBugReproduction(JQF_MathUtilsTest.java:48)\n\nis triggered by the following inputs:\n\n    input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]\n    input (0, -2147483648) -> logged [org.apache.commons.math.MathRuntimeException$1, 0]"
+      }
+    }
+  },
+  "total_seconds": 220.9,
+  "paired_inputs_archived": true
+}

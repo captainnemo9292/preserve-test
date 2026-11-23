@@ -1,0 +1,854 @@
+
+====================================================================================================
+[12:32:53] BUG Math-22: failing test org.apache.commons.math3.distribution.FDistributionTest::testIsSupportLowerBoundInclusive -> org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-22/Math22b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source
+====================================================================================================
+Title: Fix and then deprecate isSupportXxxInclusive in RealDistribution interface
+
+The conclusion from [1] was never implemented. We should deprecate these
+properties from the RealDistribution interface, but since removal
+will have to wait until 4.0, we should agree on a precise
+definition and fix the code to match it in the mean time.
+
+The definition that I propose is that isSupportXxxInclusive means
+that when the density function is applied to the upper or lower
+bound of support returned by getSupportXxxBound, a finite (i.e. not
+infinite), not NaN value is returned.
+
+[1] http://markmail.org/message/dxuxh7eybl7xejde
+
+====================================================================================================
+[12:32:53] HIDDEN FROM THE AGENT: 8 relevant test classes
+====================================================================================================
+org.apache.commons.math3.distribution.FDistributionTest
+org.apache.commons.math3.distribution.UniformRealDistributionTest
+org.apache.commons.math3.optimization.fitting.PolynomialFitterTest
+org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizerTest
+org.apache.commons.math3.stat.descriptive.AggregateSummaryStatisticsTest
+org.apache.commons.math3.stat.inference.OneWayAnovaTest
+org.apache.commons.math3.stat.inference.TestUtilsTest
+org.apache.commons.math3.util.MathUtilsTest
+
+====================================================================================================
+[12:32:53] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:32:53] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Fix and then deprecate isSupportXxxInclusive in RealDistribution interface
+
+The conclusion from [1] was never implemented. We should deprecate these
+properties from the RealDistribution interface, but since removal
+will have to wait until 4.0, we should agree on a precise
+definition and fix the code to match it in the mean time.
+
+The definition that I propose is that isSupportXxxInclusive means
+that when the density function is applied to the upper or lower
+bound of support returned by getSupportXxxBound, a finite (i.e. not
+infinite), not NaN value is returned.
+
+[1] http://markmail.org/message/dxuxh7eybl7xejde
+
+====================================================================================================
+[12:33:00] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "In Apache Commons Math, RealDistribution.isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() return values inconsistent with a precise definition: they should be true only if the density at the support bound is finite and not NaN. Several distributions return the wrong value, and the methods should be fixed to match this definition and then deprecated.",
+  "concrete_examples": [
+    {
+      "input": "new FDistribution(d1, d2).isSupportLowerBoundInclusive() (support lower bound 0); density at 0 is infinite for d1 < 2 and finite for d1 >= 2",
+      "expected": "true only when density(0) is finite and not NaN (e.g. d1 >= 2); false when density(0) is infinite or NaN",
+      "actual": "Returns a fixed value regardless of whether density at the bound is finite, inconsistent with density(getSupportLowerBound())"
+    },
+    {
+      "input": "new GammaDistribution(shape < 1, scale).isSupportLowerBoundInclusive() (lower bound 0, density(0) = +Infinity)",
+      "expected": "false, since density at the lower bound is infinite",
+      "actual": "Returns true even though density(0) is infinite"
+    },
+    {
+      "input": "new WeibullDistribution(shape < 1, scale) / new BetaDistribution(alpha<1, beta) at bounds where density is infinite",
+      "expected": "isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() false where density is infinite",
+      "actual": "Returns a value not matching the density's finiteness at the bound"
+    }
+  ]
+}
+
+====================================================================================================
+[12:33:00] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:33:01] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0095
+====================================================================================================
+{
+  "issue_gist": "In Apache Commons Math, RealDistribution.isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() return values inconsistent with a precise definition: they should be true only if the density at the support bound is finite and not NaN. Several distributions return the wrong value, and the methods should be fixed to match this definition and then deprecated.",
+  "concrete_examples": [
+    {
+      "input": "new FDistribution(d1, d2).isSupportLowerBoundInclusive() (support lower bound 0); density at 0 is infinite for d1 < 2 and finite for d1 >= 2",
+      "expected": "true only when density(0) is finite and not NaN (e.g. d1 >= 2); false when density(0) is infinite or NaN",
+      "actual": "Returns a fixed value regardless of whether density at the bound is finite, inconsistent with density(getSupportLowerBound())"
+    },
+    {
+      "input": "new GammaDistribution(shape < 1, scale).isSupportLowerBoundInclusive() (lower bound 0, density(0) = +Infinity)",
+      "expected": "false, since density at the lower bound is infinite",
+      "actual": "Returns true even though density(0) is infinite"
+    },
+    {
+      "input": "new WeibullDistribution(shape < 1, scale) / new BetaDistribution(alpha<1, beta) at bounds where density is infinite",
+      "expected": "isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() false where density is infinite",
+      "actual": "Returns a value not matching the density's finiteness at the bound"
+    }
+  ]
+}
+
+====================================================================================================
+[12:33:01] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:33:01] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source
+Test file: src/test/java/org/apache/commons/math3/distribution/JQF_FDistributionTest.java
+Test class: org.apache.commons.math3.distribution.JQF_FDistributionTest
+Test method: testBugReproduction
+
+Bug summary: In Apache Commons Math, RealDistribution.isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() return values inconsistent with a precise definition: they should be true only if the density at the support bound is finite and not NaN. Several distributions return the wrong value, and the methods should be fixed to match this definition and then deprecated.
+
+Concrete examples:
+[{'input': 'new FDistribution(d1, d2).isSupportLowerBoundInclusive() (support lower bound 0); density at 0 is infinite for d1 < 2 and finite for d1 >= 2', 'expected': 'true only when density(0) is finite and not NaN (e.g. d1 >= 2); false when density(0) is infinite or NaN', 'actual': 'Returns a fixed value regardless of whether density at the bound is finite, inconsistent with density(getSupportLowerBound())'}, {'input': 'new GammaDistribution(shape < 1, scale).isSupportLowerBoundInclusive() (lower bound 0, density(0) = +Infinity)', 'expected': 'false, since density at the lower bound is infinite', 'actual': 'Returns true even though density(0) is infinite'}, {'input': 'new WeibullDistribution(shape < 1, scale) / new BetaDistribution(alpha<1, beta) at bounds where density is infinite', 'expected': 'isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() false where density is infinite', 'actual': "Returns a value not matching the density's finiteness at the bound"}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:33:05] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "isSupport(Lower|Upper)BoundInclusive",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source/src/main/java/org/apache/commons/math3/distribution/FDistribution.java",
+  "output_mode": "content",
+  "-A": 3
+}
+
+====================================================================================================
+[12:33:05] [002_symbolize] TOOL RESULT
+====================================================================================================
+274:    public boolean isSupportLowerBoundInclusive() {
+275-        return true;
+276-    }
+277-
+--
+279:    public boolean isSupportUpperBoundInclusive() {
+280-        return false;
+281-    }
+282-
+
+====================================================================================================
+[12:33:05] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public FDistribution\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source/src/main/java/org/apache/commons/math3/distribution/FDistribution.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:33:05] [002_symbolize] TOOL RESULT
+====================================================================================================
+62:    public FDistribution(double numeratorDegreesOfFreedom,
+82:    public FDistribution(double numeratorDegreesOfFreedom,
+103:    public FDistribution(RandomGenerator rng,
+
+====================================================================================================
+[12:33:10] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public double density|double logDensity|FastMath.log\\(x\\)|return ",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-22/source/src/main/java/org/apache/commons/math3/distribution/FDistribution.java",
+  "output_mode": "content",
+  "-n": true
+}
+
+====================================================================================================
+[12:33:10] [002_symbolize] TOOL RESULT
+====================================================================================================
+128:    public double density(double x) {
+131:        final double logx = FastMath.log(x);
+136:        return FastMath.exp(nhalf * logn + nhalf * logx - logx +
+164:        return ret;
+170:     * @return the numerator degrees of freedom.
+173:        return numeratorDegreesOfFreedom;
+179:     * @return the denominator degrees of freedom.
+182:        return denominatorDegreesOfFreedom;
+188:        return solverAbsoluteAccuracy;
+204:            return denominatorDF / (denominatorDF - 2);
+207:        return Double.NaN;
+228:        return numericalVariance;
+234:     * @return the variance of this distribution
+243:            return ( 2 * (denominatorDF * denominatorDF) * (numeratorDF + denominatorDF - 2) ) /
+247:        return Double.NaN;
+255:     * @return lower bound of the support (always 0)
+258:        return 0;
+267:     * @return upper bound of the support (always Double.POSITIVE_INFINITY)
+270:        return Double.POSITIVE_INFINITY;
+275:        return true;
+280:        return false;
+288:     * @return {@code true}
+291:        return true;
+
+====================================================================================================
+[12:33:21] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.FDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_FDistributionTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,\n                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {\n        boolean validIf = d1 > 0 && d2 > 0;\n        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.\n        boolean buggyIf = d1 > 0 && d2 > 0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        FDistribution dist = new FDistribution(d1, d2);\n        double lower = dist.getSupportLowerBound();\n        double upper = dist.getSupportUpperBound();\n        boolean lowerInc = dist.isSupportLowerBoundInclusive();\n        boolean upperInc = dist.isSupportUpperBoundInclusive();\n        double densLower = dist.density(lower);\n        double densUpper = dist.density(upper);\n\n        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });\n\n        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);\n        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);\n        assertEquals(\"lower bound inclusive must match finiteness of density at lower bound\", lowerFinite, lowerInc);\n        assertEquals(\"upper bound inclusive must match finiteness of density at upper bound\", upperFinite, upperInc);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:33:21] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:33:22] [002_symbolize] CALL DONE subtype=success turns=5 session_cost=$0.1618
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.FDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_FDistributionTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,\n                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {\n        boolean validIf = d1 > 0 && d2 > 0;\n        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.\n        boolean buggyIf = d1 > 0 && d2 > 0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        FDistribution dist = new FDistribution(d1, d2);\n        double lower = dist.getSupportLowerBound();\n        double upper = dist.getSupportUpperBound();\n        boolean lowerInc = dist.isSupportLowerBoundInclusive();\n        boolean upperInc = dist.isSupportUpperBoundInclusive();\n        double densLower = dist.density(lower);\n        double densUpper = dist.density(upper);\n\n        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });\n\n        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);\n        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);\n        assertEquals(\"lower bound inclusive must match finiteness of density at lower bound\", lowerFinite, lowerInc);\n        assertEquals(\"upper bound inclusive must match finiteness of density at upper bound\", upperFinite, upperInc);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:33:22] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:33:22] TEST CODE (org.apache.commons.math3.distribution.JQF_FDistributionTest)
+====================================================================================================
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+}
+
+====================================================================================================
+[12:33:23] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:33:45] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 18282,
+  "discarded_by_assume": 0,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 6093
+  },
+  "passed_assume": 18282,
+  "classified": 6093
+}
+
+====================================================================================================
+[12:33:45] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:33:45] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Fix and then deprecate isSupportXxxInclusive in RealDistribution interface
+
+The conclusion from [1] was never implemented. We should deprecate these
+properties from the RealDistribution interface, but since removal
+will have to wait until 4.0, we should agree on a precise
+definition and fix the code to match it in the mean time.
+
+The definition that I propose is that isSupportXxxInclusive means
+that when the density function is applied to the upper or lower
+bound of support returned by getSupportXxxBound, a finite (i.e. not
+infinite), not NaN value is returned.
+
+[1] http://markmail.org/message/dxuxh7eybl7xejde
+
+=== Test ===
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: lower bound inclusive must match finiteness of density at lower bound expected:<false> but was:<true>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:118)
+    	at org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)
+
+Location: org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)
+
+is triggered by the following inputs:
+
+    input (66.56606871337918, 67.16723577462031) -> logged [0.0, Infinity, 0, 1, NaN, NaN]
+    input (78.57557704940572, 89.53793639813046) -> logged [0.0, Infinity, 0, 1, NaN, NaN]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:34:00] [004_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug.
+
+**Inputs and error.** The failing inputs are (66.57, 67.17) and (78.58, 89.54). They are valid `FDistribution` parameters. The logged values show `getSupportLowerBound()` is 0 and `isSupportLowerBoundInclusive()` is true. `density(0)` returns NaN. The report defines "inclusive" to mean the density at the bound is finite and not NaN. Here the density is NaN, so the flag should be false, but it is true. The assertion message "expected:<false> but was:<true>" matches that.
+
+**Root cause.** This is the inconsistency the report describes. `FDistribution` hard-codes `isSupportLowerBoundInclusive()` to true, regardless of the density at the bound. The density formula gives NaN at x=0, because `logx` is -Infinity and the terms `nhalf*logx - logx` evaluate to -Inf - (-Inf).
+
+**Is buggyIf too wide?** No. I did not run the code, so this rests on my reading of the density formula. It suggests `density(0)` is NaN for every positive d1 and d2, and that includes d1 = 2. The hard-coded lower flag is always true, so the buggy code is wrong for every valid input. buggyIf equals validIf, and every input it accepts really does trigger the bug. The upper-bound assertion holds on buggy code: `density(Infinity)` is NaN and the upper flag is false, so it does not cause failures.
+
+**Is buggyIf too narrow?** No. Nothing that triggers the bug is excluded.
+
+**Domain coverage.** d1 and d2 range over 0.01 to 100 with the validIf condition d > 0. That is a reasonable range for the valid domain, and the test is not restricted to bug-triggering inputs.
+
+**Fix compatibility.** The assertions check the flag against the density's finiteness. They would pass whether a fix changes the flag or changes the density at the bound.
+
+The test covers only `FDistribution`. The report names `RealDistribution` in general, but it is a legitimate instance of the bug.
+
+====================================================================================================
+[12:34:02] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are valid FDistribution parameters. On them, isSupportLowerBoundInclusive() returns true while density(0) is NaN. That contradicts the report's definition, under which \"inclusive\" requires a finite, non-NaN density at the bound. The cause is that FDistribution hard-codes the flag to true without regard to the density. Reading the density formula (not run), density(0) appears to be NaN for every positive d1 and d2, so every valid input triggers the bug. buggyIf equals validIf, so it is neither too wide nor too narrow. The upper-bound assertion already holds on buggy code (density(Infinity) is NaN and the flag is false), so it does not cause the failures. The ranges (0.01 to 100) and validIf (d > 0) cover the valid domain. The assertions would pass whether a fix changes the flag or the density."
+}
+
+====================================================================================================
+[12:34:02] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:34:03] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2958
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are valid FDistribution parameters. On them, isSupportLowerBoundInclusive() returns true while density(0) is NaN. That contradicts the report's definition, under which \"inclusive\" requires a finite, non-NaN density at the bound. The cause is that FDistribution hard-codes the flag to true without regard to the density. Reading the density formula (not run), density(0) appears to be NaN for every positive d1 and d2, so every valid input triggers the bug. buggyIf equals validIf, so it is neither too wide nor too narrow. The upper-bound assertion already holds on buggy code (density(Infinity) is NaN and the flag is false), so it does not cause the failures. The ranges (0.01 to 100) and validIf (d > 0) cover the valid domain. The assertions would pass whether a fix changes the flag or the density."
+}
+
+====================================================================================================
+[12:34:03] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:34:03] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:34:07] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test constructs a real FDistribution and calls its actual methods: getSupportLowerBound, getSupportUpperBound, isSupportLowerBoundInclusive, isSupportUpperBoundInclusive and density. It uses no mocking libraries, fake subclasses or hard-coded return values. The assertions compare the real flag values against the real density results."
+}
+
+====================================================================================================
+[12:34:07] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:34:08] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4200
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test constructs a real FDistribution and calls its actual methods: getSupportLowerBound, getSupportUpperBound, isSupportLowerBoundInclusive, isSupportUpperBoundInclusive and density. It uses no mocking libraries, fake subclasses or hard-coded return values. The assertions compare the real flag values against the real density results."
+}
+
+====================================================================================================
+[12:34:08] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:34:11] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures: no fail(), assertTrue(false), or assertEquals on constants. Both assertions compare values computed from the real FDistribution: whether the density at each support bound is finite, and what isSupportXxxBoundInclusive() returns. They can pass if the flag matches the density's finiteness. A fix could achieve that either by returning false for the lower flag or by making density(0) finite."
+}
+
+====================================================================================================
+[12:34:11] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:34:12] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4296
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures: no fail(), assertTrue(false), or assertEquals on constants. Both assertions compare values computed from the real FDistribution: whether the density at each support bound is finite, and what isSupportXxxBoundInclusive() returns. They can pass if the flag matches the density's finiteness. A fix could achieve that either by returning false for the lower flag or by making density(0) finite."
+}
+
+====================================================================================================
+[12:34:12] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:34:16] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both assertions compare two primitive booleans (lowerFinite vs lowerInc, upperFinite vs upperInc). assertEquals(String, Object, Object) autoboxes them to Boolean and compares with equals(), which is correct. Neither assertion compares doubles directly, because the doubles are first reduced to booleans through NaN and infinity checks, so no delta is needed. Neither compares strings or objects with ==, and no arrays are involved."
+}
+
+====================================================================================================
+[12:34:16] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:34:17] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4397
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both assertions compare two primitive booleans (lowerFinite vs lowerInc, upperFinite vs upperInc). assertEquals(String, Object, Object) autoboxes them to Boolean and compares with equals(), which is correct. Neither assertion compares doubles directly, because the doubles are first reduced to booleans through NaN and infinity checks, so no delta is needed. Neither compares strings or objects with ==, and no arrays are involved."
+}
+
+====================================================================================================
+[12:34:17] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:34:17] AGENT FINISHED success=True llm_calls=10
+====================================================================================================
+
+
+====================================================================================================
+[12:34:18] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FDistributionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug22"
+}
+
+====================================================================================================
+[12:34:18] FINAL TEST FILE JQF_FDistributionTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.FDistribution;
+
+@RunWith(JQF.class)
+public class JQF_FDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        // The lower bound (0) is always reported as inclusive, but density(0) is not a finite number.
+        boolean buggyIf = d1 > 0 && d2 > 0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        FDistribution dist = new FDistribution(d1, d2);
+        double lower = dist.getSupportLowerBound();
+        double upper = dist.getSupportUpperBound();
+        boolean lowerInc = dist.isSupportLowerBoundInclusive();
+        boolean upperInc = dist.isSupportUpperBoundInclusive();
+        double densLower = dist.density(lower);
+        double densUpper = dist.density(upper);
+
+        Log.logOutIf(true, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+
+        boolean lowerFinite = !Double.isNaN(densLower) && !Double.isInfinite(densLower);
+        boolean upperFinite = !Double.isNaN(densUpper) && !Double.isInfinite(densUpper);
+        assertEquals("lower bound inclusive must match finiteness of density at lower bound", lowerFinite, lowerInc);
+        assertEquals("upper bound inclusive must match finiteness of density at upper bound", upperFinite, upperInc);
+    }
+
+    @Fuzz
+    public void testIsSupportLowerBoundInclusive(@InRange(minDouble = 0.01, maxDouble = 100.0) double d1,
+                                    @InRange(minDouble = 0.01, maxDouble = 100.0) double d2) {
+        boolean validIf = d1 > 0 && d2 > 0;
+        boolean buggyIf = d1 > 0 && d2 > 0;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            FDistribution dist = new FDistribution(d1, d2);
+            double lower = dist.getSupportLowerBound();
+            double upper = dist.getSupportUpperBound();
+            boolean lowerInc = dist.isSupportLowerBoundInclusive();
+            boolean upperInc = dist.isSupportUpperBoundInclusive();
+            double densLower = dist.density(lower);
+            double densUpper = dist.density(upper);
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ lower, upper, lowerInc, upperInc, densLower, densUpper });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:37:12] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 37332,
+    "inside_buggyIf": 37331,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 37614,
+      "inside_buggyIf": 37614,
+      "unique_failures": {}
+    }
+  }
+}

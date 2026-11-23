@@ -1,0 +1,156 @@
+{
+  "bug": "Math-95",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.4135,
+  "tokens": {
+    "input": 20,
+    "output": 3079,
+    "cache_write": 94026,
+    "cache_read": 65712
+  },
+  "seconds": 71.7,
+  "started_at": "2026-11-21T13:25:27",
+  "timing": {
+    "checkout": 10.1,
+    "agent": 61.6,
+    "derive": 1.7,
+    "validation": 162.4
+  },
+  "llm_seconds": 39.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 468,
+        "cache_write": 1205,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009585,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 13.9,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1531,
+        "cache_write": 31719,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.142302,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 7.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 528,
+        "cache_write": 28652,
+        "cache_read": 611
+      },
+      "cost_usd": 0.119953,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 182,
+        "cache_write": 30134,
+        "cache_read": 603
+      },
+      "cost_usd": 0.122424,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 193,
+        "cache_write": 1138,
+        "cache_read": 30737
+      },
+      "cost_usd": 0.009564,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 3.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 177,
+        "cache_write": 1178,
+        "cache_read": 31875
+      },
+      "cost_usd": 0.009678,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.distribution.FDistributionTest::testSmallDegreesOfFreedom",
+  "jqf_class": "org.apache.commons.math.distribution.JQF_FDistributionTest",
+  "hidden_tests": [
+    "org.apache.commons.math.distribution.FDistributionTest",
+    "org.apache.commons.math.stat.inference.OneWayAnovaTest",
+    "org.apache.commons.math.stat.inference.TestUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testSmallDegreesOfFreedom",
+  "issue_gist": "FDistributionImpl.getInitialDomain() computes d/(d-2), which divides by zero when the denominator degrees of freedom is 2. That gives POSITIVE_INFINITY, which is passed as the initial value to UnivariateRealSolverUtils.bracket. bracket rejects it with an IllegalArgumentException, so inverse cumulative probability fails.",
+  "failing_inputs_count": 2397,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FDistributionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug95",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 46497,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 46493,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 235.7,
+  "paired_inputs_archived": true
+}

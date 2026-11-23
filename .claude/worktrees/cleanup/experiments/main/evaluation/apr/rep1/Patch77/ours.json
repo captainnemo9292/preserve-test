@@ -1,0 +1,76 @@
+{
+ "patch": "Patch77",
+ "dataset": "apr",
+ "bug": "Math-97",
+ "tool": "Nopol2015",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T16:19:35",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-38, 28, -9.032423748066421, 1, 1.0453987354594259) -> logged [java.lang.IllegalArgumentException, NaN]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:51)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.j",
+    "input (-41, 31, -6.490426511012622, 0, 1.109554850306047) -> logged [java.lang.IllegalArgumentException, NaN]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:51)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.j",
+    "input (-54, 31, -0.9702005671181002, 1, 1.5546264871225968) -> logged [java.lang.IllegalArgumentException, NaN]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:51)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.j"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 24669,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2,
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:51)\n\nLocation: org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:51)\n\nis triggered by the following inputs:\n\n    input (-46, 87, -5.088414159322953, 0, 0.6283170784663246) -> logged [java.lang.IllegalArgumentException, NaN]\n    input (-20, 58, 7.233428517955616, 0, -0.3937201843410124) -> logged [java.lang.IllegalArgumentException, NaN]\n\nThe error:\n    java.lang.AssertionError: expected:<75.0> but was:<NaN>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:52)\n\nLocation: org.apache.commons.math.analysis.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:52)\n\nis triggered by the following inputs:\n\n    input (44, 75, -2.2997056977315573, 1, 1.533411186839861) -> logged [none, NaN]\n    input (65, 73, -0.37432131423053505, 1, 1.7295972138802282) -> logged [none, NaN]"
+  },
+  "seconds": 44.0
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 18.5,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 16.404951810836792,
+  "time": {
+   "CHECKOUT_BUGGY": 2.6156413555145264,
+   "DELTA_BUGGY": 0.0015659332275390625,
+   "COMPILE_BUGGY": 4.258188009262085,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 2.5439822673797607,
+   "PATCH": 0.012227058410644531,
+   "DELTA_PATCH": 0.0015833377838134766,
+   "COMPILE_PATCH": 3.9349563121795654,
+   "PATCH_TEST": 2.051156520843506,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 63.0
+}

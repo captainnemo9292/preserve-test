@@ -1,0 +1,174 @@
+{
+  "bug": "Math-34",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 14,
+  "cost_usd": 0.5591,
+  "tokens": {
+    "input": 24,
+    "output": 6561,
+    "cache_write": 119889,
+    "cache_read": 138989
+  },
+  "seconds": 97.4,
+  "started_at": "2026-11-21T12:42:02",
+  "timing": {
+    "checkout": 10.6,
+    "agent": 86.8,
+    "derive": 1.7,
+    "validation": 190.5
+  },
+  "llm_seconds": 64.6,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 307,
+        "cache_write": 770,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006235,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 22.5,
+      "turns": 7,
+      "tokens": {
+        "input": 6,
+        "output": 2671,
+        "cache_write": 34132,
+        "cache_read": 27861
+      },
+      "cost_usd": 0.166036,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1418,
+        "cache_write": 6166,
+        "cache_read": 28261
+      },
+      "cost_usd": 0.041674,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 14.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1453,
+        "cache_write": 36590,
+        "cache_read": 611
+      },
+      "cost_usd": 0.160955,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 251,
+        "cache_write": 39016,
+        "cache_read": 603
+      },
+      "cost_usd": 0.158642,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 223,
+        "cache_write": 1607,
+        "cache_read": 39619
+      },
+      "cost_usd": 0.012628,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 238,
+        "cache_write": 1608,
+        "cache_read": 41226
+      },
+      "cost_usd": 0.012943,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math3.genetics.ListPopulationTest::testIterator",
+  "jqf_class": "org.apache.commons.math3.genetics.JQF_ListPopulationTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.genetics.ChromosomeTest",
+    "org.apache.commons.math3.genetics.ElitisticListPopulationTest",
+    "org.apache.commons.math3.genetics.FitnessCachingTest",
+    "org.apache.commons.math3.genetics.GeneticAlgorithmTestBinary",
+    "org.apache.commons.math3.genetics.GeneticAlgorithmTestPermutations",
+    "org.apache.commons.math3.genetics.ListPopulationTest",
+    "org.apache.commons.math3.genetics.TournamentSelectionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIterator",
+  "issue_gist": "ListPopulation.iterator() returns an iterator over the internal modifiable chromosome list, so callers can call remove() on it and delete chromosomes from the population. The iterator should be backed by an unmodifiable view of the list so remove() throws UnsupportedOperationException.",
+  "failing_inputs_count": 2288,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ListPopulationTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug34",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 62338,
+      "inside_buggyIf": 27674,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 47077,
+        "inside_buggyIf": 21059,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 289.6,
+  "paired_inputs_archived": true
+}

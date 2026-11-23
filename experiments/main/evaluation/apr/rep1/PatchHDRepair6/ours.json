@@ -1,0 +1,90 @@
+{
+ "patch": "PatchHDRepair6",
+ "dataset": "apr",
+ "bug": "Math-53",
+ "tool": "HDRepair",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T15:09:23",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 5572,
+   "fail": 14428,
+   "not_run": 0,
+   "failing_examples": [
+    "input (NaN, -1.7952457077488901, -Infinity, Infinity) -> logged [NaN, Infinity, true, NaN, NaN, true]\njava.lang.AssertionError\n\tat org.junit.Assert.fail(Assert.java:86)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.junit.Assert.assertTrue(Assert.java:52)\n\tat org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:67)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runRe",
+    "input (0.0, Infinity, NaN, -54.77572863873705) -> logged [NaN, Infinity, true, NaN, NaN, true]\njava.lang.AssertionError\n\tat org.junit.Assert.fail(Assert.java:86)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.junit.Assert.assertTrue(Assert.java:52)\n\tat org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:67)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runRe",
+    "input (NaN, -58.53411774722381, 75.31158368972837, -20.843749074390544) -> logged [NaN, -79.37786682161436, true, NaN, NaN, true]\njava.lang.AssertionError\n\tat org.junit.Assert.fail(Assert.java:86)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.junit.Assert.assertTrue(Assert.java:52)\n\tat org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:67)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runRe"
+   ]
+  },
+  "fresh": {
+   "trials": 68436,
+   "inside_buggyIf": 30491,
+   "unique_failures": {
+    "java.lang.AssertionError": 4
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError\n    \tat org.junit.Assert.fail(Assert.java:86)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.junit.Assert.assertTrue(Assert.java:52)\n    \tat org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:66)\n\nLocation: org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:66)\n\nis triggered by the following inputs:\n\n    input (0.0, 0.0, NaN, -44.684628775028436) -> logged [NaN, -44.684628775028436, true, NaN, NaN, true]\n    input (Infinity, NaN, 42.05283269448074, -83.50736630077938) -> logged [Infinity, NaN, true, NaN, NaN, true]"
+  },
+  "seconds": 94.0
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 33.0,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 31.04952883720398,
+  "time": {
+   "CHECKOUT_BUGGY": 2.622121810913086,
+   "DELTA_BUGGY": 0.0017638206481933594,
+   "COMPILE_BUGGY": 4.939668416976929,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 2.5619993209838867,
+   "PATCH": 0.010989665985107422,
+   "DELTA_PATCH": 0.0017855167388916016,
+   "COMPILE_PATCH": 5.55461859703064,
+   "PATCH_TEST": 2.454761028289795,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.9900588989257812,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.0000665187835693,
+   "DELTA_FIX": 0.0012898445129394531,
+   "COMPILE_FIX": 5.432127237319946,
+   "REPRO_FOR_VALIDATE": 1.779249906539917,
+   "VALIDATE": 0.01039576530456543
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-PatchHDRepair6/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-PatchHDRepair6/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-PatchHDRepair6/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-PatchHDRepair6/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "54.849502092618195;-73.76791835484234;50.61438027119033;Infinity",
+    "org_out_content": "105.46388236380852;Infinity;false;4.235121821427867;-Infinity;false",
+    "patch_out_content": "56.42029841941309;Infinity;false;4.235121821427867;-Infinity;false",
+    "fix_out_content": "105.46388236380852;Infinity;false;4.235121821427867;-Infinity;false"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 128.0
+}

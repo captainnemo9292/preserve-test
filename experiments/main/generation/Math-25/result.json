@@ -1,0 +1,190 @@
+{
+  "bug": "Math-25",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 12,
+  "cost_usd": 0.7434,
+  "tokens": {
+    "input": 26,
+    "output": 11597,
+    "cache_write": 152465,
+    "cache_read": 174876
+  },
+  "seconds": 134.5,
+  "started_at": "2026-11-21T12:36:39",
+  "timing": {
+    "checkout": 11.6,
+    "agent": 122.9,
+    "derive": 1.6,
+    "validation": 186.1
+  },
+  "llm_seconds": 100.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 398,
+        "cache_write": 787,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007213,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 30.4,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 3725,
+        "cache_write": 35810,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.180606,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 14.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2323,
+        "cache_write": 8006,
+        "cache_read": 29722
+      },
+      "cost_usd": 0.05823,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_symbolize",
+      "seconds": 13.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 2291,
+        "cache_write": 5539,
+        "cache_read": 37728
+      },
+      "cost_usd": 0.048847,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "008_check_inputs",
+      "seconds": 20.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2118,
+        "cache_write": 46753,
+        "cache_read": 611
+      },
+      "cost_usd": 0.208257,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_validate",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 272,
+        "cache_write": 50227,
+        "cache_read": 603
+      },
+      "cost_usd": 0.203696,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "009_validate",
+      "seconds": 4.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 254,
+        "cache_write": 2666,
+        "cache_read": 50830
+      },
+      "cost_usd": 0.018295,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "009_validate",
+      "seconds": 4.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 216,
+        "cache_write": 2677,
+        "cache_read": 53496
+      },
+      "cost_usd": 0.018226,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math3.optimization.fitting.HarmonicFitterTest::testMath844",
+  "jqf_class": "org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.optimization.fitting.HarmonicFitterTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath844",
+  "issue_gist": "HarmonicFitter.ParameterGuesser (commons-math MATH-844) can compute an unusable amplitude guess (and thus bad a/omega/phase) because its guessing algorithm is fragile on some data, e.g. noisy or sparse samples, or data where the integration-based estimate breaks down. This can lead to NaN or nonsensical values or a MathIllegalStateException.",
+  "failing_inputs_count": 3275,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_HarmonicFitterTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug25",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 47097,
+      "inside_buggyIf": 26997,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (7.55635663259871, 9.253528988041486, 9.721881328533131, 10.39197272733961, 11.892839692996349, 12.898549339080004, 13.732658261373697, 14.786952404469348, 16.33388647555889, 17.647935338739764, 18.701238188500813, 20.24363951054225, 24.304125434358774, 4.221360468789948, 7.3635108842229755, 2.099462800246947, -1.7538586735398667, -5.815966922156985, 3.561288430420543, -6.27994920153951, 3.273898100109509, -7.377143310878084, 7.931141714559221, -5.7643127198806905) -> logged [none, 7.654142512718653, 0.4952349031409015, 2.6352289623950838]\njava.lang.AssertionError: expected:<15.840634372618428> but was:<7.654142512718653>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv",
+          "input (3.368290416362349, 4.372905076714433, 4.999448825845874, 5.189544272674433, 5.3329777579821025, 6.932326814882421, 7.607015995567669, -15.242736276169847, 5.028453282875043, 8.59736247557241, 7.3090155126791565, 3.9366136995264576, 2.7134562184178908, 8.7489906258763) -> logged [none, 3.0177672037292043, 1.4823288721506627, -0.7271510769545577]\njava.lang.AssertionError: expected:<11.995863451023073> but was:<3.0177672037292043>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.in",
+          "input (-4.825364453669798, -3.180493600071391, -1.5609505573461735, -0.8507014158860093, 1.040752290462538, 19.970977932896396, 2.0336786489823773, 4.389135018294654, -7.935653811507482, -8.326717976981504) -> logged [none, 6.357926497638079, 1.0710978968266236, 2.8738098522197904]\njava.lang.AssertionError: expected:<14.148847954938951> but was:<6.357926497638079>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv"
+        ]
+      },
+      "fresh": {
+        "trials": 48701,
+        "inside_buggyIf": 27720,
+        "unique_failures": {
+          "java.lang.AssertionError": 2
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: expected:<14.935164862662464> but was:<9.71172164060092>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nLocation: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nis triggered by the following inputs:\n\n    input (5.200556870602046, 7.112680465640926, 8.137488732920747, 8.664530898431536, 9.286525973883506, 9.83131159949611, 10.67973683791973, 11.161234361956453, 12.65310333662767, 13.13948028935929, 13.945576750146053, 14.98485851311603, -19.998345132629215, -4.276292554229535, -6.329538632490301, 9.871984592695714, 0.3540323911661236, 2.8129030771389196, 6.1511196506586465, -5.096173144936422, 0.8195405386228813, 3.194603946877052, -6.950801769866979, -9.551458688506125) -> logged [none, 9.71172164060092, 0.6421700328491897, -0.24366919102629278]\n    input (7.0476743241194875, 8.945947887986469, 9.090839739436262, 10.79751148252461, 29.49584333707319, -5.2484051283026245, -0.8956336926494917, 1.7551714705791106) -> logged [none, 3.5017882994408676, 1.6755888433971209, 1.134860483716715]"
+      }
+    }
+  },
+  "total_seconds": 322.3,
+  "paired_inputs_archived": true
+}

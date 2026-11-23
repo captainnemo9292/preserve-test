@@ -1,0 +1,219 @@
+{
+  "bug": "Math-7",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 20,
+  "cost_usd": 1.0417,
+  "tokens": {
+    "input": 36,
+    "output": 22397,
+    "cache_write": 195211,
+    "cache_read": 367752
+  },
+  "seconds": 253.0,
+  "started_at": "2026-11-21T12:31:12",
+  "timing": {
+    "checkout": 12.0,
+    "agent": 240.9,
+    "derive": 1.8,
+    "validation": 71.7
+  },
+  "llm_seconds": 202.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 440,
+        "cache_write": 949,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008281,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 74.4,
+      "turns": 10,
+      "tokens": {
+        "input": 12,
+        "output": 8255,
+        "cache_write": 43774,
+        "cache_read": 107886
+      },
+      "cost_usd": 0.268459,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 27.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2776,
+        "cache_write": 39201,
+        "cache_read": 611
+      },
+      "cost_usd": 0.184629,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 35.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 4647,
+        "cache_write": 14630,
+        "cache_read": 37429
+      },
+      "cost_usd": 0.108737,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 15.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 2585,
+        "cache_write": 7892,
+        "cache_read": 52059
+      },
+      "cost_usd": 0.062632,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 27.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2972,
+        "cache_write": 20853,
+        "cache_read": 39812
+      },
+      "cost_usd": 0.117117,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 6.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 296,
+        "cache_write": 62242,
+        "cache_read": 603
+      },
+      "cost_usd": 0.251996,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 229,
+        "cache_write": 2854,
+        "cache_read": 62845
+      },
+      "cost_usd": 0.019999,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 197,
+        "cache_write": 2816,
+        "cache_read": 65699
+      },
+      "cost_usd": 0.019812,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math3.ode.nonstiff.DormandPrince853IntegratorTest::testEventsScheduling",
+  "jqf_class": "org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.ode.ContinuousOutputModelTest",
+    "org.apache.commons.math3.ode.FirstOrderConverterTest",
+    "org.apache.commons.math3.ode.JacobianMatricesTest",
+    "org.apache.commons.math3.ode.events.EventStateTest",
+    "org.apache.commons.math3.ode.events.OverlappingEventsTest",
+    "org.apache.commons.math3.ode.events.ReappearingEventTest",
+    "org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaStepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.DormandPrince54IntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.DormandPrince54StepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.DormandPrince853IntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.DormandPrince853StepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.EulerIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.EulerStepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.GillIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.GillStepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerStepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.HighamHall54IntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.HighamHall54StepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.MidpointIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.MidpointStepInterpolatorTest",
+    "org.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegratorTest",
+    "org.apache.commons.math3.ode.nonstiff.ThreeEighthesStepInterpolatorTest",
+    "org.apache.commons.math3.ode.sampling.NordsieckStepInterpolatorTest",
+    "org.apache.commons.math3.ode.sampling.StepNormalizerOutputOverlapTest",
+    "org.apache.commons.math3.ode.sampling.StepNormalizerOutputTest",
+    "org.apache.commons.math3.ode.sampling.StepNormalizerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testEventsScheduling",
+  "issue_gist": "In Commons Math's AbstractIntegrator event handling (ODE integration), when one event handler returns RESET_STATE, the method returns early and the other event handlers that did not trigger in that step are not updated (reinitialized) to the new state/time. On the next step they still reference the old start state/date, so their g(t, y) functions get completely wrong y values (e.g. 1.0e20 instead of within [-1, 1]).",
+  "failing_inputs_count": 300,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_DormandPrince853IntegratorTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug7",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf pass on the buggy version",
+    "on_buggy": {
+      "result": "mixed",
+      "trials": 100001,
+      "inside_buggyIf": 5739,
+      "paired_inputs": 5739,
+      "outcomes": {
+        "java.lang.AssertionError": 5732,
+        "SUCCESS": 7
+      },
+      "passing_examples": [
+        "input (0.6400693886679896, 3, 0.13628131717126513, 7.510750462598686, 0.34733964470459666) -> logged [none, 7.510750462598686, 0.9411474402987237, 0.33724730775850287, 3, 0.694689245518568, 91, 0, 1.0]",
+        "input (0.6756246246365152, 2, 0.10549605051032948, 3.061434785972797, 0.37092819575593194) -> logged [none, 3.061434785972797, 0.08050455863533315, -0.9966115693149936, 2, 0.7419555298183709, 47, 0, 1.020968960792958]",
+        "input (0.8058628328910072, 2, 0.22692239711616013, 7.644511248164482, 0.3123852579350216) -> logged [none, 7.644511248164482, 0.977871782988684, 0.2084723022778505, 3, 0.937229085489231, 77, 0, 1.0309595919055672]"
+      ]
+    },
+    "on_fix": {
+      "result": "not run"
+    }
+  },
+  "total_seconds": 326.5,
+  "paired_inputs_archived": true
+}

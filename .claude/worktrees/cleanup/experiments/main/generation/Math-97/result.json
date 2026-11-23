@@ -1,0 +1,185 @@
+{
+  "bug": "Math-97",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.5661,
+  "tokens": {
+    "input": 24,
+    "output": 5903,
+    "cache_write": 123304,
+    "cache_read": 138535
+  },
+  "seconds": 95.3,
+  "started_at": "2026-11-21T13:26:15",
+  "timing": {
+    "checkout": 8.5,
+    "agent": 86.8,
+    "derive": 1.7,
+    "validation": 103.7
+  },
+  "llm_seconds": 64.4,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 480,
+        "cache_write": 1259,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009921,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 19.1,
+      "turns": 6,
+      "tokens": {
+        "input": 6,
+        "output": 2010,
+        "cache_write": 36248,
+        "cache_read": 25683
+      },
+      "cost_usd": 0.167672,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1326,
+        "cache_write": 6192,
+        "cache_read": 29542
+      },
+      "cost_usd": 0.040986,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 14.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1411,
+        "cache_write": 37643,
+        "cache_read": 611
+      },
+      "cost_usd": 0.164747,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 200,
+        "cache_write": 39408,
+        "cache_read": 603
+      },
+      "cost_usd": 0.1597,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 193,
+        "cache_write": 1266,
+        "cache_read": 40011
+      },
+      "cost_usd": 0.011003,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 283,
+        "cache_write": 1288,
+        "cache_read": 41277
+      },
+      "cost_usd": 0.012118,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.analysis.BrentSolverTest::testRootEndpoints",
+  "jqf_class": "org.apache.commons.math.analysis.JQF_BrentSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.BrentSolverTest",
+    "org.apache.commons.math.analysis.UnivariateRealSolverFactoryImplTest",
+    "org.apache.commons.math.analysis.UnivariateRealSolverUtilsTest",
+    "org.apache.commons.math.distribution.ChiSquareDistributionTest",
+    "org.apache.commons.math.distribution.FDistributionTest",
+    "org.apache.commons.math.distribution.GammaDistributionTest",
+    "org.apache.commons.math.distribution.NormalDistributionTest",
+    "org.apache.commons.math.distribution.TDistributionTest",
+    "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.EulerIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.GillIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.MidpointIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ThreeEighthesIntegratorTest",
+    "org.apache.commons.math.stat.regression.SimpleRegressionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testRootEndpoints",
+  "issue_gist": "BrentSolver.solve(min, max) rejects intervals where an endpoint function value is exactly 0 because it checks yMin * yMax >= 0 and throws IllegalArgumentException. It should treat the endpoint with zero value as the root and return it. The report's suggested fix of returning 0 is wrong in general, because the root is the endpoint, not the value 0.",
+  "failing_inputs_count": 1262,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_BrentSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug97",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 24684,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 24737,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 200.6,
+  "paired_inputs_archived": true
+}

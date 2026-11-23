@@ -1,0 +1,203 @@
+{
+  "bug": "Math-73",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.5652,
+  "tokens": {
+    "input": 24,
+    "output": 6571,
+    "cache_write": 121377,
+    "cache_read": 138982
+  },
+  "seconds": 97.0,
+  "started_at": "2026-11-21T13:09:03",
+  "timing": {
+    "checkout": 9.6,
+    "agent": 87.4,
+    "derive": 1.6,
+    "validation": 89.3
+  },
+  "llm_seconds": 69.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 540,
+        "cache_write": 805,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008705,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 23.7,
+      "turns": 6,
+      "tokens": {
+        "input": 6,
+        "output": 2821,
+        "cache_write": 35254,
+        "cache_read": 27469
+      },
+      "cost_usd": 0.171985,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 8.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1106,
+        "cache_write": 6619,
+        "cache_read": 28866
+      },
+      "cost_usd": 0.040427,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 15.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1509,
+        "cache_write": 36899,
+        "cache_read": 611
+      },
+      "cost_usd": 0.162751,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 198,
+        "cache_write": 39029,
+        "cache_read": 603
+      },
+      "cost_usd": 0.158164,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 218,
+        "cache_write": 1361,
+        "cache_read": 39632
+      },
+      "cost_usd": 0.011595,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 179,
+        "cache_write": 1410,
+        "cache_read": 40993
+      },
+      "cost_usd": 0.011537,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.analysis.solvers.BrentSolverTest::testBadEndpoints",
+  "jqf_class": "org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.solvers.BrentSolverTest",
+    "org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactoryImplTest",
+    "org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtilsTest",
+    "org.apache.commons.math.distribution.BetaDistributionTest",
+    "org.apache.commons.math.distribution.ChiSquareDistributionTest",
+    "org.apache.commons.math.distribution.FDistributionTest",
+    "org.apache.commons.math.distribution.GammaDistributionTest",
+    "org.apache.commons.math.distribution.NormalDistributionTest",
+    "org.apache.commons.math.distribution.TDistributionTest",
+    "org.apache.commons.math.ode.ContinuousOutputModelTest",
+    "org.apache.commons.math.ode.FirstOrderConverterTest",
+    "org.apache.commons.math.ode.events.EventStateTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ClassicalRungeKuttaStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.EulerIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.EulerStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.GillIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.GillStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.MidpointIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.MidpointStepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.ThreeEighthesIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.ThreeEighthesStepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.NordsieckStepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.StepNormalizerTest",
+    "org.apache.commons.math.optimization.MultiStartDifferentiableMultivariateRealOptimizerTest",
+    "org.apache.commons.math.optimization.general.NonLinearConjugateGradientOptimizerTest",
+    "org.apache.commons.math.stat.regression.SimpleRegressionTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testBadEndpoints",
+  "issue_gist": "BrentSolver.solve(f, min, max, initial) does not verify that the function values at min, initial, and max don't all share the same sign (no bracketing check for the three points), so it doesn't throw the IllegalArgumentException its Javadoc promises and instead proceeds with an invalid bracket.",
+  "failing_inputs_count": 702,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_BrentSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug73",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 14212,
+      "paired_inputs": 14212,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 14212
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 14212,
+        "failed_on_buggy": 14212,
+        "pass": 14212,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 14259,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 187.9,
+  "paired_inputs_archived": true
+}

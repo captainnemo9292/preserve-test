@@ -1,0 +1,183 @@
+{
+  "bug": "Math-49",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 16,
+  "cost_usd": 0.7297,
+  "tokens": {
+    "input": 32,
+    "output": 10794,
+    "cache_write": 149083,
+    "cache_read": 253651
+  },
+  "seconds": 137.8,
+  "started_at": "2026-11-21T12:54:21",
+  "timing": {
+    "checkout": 10.7,
+    "agent": 127.0,
+    "derive": 1.7,
+    "validation": 187.3
+  },
+  "llm_seconds": 99.3,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 390,
+        "cache_write": 1327,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009293,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 37.5,
+      "turns": 7,
+      "tokens": {
+        "input": 10,
+        "output": 4206,
+        "cache_write": 37654,
+        "cache_read": 81967
+      },
+      "cost_usd": 0.200893,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1574,
+        "cache_write": 7173,
+        "cache_read": 31058
+      },
+      "cost_usd": 0.047542,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_symbolize",
+      "seconds": 11.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 1781,
+        "cache_write": 4791,
+        "cache_read": 38231
+      },
+      "cost_usd": 0.040805,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "008_check_inputs",
+      "seconds": 20.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2216,
+        "cache_write": 45670,
+        "cache_read": 611
+      },
+      "cost_usd": 0.204905,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 217,
+        "cache_write": 48626,
+        "cache_read": 603
+      },
+      "cost_usd": 0.196742,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "009_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 200,
+        "cache_write": 1915,
+        "cache_read": 49229
+      },
+      "cost_usd": 0.014591,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "009_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 210,
+        "cache_write": 1927,
+        "cache_read": 51144
+      },
+      "cost_usd": 0.01493,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math.linear.SparseRealVectorTest::testConcurrentModification",
+  "jqf_class": "org.apache.commons.math.linear.JQF_SparseRealVectorTest",
+  "hidden_tests": [
+    "org.apache.commons.math.linear.ArrayRealVectorTest",
+    "org.apache.commons.math.linear.SparseRealVectorTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testConcurrentModification",
+  "issue_gist": "OpenMapRealVector.ebeMultiply (and similar element-wise ops) modifies the underlying open-addressing hash map (e.g., setting an entry to zero/removing it) while iterating over it, causing a ConcurrentModificationException (MathRuntimeException) for sparse vectors with non-overlapping nonzero entries.",
+  "failing_inputs_count": 3348,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SparseRealVectorTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug49",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 31612,
+      "inside_buggyIf": 14066,
+      "paired_inputs": 14065,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 14065
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 14065,
+        "failed_on_buggy": 14065,
+        "pass": 14065,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 31206,
+        "inside_buggyIf": 14059,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 326.8,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,186 @@
+{
+  "bug": "Lang-39",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.6208,
+  "tokens": {
+    "input": 28,
+    "output": 8725,
+    "cache_write": 128553,
+    "cache_read": 193226
+  },
+  "seconds": 117.4,
+  "started_at": "2026-11-21T12:16:18",
+  "timing": {
+    "checkout": 9.5,
+    "agent": 107.9,
+    "derive": 1.4,
+    "validation": 111.8
+  },
+  "llm_seconds": 85.6,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 331,
+        "cache_write": 1117,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007863,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 34.5,
+      "turns": 6,
+      "tokens": {
+        "input": 10,
+        "output": 3887,
+        "cache_write": 34617,
+        "cache_read": 75814
+      },
+      "cost_usd": 0.184939,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 17.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2356,
+        "cache_write": 7627,
+        "cache_read": 28373
+      },
+      "cost_usd": 0.056909,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 15.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1519,
+        "cache_write": 38833,
+        "cache_read": 611
+      },
+      "cost_usd": 0.170587,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 219,
+        "cache_write": 41776,
+        "cache_read": 603
+      },
+      "cost_usd": 0.169362,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 255,
+        "cache_write": 2259,
+        "cache_read": 42379
+      },
+      "cost_usd": 0.015832,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 158,
+        "cache_write": 2324,
+        "cache_read": 44638
+      },
+      "cost_usd": 0.015348,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.lang3.StringUtilsTest::testReplace_StringStringArrayStringArray",
+  "jqf_class": "org.apache.commons.lang3.JQF_StringUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang3.ArrayUtilsTest",
+    "org.apache.commons.lang3.CharSetUtilsTest",
+    "org.apache.commons.lang3.CharUtilsTest",
+    "org.apache.commons.lang3.ClassUtilsTest",
+    "org.apache.commons.lang3.StringEscapeUtilsTest",
+    "org.apache.commons.lang3.StringUtilsEqualsIndexOfTest",
+    "org.apache.commons.lang3.StringUtilsIsTest",
+    "org.apache.commons.lang3.StringUtilsStartsEndsWithTest",
+    "org.apache.commons.lang3.StringUtilsSubstringTest",
+    "org.apache.commons.lang3.StringUtilsTest",
+    "org.apache.commons.lang3.StringUtilsTrimEmptyTest",
+    "org.apache.commons.lang3.ValidateTest",
+    "org.apache.commons.lang3.WordUtilsTest",
+    "org.apache.commons.lang3.exception.ContextedExceptionTest",
+    "org.apache.commons.lang3.exception.ContextedRuntimeExceptionTest",
+    "org.apache.commons.lang3.exception.ExceptionUtilsTest",
+    "org.apache.commons.lang3.math.NumberUtilsTest",
+    "org.apache.commons.lang3.time.DurationFormatUtilsTest",
+    "org.apache.commons.lang3.time.StopWatchTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testReplace_StringStringArrayStringArray",
+  "issue_gist": "StringUtils.replaceEach throws a NullPointerException when an element of the replacement array is null, even though StringUtils methods are expected to be null-friendly. A null replacement should be handled gracefully, for example by treating it as an empty string or skipping that replacement, and the behavior should be documented.",
+  "failing_inputs_count": 576,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_StringUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug39",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 10314,
+      "paired_inputs": 10314,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 10314
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 10314,
+        "failed_on_buggy": 10314,
+        "pass": 10314,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 10305,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 230.7,
+  "paired_inputs_archived": true
+}

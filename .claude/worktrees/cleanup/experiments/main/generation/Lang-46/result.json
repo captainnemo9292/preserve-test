@@ -1,0 +1,169 @@
+{
+  "bug": "Lang-46",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 11,
+  "cost_usd": 0.4992,
+  "tokens": {
+    "input": 22,
+    "output": 5481,
+    "cache_write": 108567,
+    "cache_read": 100302
+  },
+  "seconds": 87.5,
+  "started_at": "2026-11-21T12:19:20",
+  "timing": {
+    "checkout": 9.1,
+    "agent": 78.3,
+    "derive": 1.4,
+    "validation": 160.9
+  },
+  "llm_seconds": 56.3,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 262,
+        "cache_write": 1153,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007317,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 15.0,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1791,
+        "cache_write": 30928,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.141738,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 13.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1785,
+        "cache_write": 5847,
+        "cache_read": 24764
+      },
+      "cost_usd": 0.043718,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 11.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1081,
+        "cache_write": 32990,
+        "cache_read": 611
+      },
+      "cost_usd": 0.142835,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 189,
+        "cache_write": 34946,
+        "cache_read": 603
+      },
+      "cost_usd": 0.141742,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 183,
+        "cache_write": 1340,
+        "cache_read": 35549
+      },
+      "cost_usd": 0.010753,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 3.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 190,
+        "cache_write": 1363,
+        "cache_read": 36889
+      },
+      "cost_usd": 0.011049,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.lang.StringEscapeUtilsTest::testEscapeJavaWithSlash",
+  "jqf_class": "org.apache.commons.lang.JQF_StringEscapeUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang.StringEscapeUtilsTest",
+    "org.apache.commons.lang.StringUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testEscapeJavaWithSlash",
+  "issue_gist": "In Commons Lang 2.4, StringEscapeUtils.escapeJava(String) wrongly escapes the '/' character as '\\/'. '/' is not an escapable character in Java strings, so it should be left unchanged. The escaping probably came in as a side effect of the LANG-363 fix, which was meant for JavaScript escaping.",
+  "failing_inputs_count": 614,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_StringEscapeUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug46",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 31562,
+      "inside_buggyIf": 27587,
+      "paired_inputs": 268,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 268
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 268,
+        "failed_on_buggy": 268,
+        "pass": 268,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 90154,
+        "inside_buggyIf": 78900,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 249.7,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,199 @@
+{
+  "bug": "Math-80",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 15,
+  "cost_usd": 1.4748,
+  "tokens": {
+    "input": 28,
+    "output": 12754,
+    "cache_write": 331096,
+    "cache_read": 228254
+  },
+  "seconds": 183.5,
+  "started_at": "2026-11-21T13:09:16",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 173.2,
+    "derive": 1.7,
+    "validation": 186.1
+  },
+  "llm_seconds": 113.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 592,
+        "cache_write": 1955,
+        "cache_read": 808
+      },
+      "cost_usd": 0.013825,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 21.6,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 3076,
+        "cache_write": 33504,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.164892,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 15.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2488,
+        "cache_write": 7368,
+        "cache_read": 25872
+      },
+      "cost_usd": 0.056943,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 11.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1021,
+        "cache_write": 40042,
+        "cache_read": 611
+      },
+      "cost_usd": 0.170443,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 31.0,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 3723,
+        "cache_write": 84592,
+        "cache_read": 33779
+      },
+      "cost_usd": 0.378984,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 11.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 990,
+        "cache_write": 77178,
+        "cache_read": 611
+      },
+      "cost_usd": 0.318677,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 6.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 247,
+        "cache_write": 80317,
+        "cache_read": 603
+      },
+      "cost_usd": 0.323806,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 254,
+        "cache_write": 3052,
+        "cache_read": 80920
+      },
+      "cost_usd": 0.022848,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 5.6,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 363,
+        "cache_write": 3088,
+        "cache_read": 83972
+      },
+      "cost_usd": 0.024387,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math.linear.EigenDecompositionImplTest::testMathpbx02",
+  "jqf_class": "org.apache.commons.math.linear.JQF_EigenDecompositionImplTest",
+  "hidden_tests": [
+    "org.apache.commons.math.linear.EigenDecompositionImplTest",
+    "org.apache.commons.math.linear.EigenSolverTest",
+    "org.apache.commons.math.linear.SingularValueDecompositionImplTest",
+    "org.apache.commons.math.linear.SingularValueSolverTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMathpbx02",
+  "issue_gist": "EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.",
+  "failing_inputs_count": 2922,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_EigenDecompositionImplTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug80",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 17555,
+      "inside_buggyIf": 6375,
+      "paired_inputs": 6375,
+      "outcomes": {
+        "java.lang.AssertionError": 6375
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 6375,
+        "failed_on_buggy": 6375,
+        "pass": 6375,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 17728,
+        "inside_buggyIf": 6383,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 371.4,
+  "paired_inputs_archived": true
+}

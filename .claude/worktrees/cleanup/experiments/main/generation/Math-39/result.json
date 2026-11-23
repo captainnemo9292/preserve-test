@@ -1,0 +1,210 @@
+{
+  "bug": "Math-39",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 17,
+  "cost_usd": 1.4453,
+  "tokens": {
+    "input": 32,
+    "output": 14830,
+    "cache_write": 316287,
+    "cache_read": 318093
+  },
+  "seconds": 191.7,
+  "started_at": "2026-11-21T12:46:52",
+  "timing": {
+    "checkout": 11.3,
+    "agent": 180.4,
+    "derive": 1.6,
+    "validation": 134.3
+  },
+  "llm_seconds": 141.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 508,
+        "cache_write": 871,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008649,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 28.4,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 3093,
+        "cache_write": 36807,
+        "cache_read": 28569
+      },
+      "cost_usd": 0.181027,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 8.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1099,
+        "cache_write": 7128,
+        "cache_read": 30397
+      },
+      "cost_usd": 0.042546,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 20.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2204,
+        "cache_write": 38336,
+        "cache_read": 611
+      },
+      "cost_usd": 0.175449,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 41.5,
+      "turns": 4,
+      "tokens": {
+        "input": 6,
+        "output": 4919,
+        "cache_write": 80221,
+        "cache_read": 102589
+      },
+      "cost_usd": 0.380345,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_check_inputs",
+      "seconds": 20.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2354,
+        "cache_write": 74221,
+        "cache_read": 611
+      },
+      "cost_usd": 0.320489,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_validate",
+      "seconds": 7.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 225,
+        "cache_write": 75567,
+        "cache_read": 603
+      },
+      "cost_usd": 0.304586,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "010_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 202,
+        "cache_write": 1565,
+        "cache_read": 76170
+      },
+      "cost_usd": 0.015905,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "010_validate",
+      "seconds": 4.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 226,
+        "cache_write": 1571,
+        "cache_read": 77735
+      },
+      "cost_usd": 0.016325,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest::testTooLargeFirstStep",
+  "jqf_class": "org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest",
+  "hidden_tests": [
+    "org.apache.commons.math.ode.ContinuousOutputModelTest",
+    "org.apache.commons.math.ode.JacobianMatricesTest",
+    "org.apache.commons.math.ode.events.EventStateTest",
+    "org.apache.commons.math.ode.events.OverlappingEventsTest",
+    "org.apache.commons.math.ode.events.ReappearingEventTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince54StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.DormandPrince853StepInterpolatorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54IntegratorTest",
+    "org.apache.commons.math.ode.nonstiff.HighamHall54StepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.NordsieckStepInterpolatorTest",
+    "org.apache.commons.math.ode.sampling.StepNormalizerTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testTooLargeFirstStep",
+  "issue_gist": "Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.",
+  "failing_inputs_count": 2282,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_DormandPrince853IntegratorTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug39",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 1163,
+      "inside_buggyIf": 894,
+      "paired_inputs": 894,
+      "outcomes": {
+        "java.lang.AssertionError": 894
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 894,
+        "failed_on_buggy": 894,
+        "pass": 894,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 32498,
+        "inside_buggyIf": 24713,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 327.7,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,55 @@
+{
+ "patch": "120_NFL_Kali-A_Patch_2_2",
+ "dataset": "apr",
+ "bug": "Math-32",
+ "tool": "Kali-A",
+ "label": "Incorrect",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:42:19",
+ "preserve": {
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 209.8,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 207.42405700683594,
+  "time": {
+   "CHECKOUT_BUGGY": 3.8077008724212646,
+   "DELTA_BUGGY": 0.001699686050415039,
+   "COMPILE_BUGGY": 6.4980998039245605,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.7689266204833984,
+   "PATCH": 0.012673139572143555,
+   "DELTA_PATCH": 0.0020606517791748047,
+   "COMPILE_PATCH": 9.186883449554443,
+   "PATCH_TEST": 2.4320366382598877,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.4818468093872,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 209.8
+}

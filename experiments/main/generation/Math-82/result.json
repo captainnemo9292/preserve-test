@@ -1,0 +1,455 @@
+{
+  "bug": "Math-82",
+  "success": false,
+  "failure_reason": "LLM call budget exhausted (50 calls)",
+  "model": "sonnet",
+  "llm_call_count": 50,
+  "cost_usd": 3.7915,
+  "tokens": {
+    "input": 66,
+    "output": 60993,
+    "cache_write": 696655,
+    "cache_read": 3948399
+  },
+  "seconds": 794.7,
+  "started_at": "2026-11-21T13:12:12",
+  "timing": {
+    "checkout": 10.5,
+    "agent": 784.3
+  },
+  "llm_seconds": 487.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 8.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 409,
+        "cache_write": 1515,
+        "cache_read": 808
+      },
+      "cost_usd": 0.010235,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 14.6,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 1891,
+        "cache_write": 32317,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.148294,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 15.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1561,
+        "cache_write": 30170,
+        "cache_read": 611
+      },
+      "cost_usd": 0.136355,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 18.9,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2337,
+        "cache_write": 68985,
+        "cache_read": 26028
+      },
+      "cost_usd": 0.301921,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_check_inputs",
+      "seconds": 12.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1127,
+        "cache_write": 61632,
+        "cache_read": 611
+      },
+      "cost_usd": 0.257863,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "008_symbolize",
+      "seconds": 68.3,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 9049,
+        "cache_write": 105629,
+        "cache_read": 57231
+      },
+      "cost_usd": 0.518737,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_check_inputs",
+      "seconds": 35.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 4279,
+        "cache_write": 97912,
+        "cache_read": 611
+      },
+      "cost_usd": 0.434503,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "011_symbolize",
+      "seconds": 23.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3327,
+        "cache_write": 19841,
+        "cache_read": 93071
+      },
+      "cost_usd": 0.121945,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "013_check_inputs",
+      "seconds": 46.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 6113,
+        "cache_write": 15259,
+        "cache_read": 98523
+      },
+      "cost_usd": 0.132022,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "014_symbolize",
+      "seconds": 16.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2231,
+        "cache_write": 13504,
+        "cache_read": 112912
+      },
+      "cost_usd": 0.087621,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "016_check_inputs",
+      "seconds": 10.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 995,
+        "cache_write": 17313,
+        "cache_read": 113782
+      },
+      "cost_usd": 0.090584,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "017_symbolize",
+      "seconds": 16.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2191,
+        "cache_write": 12481,
+        "cache_read": 126416
+      },
+      "cost_usd": 0.08448,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "019_check_inputs",
+      "seconds": 10.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1166,
+        "cache_write": 12263,
+        "cache_read": 131095
+      },
+      "cost_usd": 0.073825,
+      "outcome": "success"
+    },
+    {
+      "call": 14,
+      "step": "020_symbolize",
+      "seconds": 15.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2200,
+        "cache_write": 12393,
+        "cache_read": 138897
+      },
+      "cost_usd": 0.085466,
+      "outcome": "success"
+    },
+    {
+      "call": 15,
+      "step": "022_check_inputs",
+      "seconds": 12.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1375,
+        "cache_write": 12361,
+        "cache_read": 143358
+      },
+      "cost_usd": 0.077534,
+      "outcome": "success"
+    },
+    {
+      "call": 16,
+      "step": "023_symbolize",
+      "seconds": 15.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2081,
+        "cache_write": 12501,
+        "cache_read": 151290
+      },
+      "cost_usd": 0.085947,
+      "outcome": "success"
+    },
+    {
+      "call": 17,
+      "step": "025_check_inputs",
+      "seconds": 7.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 867,
+        "cache_write": 12623,
+        "cache_read": 155719
+      },
+      "cost_usd": 0.074738,
+      "outcome": "success"
+    },
+    {
+      "call": 18,
+      "step": "026_symbolize",
+      "seconds": 15.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2107,
+        "cache_write": 12422,
+        "cache_read": 163791
+      },
+      "cost_usd": 0.087141,
+      "outcome": "success"
+    },
+    {
+      "call": 19,
+      "step": "028_check_inputs",
+      "seconds": 7.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 857,
+        "cache_write": 12136,
+        "cache_read": 168342
+      },
+      "cost_usd": 0.073952,
+      "outcome": "success"
+    },
+    {
+      "call": 20,
+      "step": "029_symbolize",
+      "seconds": 13.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1949,
+        "cache_write": 12424,
+        "cache_read": 176213
+      },
+      "cost_usd": 0.086811,
+      "outcome": "success"
+    },
+    {
+      "call": 21,
+      "step": "031_check_inputs",
+      "seconds": 9.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1005,
+        "cache_write": 12114,
+        "cache_read": 180478
+      },
+      "cost_usd": 0.076558,
+      "outcome": "success"
+    },
+    {
+      "call": 22,
+      "step": "032_symbolize",
+      "seconds": 13.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1792,
+        "cache_write": 12286,
+        "cache_read": 188637
+      },
+      "cost_usd": 0.085932,
+      "outcome": "success"
+    },
+    {
+      "call": 23,
+      "step": "034_check_inputs",
+      "seconds": 8.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 735,
+        "cache_write": 12182,
+        "cache_read": 192592
+      },
+      "cost_usd": 0.075341,
+      "outcome": "success"
+    },
+    {
+      "call": 24,
+      "step": "035_symbolize",
+      "seconds": 11.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1694,
+        "cache_write": 12066,
+        "cache_read": 200923
+      },
+      "cost_usd": 0.0853,
+      "outcome": "success"
+    },
+    {
+      "call": 25,
+      "step": "037_check_inputs",
+      "seconds": 7.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 820,
+        "cache_write": 11925,
+        "cache_read": 204774
+      },
+      "cost_usd": 0.076381,
+      "outcome": "success"
+    },
+    {
+      "call": 26,
+      "step": "038_symbolize",
+      "seconds": 11.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1695,
+        "cache_write": 12049,
+        "cache_read": 212989
+      },
+      "cost_usd": 0.086449,
+      "outcome": "success"
+    },
+    {
+      "call": 27,
+      "step": "040_check_inputs",
+      "seconds": 8.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 854,
+        "cache_write": 12065,
+        "cache_read": 216699
+      },
+      "cost_usd": 0.078474,
+      "outcome": "success"
+    },
+    {
+      "call": 28,
+      "step": "041_symbolize",
+      "seconds": 11.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1741,
+        "cache_write": 12080,
+        "cache_read": 225038
+      },
+      "cost_usd": 0.088238,
+      "outcome": "success"
+    },
+    {
+      "call": 29,
+      "step": "043_check_inputs",
+      "seconds": 8.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 849,
+        "cache_write": 12125,
+        "cache_read": 228764
+      },
+      "cost_usd": 0.07987,
+      "outcome": "success"
+    },
+    {
+      "call": 30,
+      "step": "044_symbolize",
+      "seconds": 11.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1696,
+        "cache_write": 12082,
+        "cache_read": 237118
+      },
+      "cost_usd": 0.089004,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 14,
+  "failing_test": "org.apache.commons.math.optimization.linear.SimplexSolverTest::testMath288",
+  "jqf_class": "org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.optimization.linear.SimplexSolverTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath288",
+  "issue_gist": "Commons Math SimplexSolver returns a suboptimal solution (a=1, b=0.5, value 8.5) for a bounded maximization LP whose true optimum is a=1, b=1, value 10. The simplex pivoting or optimality logic, likely in choosing the pivot row or entering column, stops at a non-optimal point.",
+  "failing_inputs_count": 1898,
+  "total_seconds": 794.7,
+  "paired_inputs_archived": false
+}

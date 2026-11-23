@@ -1,0 +1,1174 @@
+
+====================================================================================================
+[12:26:17] BUG Math-2: failing test org.apache.commons.math3.distribution.HypergeometricDistributionTest::testMath1021 -> org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-2/Math2b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source
+====================================================================================================
+Title: HypergeometricDistribution.sample suffers from integer overflow
+
+Hi, I have an application which broke when ported from commons math 2.2 to 3.2. It looks like the HypergeometricDistribution.sample() method doesn't work as well as it used to with large integer values -- the example code below should return a sample between 0 and 50, but usually returns -50.
+
+{code}
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+public class Foo {
+  public static void main(String[] args) {
+    HypergeometricDistribution a = new HypergeometricDistribution(
+        43130568, 42976365, 50);
+    System.out.printf("%d %d%n", a.getSupportLowerBound(), a.getSupportUpperBound()); // Prints "0 50"
+    System.out.printf("%d%n",a.sample());                                             // Prints "-50"
+  }
+}
+{code}
+
+In the debugger, I traced it as far as an integer overflow in HypergeometricDistribution.getNumericalMean() -- instead of doing
+{code}
+return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
+{code}
+it could do:
+{code}
+return getSampleSize() * ((double) getNumberOfSuccesses() / (double) getPopulationSize());
+{code}
+This seemed to fix it, based on a quick test.
+
+====================================================================================================
+[12:26:17] HIDDEN FROM THE AGENT: 1 relevant test classes
+====================================================================================================
+org.apache.commons.math3.distribution.HypergeometricDistributionTest
+
+====================================================================================================
+[12:26:17] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:26:17] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: HypergeometricDistribution.sample suffers from integer overflow
+
+Hi, I have an application which broke when ported from commons math 2.2 to 3.2. It looks like the HypergeometricDistribution.sample() method doesn't work as well as it used to with large integer values -- the example code below should return a sample between 0 and 50, but usually returns -50.
+
+{code}
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+public class Foo {
+  public static void main(String[] args) {
+    HypergeometricDistribution a = new HypergeometricDistribution(
+        43130568, 42976365, 50);
+    System.out.printf("%d %d%n", a.getSupportLowerBound(), a.getSupportUpperBound()); // Prints "0 50"
+    System.out.printf("%d%n",a.sample());                                             // Prints "-50"
+  }
+}
+{code}
+
+In the debugger, I traced it as far as an integer overflow in HypergeometricDistribution.getNumericalMean() -- instead of doing
+{code}
+return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
+{code}
+it could do:
+{code}
+return getSampleSize() * ((double) getNumberOfSuccesses() / (double) getPopulationSize());
+{code}
+This seemed to fix it, based on a quick test.
+
+====================================================================================================
+[12:26:22] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "HypergeometricDistribution.getNumericalMean() computes getSampleSize() * getNumberOfSuccesses() in int arithmetic, which overflows for large populations. This makes the mean wrong (negative), so sample() returns a negative value outside the support range.",
+  "concrete_examples": [
+    {
+      "input": "new HypergeometricDistribution(43130568, 42976365, 50).sample()",
+      "expected": "A sample between 0 and 50 (the support bounds are 0 and 50)",
+      "actual": "Usually returns -50, because the int product 50 * 42976365 overflows in getNumericalMean()"
+    },
+    {
+      "input": "new HypergeometricDistribution(43130568, 42976365, 50).getNumericalMean()",
+      "expected": "About 49.82, which is 50 * (42976365.0 / 43130568.0)",
+      "actual": "A wrong, negative or garbage value, because (double)(50 * 42976365) / 43130568 is computed after the int overflow"
+    }
+  ]
+}
+
+====================================================================================================
+[12:26:22] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:26:23] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0086
+====================================================================================================
+{
+  "issue_gist": "HypergeometricDistribution.getNumericalMean() computes getSampleSize() * getNumberOfSuccesses() in int arithmetic, which overflows for large populations. This makes the mean wrong (negative), so sample() returns a negative value outside the support range.",
+  "concrete_examples": [
+    {
+      "input": "new HypergeometricDistribution(43130568, 42976365, 50).sample()",
+      "expected": "A sample between 0 and 50 (the support bounds are 0 and 50)",
+      "actual": "Usually returns -50, because the int product 50 * 42976365 overflows in getNumericalMean()"
+    },
+    {
+      "input": "new HypergeometricDistribution(43130568, 42976365, 50).getNumericalMean()",
+      "expected": "About 49.82, which is 50 * (42976365.0 / 43130568.0)",
+      "actual": "A wrong, negative or garbage value, because (double)(50 * 42976365) / 43130568 is computed after the int overflow"
+    }
+  ]
+}
+
+====================================================================================================
+[12:26:23] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:26:23] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source
+Test file: src/test/java/org/apache/commons/math3/distribution/JQF_HypergeometricDistributionTest.java
+Test class: org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest
+Test method: testBugReproduction
+
+Bug summary: HypergeometricDistribution.getNumericalMean() computes getSampleSize() * getNumberOfSuccesses() in int arithmetic, which overflows for large populations. This makes the mean wrong (negative), so sample() returns a negative value outside the support range.
+
+Concrete examples:
+[{'input': 'new HypergeometricDistribution(43130568, 42976365, 50).sample()', 'expected': 'A sample between 0 and 50 (the support bounds are 0 and 50)', 'actual': 'Usually returns -50, because the int product 50 * 42976365 overflows in getNumericalMean()'}, {'input': 'new HypergeometricDistribution(43130568, 42976365, 50).getNumericalMean()', 'expected': 'About 49.82, which is 50 * (42976365.0 / 43130568.0)', 'actual': 'A wrong, negative or garbage value, because (double)(50 * 42976365) / 43130568 is computed after the int overflow'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:26:28] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "getNumericalMean|sample|getSupport|public HypergeometricDistribution|throw",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source/src/main/java/org/apache/commons/math3/distribution/HypergeometricDistribution.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:26:28] [002_symbolize] TOOL RESULT
+====================================================================================================
+42:    /** The sample size. */
+43:    private final int sampleSize;
+51:     * size, number of successes in the population, and sample size.
+55:     * @param sampleSize Sample size.
+56:     * @throws NotPositiveException if {@code numberOfSuccesses < 0}.
+57:     * @throws NotStrictlyPositiveException if {@code populationSize <= 0}.
+58:     * @throws NumberIsTooLargeException if {@code numberOfSuccesses > populationSize},
+59:     * or {@code sampleSize > populationSize}.
+61:    public HypergeometricDistribution(int populationSize, int numberOfSuccesses, int sampleSize)
+62:    throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
+63:        this(new Well19937c(), populationSize, numberOfSuccesses, sampleSize);
+72:     * @param sampleSize Sample size.
+73:     * @throws NotPositiveException if {@code numberOfSuccesses < 0}.
+74:     * @throws NotStrictlyPositiveException if {@code populationSize <= 0}.
+75:     * @throws NumberIsTooLargeException if {@code numberOfSuccesses > populationSize},
+76:     * or {@code sampleSize > populationSize}.
+79:    public HypergeometricDistribution(RandomGenerator rng,
+82:                                      int sampleSize)
+83:    throws NotPositiveException, NotStrictlyPositiveException, NumberIsTooLargeException {
+87:            throw new NotStrictlyPositiveException(LocalizedFormats.POPULATION_SIZE,
+91:            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SUCCESSES,
+94:        if (sampleSize < 0) {
+95:            throw new NotPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
+96:                                           sampleSize);
+100:            throw new NumberIsTooLargeException(LocalizedFormats.NUMBER_OF_SUCCESS_LARGER_THAN_POPULATION_SIZE,
+103:        if (sampleSize > populationSize) {
+104:            throw new NumberIsTooLargeException(LocalizedFormats.SAMPLE_SIZE_LARGER_THAN_POPULATION_SIZE,
+105:                                                sampleSize, populationSize, true);
+110:        this.sampleSize = sampleSize;
+117:        int[] domain = getDomain(populationSize, numberOfSuccesses, sampleSize);
+174:     * Access the sample size.
+176:     * @return the sample size.
+179:        return sampleSize;
+198:        int[] domain = getDomain(populationSize, numberOfSuccesses, sampleSize);
+202:            double p = (double) sampleSize / (double) populationSize;
+203:            double q = (double) (populationSize - sampleSize) / (double) populationSize;
+207:                SaddlePointExpansion.logBinomialProbability(sampleSize - x,
+210:                SaddlePointExpansion.logBinomialProbability(sampleSize, populationSize, p, q);
+227:        final int[] domain = getDomain(populationSize, numberOfSuccesses, sampleSize);
+264:     * For population size {@code N}, number of successes {@code m}, and sample
+267:    public double getNumericalMean() {
+274:     * For population size {@code N}, number of successes {@code m}, and sample
+301:     * For population size {@code N}, number of successes {@code m}, and sample
+307:    public int getSupportLowerBound() {
+315:     * For number of successes {@code m} and sample size {@code n}, the upper
+320:    public int getSupportUpperBound() {
+
+====================================================================================================
+[12:26:31] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source/src/main/java/org/apache/commons/math3/distribution/HypergeometricDistribution.java",
+  "offset": 255,
+  "limit": 80
+}
+
+====================================================================================================
+[12:26:31] [002_symbolize] TOOL RESULT
+====================================================================================================
+255	            x0 += dx;
+256	            ret += probability(x0);
+257	        }
+258	        return ret;
+259	    }
+260	
+261	    /**
+262	     * {@inheritDoc}
+263	     *
+264	     * For population size {@code N}, number of successes {@code m}, and sample
+265	     * size {@code n}, the mean is {@code n * m / N}.
+266	     */
+267	    public double getNumericalMean() {
+268	        return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
+269	    }
+270	
+271	    /**
+272	     * {@inheritDoc}
+273	     *
+274	     * For population size {@code N}, number of successes {@code m}, and sample
+275	     * size {@code n}, the variance is
+276	     * {@code [n * m * (N - n) * (N - m)] / [N^2 * (N - 1)]}.
+277	     */
+278	    public double getNumericalVariance() {
+279	        if (!numericalVarianceIsCalculated) {
+280	            numericalVariance = calculateNumericalVariance();
+281	            numericalVarianceIsCalculated = true;
+282	        }
+283	        return numericalVariance;
+284	    }
+285	
+286	    /**
+287	     * Used by {@link #getNumericalVariance()}.
+288	     *
+289	     * @return the variance of this distribution
+290	     */
+291	    protected double calculateNumericalVariance() {
+292	        final double N = getPopulationSize();
+293	        final double m = getNumberOfSuccesses();
+294	        final double n = getSampleSize();
+295	        return (n * m * (N - n) * (N - m)) / (N * N * (N - 1));
+296	    }
+297	
+298	    /**
+299	     * {@inheritDoc}
+300	     *
+301	     * For population size {@code N}, number of successes {@code m}, and sample
+302	     * size {@code n}, the lower bound of the support is
+303	     * {@code max(0, n + m - N)}.
+304	     *
+305	     * @return lower bound of the support
+306	     */
+307	    public int getSupportLowerBound() {
+308	        return FastMath.max(0,
+309	                            getSampleSize() + getNumberOfSuccesses() - getPopulationSize());
+310	    }
+311	
+312	    /**
+313	     * {@inheritDoc}
+314	     *
+315	     * For number of successes {@code m} and sample size {@code n}, the upper
+316	     * bound of the support is {@code min(m, n)}.
+317	     *
+318	     * @return upper bound of the support
+319	     */
+320	    public int getSupportUpperBound() {
+321	        return FastMath.min(getNumberOfSuccesses(), getSampleSize());
+322	    }
+323	
+324	    /**
+325	     * {@inheritDoc}
+326	     *
+327	     * The support of this distribution is connected.
+328	     *
+329	     * @return {@code true}
+330	     */
+331	    public boolean isSupportConnected() {
+332	        return true;
+333	    }
+334	}
+
+====================================================================================================
+[12:26:31] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "sample\\(\\)|getNumericalMean|inverseCumulativeProbability",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source/src/main/java/org/apache/commons/math3/distribution/AbstractIntegerDistribution.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:26:31] [002_symbolize] TOOL RESULT
+====================================================================================================
+100:    public int inverseCumulativeProbability(final double p) throws OutOfRangeException {
+124:        // cf. AbstractRealDistribution.inverseCumulativeProbability(double)
+125:        final double mu = getNumericalMean();
+147:     * #inverseCumulativeProbability(double)}. It assumes {@code 0 < p < 1} and
+192:    public int sample() {
+193:        return inverseCumulativeProbability(random.nextDouble());
+200:     * {@link #sample()} in a loop.
+209:            out[i] = sample();
+
+====================================================================================================
+[12:26:51] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.From;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.HypergeometricDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_HypergeometricDistributionTest {\n\n    /** Generates {populationSize, numberOfSuccesses, sampleSize}. */\n    public static class ParamsGen extends Generator<int[]> {\n        public ParamsGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int mode = r.nextInt(0, 3);\n            int popSize;\n            if (mode == 0) {\n                // large population: product usually overflows int\n                popSize = r.nextInt(1000000, Integer.MAX_VALUE - 1);\n            } else if (mode == 1) {\n                // small population: product never overflows\n                popSize = r.nextInt(1, 46340);\n            } else {\n                // medium population: mixed\n                popSize = r.nextInt(1, 200000);\n            }\n            int succ;\n            int sample;\n            int sub = r.nextInt(0, 3);\n            if (sub == 0) {\n                succ = r.nextInt(0, popSize);\n                sample = r.nextInt(0, popSize);\n            } else if (sub == 1) {\n                // many successes, small sample (like the report)\n                succ = r.nextInt(popSize / 2, popSize);\n                sample = r.nextInt(0, Math.min(popSize, 100));\n            } else {\n                // boundary-ish values\n                succ = r.nextBoolean() ? popSize : r.nextInt(0, popSize);\n                sample = r.nextBoolean() ? popSize : r.nextInt(0, popSize);\n            }\n            return new int[]{popSize, succ, sample};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ParamsGen.class) int[] p) {\n        int populationSize = p[0];\n        int numberOfSuccesses = p[1];\n        int sampleSize = p[2];\n\n        boolean validIf = populationSize >= 1\n                && numberOfSuccesses >= 0 && numberOfSuccesses <= populationSize\n                && sampleSize >= 0 && sampleSize <= populationSize;\n        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        HypergeometricDistribution dist =\n                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);\n        double mean = dist.getNumericalMean();\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n\n        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });\n        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);\n        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));\n        assertTrue(\"mean must be within [0, sampleSize]: \" + mean, mean >= 0 && mean <= sampleSize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:26:51] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:26:52] [002_symbolize] CALL DONE subtype=success turns=5 session_cost=$0.1775
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.From;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.HypergeometricDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_HypergeometricDistributionTest {\n\n    /** Generates {populationSize, numberOfSuccesses, sampleSize}. */\n    public static class ParamsGen extends Generator<int[]> {\n        public ParamsGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int mode = r.nextInt(0, 3);\n            int popSize;\n            if (mode == 0) {\n                // large population: product usually overflows int\n                popSize = r.nextInt(1000000, Integer.MAX_VALUE - 1);\n            } else if (mode == 1) {\n                // small population: product never overflows\n                popSize = r.nextInt(1, 46340);\n            } else {\n                // medium population: mixed\n                popSize = r.nextInt(1, 200000);\n            }\n            int succ;\n            int sample;\n            int sub = r.nextInt(0, 3);\n            if (sub == 0) {\n                succ = r.nextInt(0, popSize);\n                sample = r.nextInt(0, popSize);\n            } else if (sub == 1) {\n                // many successes, small sample (like the report)\n                succ = r.nextInt(popSize / 2, popSize);\n                sample = r.nextInt(0, Math.min(popSize, 100));\n            } else {\n                // boundary-ish values\n                succ = r.nextBoolean() ? popSize : r.nextInt(0, popSize);\n                sample = r.nextBoolean() ? popSize : r.nextInt(0, popSize);\n            }\n            return new int[]{popSize, succ, sample};\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(ParamsGen.class) int[] p) {\n        int populationSize = p[0];\n        int numberOfSuccesses = p[1];\n        int sampleSize = p[2];\n\n        boolean validIf = populationSize >= 1\n                && numberOfSuccesses >= 0 && numberOfSuccesses <= populationSize\n                && sampleSize >= 0 && sampleSize <= populationSize;\n        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        HypergeometricDistribution dist =\n                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);\n        double mean = dist.getNumericalMean();\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n\n        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });\n        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);\n        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));\n        assertTrue(\"mean must be within [0, sampleSize]: \" + mean, mean >= 0 && mean <= sampleSize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:26:52] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:26:52] TEST CODE (org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest)
+====================================================================================================
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.From;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    /** Generates {populationSize, numberOfSuccesses, sampleSize}. */
+    public static class ParamsGen extends Generator<int[]> {
+        public ParamsGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int mode = r.nextInt(0, 3);
+            int popSize;
+            if (mode == 0) {
+                // large population: product usually overflows int
+                popSize = r.nextInt(1000000, Integer.MAX_VALUE - 1);
+            } else if (mode == 1) {
+                // small population: product never overflows
+                popSize = r.nextInt(1, 46340);
+            } else {
+                // medium population: mixed
+                popSize = r.nextInt(1, 200000);
+            }
+            int succ;
+            int sample;
+            int sub = r.nextInt(0, 3);
+            if (sub == 0) {
+                succ = r.nextInt(0, popSize);
+                sample = r.nextInt(0, popSize);
+            } else if (sub == 1) {
+                // many successes, small sample (like the report)
+                succ = r.nextInt(popSize / 2, popSize);
+                sample = r.nextInt(0, Math.min(popSize, 100));
+            } else {
+                // boundary-ish values
+                succ = r.nextBoolean() ? popSize : r.nextInt(0, popSize);
+                sample = r.nextBoolean() ? popSize : r.nextInt(0, popSize);
+            }
+            return new int[]{popSize, succ, sample};
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(ParamsGen.class) int[] p) {
+        int populationSize = p[0];
+        int numberOfSuccesses = p[1];
+        int sampleSize = p[2];
+
+        boolean validIf = populationSize >= 1
+                && numberOfSuccesses >= 0 && numberOfSuccesses <= populationSize
+                && sampleSize >= 0 && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+====================================================================================================
+[12:26:52] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `int populationSize = p[0];`
+
+====================================================================================================
+[12:26:52] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:26:52] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `int populationSize = p[0];`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source
+Test file: src/test/java/org/apache/commons/math3/distribution/JQF_HypergeometricDistributionTest.java
+Test class: org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest
+Test method: testBugReproduction
+
+Bug summary: HypergeometricDistribution.getNumericalMean() computes getSampleSize() * getNumberOfSuccesses() in int arithmetic, which overflows for large populations. This makes the mean wrong (negative), so sample() returns a negative value outside the support range.
+
+Concrete examples:
+[{'input': 'new HypergeometricDistribution(43130568, 42976365, 50).sample()', 'expected': 'A sample between 0 and 50 (the support bounds are 0 and 50)', 'actual': 'Usually returns -50, because the int product 50 * 42976365 overflows in getNumericalMean()'}, {'input': 'new HypergeometricDistribution(43130568, 42976365, 50).getNumericalMean()', 'expected': 'About 49.82, which is 50 * (42976365.0 / 43130568.0)', 'actual': 'A wrong, negative or garbage value, because (double)(50 * 42976365) / 43130568 is computed after the int overflow'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-2/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:27:03] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.HypergeometricDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_HypergeometricDistributionTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,\n                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,\n                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {\n        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;\n        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        HypergeometricDistribution dist =\n                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);\n        double mean = dist.getNumericalMean();\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n\n        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });\n        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);\n        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));\n        assertTrue(\"mean must be within [0, sampleSize]: \" + mean, mean >= 0 && mean <= sampleSize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:27:03] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:27:04] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2219
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math3.distribution.HypergeometricDistribution;\n\n@RunWith(JQF.class)\npublic class JQF_HypergeometricDistributionTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,\n                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,\n                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {\n        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;\n        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        HypergeometricDistribution dist =\n                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);\n        double mean = dist.getNumericalMean();\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n\n        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });\n        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);\n        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));\n        assertTrue(\"mean must be within [0, sampleSize]: \" + mean, mean >= 0 && mean <= sampleSize);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:27:04] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:27:04] TEST CODE (org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest)
+====================================================================================================
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+====================================================================================================
+[12:27:05] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:27:26] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 31581,
+  "discarded_by_assume": 21071,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 1733
+  },
+  "passed_assume": 10510,
+  "classified": 1733
+}
+
+====================================================================================================
+[12:27:26] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:27:26] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: HypergeometricDistribution.sample suffers from integer overflow
+
+Hi, I have an application which broke when ported from commons math 2.2 to 3.2. It looks like the HypergeometricDistribution.sample() method doesn't work as well as it used to with large integer values -- the example code below should return a sample between 0 and 50, but usually returns -50.
+
+{code}
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+public class Foo {
+  public static void main(String[] args) {
+    HypergeometricDistribution a = new HypergeometricDistribution(
+        43130568, 42976365, 50);
+    System.out.printf("%d %d%n", a.getSupportLowerBound(), a.getSupportUpperBound()); // Prints "0 50"
+    System.out.printf("%d%n",a.sample());                                             // Prints "-50"
+  }
+}
+{code}
+
+In the debugger, I traced it as far as an integer overflow in HypergeometricDistribution.getNumericalMean() -- instead of doing
+{code}
+return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
+{code}
+it could do:
+{code}
+return getSampleSize() * ((double) getNumberOfSuccesses() / (double) getPopulationSize());
+{code}
+This seemed to fix it, based on a quick test.
+
+=== Test ===
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<5.726155286248134E7> but was:<1.1660966935403876>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)
+
+Location: org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)
+
+is triggered by the following inputs:
+
+    input (2023496973, 1506378553, 474350399) -> logged [-0.9061062356232148, 0, 474350399, 2023496973, 1506378553, 474350399]
+    input (1442162015, 61417477, 1113222790) -> logged [-0.12219154309094737, 0, 61417477, 1442162015, 61417477, 1113222790]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:27:40] [006_check_inputs] MODEL TEXT
+====================================================================================================
+is_relevant: true. The failures show the reported integer-overflow bug in `getNumericalMean()`, and `buggyIf` and the input ranges are accurate.
+
+1. **Inputs match the conditions.** Both failing inputs are large populations where `sampleSize * numberOfSuccesses` exceeds `Integer.MAX_VALUE`. For `(2023496973, 1506378553, 474350399)` the logged mean is -0.906. For `(1442162015, 61417477, 1113222790)` it is -0.122. The correct means would be about 3.5e8 and 4.7e7. The report has the same shape, with a large population and an int product that overflows.
+
+2. **The error matches the expected behavior.** `getNumericalMean()` returns a wrong value (negative or tiny) instead of `n*m/N`. The report traces the bad `sample()` result to exactly this mean.
+
+3. **Same root cause.** The wrong mean comes from the int multiplication `getSampleSize() * getNumberOfSuccesses()` before the cast to double. That is the line the report names. The test checks the mean directly rather than `sample()`, which is a valid way to test the cause.
+
+4. **`buggyIf` does not accept correct inputs.** `buggyIf` is true exactly when the long product exceeds `Integer.MAX_VALUE`. Any such product wraps to a value different from the true one, because it is shifted by a multiple of 2^32. The mean is therefore wrong for every input `buggyIf` accepts. The second assertion, that the mean lies in `[0, sampleSize]`, always holds for a correct mean, so it is not wrongly strict.
+
+5. **`buggyIf` does not miss bug-triggering inputs.** When the product is at most `Integer.MAX_VALUE`, there is no overflow and the mean is correct. Every overflowing input is covered.
+
+6. **The ranges and `validIf` cover the valid domain.** `populationSize` runs from 1 up, the other two from 0 up, and `validIf` requires `numberOfSuccesses <= populationSize` and `sampleSize <= populationSize`. Small and non-overflowing inputs are included. The only gap is that `maxInt` is exclusive, so `Integer.MAX_VALUE` itself is never generated. That is negligible.
+
+The stack trace shows `expected:<5.726155286248134E7> but was:<1.1660966935403876>`. That is not the same as either logged input. It most likely comes from a third failing input, and it shows the same kind of wrong mean.
+
+====================================================================================================
+[12:27:42] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are large populations where sampleSize*numberOfSuccesses overflows int. For these, getNumericalMean() returns a wrong value (negative or tiny) instead of n*m/N. This is the overflow in the report's named line, and it is what drives the bad sample() result. buggyIf is exact: the product exceeds Integer.MAX_VALUE exactly when overflow happens, and every wrapped product differs from the true one, so the mean is always wrong there. No correct inputs are included and no overflowing inputs are missed. The parameter ranges plus validIf cover the full valid domain, including non-overflowing inputs. The only gap is that Integer.MAX_VALUE itself is never generated, which is negligible."
+}
+
+====================================================================================================
+[12:27:42] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:27:42] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3798
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs are large populations where sampleSize*numberOfSuccesses overflows int. For these, getNumericalMean() returns a wrong value (negative or tiny) instead of n*m/N. This is the overflow in the report's named line, and it is what drives the bad sample() result. buggyIf is exact: the product exceeds Integer.MAX_VALUE exactly when overflow happens, and every wrapped product differs from the true one, so the mean is always wrong there. No correct inputs are included and no overflowing inputs are missed. The parameter ranges plus validIf cover the full valid domain, including non-overflowing inputs. The only gap is that Integer.MAX_VALUE itself is never generated, which is negligible."
+}
+
+====================================================================================================
+[12:27:42] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:27:42] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:27:47] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds a real HypergeometricDistribution and calls the real getNumericalMean(), getSupportLowerBound() and getSupportUpperBound(). The `expected` value is a reference formula used only in the assertion. It does not replace or simulate any return value from the code under test."
+}
+
+====================================================================================================
+[12:27:47] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:27:47] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5308
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds a real HypergeometricDistribution and calls the real getNumericalMean(), getSupportLowerBound() and getSupportUpperBound(). The `expected` value is a reference formula used only in the assertion. It does not replace or simulate any return value from the code under test."
+}
+
+====================================================================================================
+[12:27:47] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:27:51] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no `fail()`, `assertTrue(false)` or `assertEquals(1, 0)`. Both assertions depend on values from the code under test. The first compares `getNumericalMean()` with the reference value n*(m/N). The second checks that the mean lies in [0, sampleSize]. A fixed `getNumericalMean()` would pass both, so the test can pass."
+}
+
+====================================================================================================
+[12:27:51] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:27:52] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5409
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no `fail()`, `assertTrue(false)` or `assertEquals(1, 0)`. Both assertions depend on values from the code under test. The first compares `getNumericalMean()` with the reference value n*(m/N). The second checks that the mean lies in [0, sampleSize]. A fixed `getNumericalMean()` would pass both, so the test can pass."
+}
+
+====================================================================================================
+[12:27:52] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:27:58] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality check is done correctly. The values are doubles, and the test uses `assertEquals(expected, mean, delta)` with a delta of 1e-6 scaled by max(1, |expected|). That tolerance is far larger than floating-point rounding differences between the fixed formula and the reference formula. It is far smaller than the overflow error, which is on the order of the mean itself. Neither `==` nor `assertEquals` without a delta is used on doubles. The second assertion is a range check, not an equality check."
+}
+
+====================================================================================================
+[12:27:58] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:27:59] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5544
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality check is done correctly. The values are doubles, and the test uses `assertEquals(expected, mean, delta)` with a delta of 1e-6 scaled by max(1, |expected|). That tolerance is far larger than floating-point rounding differences between the fixed formula and the reference formula. It is far smaller than the overflow error, which is on the order of the mean itself. Neither `==` nor `assertEquals` without a delta is used on doubles. The second assertion is a range check, not an equality check."
+}
+
+====================================================================================================
+[12:27:59] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:27:59] AGENT FINISHED success=True llm_calls=12
+====================================================================================================
+
+
+====================================================================================================
+[12:28:00] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_HypergeometricDistributionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug2"
+}
+
+====================================================================================================
+[12:28:00] FINAL TEST FILE JQF_HypergeometricDistributionTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
+
+@RunWith(JQF.class)
+public class JQF_HypergeometricDistributionTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        HypergeometricDistribution dist =
+                new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+        double mean = dist.getNumericalMean();
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        Log.logOutIf(true, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        double expected = (double) sampleSize * ((double) numberOfSuccesses / (double) populationSize);
+        assertEquals(expected, mean, 1e-6 * Math.max(1.0, Math.abs(expected)));
+        assertTrue("mean must be within [0, sampleSize]: " + mean, mean >= 0 && mean <= sampleSize);
+    }
+
+    @Fuzz
+    public void testMath1021(@InRange(minInt = 1, maxInt = 2147483647) int populationSize,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int numberOfSuccesses,
+                                    @InRange(minInt = 0, maxInt = 2147483647) int sampleSize) {
+        boolean validIf = numberOfSuccesses <= populationSize && sampleSize <= populationSize;
+        boolean buggyIf = (long) sampleSize * (long) numberOfSuccesses > (long) Integer.MAX_VALUE;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            HypergeometricDistribution dist =
+                    new HypergeometricDistribution(populationSize, numberOfSuccesses, sampleSize);
+            double mean = dist.getNumericalMean();
+            int lower = dist.getSupportLowerBound();
+            int upper = dist.getSupportUpperBound();
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ mean, lower, upper, populationSize, numberOfSuccesses, sampleSize });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:31:11] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 63695,
+    "inside_buggyIf": 21287,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 64503,
+      "inside_buggyIf": 21520,
+      "unique_failures": {}
+    }
+  }
+}

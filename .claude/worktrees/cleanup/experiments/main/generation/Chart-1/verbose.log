@@ -1,0 +1,1854 @@
+
+====================================================================================================
+[12:13:12] BUG Chart-1: failing test org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests::test2947660 -> org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source
+====================================================================================================
+Title: Potential NPE in AbstractCategoryItemRender.getLegendItems()
+
+Setting up a working copy of the current JFreeChart trunk in Eclipse I got a warning about a null pointer access in this bit of code from AbstractCategoryItemRender.java:
+
+public LegendItemCollection getLegendItems\(\) \{
+LegendItemCollection result = new LegendItemCollection\(\);
+if \(this.plot == null\) \{
+return result;
+\}
+int index = this.plot.getIndexOf\(this\);
+CategoryDataset dataset = this.plot.getDataset\(index\);
+if \(dataset \!= null\) \{
+return result;
+\}
+int seriesCount = dataset.getRowCount\(\);
+...
+\}
+
+The warning is in the last code line where seriesCount is assigned. The variable dataset is guaranteed to be null in this location, I suppose that the check before that should actually read "if \(dataset == null\)", not "if \(dataset \!= null\)".
+
+This is trunk as of 2010-02-08.
+
+====================================================================================================
+[12:13:12] HIDDEN FROM THE AGENT: 64 relevant test classes
+====================================================================================================
+org.jfree.chart.axis.junit.LogAxisTests
+org.jfree.chart.axis.junit.NumberAxisTests
+org.jfree.chart.axis.junit.SubCategoryAxisTests
+org.jfree.chart.axis.junit.ValueAxisTests
+org.jfree.chart.junit.AreaChartTests
+org.jfree.chart.junit.BarChart3DTests
+org.jfree.chart.junit.BarChartTests
+org.jfree.chart.junit.ChartPanelTests
+org.jfree.chart.junit.GanttChartTests
+org.jfree.chart.junit.JFreeChartTests
+org.jfree.chart.junit.LineChart3DTests
+org.jfree.chart.junit.LineChartTests
+org.jfree.chart.junit.PieChart3DTests
+org.jfree.chart.junit.PieChartTests
+org.jfree.chart.junit.ScatterPlotTests
+org.jfree.chart.junit.StackedAreaChartTests
+org.jfree.chart.junit.StackedBarChart3DTests
+org.jfree.chart.junit.StackedBarChartTests
+org.jfree.chart.junit.StandardChartThemeTests
+org.jfree.chart.junit.TimeSeriesChartTests
+org.jfree.chart.junit.WaterfallChartTests
+org.jfree.chart.junit.XYAreaChartTests
+org.jfree.chart.junit.XYBarChartTests
+org.jfree.chart.junit.XYLineChartTests
+org.jfree.chart.junit.XYStepAreaChartTests
+org.jfree.chart.junit.XYStepChartTests
+org.jfree.chart.plot.junit.CategoryPlotTests
+org.jfree.chart.plot.junit.CombinedDomainCategoryPlotTests
+org.jfree.chart.plot.junit.CombinedRangeCategoryPlotTests
+org.jfree.chart.plot.junit.MultiplePiePlotTests
+org.jfree.chart.plot.junit.PiePlot3DTests
+org.jfree.chart.plot.junit.PiePlotTests
+org.jfree.chart.plot.junit.XYPlotTests
+org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests
+org.jfree.chart.renderer.category.junit.AreaRendererTests
+org.jfree.chart.renderer.category.junit.BarRenderer3DTests
+org.jfree.chart.renderer.category.junit.BarRendererTests
+org.jfree.chart.renderer.category.junit.BoxAndWhiskerRendererTests
+org.jfree.chart.renderer.category.junit.CategoryStepRendererTests
+org.jfree.chart.renderer.category.junit.DefaultCategoryItemRendererTests
+org.jfree.chart.renderer.category.junit.GanttRendererTests
+org.jfree.chart.renderer.category.junit.GradientBarPainterTests
+org.jfree.chart.renderer.category.junit.GroupedStackedBarRendererTests
+org.jfree.chart.renderer.category.junit.IntervalBarRendererTests
+org.jfree.chart.renderer.category.junit.LayeredBarRendererTests
+org.jfree.chart.renderer.category.junit.LevelRendererTests
+org.jfree.chart.renderer.category.junit.LineAndShapeRendererTests
+org.jfree.chart.renderer.category.junit.LineRenderer3DTests
+org.jfree.chart.renderer.category.junit.MinMaxCategoryRendererTests
+org.jfree.chart.renderer.category.junit.ScatterRendererTests
+org.jfree.chart.renderer.category.junit.StackedAreaRendererTests
+org.jfree.chart.renderer.category.junit.StackedBarRenderer3DTests
+org.jfree.chart.renderer.category.junit.StackedBarRendererTests
+org.jfree.chart.renderer.category.junit.StandardBarPainterTests
+org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests
+org.jfree.chart.renderer.category.junit.StatisticalLineAndShapeRendererTests
+org.jfree.chart.renderer.category.junit.WaterfallBarRendererTests
+org.jfree.chart.renderer.junit.AbstractRendererTests
+org.jfree.chart.renderer.xy.junit.StackedXYAreaRenderer2Tests
+org.jfree.chart.renderer.xy.junit.StackedXYAreaRendererTests
+org.jfree.chart.renderer.xy.junit.StackedXYBarRendererTests
+org.jfree.chart.renderer.xy.junit.StandardXYItemRendererTests
+org.jfree.chart.renderer.xy.junit.XYBarRendererTests
+org.jfree.chart.renderer.xy.junit.XYLineAndShapeRendererTests
+
+====================================================================================================
+[12:13:12] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:12] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Potential NPE in AbstractCategoryItemRender.getLegendItems()
+
+Setting up a working copy of the current JFreeChart trunk in Eclipse I got a warning about a null pointer access in this bit of code from AbstractCategoryItemRender.java:
+
+public LegendItemCollection getLegendItems\(\) \{
+LegendItemCollection result = new LegendItemCollection\(\);
+if \(this.plot == null\) \{
+return result;
+\}
+int index = this.plot.getIndexOf\(this\);
+CategoryDataset dataset = this.plot.getDataset\(index\);
+if \(dataset \!= null\) \{
+return result;
+\}
+int seriesCount = dataset.getRowCount\(\);
+...
+\}
+
+The warning is in the last code line where seriesCount is assigned. The variable dataset is guaranteed to be null in this location, I suppose that the check before that should actually read "if \(dataset == null\)", not "if \(dataset \!= null\)".
+
+This is trunk as of 2010-02-08.
+
+====================================================================================================
+[12:13:16] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().",
+  "concrete_examples": [
+    {
+      "input": "Renderer attached to a CategoryPlot with a non-null CategoryDataset (e.g. 2 series); call renderer.getLegendItems()",
+      "expected": "LegendItemCollection containing one LegendItem per series (2 items)",
+      "actual": "Empty LegendItemCollection is returned because `if (dataset != null) return result;` exits early"
+    },
+    {
+      "input": "Renderer attached to a CategoryPlot whose dataset at the renderer's index is null; call renderer.getLegendItems()",
+      "expected": "Empty LegendItemCollection returned without error",
+      "actual": "NullPointerException at `dataset.getRowCount()` because the check passes through when dataset is null"
+    }
+  ]
+}
+
+====================================================================================================
+[12:13:16] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:17] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0082
+====================================================================================================
+{
+  "issue_gist": "In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().",
+  "concrete_examples": [
+    {
+      "input": "Renderer attached to a CategoryPlot with a non-null CategoryDataset (e.g. 2 series); call renderer.getLegendItems()",
+      "expected": "LegendItemCollection containing one LegendItem per series (2 items)",
+      "actual": "Empty LegendItemCollection is returned because `if (dataset != null) return result;` exits early"
+    },
+    {
+      "input": "Renderer attached to a CategoryPlot whose dataset at the renderer's index is null; call renderer.getLegendItems()",
+      "expected": "Empty LegendItemCollection returned without error",
+      "actual": "NullPointerException at `dataset.getRowCount()` because the check passes through when dataset is null"
+    }
+  ]
+}
+
+====================================================================================================
+[12:13:17] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:17] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source
+Test file: tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java
+Test class: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests
+Test method: testBugReproduction
+
+Bug summary: In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().
+
+Concrete examples:
+[{'input': 'Renderer attached to a CategoryPlot with a non-null CategoryDataset (e.g. 2 series); call renderer.getLegendItems()', 'expected': 'LegendItemCollection containing one LegendItem per series (2 items)', 'actual': 'Empty LegendItemCollection is returned because `if (dataset != null) return result;` exits early'}, {'input': "Renderer attached to a CategoryPlot whose dataset at the renderer's index is null; call renderer.getLegendItems()", 'expected': 'Empty LegendItemCollection returned without error', 'actual': 'NullPointerException at `dataset.getRowCount()` because the check passes through when dataset is null'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:13:22] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public LegendItemCollection getLegendItems",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source",
+  "glob": "**/AbstractCategoryItemRenderer.java",
+  "output_mode": "content",
+  "-A": 40
+}
+
+====================================================================================================
+[12:13:22] [002_symbolize] TOOL RESULT
+====================================================================================================
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java:1790:    public LegendItemCollection getLegendItems() {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1791-        LegendItemCollection result = new LegendItemCollection();
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1792-        if (this.plot == null) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1793-            return result;
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1794-        }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1795-        int index = this.plot.getIndexOf(this);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1796-        CategoryDataset dataset = this.plot.getDataset(index);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1797-        if (dataset != null) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1798-            return result;
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1799-        }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1800-        int seriesCount = dataset.getRowCount();
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1801-        if (plot.getRowRenderingOrder().equals(SortOrder.ASCENDING)) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1802-            for (int i = 0; i < seriesCount; i++) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1803-                if (isSeriesVisibleInLegend(i)) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1804-                    LegendItem item = getLegendItem(index, i);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1805-                    if (item != null) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1806-                        result.add(item);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1807-                    }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1808-                }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1809-            }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1810-        }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1811-        else {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1812-            for (int i = seriesCount - 1; i >= 0; i--) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1813-                if (isSeriesVisibleInLegend(i)) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1814-                    LegendItem item = getLegendItem(index, i);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1815-                    if (item != null) {
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1816-                        result.add(item);
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1817-                    }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1818-                }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1819-            }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1820-        }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1821-        return result;
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1822-    }
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1823-
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1824-    /**
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1825-     * Adds an entity with the specified hotspot.
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1826-     *
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1827-     * @param entities  the entity collection.
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1828-     * @param hotspot  the hotspot (<code>null</code> not permitted).
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1829-     * @param dataset  the dataset.
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java-1830-     * @param row  the row index.
+
+====================================================================================================
+[12:13:36] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.jfree.util.SortOrder;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n                if (cols == 0) {\n                    // no columns: series cannot be represented, so rows may be 0\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:36] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:37] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1603
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.jfree.util.SortOrder;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n                if (cols == 0) {\n                    // no columns: series cannot be represented, so rows may be 0\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:37] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:13:37] TEST CODE (org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests)
+====================================================================================================
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.util.SortOrder;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+                if (cols == 0) {
+                    // no columns: series cannot be represented, so rows may be 0
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+====================================================================================================
+[12:13:38] COMPILE FAILED
+====================================================================================================
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Xmx2500m -Xms256m
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:19: error: package org.jfree.util does not exist
+import org.jfree.util.SortOrder;
+^
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:53: error: cannot find symbol
+plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+^
+symbol:   variable SortOrder
+location: class JQF_AbstractCategoryItemRendererTests
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:53: error: cannot find symbol
+plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+^
+symbol:   variable SortOrder
+location: class JQF_AbstractCategoryItemRendererTests
+3 errors
+
+====================================================================================================
+[12:13:38] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:13:38] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not compile:
+
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Xmx2500m -Xms256m
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:19: error: package org.jfree.util does not exist
+import org.jfree.util.SortOrder;
+^
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:53: error: cannot find symbol
+plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+^
+symbol:   variable SortOrder
+location: class JQF_AbstractCategoryItemRendererTests
+/tmp/preserve-experiment/main-11df6b11/Chart-1/Chart1b/tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java:53: error: cannot find symbol
+plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+^
+symbol:   variable SortOrder
+location: class JQF_AbstractCategoryItemRendererTests
+3 errors
+
+Fix the compilation errors and regenerate the test. It is compiled with Java 8 against the project's classes, JUnit 4 and JQF.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source
+Test file: tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java
+Test class: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests
+Test method: testBugReproduction
+
+Bug summary: In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().
+
+Concrete examples:
+[{'input': 'Renderer attached to a CategoryPlot with a non-null CategoryDataset (e.g. 2 series); call renderer.getLegendItems()', 'expected': 'LegendItemCollection containing one LegendItem per series (2 items)', 'actual': 'Empty LegendItemCollection is returned because `if (dataset != null) return result;` exits early'}, {'input': "Renderer attached to a CategoryPlot whose dataset at the renderer's index is null; call renderer.getLegendItems()", 'expected': 'Empty LegendItemCollection returned without error', 'actual': 'NullPointerException at `dataset.getRowCount()` because the check passes through when dataset is null'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:13:41] [004_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "import .*SortOrder;",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:13:41] [004_symbolize] TOOL RESULT
+====================================================================================================
+Path does not exist: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java. Note: your current working directory is /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source.
+
+====================================================================================================
+[12:13:43] [004_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "import .*SortOrder;",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source",
+  "glob": "**/AbstractCategoryItemRenderer.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:13:43] [004_symbolize] TOOL RESULT
+====================================================================================================
+source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java:170:import org.jfree.chart.util.SortOrder;
+
+====================================================================================================
+[12:13:50] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.chart.util.SortOrder;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:50] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:13:51] [004_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.4097
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.chart.util.SortOrder;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:13:51] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:13:51] TEST CODE (org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests)
+====================================================================================================
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+====================================================================================================
+[12:13:52] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:14:13] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 23311,
+  "discarded_by_assume": 1642,
+  "passing": 418,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 2867,
+    "java.lang.AssertionError": 2111
+  },
+  "passed_assume": 21669,
+  "classified": 5396
+}
+
+====================================================================================================
+[12:14:13] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:14:13] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Potential NPE in AbstractCategoryItemRender.getLegendItems()
+
+Setting up a working copy of the current JFreeChart trunk in Eclipse I got a warning about a null pointer access in this bit of code from AbstractCategoryItemRender.java:
+
+public LegendItemCollection getLegendItems\(\) \{
+LegendItemCollection result = new LegendItemCollection\(\);
+if \(this.plot == null\) \{
+return result;
+\}
+int index = this.plot.getIndexOf\(this\);
+CategoryDataset dataset = this.plot.getDataset\(index\);
+if \(dataset \!= null\) \{
+return result;
+\}
+int seriesCount = dataset.getRowCount\(\);
+...
+\}
+
+The warning is in the last code line where seriesCount is assigned. The variable dataset is guaranteed to be null in this location, I suppose that the check before that should actually read "if \(dataset == null\)", not "if \(dataset \!= null\)".
+
+This is trunk as of 2010-02-08.
+
+=== Test ===
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one series -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:71)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:71)
+
+is triggered by the following inputs:
+
+    input (1, 0, 3, 31.061717162150014, 1) -> logged [java.lang.NullPointerException, -1, , 0]
+    input (1, 2, 4, 29.381923951435308, 0) -> logged [java.lang.NullPointerException, -1, , 0]
+
+The error:
+    java.lang.AssertionError: expected:<5> but was:<0>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+is triggered by the following inputs:
+
+    input (0, 1, 3, 84.71109630000355, 1) -> logged [none, 0, , 1]
+    input (0, 2, 2, 66.50189498680726, 0) -> logged [none, 0, , 2]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:14:24] [006_check_inputs] MODEL TEXT
+====================================================================================================
+<br>
+
+====================================================================================================
+[12:14:29] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The observed failures do show the reported bug, but the `buggyIf` condition is too wide, so the test is not acceptable as written.\n\n(1)-(3) Both failures match the report and share its root cause, the inverted `dataset != null` check.\n- The first failure logs `[NullPointerException, -1, , 0]`. The dataset is null, and `getLegendItems()` falls through to `dataset.getRowCount()`, which throws the NPE the report describes.\n- The second failure logs `[none, 0, , 1]` and `[none, 0, , 2]`. The dataset is non-null with series, and the legend comes back empty instead of one item per series. This is the other symptom of the same inverted check.\n\n(4) `buggyIf` is `!hasDataset || rows >= 1`, which is too wide.\n- The dataset is built by calling `addValue` for each (row, col) pair. When `cols == 0`, no values are added, so the dataset has 0 rows even though `rows >= 1`.\n- In that case the buggy code returns an empty legend, and the expected count (`actualRows`) is also 0, so the buggy code already behaves correctly.\n- `buggyIf` still accepts these inputs, so it includes cases that are not bug-triggering. Those inputs would later be treated as bug inputs even though a fix leaves their behavior unchanged.\n- The condition should be `!hasDataset || (rows >= 1 && cols >= 1)`.\n\n(5) `buggyIf` does not miss any bug-triggering inputs. The null-dataset case and the non-null dataset with at least one real series are both covered.\n\n(6) The ranges and `validIf = true` cover the valid input domain well. Null and non-null datasets, 0 to 6 rows, 0 to 5 columns and both rendering orders are all generated.\n\nBecause of the over-broad `buggyIf` in (4), the test is judged not relevant until it is corrected."
+}
+
+====================================================================================================
+[12:14:29] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:29] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.6412
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The observed failures do show the reported bug, but the `buggyIf` condition is too wide, so the test is not acceptable as written.\n\n(1)-(3) Both failures match the report and share its root cause, the inverted `dataset != null` check.\n- The first failure logs `[NullPointerException, -1, , 0]`. The dataset is null, and `getLegendItems()` falls through to `dataset.getRowCount()`, which throws the NPE the report describes.\n- The second failure logs `[none, 0, , 1]` and `[none, 0, , 2]`. The dataset is non-null with series, and the legend comes back empty instead of one item per series. This is the other symptom of the same inverted check.\n\n(4) `buggyIf` is `!hasDataset || rows >= 1`, which is too wide.\n- The dataset is built by calling `addValue` for each (row, col) pair. When `cols == 0`, no values are added, so the dataset has 0 rows even though `rows >= 1`.\n- In that case the buggy code returns an empty legend, and the expected count (`actualRows`) is also 0, so the buggy code already behaves correctly.\n- `buggyIf` still accepts these inputs, so it includes cases that are not bug-triggering. Those inputs would later be treated as bug inputs even though a fix leaves their behavior unchanged.\n- The condition should be `!hasDataset || (rows >= 1 && cols >= 1)`.\n\n(5) `buggyIf` does not miss any bug-triggering inputs. The null-dataset case and the non-null dataset with at least one real series are both covered.\n\n(6) The ranges and `validIf = true` cover the valid input domain well. Null and non-null datasets, 0 to 6 rows, 0 to 5 columns and both rendering orders are all generated.\n\nBecause of the over-broad `buggyIf` in (4), the test is judged not relevant until it is corrected."
+}
+
+====================================================================================================
+[12:14:29] NODE 007 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:14:29] LLM CALL [007_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:71)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:71)
+
+is triggered by the following inputs:
+
+    input (1, 0, 3, 31.061717162150014, 1) -> logged [java.lang.NullPointerException, -1, , 0]
+    input (1, 2, 4, 29.381923951435308, 0) -> logged [java.lang.NullPointerException, -1, , 0]
+
+The error:
+    java.lang.AssertionError: expected:<5> but was:<0>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+is triggered by the following inputs:
+
+    input (0, 1, 3, 84.71109630000355, 1) -> logged [none, 0, , 1]
+    input (0, 2, 2, 66.50189498680726, 0) -> logged [none, 0, , 2]
+
+Analysis: The observed failures do show the reported bug, but the `buggyIf` condition is too wide, so the test is not acceptable as written.
+
+(1)-(3) Both failures match the report and share its root cause, the inverted `dataset != null` check.
+- The first failure logs `[NullPointerException, -1, , 0]`. The dataset is null, and `getLegendItems()` falls through to `dataset.getRowCount()`, which throws the NPE the report describes.
+- The second failure logs `[none, 0, , 1]` and `[none, 0, , 2]`. The dataset is non-null with series, and the legend comes back empty instead of one item per series. This is the other symptom of the same inverted check.
+
+(4) `buggyIf` is `!hasDataset || rows >= 1`, which is too wide.
+- The dataset is built by calling `addValue` for each (row, col) pair. When `cols == 0`, no values are added, so the dataset has 0 rows even though `rows >= 1`.
+- In that case the buggy code returns an empty legend, and the expected count (`actualRows`) is also 0, so the buggy code already behaves correctly.
+- `buggyIf` still accepts these inputs, so it includes cases that are not bug-triggering. Those inputs would later be treated as bug inputs even though a fix leaves their behavior unchanged.
+- The condition should be `!hasDataset || (rows >= 1 && cols >= 1)`.
+
+(5) `buggyIf` does not miss any bug-triggering inputs. The null-dataset case and the non-null dataset with at least one real series are both covered.
+
+(6) The ranges and `validIf = true` cover the valid input domain well. Null and non-null datasets, 0 to 6 rows, 0 to 5 columns and both rendering orders are all generated.
+
+Because of the over-broad `buggyIf` in (4), the test is judged not relevant until it is corrected.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source
+Test file: tests/org/jfree/chart/renderer/category/junit/JQF_AbstractCategoryItemRendererTests.java
+Test class: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests
+Test method: testBugReproduction
+
+Bug summary: In AbstractCategoryItemRenderer.getLegendItems(), the null check on the dataset is inverted (`dataset != null` returns early), so a non-null dataset yields an empty legend and a null dataset causes a NullPointerException at dataset.getRowCount().
+
+Concrete examples:
+[{'input': 'Renderer attached to a CategoryPlot with a non-null CategoryDataset (e.g. 2 series); call renderer.getLegendItems()', 'expected': 'LegendItemCollection containing one LegendItem per series (2 items)', 'actual': 'Empty LegendItemCollection is returned because `if (dataset != null) return result;` exits early'}, {'input': "Renderer attached to a CategoryPlot whose dataset at the renderer's index is null; call renderer.getLegendItems()", 'expected': 'Empty LegendItemCollection returned without error', 'actual': 'NullPointerException at `dataset.getRowCount()` because the check passes through when dataset is null'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Chart-1/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:14:39] [007_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.chart.util.SortOrder;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1\n        // for DefaultCategoryDataset to hold any row) -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:14:39] [007_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:14:39] [007_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.7105
+====================================================================================================
+{
+  "pbt": "package org.jfree.chart.renderer.category.junit;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport org.jfree.chart.LegendItemCollection;\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.renderer.category.BarRenderer;\nimport org.jfree.chart.util.SortOrder;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\n\n@RunWith(JQF.class)\npublic class JQF_AbstractCategoryItemRendererTests {\n\n    @Fuzz\n    public void testBugReproduction(boolean hasDataset,\n                         @InRange(minInt = 0, maxInt = 7) int rows,\n                         @InRange(minInt = 0, maxInt = 6) int cols,\n                         @InRange(minDouble = 0, maxDouble = 100) double value,\n                         boolean ascending) {\n        boolean validIf = true;\n        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1\n        // for DefaultCategoryDataset to hold any row) -> empty legend\n        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        CategoryDataset dataset = null;\n        if (hasDataset) {\n            DefaultCategoryDataset d = new DefaultCategoryDataset();\n            for (int i = 0; i < rows; i++) {\n                for (int j = 0; j < cols; j++) {\n                    d.addValue(value + i + j, \"S\" + i, \"C\" + j);\n                }\n            }\n            dataset = d;\n        }\n        BarRenderer renderer = new BarRenderer();\n        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis(\"c\"),\n                new NumberAxis(\"v\"), renderer);\n        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);\n        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();\n\n        String exceptionName = \"none\";\n        int count = -1;\n        StringBuilder labels = new StringBuilder();\n        try {\n            LegendItemCollection items = renderer.getLegendItems();\n            count = items.getItemCount();\n            for (int i = 0; i < count; i++) {\n                labels.append(items.get(i).getLabel()).append(\";\");\n            }\n        } catch (Exception e) {\n            exceptionName = e.getClass().getName();\n        }\n\n        final String exc = exceptionName;\n        final int cnt = count;\n        final String lab = labels.toString();\n        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });\n        int expectedCount = actualRows;\n        assertEquals(\"none\", exc);\n        assertEquals(expectedCount, cnt);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:14:39] NODE 008 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:14:39] TEST CODE (org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests)
+====================================================================================================
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+====================================================================================================
+[12:14:41] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:15:02] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 24034,
+  "discarded_by_assume": 3447,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2173,
+    "org.junit.ComparisonFailure": 3006
+  },
+  "passed_assume": 20587,
+  "classified": 5179
+}
+
+====================================================================================================
+[12:15:02] NODE 009 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:15:02] LLM CALL [009_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Potential NPE in AbstractCategoryItemRender.getLegendItems()
+
+Setting up a working copy of the current JFreeChart trunk in Eclipse I got a warning about a null pointer access in this bit of code from AbstractCategoryItemRender.java:
+
+public LegendItemCollection getLegendItems\(\) \{
+LegendItemCollection result = new LegendItemCollection\(\);
+if \(this.plot == null\) \{
+return result;
+\}
+int index = this.plot.getIndexOf\(this\);
+CategoryDataset dataset = this.plot.getDataset\(index\);
+if \(dataset \!= null\) \{
+return result;
+\}
+int seriesCount = dataset.getRowCount\(\);
+...
+\}
+
+The warning is in the last code line where seriesCount is assigned. The variable dataset is guaranteed to be null in this location, I suppose that the check before that should actually read "if \(dataset == null\)", not "if \(dataset \!= null\)".
+
+This is trunk as of 2010-02-08.
+
+=== Test ===
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<6> but was:<0>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:73)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:73)
+
+is triggered by the following inputs:
+
+    input (0, 2, 1, 51.77273927801448, 0) -> logged [none, 0, , 2]
+    input (0, 4, 5, 85.79036274972358, 1) -> logged [none, 0, , 4]
+
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+Location: org.jfree.chart.renderer.category.junit.JQF_AbstractCategoryItemRendererTests.testBugReproduction(JQF_AbstractCategoryItemRendererTests.java:72)
+
+is triggered by the following inputs:
+
+    input (1, 1, 4, 52.02349325912936, 1) -> logged [java.lang.NullPointerException, -1, , 0]
+    input (1, 4, 2, 14.633723077099381, 1) -> logged [java.lang.NullPointerException, -1, , 0]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:15:13] [009_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce both symptoms of the reported bug, and the earlier `buggyIf` problem is fixed.\n\n(1)-(3) The two failure groups match the two symptoms of the inverted `dataset != null` check:\n- Non-null dataset: the inputs `(hasDataset=true, rows=2, cols=1)` and `(true, 4, 5)` log `[none, 0, , 2]` and `[none, 0, , 4]`. The dataset has real series, but `getLegendItems()` returns an empty legend instead of one item per series. This is the early return on `dataset != null`.\n- Null dataset: the inputs `(false, 1, 4)` and `(false, 4, 2)` log `[NullPointerException, -1, , 0]`. The renderer's plot has a null dataset, so execution falls through to `dataset.getRowCount()` and throws the NPE the report describes. A fix would return an empty legend without error, and the test would pass.\n\nThe `hasDataset` boolean is the first input, with 0 meaning true and 1 meaning false, which is why the logged `actualRows` is 0 in the null group.\n\n(4) `buggyIf` is now `!hasDataset || (rows >= 1 && cols >= 1)`, and it only accepts bug-triggering inputs.\n- The null dataset always throws the NPE on buggy code.\n- A non-null dataset with `rows >= 1` and `cols >= 1` really has `rows` series, because `DefaultCategoryDataset` only creates a row when `addValue` is called. Buggy code returns 0 items where `rows` are expected.\n- The previously included case `cols == 0` is now excluded.\n- Non-null empty datasets are also excluded, since both buggy and fixed code return an empty legend for them.\n\n(5) `buggyIf` misses no bug-triggering inputs. Every null dataset and every non-null dataset with at least one series is covered.\n\n(6) The ranges and `validIf = true` cover the valid domain. They generate null and non-null datasets, 0 to 6 rows, 0 to 5 columns, and both rendering orders. Non-triggering inputs, such as empty datasets, are still generated for the later preservation check.\n\nThe assertions match the expected fixed behavior: no exception, and a legend item count equal to the number of series."
+}
+
+====================================================================================================
+[12:15:13] [009_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:15:13] [009_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.7770
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce both symptoms of the reported bug, and the earlier `buggyIf` problem is fixed.\n\n(1)-(3) The two failure groups match the two symptoms of the inverted `dataset != null` check:\n- Non-null dataset: the inputs `(hasDataset=true, rows=2, cols=1)` and `(true, 4, 5)` log `[none, 0, , 2]` and `[none, 0, , 4]`. The dataset has real series, but `getLegendItems()` returns an empty legend instead of one item per series. This is the early return on `dataset != null`.\n- Null dataset: the inputs `(false, 1, 4)` and `(false, 4, 2)` log `[NullPointerException, -1, , 0]`. The renderer's plot has a null dataset, so execution falls through to `dataset.getRowCount()` and throws the NPE the report describes. A fix would return an empty legend without error, and the test would pass.\n\nThe `hasDataset` boolean is the first input, with 0 meaning true and 1 meaning false, which is why the logged `actualRows` is 0 in the null group.\n\n(4) `buggyIf` is now `!hasDataset || (rows >= 1 && cols >= 1)`, and it only accepts bug-triggering inputs.\n- The null dataset always throws the NPE on buggy code.\n- A non-null dataset with `rows >= 1` and `cols >= 1` really has `rows` series, because `DefaultCategoryDataset` only creates a row when `addValue` is called. Buggy code returns 0 items where `rows` are expected.\n- The previously included case `cols == 0` is now excluded.\n- Non-null empty datasets are also excluded, since both buggy and fixed code return an empty legend for them.\n\n(5) `buggyIf` misses no bug-triggering inputs. Every null dataset and every non-null dataset with at least one series is covered.\n\n(6) The ranges and `validIf = true` cover the valid domain. They generate null and non-null datasets, 0 to 6 rows, 0 to 5 columns, and both rendering orders. Non-triggering inputs, such as empty datasets, are still generated for the later preservation check.\n\nThe assertions match the expected fixed behavior: no exception, and a legend item count equal to the number of series."
+}
+
+====================================================================================================
+[12:15:13] NODE 010 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:15:13] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:15:18] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking or simulation. It builds real objects: a `DefaultCategoryDataset`, a `BarRenderer`, a `CategoryPlot` with real `CategoryAxis` and `NumberAxis` instances, and a `SortOrder`. It then calls the actual `renderer.getLegendItems()`, which runs the real `AbstractCategoryItemRenderer` code. There are no Mockito, EasyMock or PowerMock imports, no subclasses overriding the code under test, and no hard-coded return values. The expected count is read from the real dataset's `getRowCount()`, and the exception and item count are taken from the real call."
+}
+
+====================================================================================================
+[12:15:18] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:15:19] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.0504
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking or simulation. It builds real objects: a `DefaultCategoryDataset`, a `BarRenderer`, a `CategoryPlot` with real `CategoryAxis` and `NumberAxis` instances, and a `SortOrder`. It then calls the actual `renderer.getLegendItems()`, which runs the real `AbstractCategoryItemRenderer` code. There are no Mockito, EasyMock or PowerMock imports, no subclasses overriding the code under test, and no hard-coded return values. The expected count is read from the real dataset's `getRowCount()`, and the exception and item count are taken from the real call."
+}
+
+====================================================================================================
+[12:15:19] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:15:23] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no `fail()`, `assertTrue(false)` or constant-mismatch assertion like `assertEquals(1, 0)`. Both assertions depend on the behavior of the code under test: `assertEquals(\"none\", exc)` checks that no exception was thrown, and `assertEquals(expectedCount, cnt)` checks the legend item count against the dataset's real row count. Once `getLegendItems()` is fixed, a null dataset gives no exception and an empty legend (0 equals 0), and a non-null dataset gives one item per series, so the test can pass."
+}
+
+====================================================================================================
+[12:15:23] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:15:24] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.0665
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no `fail()`, `assertTrue(false)` or constant-mismatch assertion like `assertEquals(1, 0)`. Both assertions depend on the behavior of the code under test: `assertEquals(\"none\", exc)` checks that no exception was thrown, and `assertEquals(expectedCount, cnt)` checks the legend item count against the dataset's real row count. Once `getLegendItems()` is fixed, a null dataset gives no exception and an empty legend (0 equals 0), and a non-null dataset gives one item per series, so the test can pass."
+}
+
+====================================================================================================
+[12:15:24] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:15:27] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. `assertEquals(\"none\", exc)` compares two Strings with `assertEquals`, which uses `equals()`, not `==`. `assertEquals(expectedCount, cnt)` compares two ints, which are primitives, so no delta is needed. No doubles, arrays or other objects are compared with an improper method."
+}
+
+====================================================================================================
+[12:15:27] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:15:28] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.0820
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "Both equality checks are done correctly. `assertEquals(\"none\", exc)` compares two Strings with `assertEquals`, which uses `equals()`, not `==`. `assertEquals(expectedCount, cnt)` compares two ints, which are primitives, so no delta is needed. No doubles, arrays or other objects are compared with an improper method."
+}
+
+====================================================================================================
+[12:15:28] NODE 011 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:15:28] AGENT FINISHED success=True llm_calls=15
+====================================================================================================
+
+
+====================================================================================================
+[12:15:29] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_AbstractCategoryItemRendererTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug1"
+}
+
+====================================================================================================
+[12:15:29] FINAL TEST FILE JQF_AbstractCategoryItemRendererTests.java (repro method + derived preservation method)
+====================================================================================================
+package org.jfree.chart.renderer.category.junit;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.util.SortOrder;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+@RunWith(JQF.class)
+public class JQF_AbstractCategoryItemRendererTests {
+
+    @Fuzz
+    public void testBugReproduction(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        // Bug: null dataset -> NPE; non-null dataset with at least one actual series (needs rows>=1 and cols>=1
+        // for DefaultCategoryDataset to hold any row) -> empty legend
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        CategoryDataset dataset = null;
+        if (hasDataset) {
+            DefaultCategoryDataset d = new DefaultCategoryDataset();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    d.addValue(value + i + j, "S" + i, "C" + j);
+                }
+            }
+            dataset = d;
+        }
+        BarRenderer renderer = new BarRenderer();
+        CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                new NumberAxis("v"), renderer);
+        plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+        final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+        String exceptionName = "none";
+        int count = -1;
+        StringBuilder labels = new StringBuilder();
+        try {
+            LegendItemCollection items = renderer.getLegendItems();
+            count = items.getItemCount();
+            for (int i = 0; i < count; i++) {
+                labels.append(items.get(i).getLabel()).append(";");
+            }
+        } catch (Exception e) {
+            exceptionName = e.getClass().getName();
+        }
+
+        final String exc = exceptionName;
+        final int cnt = count;
+        final String lab = labels.toString();
+        Log.logOutIf(true, () -> new Object[]{ exc, cnt, lab, actualRows });
+        int expectedCount = actualRows;
+        assertEquals("none", exc);
+        assertEquals(expectedCount, cnt);
+    }
+
+    @Fuzz
+    public void test2947660(boolean hasDataset,
+                         @InRange(minInt = 0, maxInt = 7) int rows,
+                         @InRange(minInt = 0, maxInt = 6) int cols,
+                         @InRange(minDouble = 0, maxDouble = 100) double value,
+                         boolean ascending) {
+        boolean validIf = true;
+        boolean buggyIf = !hasDataset || (rows >= 1 && cols >= 1);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            CategoryDataset dataset = null;
+            if (hasDataset) {
+                DefaultCategoryDataset d = new DefaultCategoryDataset();
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        d.addValue(value + i + j, "S" + i, "C" + j);
+                    }
+                }
+                dataset = d;
+            }
+            BarRenderer renderer = new BarRenderer();
+            CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("c"),
+                    new NumberAxis("v"), renderer);
+            plot.setRowRenderingOrder(ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING);
+            final int actualRows = (dataset == null) ? 0 : dataset.getRowCount();
+
+            String exceptionName = "none";
+            int count = -1;
+            StringBuilder labels = new StringBuilder();
+            try {
+                LegendItemCollection items = renderer.getLegendItems();
+                count = items.getItemCount();
+                for (int i = 0; i < count; i++) {
+                    labels.append(items.get(i).getLabel()).append(";");
+                }
+            } catch (Exception e) {
+                exceptionName = e.getClass().getName();
+            }
+
+            final String exc = exceptionName;
+            final int cnt = count;
+            final String lab = labels.toString();
+            Log.logOutIf(preserveIf, () -> new Object[]{ exc, cnt, lab, actualRows });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:18:28] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 50279,
+    "inside_buggyIf": 42922,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 11697,
+      "java.lang.AssertionError": 8303
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 72282,
+      "inside_buggyIf": 61952,
+      "unique_failures": {}
+    }
+  }
+}

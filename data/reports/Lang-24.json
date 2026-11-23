@@ -1,0 +1,6 @@
+{
+  "bug": "Lang-24",
+  "url": "https://issues.apache.org/jira/browse/LANG-664",
+  "title": "NumberUtils.isNumber(String)  is not right when the String is \"1.1L\"",
+  "body": "\"1.1L\"  is not a Java Number . but NumberUtils.isNumber(String) return true.\n\nperhaps change:\n{code:java}\n            if (chars[i] == 'l'\n                || chars[i] == 'L') {\n                // not allowing L with an exponent\n                return foundDigit && !hasExp;\n            }\n{code}\nto:\n{code:java}\n            if (chars[i] == 'l'\n                || chars[i] == 'L') {\n                // not allowing L with an exponent\n                return foundDigit && !hasExp && !hasDecPoint;\n            }\n{code}"
+}

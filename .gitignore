@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+src/*.egg-info/
+
+# local outputs and caches
+workspace/
+results*/
+
+# experiments: only the main experiment's results are kept in git, without the snapshots the
+# agent read (workspace/) and the buggy runs' saved inputs (paired-inputs.tar.gz), which are large
+# and regenerated when missing
+experiments/*
+!experiments/main/
+experiments/main/workspace/
+experiments/main/**/paired-inputs.tar.gz

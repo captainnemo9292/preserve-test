@@ -1,0 +1,203 @@
+{
+  "bug": "Chart-5",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.5414,
+  "tokens": {
+    "input": 28,
+    "output": 6155,
+    "cache_write": 115414,
+    "cache_read": 181765
+  },
+  "seconds": 104.8,
+  "started_at": "2026-11-21T12:12:59",
+  "timing": {
+    "checkout": 12.0,
+    "agent": 92.8,
+    "derive": 1.5,
+    "validation": 91.6
+  },
+  "llm_seconds": 73.6,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 568,
+        "cache_write": 1441,
+        "cache_read": 808
+      },
+      "cost_usd": 0.011529,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 23.8,
+      "turns": 6,
+      "tokens": {
+        "input": 10,
+        "output": 2033,
+        "cache_write": 33706,
+        "cache_read": 76678
+      },
+      "cost_usd": 0.162842,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 7.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 847,
+        "cache_write": 6092,
+        "cache_read": 26640
+      },
+      "cost_usd": 0.035506,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 21.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2154,
+        "cache_write": 34818,
+        "cache_read": 611
+      },
+      "cost_usd": 0.160877,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 6.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 165,
+        "cache_write": 37052,
+        "cache_read": 603
+      },
+      "cost_usd": 0.149926,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 211,
+        "cache_write": 1115,
+        "cache_read": 37655
+      },
+      "cost_usd": 0.010343,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 177,
+        "cache_write": 1190,
+        "cache_read": 38770
+      },
+      "cost_usd": 0.010415,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.jfree.data.xy.junit.XYSeriesTests::testBug1955483",
+  "jqf_class": "org.jfree.data.xy.junit.JQF_XYSeriesTests",
+  "hidden_tests": [
+    "org.jfree.chart.annotations.junit.XYBoxAnnotationTests",
+    "org.jfree.chart.axis.junit.LogAxisTests",
+    "org.jfree.chart.axis.junit.NumberAxisTests",
+    "org.jfree.chart.axis.junit.ValueAxisTests",
+    "org.jfree.chart.junit.ScatterPlotTests",
+    "org.jfree.chart.junit.TimeSeriesChartTests",
+    "org.jfree.chart.junit.XYAreaChartTests",
+    "org.jfree.chart.junit.XYBarChartTests",
+    "org.jfree.chart.junit.XYLineChartTests",
+    "org.jfree.chart.junit.XYStepAreaChartTests",
+    "org.jfree.chart.junit.XYStepChartTests",
+    "org.jfree.chart.labels.junit.BubbleXYItemLabelGeneratorTests",
+    "org.jfree.chart.labels.junit.StandardXYSeriesLabelGeneratorTests",
+    "org.jfree.chart.plot.junit.CombinedDomainXYPlotTests",
+    "org.jfree.chart.plot.junit.CombinedRangeXYPlotTests",
+    "org.jfree.chart.plot.junit.XYPlotTests",
+    "org.jfree.chart.renderer.xy.junit.AbstractXYItemRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYAreaRenderer2Tests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYAreaRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StackedXYBarRendererTests",
+    "org.jfree.chart.renderer.xy.junit.StandardXYItemRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYAreaRenderer2Tests",
+    "org.jfree.chart.renderer.xy.junit.XYAreaRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYBarRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYDifferenceRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYDotRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYLineAndShapeRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYStepAreaRendererTests",
+    "org.jfree.chart.renderer.xy.junit.XYStepRendererTests",
+    "org.jfree.data.general.junit.DatasetUtilitiesTests",
+    "org.jfree.data.statistics.junit.RegressionTests",
+    "org.jfree.data.xy.junit.DefaultTableXYDatasetTests",
+    "org.jfree.data.xy.junit.IntervalXYDelegateTests",
+    "org.jfree.data.xy.junit.TableXYDatasetTests",
+    "org.jfree.data.xy.junit.XYSeriesCollectionTests",
+    "org.jfree.data.xy.junit.XYSeriesTests"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testBug1955483",
+  "issue_gist": "XYSeries.addOrUpdate(Number x, Number y) ignores the allowDuplicateXValues flag. When an item with the same x already exists, it overwrites that item instead of adding a new one, so duplicate X values are lost. The fix also moves the maximum-item-count check to after the add.",
+  "failing_inputs_count": 305,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_XYSeriesTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug5",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 6177,
+      "paired_inputs": 6177,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 6177
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 6177,
+        "failed_on_buggy": 6177,
+        "pass": 6177,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 6412,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 197.9,
+  "paired_inputs_archived": true
+}

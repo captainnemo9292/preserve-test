@@ -1,0 +1,82 @@
+{
+ "patch": "69_NFL_AVATAR_Patch_53_25",
+ "dataset": "apr",
+ "bug": "Math-95",
+ "tool": "AVATAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T16:17:17",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 20000,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 46439,
+   "unique_failures": {}
+  },
+  "seconds": 64.0
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 39.8,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 37.129438400268555,
+  "time": {
+   "CHECKOUT_BUGGY": 3.8588173389434814,
+   "DELTA_BUGGY": 0.0013148784637451172,
+   "COMPILE_BUGGY": 6.083674907684326,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.777695655822754,
+   "PATCH": 0.016466856002807617,
+   "DELTA_PATCH": 0.0037994384765625,
+   "COMPILE_PATCH": 5.5218212604522705,
+   "PATCH_TEST": 2.612082004547119,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 2.2304317951202393,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.6776695251464844,
+   "DELTA_FIX": 0.0012047290802001953,
+   "COMPILE_FIX": 6.120473146438599,
+   "REPRO_FOR_VALIDATE": 2.1283843517303467,
+   "VALIDATE": 0.014524221420288086
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-69_NFL_AVATAR_Patch_53_25/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-69_NFL_AVATAR_Patch_53_25/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-69_NFL_AVATAR_Patch_53_25/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-69_NFL_AVATAR_Patch_53_25/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "46.833845472475126;14.0;0.401379188478713",
+    "org_out_content": "none;0.9284428084637364",
+    "patch_out_content": "none;0.9284427447274298",
+    "fix_out_content": "none;0.9284428084637364"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 104.8
+}

@@ -1,0 +1,1540 @@
+
+====================================================================================================
+[12:20:55] BUG Lang-53: failing test org.apache.commons.lang.time.DateUtilsTest::testRoundLang346 -> org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Lang-53/Lang53b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source
+====================================================================================================
+Title: Dates.round() behaves incorrectly for minutes and seconds
+
+Get unexpected output for rounding by minutes or seconds.
+
+public void testRound()
+{
+    Calendar testCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    testCalendar.set(2007, 6, 2, 8, 9, 50);
+    Date date = testCalendar.getTime();
+    System.out.println("Before round() " + date);
+    System.out.println("After round()  " + DateUtils.round(date, Calendar.MINUTE));
+}
+
+--2.1 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:10:00 CDT 2007 -- this is what I would expect
+
+--2.2 and 2.3 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:01:00 CDT 2007 -- this appears to be wrong
+
+====================================================================================================
+[12:20:55] HIDDEN FROM THE AGENT: 2 relevant test classes
+====================================================================================================
+org.apache.commons.lang.time.DateFormatUtilsTest
+org.apache.commons.lang.time.DateUtilsTest
+
+====================================================================================================
+[12:20:55] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:20:55] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Dates.round() behaves incorrectly for minutes and seconds
+
+Get unexpected output for rounding by minutes or seconds.
+
+public void testRound()
+{
+    Calendar testCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    testCalendar.set(2007, 6, 2, 8, 9, 50);
+    Date date = testCalendar.getTime();
+    System.out.println("Before round() " + date);
+    System.out.println("After round()  " + DateUtils.round(date, Calendar.MINUTE));
+}
+
+--2.1 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:10:00 CDT 2007 -- this is what I would expect
+
+--2.2 and 2.3 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:01:00 CDT 2007 -- this appears to be wrong
+
+====================================================================================================
+[12:20:58] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "DateUtils.round() with Calendar.MINUTE (and SECOND) in versions 2.2/2.3 yields wrong results: rounding up a value at 59-ish boundaries adds the rounding increment to the wrong field, producing e.g. 03:01:00 instead of 03:10:00 when rounding 03:09:50 to the minute.",
+  "concrete_examples": [
+    {
+      "input": "Calendar GMT set(2007, 6, 2, 8, 9, 50); DateUtils.round(date, Calendar.MINUTE)",
+      "expected": "Mon Jul 02 03:10:00 CDT 2007 (08:10:00 GMT)",
+      "actual": "Mon Jul 02 03:01:00 CDT 2007"
+    }
+  ]
+}
+
+====================================================================================================
+[12:20:58] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:20:59] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0074
+====================================================================================================
+{
+  "issue_gist": "DateUtils.round() with Calendar.MINUTE (and SECOND) in versions 2.2/2.3 yields wrong results: rounding up a value at 59-ish boundaries adds the rounding increment to the wrong field, producing e.g. 03:01:00 instead of 03:10:00 when rounding 03:09:50 to the minute.",
+  "concrete_examples": [
+    {
+      "input": "Calendar GMT set(2007, 6, 2, 8, 9, 50); DateUtils.round(date, Calendar.MINUTE)",
+      "expected": "Mon Jul 02 03:10:00 CDT 2007 (08:10:00 GMT)",
+      "actual": "Mon Jul 02 03:01:00 CDT 2007"
+    }
+  ]
+}
+
+====================================================================================================
+[12:20:59] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:20:59] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source
+Test file: src/test/org/apache/commons/lang/time/JQF_DateUtilsTest.java
+Test class: org.apache.commons.lang.time.JQF_DateUtilsTest
+Test method: testBugReproduction
+
+Bug summary: DateUtils.round() with Calendar.MINUTE (and SECOND) in versions 2.2/2.3 yields wrong results: rounding up a value at 59-ish boundaries adds the rounding increment to the wrong field, producing e.g. 03:01:00 instead of 03:10:00 when rounding 03:09:50 to the minute.
+
+Concrete examples:
+[{'input': 'Calendar GMT set(2007, 6, 2, 8, 9, 50); DateUtils.round(date, Calendar.MINUTE)', 'expected': 'Mon Jul 02 03:10:00 CDT 2007 (08:10:00 GMT)', 'actual': 'Mon Jul 02 03:01:00 CDT 2007'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:21:02] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "private static void modify|public static Date round\\(Object|public static Date round\\(Date",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source/src/java/org/apache/commons/lang/time/DateUtils.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:21:02] [002_symbolize] TOOL RESULT
+====================================================================================================
+436:    public static Date round(Date date, int field) {
+513:    public static Date round(Object date, int field) {
+620:    private static void modify(Calendar val, int field, boolean round) {
+
+====================================================================================================
+[12:21:04] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source/src/java/org/apache/commons/lang/time/DateUtils.java",
+  "offset": 590,
+  "limit": 150
+}
+
+====================================================================================================
+[12:21:04] [002_symbolize] TOOL RESULT
+====================================================================================================
+590	     *  or <code>SEMI_MONTH</code>
+591	     * @return the rounded date
+592	     * @throws IllegalArgumentException if the date
+593	     *  is <code>null</code>
+594	     * @throws ClassCastException if the object type is not a
+595	     *  <code>Date</code> or <code>Calendar</code>
+596	     * @throws ArithmeticException if the year is over 280 million
+597	     */
+598	    public static Date truncate(Object date, int field) {
+599	        if (date == null) {
+600	            throw new IllegalArgumentException("The date must not be null");
+601	        }
+602	        if (date instanceof Date) {
+603	            return truncate((Date) date, field);
+604	        } else if (date instanceof Calendar) {
+605	            return truncate((Calendar) date, field).getTime();
+606	        } else {
+607	            throw new ClassCastException("Could not truncate " + date);
+608	        }
+609	    }
+610	
+611	    //-----------------------------------------------------------------------
+612	    /**
+613	     * <p>Internal calculation method.</p>
+614	     * 
+615	     * @param val  the calendar
+616	     * @param field  the field constant
+617	     * @param round  true to round, false to truncate
+618	     * @throws ArithmeticException if the year is over 280 million
+619	     */
+620	    private static void modify(Calendar val, int field, boolean round) {
+621	        if (val.get(Calendar.YEAR) > 280000000) {
+622	            throw new ArithmeticException("Calendar value too large for accurate calculations");
+623	        }
+624	        
+625	        if (field == Calendar.MILLISECOND) {
+626	            return;
+627	        }
+628	
+629	        // ----------------- Fix for LANG-59 ---------------------- START ---------------
+630	        // see http://issues.apache.org/jira/browse/LANG-59
+631	        //
+632	        // Manually truncate milliseconds, seconds and minutes, rather than using
+633	        // Calendar methods.
+634	
+635	        Date date = val.getTime();
+636	        long time = date.getTime();
+637	        boolean done = false;
+638	
+639	        // truncate milliseconds
+640	        int millisecs = val.get(Calendar.MILLISECOND);
+641	        if (!round || millisecs < 500) {
+642	            time = time - millisecs;
+643	        if (field == Calendar.SECOND) {
+644	            done = true;
+645	            }
+646	        }
+647	
+648	        // truncate seconds
+649	        int seconds = val.get(Calendar.SECOND);
+650	        if (!done && (!round || seconds < 30)) {
+651	            time = time - (seconds * 1000L);
+652	        if (field == Calendar.MINUTE) {
+653	            done = true;
+654	            }
+655	        }
+656	
+657	        // truncate minutes
+658	        int minutes = val.get(Calendar.MINUTE);
+659	        if (!done && (!round || minutes < 30)) {
+660	            time = time - (minutes * 60000L);
+661	        }
+662	
+663	        // reset time
+664	        if (date.getTime() != time) {
+665	            date.setTime(time);
+666	            val.setTime(date);
+667	        }
+668	        // ----------------- Fix for LANG-59 ----------------------- END ----------------
+669	
+670	        boolean roundUp = false;
+671	        for (int i = 0; i < fields.length; i++) {
+672	            for (int j = 0; j < fields[i].length; j++) {
+673	                if (fields[i][j] == field) {
+674	                    //This is our field... we stop looping
+675	                    if (round && roundUp) {
+676	                        if (field == DateUtils.SEMI_MONTH) {
+677	                            //This is a special case that's hard to generalize
+678	                            //If the date is 1, we round up to 16, otherwise
+679	                            //  we subtract 15 days and add 1 month
+680	                            if (val.get(Calendar.DATE) == 1) {
+681	                                val.add(Calendar.DATE, 15);
+682	                            } else {
+683	                                val.add(Calendar.DATE, -15);
+684	                                val.add(Calendar.MONTH, 1);
+685	                            }
+686	                        } else {
+687	                            //We need at add one to this field since the
+688	                            //  last number causes us to round up
+689	                            val.add(fields[i][0], 1);
+690	                        }
+691	                    }
+692	                    return;
+693	                }
+694	            }
+695	            //We have various fields that are not easy roundings
+696	            int offset = 0;
+697	            boolean offsetSet = false;
+698	            //These are special types of fields that require different rounding rules
+699	            switch (field) {
+700	                case DateUtils.SEMI_MONTH:
+701	                    if (fields[i][0] == Calendar.DATE) {
+702	                        //If we're going to drop the DATE field's value,
+703	                        //  we want to do this our own way.
+704	                        //We need to subtrace 1 since the date has a minimum of 1
+705	                        offset = val.get(Calendar.DATE) - 1;
+706	                        //If we're above 15 days adjustment, that means we're in the
+707	                        //  bottom half of the month and should stay accordingly.
+708	                        if (offset >= 15) {
+709	                            offset -= 15;
+710	                        }
+711	                        //Record whether we're in the top or bottom half of that range
+712	                        roundUp = offset > 7;
+713	                        offsetSet = true;
+714	                    }
+715	                    break;
+716	                case Calendar.AM_PM:
+717	                    if (fields[i][0] == Calendar.HOUR_OF_DAY) {
+718	                        //If we're going to drop the HOUR field's value,
+719	                        //  we want to do this our own way.
+720	                        offset = val.get(Calendar.HOUR_OF_DAY);
+721	                        if (offset >= 12) {
+722	                            offset -= 12;
+723	                        }
+724	                        roundUp = offset > 6;
+725	                        offsetSet = true;
+726	                    }
+727	                    break;
+728	            }
+729	            if (!offsetSet) {
+730	                int min = val.getActualMinimum(fields[i][0]);
+731	                int max = val.getActualMaximum(fields[i][0]);
+732	                //Calculate the offset from the minimum allowed value
+733	                offset = val.get(fields[i][0]) - min;
+734	                //Set roundUp if this is more than half way between the minimum and maximum
+735	                roundUp = offset > ((max - min) / 2);
+736	            }
+737	            //We need to remove this field
+738	            if (offset != 0) {
+739	                val.set(fields[i][0], val.get(fields[i][0]) - offset);
+
+====================================================================================================
+[12:21:40] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang.time;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_DateUtilsTest {\n\n    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */\n    public static class DateSpecGen extends Generator<int[]> {\n        public DateSpecGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour\n            int year = r.nextInt(1971, 2100);\n            int month = r.nextInt(0, 11);\n            int day = r.nextInt(1, 28);\n            int hour = r.nextInt(0, 23);\n            int minute = r.nextInt(0, 59);\n            int second = r.nextInt(0, 59);\n            int ms = r.nextInt(0, 999);\n            if (r.nextInt(0, 9) < 4) {\n                // bias towards bug-triggering inputs\n                if (r.nextBoolean()) {\n                    field = 2;\n                    second = r.nextInt(30, 59);\n                    minute = r.nextInt(1, 29);\n                } else {\n                    field = 1;\n                    ms = r.nextInt(500, 999);\n                    if (r.nextBoolean()) {\n                        minute = r.nextInt(1, 29);\n                    } else {\n                        second = r.nextInt(1, 29);\n                    }\n                }\n            }\n            return new int[]{field, year, month, day, hour, minute, second, ms};\n        }\n    }\n\n    private static final int[] FIELDS = {\n        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY\n    };\n\n    @Fuzz\n    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {\n        int fieldIdx = spec[0];\n        int year = spec[1];\n        int month = spec[2];\n        int day = spec[3];\n        int hour = spec[4];\n        int minute = spec[5];\n        int second = spec[6];\n        int ms = spec[7];\n\n        boolean validIf = spec.length == 8\n                && fieldIdx >= 0 && fieldIdx <= 3\n                && year >= 1971 && year <= 2100\n                && month >= 0 && month <= 11\n                && day >= 1 && day <= 28\n                && hour >= 0 && hour <= 23\n                && minute >= 0 && minute <= 59\n                && second >= 0 && second <= 59\n                && ms >= 0 && ms <= 999;\n        boolean buggyIf = validIf && (\n                (fieldIdx == 2 && second >= 30 && minute >= 1 && minute <= 29)\n                || (fieldIdx == 1 && ms >= 500\n                    && ((second >= 1 && second < 30) || (minute >= 1 && minute < 30))));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        int field = FIELDS[fieldIdx];\n        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(\"GMT\"));\n        cal.clear();\n        cal.set(year, month, day, hour, minute, second);\n        cal.set(Calendar.MILLISECOND, ms);\n        Date date = cal.getTime();\n        long input = date.getTime();\n\n        Date rounded = DateUtils.round(date, field);\n        long result = rounded.getTime();\n\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });\n\n        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;\n        long floor = input - (((input % unit) + unit) % unit);\n        long expected = floor + unit; // both bug cases round up\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:21:40] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:21:40] [002_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.1885
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang.time;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_DateUtilsTest {\n\n    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */\n    public static class DateSpecGen extends Generator<int[]> {\n        public DateSpecGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour\n            int year = r.nextInt(1971, 2100);\n            int month = r.nextInt(0, 11);\n            int day = r.nextInt(1, 28);\n            int hour = r.nextInt(0, 23);\n            int minute = r.nextInt(0, 59);\n            int second = r.nextInt(0, 59);\n            int ms = r.nextInt(0, 999);\n            if (r.nextInt(0, 9) < 4) {\n                // bias towards bug-triggering inputs\n                if (r.nextBoolean()) {\n                    field = 2;\n                    second = r.nextInt(30, 59);\n                    minute = r.nextInt(1, 29);\n                } else {\n                    field = 1;\n                    ms = r.nextInt(500, 999);\n                    if (r.nextBoolean()) {\n                        minute = r.nextInt(1, 29);\n                    } else {\n                        second = r.nextInt(1, 29);\n                    }\n                }\n            }\n            return new int[]{field, year, month, day, hour, minute, second, ms};\n        }\n    }\n\n    private static final int[] FIELDS = {\n        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY\n    };\n\n    @Fuzz\n    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {\n        int fieldIdx = spec[0];\n        int year = spec[1];\n        int month = spec[2];\n        int day = spec[3];\n        int hour = spec[4];\n        int minute = spec[5];\n        int second = spec[6];\n        int ms = spec[7];\n\n        boolean validIf = spec.length == 8\n                && fieldIdx >= 0 && fieldIdx <= 3\n                && year >= 1971 && year <= 2100\n                && month >= 0 && month <= 11\n                && day >= 1 && day <= 28\n                && hour >= 0 && hour <= 23\n                && minute >= 0 && minute <= 59\n                && second >= 0 && second <= 59\n                && ms >= 0 && ms <= 999;\n        boolean buggyIf = validIf && (\n                (fieldIdx == 2 && second >= 30 && minute >= 1 && minute <= 29)\n                || (fieldIdx == 1 && ms >= 500\n                    && ((second >= 1 && second < 30) || (minute >= 1 && minute < 30))));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        int field = FIELDS[fieldIdx];\n        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(\"GMT\"));\n        cal.clear();\n        cal.set(year, month, day, hour, minute, second);\n        cal.set(Calendar.MILLISECOND, ms);\n        Date date = cal.getTime();\n        long input = date.getTime();\n\n        Date rounded = DateUtils.round(date, field);\n        long result = rounded.getTime();\n\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });\n\n        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;\n        long floor = input - (((input % unit) + unit) % unit);\n        long expected = floor + unit; // both bug cases round up\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:21:40] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:21:40] TEST CODE (org.apache.commons.lang.time.JQF_DateUtilsTest)
+====================================================================================================
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                // bias towards bug-triggering inputs
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        int fieldIdx = spec[0];
+        int year = spec[1];
+        int month = spec[2];
+        int day = spec[3];
+        int hour = spec[4];
+        int minute = spec[5];
+        int second = spec[6];
+        int ms = spec[7];
+
+        boolean validIf = spec.length == 8
+                && fieldIdx >= 0 && fieldIdx <= 3
+                && year >= 1971 && year <= 2100
+                && month >= 0 && month <= 11
+                && day >= 1 && day <= 28
+                && hour >= 0 && hour <= 23
+                && minute >= 0 && minute <= 59
+                && second >= 0 && second <= 59
+                && ms >= 0 && ms <= 999;
+        boolean buggyIf = validIf && (
+                (fieldIdx == 2 && second >= 30 && minute >= 1 && minute <= 29)
+                || (fieldIdx == 1 && ms >= 500
+                    && ((second >= 1 && second < 30) || (minute >= 1 && minute < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[fieldIdx];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(year, month, day, hour, minute, second);
+        cal.set(Calendar.MILLISECOND, ms);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit; // both bug cases round up
+        assertEquals(expected, result);
+    }
+}
+
+====================================================================================================
+[12:21:40] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `int fieldIdx = spec[0];`
+
+====================================================================================================
+[12:21:40] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:21:40] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `int fieldIdx = spec[0];`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source
+Test file: src/test/org/apache/commons/lang/time/JQF_DateUtilsTest.java
+Test class: org.apache.commons.lang.time.JQF_DateUtilsTest
+Test method: testBugReproduction
+
+Bug summary: DateUtils.round() with Calendar.MINUTE (and SECOND) in versions 2.2/2.3 yields wrong results: rounding up a value at 59-ish boundaries adds the rounding increment to the wrong field, producing e.g. 03:01:00 instead of 03:10:00 when rounding 03:09:50 to the minute.
+
+Concrete examples:
+[{'input': 'Calendar GMT set(2007, 6, 2, 8, 9, 50); DateUtils.round(date, Calendar.MINUTE)', 'expected': 'Mon Jul 02 03:10:00 CDT 2007 (08:10:00 GMT)', 'actual': 'Mon Jul 02 03:01:00 CDT 2007'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Lang-53/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:21:51] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang.time;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_DateUtilsTest {\n\n    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */\n    public static class DateSpecGen extends Generator<int[]> {\n        public DateSpecGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour\n            int year = r.nextInt(1971, 2100);\n            int month = r.nextInt(0, 11);\n            int day = r.nextInt(1, 28);\n            int hour = r.nextInt(0, 23);\n            int minute = r.nextInt(0, 59);\n            int second = r.nextInt(0, 59);\n            int ms = r.nextInt(0, 999);\n            if (r.nextInt(0, 9) < 4) {\n                if (r.nextBoolean()) {\n                    field = 2;\n                    second = r.nextInt(30, 59);\n                    minute = r.nextInt(1, 29);\n                } else {\n                    field = 1;\n                    ms = r.nextInt(500, 999);\n                    if (r.nextBoolean()) {\n                        minute = r.nextInt(1, 29);\n                    } else {\n                        second = r.nextInt(1, 29);\n                    }\n                }\n            }\n            return new int[]{field, year, month, day, hour, minute, second, ms};\n        }\n    }\n\n    private static final int[] FIELDS = {\n        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY\n    };\n\n    @Fuzz\n    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {\n        boolean validIf = spec != null && spec.length == 8\n                && spec[0] >= 0 && spec[0] <= 3\n                && spec[1] >= 1971 && spec[1] <= 2100\n                && spec[2] >= 0 && spec[2] <= 11\n                && spec[3] >= 1 && spec[3] <= 28\n                && spec[4] >= 0 && spec[4] <= 23\n                && spec[5] >= 0 && spec[5] <= 59\n                && spec[6] >= 0 && spec[6] <= 59\n                && spec[7] >= 0 && spec[7] <= 999;\n        boolean buggyIf = validIf && (\n                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)\n                || (spec[0] == 1 && spec[7] >= 500\n                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        int field = FIELDS[spec[0]];\n        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(\"GMT\"));\n        cal.clear();\n        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);\n        cal.set(Calendar.MILLISECOND, spec[7]);\n        Date date = cal.getTime();\n        long input = date.getTime();\n\n        Date rounded = DateUtils.round(date, field);\n        long result = rounded.getTime();\n\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });\n\n        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;\n        long floor = input - (((input % unit) + unit) % unit);\n        long expected = floor + unit;\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:21:51] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:21:52] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2433
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.lang.time;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\nimport java.util.Calendar;\nimport java.util.Date;\nimport java.util.TimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_DateUtilsTest {\n\n    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */\n    public static class DateSpecGen extends Generator<int[]> {\n        public DateSpecGen() { super(int[].class); }\n\n        @Override\n        public int[] generate(SourceOfRandomness r, GenerationStatus status) {\n            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour\n            int year = r.nextInt(1971, 2100);\n            int month = r.nextInt(0, 11);\n            int day = r.nextInt(1, 28);\n            int hour = r.nextInt(0, 23);\n            int minute = r.nextInt(0, 59);\n            int second = r.nextInt(0, 59);\n            int ms = r.nextInt(0, 999);\n            if (r.nextInt(0, 9) < 4) {\n                if (r.nextBoolean()) {\n                    field = 2;\n                    second = r.nextInt(30, 59);\n                    minute = r.nextInt(1, 29);\n                } else {\n                    field = 1;\n                    ms = r.nextInt(500, 999);\n                    if (r.nextBoolean()) {\n                        minute = r.nextInt(1, 29);\n                    } else {\n                        second = r.nextInt(1, 29);\n                    }\n                }\n            }\n            return new int[]{field, year, month, day, hour, minute, second, ms};\n        }\n    }\n\n    private static final int[] FIELDS = {\n        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY\n    };\n\n    @Fuzz\n    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {\n        boolean validIf = spec != null && spec.length == 8\n                && spec[0] >= 0 && spec[0] <= 3\n                && spec[1] >= 1971 && spec[1] <= 2100\n                && spec[2] >= 0 && spec[2] <= 11\n                && spec[3] >= 1 && spec[3] <= 28\n                && spec[4] >= 0 && spec[4] <= 23\n                && spec[5] >= 0 && spec[5] <= 59\n                && spec[6] >= 0 && spec[6] <= 59\n                && spec[7] >= 0 && spec[7] <= 999;\n        boolean buggyIf = validIf && (\n                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)\n                || (spec[0] == 1 && spec[7] >= 500\n                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        int field = FIELDS[spec[0]];\n        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(\"GMT\"));\n        cal.clear();\n        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);\n        cal.set(Calendar.MILLISECOND, spec[7]);\n        Date date = cal.getTime();\n        long input = date.getTime();\n\n        Date rounded = DateUtils.round(date, field);\n        long result = rounded.getTime();\n\n        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });\n\n        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;\n        long floor = input - (((input % unit) + unit) % unit);\n        long expected = floor + unit;\n        assertEquals(expected, result);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:21:52] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:21:52] TEST CODE (org.apache.commons.lang.time.JQF_DateUtilsTest)
+====================================================================================================
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+}
+
+====================================================================================================
+[12:21:53] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:22:14] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 48994,
+  "discarded_by_assume": 21926,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 3005
+  },
+  "passed_assume": 27068,
+  "classified": 3005
+}
+
+====================================================================================================
+[12:22:14] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:22:14] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Dates.round() behaves incorrectly for minutes and seconds
+
+Get unexpected output for rounding by minutes or seconds.
+
+public void testRound()
+{
+    Calendar testCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    testCalendar.set(2007, 6, 2, 8, 9, 50);
+    Date date = testCalendar.getTime();
+    System.out.println("Before round() " + date);
+    System.out.println("After round()  " + DateUtils.round(date, Calendar.MINUTE));
+}
+
+--2.1 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:10:00 CDT 2007 -- this is what I would expect
+
+--2.2 and 2.3 produces
+Before round() Mon Jul 02 03:09:50 CDT 2007
+After round()  Mon Jul 02 03:01:00 CDT 2007 -- this appears to be wrong
+
+=== Test ===
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<3604043940000> but was:<3604042860000>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)
+
+Location: org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)
+
+is triggered by the following inputs:
+
+    input (1, 2011, 7, 13, 22, 49, 24, 518) -> logged [1313275741000, 1313275764518]
+    input (1, 1988, 7, 1, 19, 28, 14, 529) -> logged [586465201000, 586466894529]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:22:40] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, and I found no problem with buggyIf or the valid domain.
+
+**(1) Inputs.** Both failing inputs use field index 1 (`Calendar.SECOND`) with ms ≥ 500. The report's title says "minutes and seconds", so the seconds case is in scope. In the first input the time is 22:49:24.518, which should round to 22:49:25. The buggy code returns 22:49:01. The `SECOND` rounding goes wrong in the same way as the report's `MINUTE` rounding.
+
+**(2) Error.** The result is much earlier than the correct rounded value. In the first input it is 24 seconds earlier. The report's symptom is the same: 03:09:50 became 03:01:00 instead of 03:10:00.
+
+**(3) Root cause.** The LANG-59 manual truncation in `modify()` does not decide correctly when to truncate each field while rounding.
+- Fields are truncated independently, with checks like `seconds < 30` and `minutes < 30` and a `done` flag.
+- When the lower field is not truncated, the carry logic in the later loop adds the increment to the wrong field.
+- The result is an extra truncation, or an increment applied to the wrong unit.
+- This is the same mechanism as in the report. The unbroken `MINUTE` case (second ≥ 30, minute 1–29) takes the same code path.
+
+**(4) Does buggyIf include inputs that already behave correctly?** I traced the cases and found none.
+- For `MINUTE`, second ≥ 30 and minute 1–29 gives the wrong result: seconds are not truncated, minutes are, and no carry is added.
+- For `SECOND`, ms ≥ 500 and second 1–29, or minute 1–29, gives the wrong result.
+- Cases like minute 0, or second ≥ 30 with minute ≥ 30, are excluded, and they behave correctly.
+- The expected value is `floor + unit`, which is right for these inputs. For `SECOND`, ms ≥ 500 rounds up. For `MINUTE`, second ≥ 30 rounds up.
+
+**(5) Does buggyIf miss bug-triggering inputs?** I found none. `MINUTE` with second < 30, or with minute ≥ 30 and second ≥ 30, is correct. `HOUR_OF_DAY` and `MILLISECOND` are correct as well.
+
+**(6) Valid domain.** The generator and validIf cover several fields (ms, second, minute, hour) and a wide range of years, months, days and times. Many of these are not bug-triggering, so the domain is not restricted to the bug.
+
+====================================================================================================
+[12:22:42] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs use SECOND rounding with ms ≥ 500, for example 22:49:24.518. The correct result is 22:49:25, but the buggy code returns 22:49:01. This is the same defect as in the report: the LANG-59 truncation logic in `modify()` handles the lower fields wrongly, so the rounding increment lands on the wrong field. The report's own title covers minutes and seconds. buggyIf matches the cases that I traced as wrong. These are MINUTE with second ≥ 30 and minute 1–29, and SECOND with ms ≥ 500 and second 1–29 or minute 1–29. It excludes cases that already behave correctly, such as minute 0 or both second and minute ≥ 30. I found no bug-triggering input that it misses. The expected value, floor plus one unit, is correct for the included inputs. The ranges and validIf cover many fields and wide date ranges, not just the bug cases."
+}
+
+====================================================================================================
+[12:22:42] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:22:43] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4191
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs use SECOND rounding with ms ≥ 500, for example 22:49:24.518. The correct result is 22:49:25, but the buggy code returns 22:49:01. This is the same defect as in the report: the LANG-59 truncation logic in `modify()` handles the lower fields wrongly, so the rounding increment lands on the wrong field. The report's own title covers minutes and seconds. buggyIf matches the cases that I traced as wrong. These are MINUTE with second ≥ 30 and minute 1–29, and SECOND with ms ≥ 500 and second 1–29 or minute 1–29. It excludes cases that already behave correctly, such as minute 0 or both second and minute ≥ 30. I found no bug-triggering input that it misses. The expected value, floor plus one unit, is correct for the included inputs. The ranges and validIf cover many fields and wide date ranges, not just the bug cases."
+}
+
+====================================================================================================
+[12:22:43] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:22:43] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:22:46] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking libraries, fake subclasses or simulated return values. It builds a real Calendar and Date, calls the real DateUtils.round(date, field), and reads the returned Date. The expected value is computed independently with plain arithmetic (floor plus one unit) and is only used for the assertion. The generator only produces inputs. This is a direct test of the actual code."
+}
+
+====================================================================================================
+[12:22:46] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:22:47] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5768
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking libraries, fake subclasses or simulated return values. It builds a real Calendar and Date, calls the real DateUtils.round(date, field), and reads the returned Date. The expected value is computed independently with plain arithmetic (floor plus one unit) and is only used for the assertion. The generator only produces inputs. This is a direct test of the actual code."
+}
+
+====================================================================================================
+[12:22:47] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:22:51] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals with constant mismatched values. The only assertion is assertEquals(expected, result). The expected value is computed from the input (floor plus one unit), and result comes from DateUtils.round. A correct implementation would satisfy it for the inputs that buggyIf selects, so the test can pass."
+}
+
+====================================================================================================
+[12:22:51] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:22:52] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5902
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. There is no fail(), assertTrue(false) or assertEquals with constant mismatched values. The only assertion is assertEquals(expected, result). The expected value is computed from the input (floor plus one unit), and result comes from DateUtils.round. A correct implementation would satisfy it for the inputs that buggyIf selects, so the test can pass."
+}
+
+====================================================================================================
+[12:22:52] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:22:55] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The assertion is assertEquals(expected, result) with both arguments of primitive type long. That resolves to assertEquals(long, long), an exact comparison, which is right for epoch-millisecond values. No doubles, strings, arrays or object references are compared with == or without a delta."
+}
+
+====================================================================================================
+[12:22:55] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:22:56] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.6035
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The assertion is assertEquals(expected, result) with both arguments of primitive type long. That resolves to assertEquals(long, long), an exact comparison, which is right for epoch-millisecond values. No doubles, strings, arrays or object references are compared with == or without a delta."
+}
+
+====================================================================================================
+[12:22:56] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:22:56] AGENT FINISHED success=True llm_calls=11
+====================================================================================================
+
+
+====================================================================================================
+[12:22:57] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_DateUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug53"
+}
+
+====================================================================================================
+[12:22:57] FINAL TEST FILE JQF_DateUtilsTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.lang.time;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@RunWith(JQF.class)
+public class JQF_DateUtilsTest {
+
+    /** Generates {fieldIndex, year, month, day, hour, minute, second, millis}. */
+    public static class DateSpecGen extends Generator<int[]> {
+        public DateSpecGen() { super(int[].class); }
+
+        @Override
+        public int[] generate(SourceOfRandomness r, GenerationStatus status) {
+            int field = r.nextInt(0, 3); // 0 ms, 1 second, 2 minute, 3 hour
+            int year = r.nextInt(1971, 2100);
+            int month = r.nextInt(0, 11);
+            int day = r.nextInt(1, 28);
+            int hour = r.nextInt(0, 23);
+            int minute = r.nextInt(0, 59);
+            int second = r.nextInt(0, 59);
+            int ms = r.nextInt(0, 999);
+            if (r.nextInt(0, 9) < 4) {
+                if (r.nextBoolean()) {
+                    field = 2;
+                    second = r.nextInt(30, 59);
+                    minute = r.nextInt(1, 29);
+                } else {
+                    field = 1;
+                    ms = r.nextInt(500, 999);
+                    if (r.nextBoolean()) {
+                        minute = r.nextInt(1, 29);
+                    } else {
+                        second = r.nextInt(1, 29);
+                    }
+                }
+            }
+            return new int[]{field, year, month, day, hour, minute, second, ms};
+        }
+    }
+
+    private static final int[] FIELDS = {
+        Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY
+    };
+
+    @Fuzz
+    public void testBugReproduction(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        int field = FIELDS[spec[0]];
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.clear();
+        cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+        cal.set(Calendar.MILLISECOND, spec[7]);
+        Date date = cal.getTime();
+        long input = date.getTime();
+
+        Date rounded = DateUtils.round(date, field);
+        long result = rounded.getTime();
+
+        Log.logOutIf(true, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+
+        long unit = (field == Calendar.SECOND) ? 1000L : 60000L;
+        long floor = input - (((input % unit) + unit) % unit);
+        long expected = floor + unit;
+        assertEquals(expected, result);
+    }
+
+    @Fuzz
+    public void testRoundLang346(@From(DateSpecGen.class) int[] spec) {
+        boolean validIf = spec != null && spec.length == 8
+                && spec[0] >= 0 && spec[0] <= 3
+                && spec[1] >= 1971 && spec[1] <= 2100
+                && spec[2] >= 0 && spec[2] <= 11
+                && spec[3] >= 1 && spec[3] <= 28
+                && spec[4] >= 0 && spec[4] <= 23
+                && spec[5] >= 0 && spec[5] <= 59
+                && spec[6] >= 0 && spec[6] <= 59
+                && spec[7] >= 0 && spec[7] <= 999;
+        boolean buggyIf = validIf && (
+                (spec[0] == 2 && spec[6] >= 30 && spec[5] >= 1 && spec[5] <= 29)
+                || (spec[0] == 1 && spec[7] >= 500
+                    && ((spec[6] >= 1 && spec[6] < 30) || (spec[5] >= 1 && spec[5] < 30))));
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            int field = FIELDS[spec[0]];
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            cal.clear();
+            cal.set(spec[1], spec[2], spec[3], spec[4], spec[5], spec[6]);
+            cal.set(Calendar.MILLISECOND, spec[7]);
+            Date date = cal.getTime();
+            long input = date.getTime();
+
+            Date rounded = DateUtils.round(date, field);
+            long result = rounded.getTime();
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ Long.valueOf(result), Long.valueOf(input) });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:26:04] VALIDATION valid=False some inputs inside buggyIf fail on the developer fix
+====================================================================================================
+{
+  "valid": false,
+  "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 55861,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "fail",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 55614,
+      "unique_failures": {
+        "java.lang.AssertionError": 1
+      },
+      "failing_examples": "The error:\n    java.lang.AssertionError: expected:<592331155000> but was:<592334755000>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:645)\n    \tat org.junit.Assert.assertEquals(Assert.java:631)\n    \tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nLocation: org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nis triggered by the following inputs:\n\n    input (1, 1988, 9, 8, 16, 25, 54, 784) -> logged [592334755000, 592331154784]"
+    }
+  }
+}

@@ -1,0 +1,302 @@
+{
+  "bug": "Math-32",
+  "success": false,
+  "failure_reason": "LLM call budget exhausted (50 calls)",
+  "model": "sonnet",
+  "llm_call_count": 50,
+  "cost_usd": 5.2658,
+  "tokens": {
+    "input": 72,
+    "output": 55098,
+    "cache_write": 1117764,
+    "cache_read": 2436338
+  },
+  "seconds": 650.2,
+  "started_at": "2026-11-21T12:37:41",
+  "timing": {
+    "checkout": 10.6,
+    "agent": 639.5
+  },
+  "llm_seconds": 469.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 501,
+        "cache_write": 923,
+        "cache_read": 808
+      },
+      "cost_usd": 0.008787,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 61.9,
+      "turns": 13,
+      "tokens": {
+        "input": 16,
+        "output": 7082,
+        "cache_write": 53355,
+        "cache_read": 219415
+      },
+      "cost_usd": 0.306214,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 139.9,
+      "turns": 11,
+      "tokens": {
+        "input": 12,
+        "output": 17089,
+        "cache_write": 105010,
+        "cache_read": 386493
+      },
+      "cost_usd": 0.629603,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 8.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 513,
+        "cache_write": 98723,
+        "cache_read": 611
+      },
+      "cost_usd": 0.400087,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_symbolize",
+      "seconds": 23.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3264,
+        "cache_write": 24473,
+        "cache_read": 97661
+      },
+      "cost_usd": 0.140302,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "009_symbolize",
+      "seconds": 14.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 2155,
+        "cache_write": 7062,
+        "cache_read": 122134
+      },
+      "cost_usd": 0.062019,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "011_check_inputs",
+      "seconds": 7.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 491,
+        "cache_write": 17208,
+        "cache_read": 99334
+      },
+      "cost_usd": 0.083679,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "012_symbolize",
+      "seconds": 34.5,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 4453,
+        "cache_write": 170059,
+        "cache_read": 129735
+      },
+      "cost_usd": 0.737747,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "014_check_inputs",
+      "seconds": 18.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1774,
+        "cache_write": 145587,
+        "cache_read": 611
+      },
+      "cost_usd": 0.600153,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "015_symbolize",
+      "seconds": 24.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3325,
+        "cache_write": 14657,
+        "cache_read": 158785
+      },
+      "cost_usd": 0.10776,
+      "outcome": "success"
+    },
+    {
+      "call": 11,
+      "step": "017_check_inputs",
+      "seconds": 9.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 834,
+        "cache_write": 13613,
+        "cache_read": 146198
+      },
+      "cost_usd": 0.077416,
+      "outcome": "success"
+    },
+    {
+      "call": 12,
+      "step": "018_symbolize",
+      "seconds": 27.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3441,
+        "cache_write": 13627,
+        "cache_read": 173442
+      },
+      "cost_usd": 0.106266,
+      "outcome": "success"
+    },
+    {
+      "call": 13,
+      "step": "020_check_inputs",
+      "seconds": 8.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 718,
+        "cache_write": 13224,
+        "cache_read": 159811
+      },
+      "cost_usd": 0.076061,
+      "outcome": "success"
+    },
+    {
+      "call": 14,
+      "step": "021_symbolize",
+      "seconds": 27.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3442,
+        "cache_write": 13822,
+        "cache_read": 187069
+      },
+      "cost_usd": 0.108419,
+      "outcome": "success"
+    },
+    {
+      "call": 15,
+      "step": "023_check_inputs",
+      "seconds": 23.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2284,
+        "cache_write": 13300,
+        "cache_read": 173035
+      },
+      "cost_usd": 0.093348,
+      "outcome": "success"
+    },
+    {
+      "call": 16,
+      "step": "024_validate",
+      "seconds": 7.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 293,
+        "cache_write": 188022,
+        "cache_read": 603
+      },
+      "cost_usd": 0.755086,
+      "outcome": "success"
+    },
+    {
+      "call": 17,
+      "step": "024_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 202,
+        "cache_write": 2804,
+        "cache_read": 188625
+      },
+      "cost_usd": 0.032107,
+      "outcome": "success"
+    },
+    {
+      "call": 18,
+      "step": "024_validate",
+      "seconds": 5.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 295,
+        "cache_write": 2742,
+        "cache_read": 191429
+      },
+      "cost_usd": 0.033069,
+      "outcome": "success"
+    },
+    {
+      "call": 19,
+      "step": "025_filter_passing",
+      "seconds": 20.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2942,
+        "cache_write": 219553,
+        "cache_read": 539
+      },
+      "cost_usd": 0.90769,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 9,
+  "failing_test": "org.apache.commons.math3.geometry.euclidean.threed.PolyhedronsSetTest::testIssue780",
+  "jqf_class": "org.apache.commons.math3.geometry.euclidean.threed.JQF_PolyhedronsSetTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.geometry.euclidean.threed.PolyhedronsSetTest",
+    "org.apache.commons.math3.geometry.euclidean.twod.PolygonsSetTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIssue780",
+  "issue_gist": "Commons Math's BSPTree built from a PolyhedronsSet (a cube boundary representation of 8 vertices and 12 triangular faces) fails to yield correct faces when you extract them. The failure depends on vertex positions. Shifting one vertex slightly makes it work, which suggests a numerical-tolerance or degenerate-case bug in the BSP construction or in the polyhedron's boundary handling.",
+  "failing_inputs_count": 1491,
+  "total_seconds": 650.2,
+  "paired_inputs_archived": false
+}

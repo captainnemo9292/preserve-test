@@ -1,0 +1,6 @@
+{
+  "bug": "Math-4",
+  "url": "https://issues.apache.org/jira/browse/MATH-988",
+  "title": "NPE when calling SubLine.intersection() with non-intersecting lines",
+  "body": "When calling SubLine.intersection() with two lines that not intersect, then a NullPointerException is thrown in Line.toSubSpace(). This bug is in the twod and threed implementations.\n\nThe attached patch fixes both implementations and adds the required test cases.\n\n"
+}

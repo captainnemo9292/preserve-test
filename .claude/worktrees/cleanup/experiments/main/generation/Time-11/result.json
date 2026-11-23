@@ -1,0 +1,154 @@
+{
+  "bug": "Time-11",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.5033,
+  "tokens": {
+    "input": 22,
+    "output": 6817,
+    "cache_write": 106227,
+    "cache_read": 101616
+  },
+  "seconds": 112.7,
+  "started_at": "2026-11-21T13:34:32",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 102.4,
+    "derive": 1.9,
+    "validation": 191.9
+  },
+  "llm_seconds": 79.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 516,
+        "cache_write": 1413,
+        "cache_read": 808
+      },
+      "cost_usd": 0.010897,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 34.5,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 3564,
+        "cache_write": 33870,
+        "cache_read": 26628
+      },
+      "cost_usd": 0.173795,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 24.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2067,
+        "cache_write": 32123,
+        "cache_read": 611
+      },
+      "cost_usd": 0.149227,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 214,
+        "cache_write": 34923,
+        "cache_read": 603
+      },
+      "cost_usd": 0.1419,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 255,
+        "cache_write": 1914,
+        "cache_read": 35526
+      },
+      "cost_usd": 0.013767,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 201,
+        "cache_write": 1984,
+        "cache_read": 37440
+      },
+      "cost_usd": 0.013698,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.joda.time.tz.TestCompiler::testDateTimeZoneBuilder",
+  "jqf_class": "org.joda.time.tz.JQF_TestCompiler",
+  "hidden_tests": [
+    "org.joda.time.tz.TestCompiler"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testDateTimeZoneBuilder",
+  "issue_gist": "ZoneInfoCompiler initializes the cVerbose ThreadLocal<Boolean> via a static block, which only sets the value for the first thread. In any other thread, verbose() unboxes null and throws an NPE. This happens when DateTimeZoneBuilder hits duplicate-named recurring savings in that thread.",
+  "failing_inputs_count": 1456,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestCompiler.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug11",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 26531,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 26340,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 306.5,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,6 @@
+{
+  "bug": "Math-3",
+  "url": "https://issues.apache.org/jira/browse/MATH-1005",
+  "title": "ArrayIndexOutOfBoundsException in MathArrays.linearCombination",
+  "body": "When MathArrays.linearCombination is passed arguments with length 1, it throws an ArrayOutOfBoundsException. This is caused by this line:\n\ndouble prodHighNext = prodHigh[1];\n\nlinearCombination should check the length of the arguments and fall back to simple multiplication if length == 1."
+}

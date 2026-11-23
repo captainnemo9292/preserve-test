@@ -1,0 +1,176 @@
+{
+  "bug": "Math-84",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 13,
+  "cost_usd": 0.6454,
+  "tokens": {
+    "input": 28,
+    "output": 7119,
+    "cache_write": 138537,
+    "cache_read": 200128
+  },
+  "seconds": 117.4,
+  "started_at": "2026-11-21T13:14:16",
+  "timing": {
+    "checkout": 11.1,
+    "agent": 106.3,
+    "derive": 1.6,
+    "validation": 183.8
+  },
+  "llm_seconds": 83.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 316,
+        "cache_write": 772,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006333,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 30.1,
+      "turns": 6,
+      "tokens": {
+        "input": 6,
+        "output": 2933,
+        "cache_write": 39566,
+        "cache_read": 29106
+      },
+      "cost_usd": 0.190517,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 11.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1465,
+        "cache_write": 6658,
+        "cache_read": 33663
+      },
+      "cost_usd": 0.044652,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 20.6,
+      "turns": 3,
+      "tokens": {
+        "input": 6,
+        "output": 1608,
+        "cache_write": 43440,
+        "cache_read": 43462
+      },
+      "cost_usd": 0.194198,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 240,
+        "cache_write": 44819,
+        "cache_read": 603
+      },
+      "cost_usd": 0.181744,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 209,
+        "cache_write": 1642,
+        "cache_read": 45422
+      },
+      "cost_usd": 0.013208,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 5.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 348,
+        "cache_write": 1640,
+        "cache_read": 47064
+      },
+      "cost_usd": 0.014754,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.optimization.direct.MultiDirectionalTest::testMinimizeMaximize",
+  "jqf_class": "org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest",
+  "hidden_tests": [
+    "org.apache.commons.math.optimization.direct.MultiDirectionalTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMinimizeMaximize",
+  "issue_gist": "MultiDirectional.iterateSimplex (Apache Commons Math) never terminates when the starting point is already the exact optimum. The simplex doesn't converge or is never checked for convergence in that case, so the loop runs forever.",
+  "failing_inputs_count": 2047,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_MultiDirectionalTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug84",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 63525,
+      "inside_buggyIf": 21111,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 19892,
+        "fail": 108,
+        "not_run": 0,
+        "failing_examples": [
+          "input (-36.0, -2.0, 0.0, 0, 4.001822734947595, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 3004]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+          "input (0.0, 0, -0.358458898459423, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 1002]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+          "input (0.0, -0.75, 0, -4.508608551201203, 1) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 2003]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref"
+        ]
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 33293,
+        "unique_failures": {
+          "org.junit.ComparisonFailure": 1
+        },
+        "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\nLocation: org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\nis triggered by the following inputs:\n\n    input (0.0, 20.5, 0, -0.2108706202896471, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 2003]"
+      }
+    }
+  },
+  "total_seconds": 302.8,
+  "paired_inputs_archived": true
+}

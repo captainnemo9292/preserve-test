@@ -1,0 +1,6 @@
+{
+  "bug": "Lang-55",
+  "url": "https://issues.apache.org/jira/browse/LANG-315",
+  "title": "StopWatch: suspend() acts as split(), if followed by stop()",
+  "body": "In my opinion, it is a bug that suspend() acts as split(), if followed by stop(); see below:\n\n        StopWatch sw = new StopWatch();\n\n        sw.start();\n        Thread.sleep(1000);\n        sw.suspend();\n        // Time 1 (ok)\n        System.out.println(sw.getTime());\n\n        Thread.sleep(2000);\n        // Time 1 (again, ok)\n        System.out.println(sw.getTime());\n\n        sw.resume();\n        Thread.sleep(3000);\n        sw.suspend();\n        // Time 2 (ok)\n        System.out.println(sw.getTime());\n\n        Thread.sleep(4000);\n        // Time 2 (again, ok)\n        System.out.println(sw.getTime());\n\n        Thread.sleep(5000);\n        sw.stop();\n        // Time 2 (should be, but is Time 3 => NOT ok)\n        System.out.println(sw.getTime());\n\n\nsuspend/resume is like a pause, where time counter doesn't continue. So a following stop()-call shouldn't increase the time counter, should it?\n"
+}

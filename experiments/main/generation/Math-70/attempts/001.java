@@ -1,0 +1,51 @@
+package org.apache.commons.math.analysis.solvers;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+
+@RunWith(JQF.class)
+public class JQF_BisectionSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10.0, maxDouble = 10.0) double min,
+                                    @InRange(minDouble = -10.0, maxDouble = 10.0) double max,
+                                    @InRange(minDouble = -10.0, maxDouble = 10.0) double initial,
+                                    @InRange(minDouble = -10.0, maxDouble = 10.0) double root) {
+        boolean validIf = min < max && max - min > 1e-3
+                && initial >= min && initial <= max
+                && root >= min && root <= max;
+        boolean buggyIf = true; // every valid call of the 4-arg solve with a fresh solver hits the null field f
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double r = root;
+        UnivariateRealFunction fn = new UnivariateRealFunction() {
+            public double value(double x) throws FunctionEvaluationException {
+                return x - r;
+            }
+        };
+
+        String exceptionName = "none";
+        double result = Double.NaN;
+        try {
+            result = new BisectionSolver().solve(fn, min, max, initial);
+        } catch (Throwable t) {
+            exceptionName = t.getClass().getName();
+        }
+
+        final String exName = exceptionName;
+        final double res = result;
+        Log.logOutIf(true, () -> new Object[]{ exName, res });
+        assertEquals("none", exName);
+        assertEquals(root, res, 1e-3);
+    }
+}

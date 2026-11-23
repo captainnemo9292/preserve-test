@@ -1,0 +1,920 @@
+
+====================================================================================================
+[13:40:32] BUG Time-16: failing test org.joda.time.format.TestDateTimeFormatter::testParseInto_monthOnly_baseStartYear -> org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Time-16/Time16b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-16/source
+====================================================================================================
+Title: DateTimeFormatter.parseInto broken when no year in format
+
+In Joda Time 2.0, the default year was set to 2000 so that Feb 29 could be parsed correctly. However, parseInto now overwrites the given instant's year with 2000 (or whatever iDefaultYear is set to). The correct behavior would seem to be to use the given instant's year instead of iDefaultYear.
+This does mean that Feb 29 might not be parseable if the instant's year is not a leap year, but in this case the caller asked for that in a sense.
+
+====================================================================================================
+[13:40:32] HIDDEN FROM THE AGENT: 62 relevant test classes
+====================================================================================================
+org.joda.time.TestChronology
+org.joda.time.TestDateMidnight_Basics
+org.joda.time.TestDateMidnight_Constructors
+org.joda.time.TestDateMidnight_Properties
+org.joda.time.TestDateTimeComparator
+org.joda.time.TestDateTimeUtils
+org.joda.time.TestDateTimeZone
+org.joda.time.TestDateTimeZoneCutover
+org.joda.time.TestDateTime_Basics
+org.joda.time.TestDateTime_Constructors
+org.joda.time.TestDateTime_Properties
+org.joda.time.TestDuration_Basics
+org.joda.time.TestIllegalFieldValueException
+org.joda.time.TestInstant_Basics
+org.joda.time.TestInstant_Constructors
+org.joda.time.TestInterval_Basics
+org.joda.time.TestInterval_Constructors
+org.joda.time.TestLocalDateTime_Basics
+org.joda.time.TestLocalDateTime_Constructors
+org.joda.time.TestLocalDate_Basics
+org.joda.time.TestLocalDate_Constructors
+org.joda.time.TestLocalTime_Basics
+org.joda.time.TestLocalTime_Constructors
+org.joda.time.TestMonthDay_Basics
+org.joda.time.TestMonthDay_Constructors
+org.joda.time.TestMonthDay_Properties
+org.joda.time.TestMutableDateTime_Adds
+org.joda.time.TestMutableDateTime_Basics
+org.joda.time.TestMutableDateTime_Constructors
+org.joda.time.TestMutableDateTime_Properties
+org.joda.time.TestMutableDateTime_Sets
+org.joda.time.TestMutableInterval_Basics
+org.joda.time.TestMutableInterval_Constructors
+org.joda.time.TestMutableInterval_Updates
+org.joda.time.TestMutablePeriod_Basics
+org.joda.time.TestMutablePeriod_Updates
+org.joda.time.TestPartial_Basics
+org.joda.time.TestPeriodType
+org.joda.time.TestPeriod_Basics
+org.joda.time.TestSerialization
+org.joda.time.TestStringConvert
+org.joda.time.TestTimeOfDay_Basics
+org.joda.time.TestTimeOfDay_Constructors
+org.joda.time.TestYearMonthDay_Basics
+org.joda.time.TestYearMonthDay_Constructors
+org.joda.time.TestYearMonth_Basics
+org.joda.time.TestYearMonth_Constructors
+org.joda.time.chrono.TestGJChronology
+org.joda.time.chrono.TestISOChronology
+org.joda.time.chrono.TestLenientChronology
+org.joda.time.convert.TestStringConverter
+org.joda.time.format.TestDateTimeFormat
+org.joda.time.format.TestDateTimeFormatStyle
+org.joda.time.format.TestDateTimeFormatter
+org.joda.time.format.TestDateTimeFormatterBuilder
+org.joda.time.format.TestISODateTimeFormat
+org.joda.time.format.TestISODateTimeFormatParsing
+org.joda.time.format.TestISODateTimeFormat_Fields
+org.joda.time.format.TestTextFields
+org.joda.time.tz.TestBuilder
+org.joda.time.tz.TestCachedDateTimeZone
+org.joda.time.tz.TestCompiler
+
+====================================================================================================
+[13:40:32] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:40:32] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: DateTimeFormatter.parseInto broken when no year in format
+
+In Joda Time 2.0, the default year was set to 2000 so that Feb 29 could be parsed correctly. However, parseInto now overwrites the given instant's year with 2000 (or whatever iDefaultYear is set to). The correct behavior would seem to be to use the given instant's year instead of iDefaultYear.
+This does mean that Feb 29 might not be parseable if the instant's year is not a leap year, but in this case the caller asked for that in a sense.
+
+====================================================================================================
+[13:40:36] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "DateTimeFormatter.parseInto resets the supplied instant's year to the default year (2000) when the format has no year field, instead of preserving the instant's existing year.",
+  "concrete_examples": [
+    {
+      "input": "MutableDateTime mdt = new MutableDateTime(2004-... e.g. 2010-01-01); DateTimeFormatter f = DateTimeFormat.forPattern(\"MMdd\"); f.parseInto(mdt, \"0310\", 0);",
+      "expected": "mdt becomes 2010-03-10 (the instant's original year 2010 is kept)",
+      "actual": "mdt becomes 2000-03-10 (year overwritten with default year 2000)"
+    },
+    {
+      "input": "Parsing \"0229\" with pattern \"MMdd\" into a MutableDateTime whose year is a leap year, e.g. 2012-01-01",
+      "expected": "Result is 2012-02-29, using the instant's year",
+      "actual": "Result is 2000-02-29, year replaced by iDefaultYear"
+    }
+  ]
+}
+
+====================================================================================================
+[13:40:36] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:37] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0077
+====================================================================================================
+{
+  "issue_gist": "DateTimeFormatter.parseInto resets the supplied instant's year to the default year (2000) when the format has no year field, instead of preserving the instant's existing year.",
+  "concrete_examples": [
+    {
+      "input": "MutableDateTime mdt = new MutableDateTime(2004-... e.g. 2010-01-01); DateTimeFormatter f = DateTimeFormat.forPattern(\"MMdd\"); f.parseInto(mdt, \"0310\", 0);",
+      "expected": "mdt becomes 2010-03-10 (the instant's original year 2010 is kept)",
+      "actual": "mdt becomes 2000-03-10 (year overwritten with default year 2000)"
+    },
+    {
+      "input": "Parsing \"0229\" with pattern \"MMdd\" into a MutableDateTime whose year is a leap year, e.g. 2012-01-01",
+      "expected": "Result is 2012-02-29, using the instant's year",
+      "actual": "Result is 2000-02-29, year replaced by iDefaultYear"
+    }
+  ]
+}
+
+====================================================================================================
+[13:40:37] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:40:37] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-16/source
+Test file: src/test/java/org/joda/time/format/JQF_TestDateTimeFormatter.java
+Test class: org.joda.time.format.JQF_TestDateTimeFormatter
+Test method: testBugReproduction
+
+Bug summary: DateTimeFormatter.parseInto resets the supplied instant's year to the default year (2000) when the format has no year field, instead of preserving the instant's existing year.
+
+Concrete examples:
+[{'input': 'MutableDateTime mdt = new MutableDateTime(2004-... e.g. 2010-01-01); DateTimeFormatter f = DateTimeFormat.forPattern("MMdd"); f.parseInto(mdt, "0310", 0);', 'expected': "mdt becomes 2010-03-10 (the instant's original year 2010 is kept)", 'actual': 'mdt becomes 2000-03-10 (year overwritten with default year 2000)'}, {'input': 'Parsing "0229" with pattern "MMdd" into a MutableDateTime whose year is a leap year, e.g. 2012-01-01', 'expected': "Result is 2012-02-29, using the instant's year", 'actual': 'Result is 2000-02-29, year replaced by iDefaultYear'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-16/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:40:40] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public int parseInto\\(ReadWritableInstant",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-16/source/src/main/java/org/joda/time/format/DateTimeFormatter.java",
+  "output_mode": "content",
+  "-A": 30
+}
+
+====================================================================================================
+[13:40:40] [002_symbolize] TOOL RESULT
+====================================================================================================
+697:    public int parseInto(ReadWritableInstant instant, String text, int position) {
+698-        DateTimeParser parser = requireParser();
+699-        if (instant == null) {
+700-            throw new IllegalArgumentException("Instant must not be null");
+701-        }
+702-        
+703-        long instantMillis = instant.getMillis();
+704-        Chronology chrono = instant.getChronology();
+705-        long instantLocal = instantMillis + chrono.getZone().getOffset(instantMillis);
+706-        chrono = selectChronology(chrono);
+707-        
+708-        DateTimeParserBucket bucket = new DateTimeParserBucket(
+709-            instantLocal, chrono, iLocale, iPivotYear, iDefaultYear);
+710-        int newPos = parser.parseInto(bucket, text, position);
+711-        instant.setMillis(bucket.computeMillis(false, text));
+712-        if (iOffsetParsed && bucket.getOffsetInteger() != null) {
+713-            int parsedOffset = bucket.getOffsetInteger();
+714-            DateTimeZone parsedZone = DateTimeZone.forOffsetMillis(parsedOffset);
+715-            chrono = chrono.withZone(parsedZone);
+716-        } else if (bucket.getZone() != null) {
+717-            chrono = chrono.withZone(bucket.getZone());
+718-        }
+719-        instant.setChronology(chrono);
+720-        if (iZone != null) {
+721-            instant.setZone(iZone);
+722-        }
+723-        return newPos;
+724-    }
+725-
+726-    /**
+727-     * Parses a datetime from the given text, returning the number of
+
+====================================================================================================
+[13:40:51] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\nimport org.joda.time.chrono.ISOChronology;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    private static boolean isLeap(int y) {\n        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;\n    }\n\n    private static int daysIn(int month, int year) {\n        switch (month) {\n            case 2: return isLeap(year) ? 29 : 28;\n            case 4: case 6: case 9: case 11: return 30;\n            default: return 31;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,\n                         @InRange(minInt = 1, maxInt = 13) int month,\n                         @InRange(minInt = 1, maxInt = 32) int day) {\n        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);\n        boolean buggyIf = year != 2000;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"MMdd\").withZoneUTC();\n        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());\n        String text = String.format(\"%02d%02d\", month, day);\n        int pos = f.parseInto(mdt, text, 0);\n\n        final int resYear = mdt.getYear();\n        final int resMonth = mdt.getMonthOfYear();\n        final int resDay = mdt.getDayOfMonth();\n        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });\n        assertEquals(year, resYear);\n        assertEquals(month, resMonth);\n        assertEquals(day, resDay);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:40:51] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:40:52] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1473
+====================================================================================================
+{
+  "pbt": "package org.joda.time.format;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.joda.time.DateTimeZone;\nimport org.joda.time.MutableDateTime;\nimport org.joda.time.chrono.ISOChronology;\n\n@RunWith(JQF.class)\npublic class JQF_TestDateTimeFormatter {\n\n    private static boolean isLeap(int y) {\n        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;\n    }\n\n    private static int daysIn(int month, int year) {\n        switch (month) {\n            case 2: return isLeap(year) ? 29 : 28;\n            case 4: case 6: case 9: case 11: return 30;\n            default: return 31;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,\n                         @InRange(minInt = 1, maxInt = 13) int month,\n                         @InRange(minInt = 1, maxInt = 32) int day) {\n        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);\n        boolean buggyIf = year != 2000;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        DateTimeFormatter f = DateTimeFormat.forPattern(\"MMdd\").withZoneUTC();\n        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());\n        String text = String.format(\"%02d%02d\", month, day);\n        int pos = f.parseInto(mdt, text, 0);\n\n        final int resYear = mdt.getYear();\n        final int resMonth = mdt.getMonthOfYear();\n        final int resDay = mdt.getDayOfMonth();\n        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });\n        assertEquals(year, resYear);\n        assertEquals(month, resMonth);\n        assertEquals(day, resDay);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:40:52] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:40:52] TEST CODE (org.joda.time.format.JQF_TestDateTimeFormatter)
+====================================================================================================
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+}
+
+====================================================================================================
+[13:40:54] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:41:14] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 20116,
+  "discarded_by_assume": 393,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 4929
+  },
+  "passed_assume": 19723,
+  "classified": 4929
+}
+
+====================================================================================================
+[13:41:14] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:41:14] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: DateTimeFormatter.parseInto broken when no year in format
+
+In Joda Time 2.0, the default year was set to 2000 so that Feb 29 could be parsed correctly. However, parseInto now overwrites the given instant's year with 2000 (or whatever iDefaultYear is set to). The correct behavior would seem to be to use the given instant's year instead of iDefaultYear.
+This does mean that Feb 29 might not be parseable if the instant's year is not a leap year, but in this case the caller asked for that in a sense.
+
+=== Test ===
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<1356> but was:<2000>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:645)
+    	at org.junit.Assert.assertEquals(Assert.java:631)
+    	at org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:49)
+
+Location: org.joda.time.format.JQF_TestDateTimeFormatter.testBugReproduction(JQF_TestDateTimeFormatter.java:49)
+
+is triggered by the following inputs:
+
+    input (2786, 1, 8) -> logged [4, 2000, 1, 8, 947289600000]
+    input (1444, 10, 31) -> logged [4, 2000, 10, 31, 972950400000]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:41:26] [004_check_inputs] MODEL TEXT
+====================================================================================================
+is_relevant is true: the failing inputs reproduce the reported bug, and none of checks (4), (5) or (6) turned up a problem.
+
+**(1) Inputs match the report.** The test parses `"MMdd"`, which has no year field, into a `MutableDateTime` that starts in a non-2000 year. That is the scenario in the report. The failing inputs `(2786, 1, 8)` and `(1444, 10, 31)` both have a year other than 2000.
+
+**(2) The error matches the expected behavior.** The log shows the parsed result with year 2000 and the month and day correct:
+- For `(2786, 1, 8)` it logged `[4, 2000, 1, 8, ...]`.
+- For `(1444, 10, 31)` it logged `[4, 2000, 10, 31, ...]`.
+
+The instant's own year (2786 or 1444) was overwritten with `iDefaultYear`. The `expected:<1356> but was:<2000>` message comes from a different generated input, but it shows the same effect.
+
+**(3) Same root cause.** `parseInto` builds the `DateTimeParserBucket` with `iDefaultYear`, so the instant's year is replaced by 2000. This is the cause the report describes.
+
+**(4) buggyIf is not too wide.** buggyIf is `year != 2000`. When the year is 2000, the default year equals the instant's year, so the buggy code gives the correct result. Every other valid year is overwritten with 2000 and fails the assertion, so the test fails only on inputs that really trigger the bug.
+
+**(5) buggyIf is not too narrow.** The bug depends only on the instant's year differing from 2000. Month and day do not matter. The one gap is Feb 29 in a non-leap year, which validIf excludes. The report says that case is expected to be unparseable once the instant's year is used, so it is not a clear bug-triggering input. Leaving it out is reasonable.
+
+**(6) The ranges and validIf cover the valid domain.**
+- The year ranges over 1000–2999, and month and day cover 1–12 and 1–31.
+- validIf removes only impossible dates, using the year's leap-year status.
+- The range includes year 2000, which is non-buggy.
+- The ranges are not narrowed to the bug-triggering inputs.
+
+====================================================================================================
+[13:41:28] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test parses \"MMdd\" (no year field) into a MutableDateTime whose year is not 2000. The failing inputs (2786,1,8) and (1444,10,31) logged year 2000 with the month and day parsed correctly, so the instant's year was overwritten by iDefaultYear. That is the bug in the report, with the same root cause: the parser bucket is built with iDefaultYear instead of the instant's year. buggyIf (year != 2000) is accurate. Year 2000 already gives the correct result, and every other valid year gets overwritten. The only input it leaves out is Feb 29 in a non-leap year, which the report says is expected to be unparseable, so that is not a clear omission. The ranges (years 1000-2999, months 1-12, days 1-31) and validIf (real calendar dates for the given year) cover the valid domain, including non-buggy inputs, and are not narrowed to the bug."
+}
+
+====================================================================================================
+[13:41:28] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:41:29] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2742
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The test parses \"MMdd\" (no year field) into a MutableDateTime whose year is not 2000. The failing inputs (2786,1,8) and (1444,10,31) logged year 2000 with the month and day parsed correctly, so the instant's year was overwritten by iDefaultYear. That is the bug in the report, with the same root cause: the parser bucket is built with iDefaultYear instead of the instant's year. buggyIf (year != 2000) is accurate. Year 2000 already gives the correct result, and every other valid year gets overwritten. The only input it leaves out is Feb 29 in a non-leap year, which the report says is expected to be unparseable, so that is not a clear omission. The ranges (years 1000-2999, months 1-12, days 1-31) and validIf (real calendar dates for the given year) cover the valid domain, including non-buggy inputs, and are not narrowed to the bug."
+}
+
+====================================================================================================
+[13:41:29] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:41:29] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:41:32] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking frameworks, fake subclasses, or simulated return values. It builds a real DateTimeFormatter with DateTimeFormat.forPattern(\"MMdd\") and a real MutableDateTime. It then calls the actual parseInto method and asserts on the resulting instant's fields. The helper methods isLeap and daysIn only compute validity constraints on the inputs. They don't stand in for any code under test."
+}
+
+====================================================================================================
+[13:41:32] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:41:33] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.3964
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking frameworks, fake subclasses, or simulated return values. It builds a real DateTimeFormatter with DateTimeFormat.forPattern(\"MMdd\") and a real MutableDateTime. It then calls the actual parseInto method and asserts on the resulting instant's fields. The helper methods isLeap and daysIn only compute validity constraints on the inputs. They don't stand in for any code under test."
+}
+
+====================================================================================================
+[13:41:33] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:41:37] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no constant-vs-constant assertion such as assertEquals(1, 0). Its assertions compare the parsed year, month and day with the generated inputs. A correct parseInto would keep the instant's year and set the parsed month and day, so those assertions would pass once the bug is fixed. The test can pass."
+}
+
+====================================================================================================
+[13:41:37] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:41:38] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4064
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail() call, no assertTrue(false), and no constant-vs-constant assertion such as assertEquals(1, 0). Its assertions compare the parsed year, month and day with the generated inputs. A correct parseInto would keep the instant's year and set the parsed month and day, so those assertions would pass once the bug is fixed. The test can pass."
+}
+
+====================================================================================================
+[13:41:38] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:41:41] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All three assertions compare primitive ints (year vs resYear, month vs resMonth, day vs resDay) using assertEquals(long, long), which is the correct way to compare ints. No doubles, strings, objects or arrays are compared, so no delta, equals() or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[13:41:41] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:41:41] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4162
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All three assertions compare primitive ints (year vs resYear, month vs resMonth, day vs resDay) using assertEquals(long, long), which is the correct way to compare ints. No doubles, strings, objects or arrays are compared, so no delta, equals() or assertArrayEquals is needed."
+}
+
+====================================================================================================
+[13:41:41] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:41:41] AGENT FINISHED success=True llm_calls=8
+====================================================================================================
+
+
+====================================================================================================
+[13:41:43] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestDateTimeFormatter.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug16"
+}
+
+====================================================================================================
+[13:41:43] FINAL TEST FILE JQF_TestDateTimeFormatter.java (repro method + derived preservation method)
+====================================================================================================
+package org.joda.time.format;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+import org.joda.time.chrono.ISOChronology;
+
+@RunWith(JQF.class)
+public class JQF_TestDateTimeFormatter {
+
+    private static boolean isLeap(int y) {
+        return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    }
+
+    private static int daysIn(int month, int year) {
+        switch (month) {
+            case 2: return isLeap(year) ? 29 : 28;
+            case 4: case 6: case 9: case 11: return 30;
+            default: return 31;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+        MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+        String text = String.format("%02d%02d", month, day);
+        int pos = f.parseInto(mdt, text, 0);
+
+        final int resYear = mdt.getYear();
+        final int resMonth = mdt.getMonthOfYear();
+        final int resDay = mdt.getDayOfMonth();
+        Log.logOutIf(true, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        assertEquals(year, resYear);
+        assertEquals(month, resMonth);
+        assertEquals(day, resDay);
+    }
+
+    @Fuzz
+    public void testParseInto_monthOnly_baseStartYear(@InRange(minInt = 1000, maxInt = 3000) int year,
+                         @InRange(minInt = 1, maxInt = 13) int month,
+                         @InRange(minInt = 1, maxInt = 32) int day) {
+        boolean validIf = month >= 1 && month <= 12 && day >= 1 && day <= daysIn(month, year);
+        boolean buggyIf = year != 2000;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            DateTimeFormatter f = DateTimeFormat.forPattern("MMdd").withZoneUTC();
+            MutableDateTime mdt = new MutableDateTime(year, 1, 1, 0, 0, 0, 0, ISOChronology.getInstanceUTC());
+            String text = String.format("%02d%02d", month, day);
+            int pos = f.parseInto(mdt, text, 0);
+
+            final int resYear = mdt.getYear();
+            final int resMonth = mdt.getMonthOfYear();
+            final int resDay = mdt.getDayOfMonth();
+            Log.logOutIf(preserveIf, () -> new Object[]{ pos, resYear, resMonth, resDay, mdt.getMillis() });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:44:37] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 40831,
+    "inside_buggyIf": 40093,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 40123,
+      "inside_buggyIf": 39361,
+      "unique_failures": {}
+    }
+  }
+}

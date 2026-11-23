@@ -1,0 +1,1385 @@
+
+====================================================================================================
+[13:34:43] BUG Time-11: failing test org.joda.time.tz.TestCompiler::testDateTimeZoneBuilder -> org.joda.time.tz.JQF_TestCompiler.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Time-11/Time11b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source
+====================================================================================================
+Title: NPE in DateTimeZoneBuilder
+
+When a DateTimeZone is build with duplicate-named 'recurring saving time' in a first thread, all goes Ok: a warning message is generated and an identifier is automatically generated in PrecalculatedZone.create(). When a second thread does the same, an NPE is generated in ZoneInfoCompiler.verbose().
+
+The cause is that the cVerbose ThreadLocal is incorrectly initialized in ZoneInfoCompiler:
+
+``` java
+   static {
+        cVerbose.set(Boolean.FALSE);
+    }
+```
+
+...will initialize cVerbose only for the first thread and not for the subsequent ones. The NPE is caused by the autoboxing in:
+
+``` java
+   public static boolean verbose() {
+        return cVerbose.get();
+    }
+```
+
+A better approach could be to remove the initialization and test for null:
+
+``` java
+public static boolean verbose(){
+    Boolean verbose = cVerbose.get();
+    return (verbose != null) ? verbose : false;
+}
+```
+
+---
+
+Here follows a test case:
+
+``` java
+    @Test
+    public void testDateTimeZoneBuilder() throws Exception {
+        getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ1", true);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ2", true);
+            }
+        });
+        t.start();
+        t.join();
+    }
+
+    private DateTimeZoneBuilder getTestDataTimeZoneBuilder() {
+         return new DateTimeZoneBuilder()
+         .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+         .setStandardOffset(3600000)
+         .addRecurringSavings("", 3600000, 1601, Integer.MAX_VALUE, 'w', 3, -1, 1, false, 7200000)
+         .addRecurringSavings("", 0, 1601, Integer.MAX_VALUE, 'w', 10, -1, 1, false, 10800000);
+    }
+```
+
+====================================================================================================
+[13:34:43] HIDDEN FROM THE AGENT: 1 relevant test classes
+====================================================================================================
+org.joda.time.tz.TestCompiler
+
+====================================================================================================
+[13:34:43] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:34:43] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: NPE in DateTimeZoneBuilder
+
+When a DateTimeZone is build with duplicate-named 'recurring saving time' in a first thread, all goes Ok: a warning message is generated and an identifier is automatically generated in PrecalculatedZone.create(). When a second thread does the same, an NPE is generated in ZoneInfoCompiler.verbose().
+
+The cause is that the cVerbose ThreadLocal is incorrectly initialized in ZoneInfoCompiler:
+
+``` java
+   static {
+        cVerbose.set(Boolean.FALSE);
+    }
+```
+
+...will initialize cVerbose only for the first thread and not for the subsequent ones. The NPE is caused by the autoboxing in:
+
+``` java
+   public static boolean verbose() {
+        return cVerbose.get();
+    }
+```
+
+A better approach could be to remove the initialization and test for null:
+
+``` java
+public static boolean verbose(){
+    Boolean verbose = cVerbose.get();
+    return (verbose != null) ? verbose : false;
+}
+```
+
+---
+
+Here follows a test case:
+
+``` java
+    @Test
+    public void testDateTimeZoneBuilder() throws Exception {
+        getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ1", true);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ2", true);
+            }
+        });
+        t.start();
+        t.join();
+    }
+
+    private DateTimeZoneBuilder getTestDataTimeZoneBuilder() {
+         return new DateTimeZoneBuilder()
+         .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+         .setStandardOffset(3600000)
+         .addRecurringSavings("", 3600000, 1601, Integer.MAX_VALUE, 'w', 3, -1, 1, false, 7200000)
+         .addRecurringSavings("", 0, 1601, Integer.MAX_VALUE, 'w', 10, -1, 1, false, 10800000);
+    }
+```
+
+====================================================================================================
+[13:34:47] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "ZoneInfoCompiler initializes the cVerbose ThreadLocal<Boolean> via a static block, which only sets the value for the first thread. In any other thread, verbose() unboxes null and throws an NPE. This happens when DateTimeZoneBuilder hits duplicate-named recurring savings in that thread.",
+  "concrete_examples": [
+    {
+      "input": "In the main thread: new DateTimeZoneBuilder().addCutover(1601,'w',1,1,1,false,7200000).setStandardOffset(3600000).addRecurringSavings(\"\",3600000,1601,Integer.MAX_VALUE,'w',3,-1,1,false,7200000).addRecurringSavings(\"\",0,1601,Integer.MAX_VALUE,'w',10,-1,1,false,10800000).toDateTimeZone(\"TestDTZ1\", true). Then run the same builder code with id \"TestDTZ2\" in a new Thread and join it.",
+      "expected": "Both calls succeed. Each logs a warning about the duplicate name and generates an identifier in PrecalculatedZone.create().",
+      "actual": "The first (main) thread succeeds. The second thread throws a NullPointerException in ZoneInfoCompiler.verbose(), because cVerbose.get() returns null and autounboxing fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:34:47] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:34:49] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0109
+====================================================================================================
+{
+  "issue_gist": "ZoneInfoCompiler initializes the cVerbose ThreadLocal<Boolean> via a static block, which only sets the value for the first thread. In any other thread, verbose() unboxes null and throws an NPE. This happens when DateTimeZoneBuilder hits duplicate-named recurring savings in that thread.",
+  "concrete_examples": [
+    {
+      "input": "In the main thread: new DateTimeZoneBuilder().addCutover(1601,'w',1,1,1,false,7200000).setStandardOffset(3600000).addRecurringSavings(\"\",3600000,1601,Integer.MAX_VALUE,'w',3,-1,1,false,7200000).addRecurringSavings(\"\",0,1601,Integer.MAX_VALUE,'w',10,-1,1,false,10800000).toDateTimeZone(\"TestDTZ1\", true). Then run the same builder code with id \"TestDTZ2\" in a new Thread and join it.",
+      "expected": "Both calls succeed. Each logs a warning about the duplicate name and generates an identifier in PrecalculatedZone.create().",
+      "actual": "The first (main) thread succeeds. The second thread throws a NullPointerException in ZoneInfoCompiler.verbose(), because cVerbose.get() returns null and autounboxing fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:34:49] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:34:49] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source
+Test file: src/test/java/org/joda/time/tz/JQF_TestCompiler.java
+Test class: org.joda.time.tz.JQF_TestCompiler
+Test method: testBugReproduction
+
+Bug summary: ZoneInfoCompiler initializes the cVerbose ThreadLocal<Boolean> via a static block, which only sets the value for the first thread. In any other thread, verbose() unboxes null and throws an NPE. This happens when DateTimeZoneBuilder hits duplicate-named recurring savings in that thread.
+
+Concrete examples:
+[{'input': 'In the main thread: new DateTimeZoneBuilder().addCutover(1601,\'w\',1,1,1,false,7200000).setStandardOffset(3600000).addRecurringSavings("",3600000,1601,Integer.MAX_VALUE,\'w\',3,-1,1,false,7200000).addRecurringSavings("",0,1601,Integer.MAX_VALUE,\'w\',10,-1,1,false,10800000).toDateTimeZone("TestDTZ1", true). Then run the same builder code with id "TestDTZ2" in a new Thread and join it.', 'expected': 'Both calls succeed. Each logs a warning about the duplicate name and generates an identifier in PrecalculatedZone.create().', 'actual': 'The first (main) thread succeeds. The second thread throws a NullPointerException in ZoneInfoCompiler.verbose(), because cVerbose.get() returns null and autounboxing fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:34:55] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "cVerbose|public static boolean verbose",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source/src/main/java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[13:34:55] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/main/java/org/joda/time/tz/ZoneInfoCompiler.java:68:    static ThreadLocal<Boolean> cVerbose = new ThreadLocal<Boolean>();
+src/main/java/org/joda/time/tz/ZoneInfoCompiler.java:70:        cVerbose.set(Boolean.FALSE);
+src/main/java/org/joda/time/tz/ZoneInfoCompiler.java:77:    public static boolean verbose() {
+src/main/java/org/joda/time/tz/ZoneInfoCompiler.java:78:        return cVerbose.get();
+src/main/java/org/joda/time/tz/ZoneInfoCompiler.java:134:        cVerbose.set(verbose);
+
+====================================================================================================
+[13:34:56] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public DateTimeZoneBuilder (addCutover|setStandardOffset|addRecurringSavings)|public DateTimeZone toDateTimeZone",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source/src/main/java/org/joda/time/tz/DateTimeZoneBuilder.java",
+  "output_mode": "content",
+  "-A": 4
+}
+
+====================================================================================================
+[13:34:56] [002_symbolize] TOOL RESULT
+====================================================================================================
+244:    public DateTimeZoneBuilder addCutover(int year,
+245-                                          char mode,
+246-                                          int monthOfYear,
+247-                                          int dayOfMonth,
+248-                                          int dayOfWeek,
+--
+267:    public DateTimeZoneBuilder setStandardOffset(int standardOffset) {
+268-        getLastRuleSet().setStandardOffset(standardOffset);
+269-        return this;
+270-    }
+271-
+--
+300:    public DateTimeZoneBuilder addRecurringSavings(String nameKey, int saveMillis,
+301-                                                   int fromYear, int toYear,
+302-                                                   char mode,
+303-                                                   int monthOfYear,
+304-                                                   int dayOfMonth,
+--
+332:    public DateTimeZone toDateTimeZone(String id, boolean outputID) {
+333-        if (id == null) {
+334-            throw new IllegalArgumentException();
+335-        }
+336-
+
+====================================================================================================
+[13:34:59] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "verbose\\(\\)",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Time-11/source/src/main/java/org/joda/time/tz/DateTimeZoneBuilder.java",
+  "output_mode": "content",
+  "-B": 25,
+  "-A": 8
+}
+
+====================================================================================================
+[13:34:59] [002_symbolize] TOOL RESULT
+====================================================================================================
+1418-            String[][] zoneStrings = new DateFormatSymbols(Locale.ENGLISH).getZoneStrings();
+1419-            for (int j = 0; j < zoneStrings.length; j++) {
+1420-                String[] set = zoneStrings[j];
+1421-                if (set != null && set.length == 5 && id.equals(set[0])) {
+1422-                    zoneNameData = set;
+1423-                }
+1424-            }
+1425-
+1426-            Chronology chrono = ISOChronology.getInstanceUTC();
+1427-
+1428-            for (int i = 0; i < nameKeys.length - 1; i++) {
+1429-                String curNameKey = nameKeys[i];
+1430-                String nextNameKey = nameKeys[i + 1];
+1431-                long curOffset = wallOffsets[i];
+1432-                long nextOffset = wallOffsets[i + 1];
+1433-                long curStdOffset = standardOffsets[i];
+1434-                long nextStdOffset = standardOffsets[i + 1];
+1435-                Period p = new Period(trans[i], trans[i + 1], PeriodType.yearMonthDay(), chrono);
+1436-                if (curOffset != nextOffset &&
+1437-                        curStdOffset == nextStdOffset &&
+1438-                        curNameKey.equals(nextNameKey) &&
+1439-                        p.getYears() == 0 && p.getMonths() > 4 && p.getMonths() < 8 &&
+1440-                        curNameKey.equals(zoneNameData[2]) &&
+1441-                        curNameKey.equals(zoneNameData[4])) {
+1442-                    
+1443:                    if (ZoneInfoCompiler.verbose()) {
+1444-                        System.out.println("Fixing duplicate name key - " + nextNameKey);
+1445-                        System.out.println("     - " + new DateTime(trans[i], chrono) +
+1446-                                           " - " + new DateTime(trans[i + 1], chrono));
+1447-                    }
+1448-                    if (curOffset > nextOffset) {
+1449-                        nameKeys[i] = (curNameKey + "-Summer").intern();
+1450-                    } else if (curOffset < nextOffset) {
+1451-                        nameKeys[i + 1] = (nextNameKey + "-Summer").intern();
+1452-                        i++;
+1453-                    }
+1454-                }
+1455-            }
+1456-
+1457-            if (tailZone != null) {
+1458-                if (tailZone.iStartRecurrence.getNameKey()
+1459-                    .equals(tailZone.iEndRecurrence.getNameKey())) {
+1460:                    if (ZoneInfoCompiler.verbose()) {
+1461-                        System.out.println("Fixing duplicate recurrent name key - " +
+1462-                                           tailZone.iStartRecurrence.getNameKey());
+1463-                    }
+1464-                    if (tailZone.iStartRecurrence.getSaveMillis() > 0) {
+1465-                        tailZone = new DSTZone(
+1466-                            tailZone.getID(),
+1467-                            tailZone.iStandardOffset,
+1468-                            tailZone.iStartRecurrence.renameAppend("-Summer"),
+
+====================================================================================================
+[13:35:22] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.joda.time.tz;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.joda.time.DateTimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_TestCompiler {\n\n    public static class NameGen extends Generator<String> {\n        public NameGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] names = new String[] {\"\", \"X\", \"EST\"};\n            // bias towards the empty name so that duplicates are frequent\n            if (r.nextInt(100) < 60) {\n                return names[0];\n            }\n            return names[r.nextInt(names.length)];\n        }\n    }\n\n    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,\n                                             int save1, int save2, int month1, int month2,\n                                             int toYear, int time1, int time2) {\n        return new DateTimeZoneBuilder()\n            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)\n            .setStandardOffset(stdHours * 3600000)\n            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)\n            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(NameGen.class) String name1,\n                                    @From(NameGen.class) String name2,\n                                    @InRange(minInt = -12, maxInt = 15) int stdHours,\n                                    @InRange(minInt = 1, maxInt = 3) int saveHours,\n                                    @InRange(minInt = 1, maxInt = 13) int month1,\n                                    @InRange(minInt = 1, maxInt = 13) int month2,\n                                    boolean forever,\n                                    @InRange(minInt = 0, maxInt = 24) int hour1,\n                                    @InRange(minInt = 0, maxInt = 24) int hour2) {\n        boolean validIf = month1 != month2;\n        boolean buggyIf = validIf && forever && name1.equals(name2);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final int toYear = forever ? Integer.MAX_VALUE : 2000;\n        final int save1 = saveHours * 3600000;\n        final int save2 = 0;\n        final int time1 = hour1 * 3600000;\n        final int time2 = hour2 * 3600000;\n\n        String firstError = \"none\";\n        String firstZone = \"null\";\n        try {\n            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,\n                                   toYear, time1, time2).toDateTimeZone(\"TestDTZ1\", true);\n            firstZone = z.getID();\n        } catch (Throwable t) {\n            firstError = t.getClass().getName();\n        }\n\n        final String[] secondError = new String[] {\"none\"};\n        final String[] secondZone = new String[] {\"null\"};\n        final String n1 = name1, n2 = name2;\n        final int sh = stdHours, m1 = month1, m2 = month2;\n        Thread th = new Thread(new Runnable() {\n            @Override\n            public void run() {\n                try {\n                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,\n                                           toYear, time1, time2).toDateTimeZone(\"TestDTZ2\", true);\n                    secondZone[0] = z.getID();\n                } catch (Throwable t) {\n                    secondError[0] = t.getClass().getName();\n                }\n            }\n        });\n        th.start();\n        try {\n            th.join();\n        } catch (InterruptedException e) {\n            fail(\"interrupted\");\n        }\n\n        final String fe = firstError, fz = firstZone;\n        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });\n        assertEquals(\"none\", fe);\n        assertEquals(\"none\", secondError[0]);\n        assertEquals(\"TestDTZ2\", secondZone[0]);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:35:22] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:35:23] [002_symbolize] CALL DONE subtype=success turns=5 session_cost=$0.1847
+====================================================================================================
+{
+  "pbt": "package org.joda.time.tz;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.joda.time.DateTimeZone;\n\n@RunWith(JQF.class)\npublic class JQF_TestCompiler {\n\n    public static class NameGen extends Generator<String> {\n        public NameGen() { super(String.class); }\n        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {\n            String[] names = new String[] {\"\", \"X\", \"EST\"};\n            // bias towards the empty name so that duplicates are frequent\n            if (r.nextInt(100) < 60) {\n                return names[0];\n            }\n            return names[r.nextInt(names.length)];\n        }\n    }\n\n    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,\n                                             int save1, int save2, int month1, int month2,\n                                             int toYear, int time1, int time2) {\n        return new DateTimeZoneBuilder()\n            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)\n            .setStandardOffset(stdHours * 3600000)\n            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)\n            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(NameGen.class) String name1,\n                                    @From(NameGen.class) String name2,\n                                    @InRange(minInt = -12, maxInt = 15) int stdHours,\n                                    @InRange(minInt = 1, maxInt = 3) int saveHours,\n                                    @InRange(minInt = 1, maxInt = 13) int month1,\n                                    @InRange(minInt = 1, maxInt = 13) int month2,\n                                    boolean forever,\n                                    @InRange(minInt = 0, maxInt = 24) int hour1,\n                                    @InRange(minInt = 0, maxInt = 24) int hour2) {\n        boolean validIf = month1 != month2;\n        boolean buggyIf = validIf && forever && name1.equals(name2);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final int toYear = forever ? Integer.MAX_VALUE : 2000;\n        final int save1 = saveHours * 3600000;\n        final int save2 = 0;\n        final int time1 = hour1 * 3600000;\n        final int time2 = hour2 * 3600000;\n\n        String firstError = \"none\";\n        String firstZone = \"null\";\n        try {\n            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,\n                                   toYear, time1, time2).toDateTimeZone(\"TestDTZ1\", true);\n            firstZone = z.getID();\n        } catch (Throwable t) {\n            firstError = t.getClass().getName();\n        }\n\n        final String[] secondError = new String[] {\"none\"};\n        final String[] secondZone = new String[] {\"null\"};\n        final String n1 = name1, n2 = name2;\n        final int sh = stdHours, m1 = month1, m2 = month2;\n        Thread th = new Thread(new Runnable() {\n            @Override\n            public void run() {\n                try {\n                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,\n                                           toYear, time1, time2).toDateTimeZone(\"TestDTZ2\", true);\n                    secondZone[0] = z.getID();\n                } catch (Throwable t) {\n                    secondError[0] = t.getClass().getName();\n                }\n            }\n        });\n        th.start();\n        try {\n            th.join();\n        } catch (InterruptedException e) {\n            fail(\"interrupted\");\n        }\n\n        final String fe = firstError, fz = firstZone;\n        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });\n        assertEquals(\"none\", fe);\n        assertEquals(\"none\", secondError[0]);\n        assertEquals(\"TestDTZ2\", secondZone[0]);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:35:23] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:35:23] TEST CODE (org.joda.time.tz.JQF_TestCompiler)
+====================================================================================================
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+}
+
+====================================================================================================
+[13:35:25] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:35:46] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 44499,
+  "discarded_by_assume": 32813,
+  "passing": 0,
+  "failing_by_error": {
+    "org.junit.ComparisonFailure": 1456
+  },
+  "passed_assume": 11686,
+  "classified": 1456
+}
+
+====================================================================================================
+[13:35:46] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:35:46] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: NPE in DateTimeZoneBuilder
+
+When a DateTimeZone is build with duplicate-named 'recurring saving time' in a first thread, all goes Ok: a warning message is generated and an identifier is automatically generated in PrecalculatedZone.create(). When a second thread does the same, an NPE is generated in ZoneInfoCompiler.verbose().
+
+The cause is that the cVerbose ThreadLocal is incorrectly initialized in ZoneInfoCompiler:
+
+``` java
+   static {
+        cVerbose.set(Boolean.FALSE);
+    }
+```
+
+...will initialize cVerbose only for the first thread and not for the subsequent ones. The NPE is caused by the autoboxing in:
+
+``` java
+   public static boolean verbose() {
+        return cVerbose.get();
+    }
+```
+
+A better approach could be to remove the initialization and test for null:
+
+``` java
+public static boolean verbose(){
+    Boolean verbose = cVerbose.get();
+    return (verbose != null) ? verbose : false;
+}
+```
+
+---
+
+Here follows a test case:
+
+``` java
+    @Test
+    public void testDateTimeZoneBuilder() throws Exception {
+        getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ1", true);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ2", true);
+            }
+        });
+        t.start();
+        t.join();
+    }
+
+    private DateTimeZoneBuilder getTestDataTimeZoneBuilder() {
+         return new DateTimeZoneBuilder()
+         .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+         .setStandardOffset(3600000)
+         .addRecurringSavings("", 3600000, 1601, Integer.MAX_VALUE, 'w', 3, -1, 1, false, 7200000)
+         .addRecurringSavings("", 0, 1601, Integer.MAX_VALUE, 'w', 10, -1, 1, false, 10800000);
+    }
+```
+
+=== Test ===
+```java
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>
+    	at org.junit.Assert.assertEquals(Assert.java:115)
+    	at org.junit.Assert.assertEquals(Assert.java:144)
+    	at org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)
+
+Location: org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)
+
+is triggered by the following inputs:
+
+    input (, , 3, 1, 8, 6, 0, 13, 7) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]
+    input (, , -12, 1, 7, 1, 0, 14, 2) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:36:08] [004_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug.
+
+- **Same trigger:** Both failing inputs use equal names (`""` and `""`) and give the second recurring-savings rule an infinite end year. That is the duplicate-named recurring savings case from the report.
+- **Same symptom:** The first build, in the test's own thread, succeeds. It logs `none` and `TestDTZ1`. The same build in a new thread throws `java.lang.NullPointerException`. This matches the report: the NPE comes from `ZoneInfoCompiler.verbose()` unboxing a null `ThreadLocal<Boolean>` in a thread where the static initializer never set it.
+- **Same root cause:** The failing assertion is the `assertEquals("none", secondError[0])` check on the second thread. The only difference between the two builds is the thread, which points at the `ThreadLocal` initialization and not at the builder inputs.
+- **`buggyIf` is not too wide:** `verbose()` is only reached on the "duplicate recurrent name key" path, which needs a tail zone and equal start and end name keys. A tail zone exists only when both recurrences are infinite. `buggyIf` requires `forever` and `name1.equals(name2)`, and `month1 != month2` is already in `validIf`. I found no case where `buggyIf` accepts an input that behaves correctly on the buggy code.
+- **`buggyIf` is not too narrow:** Different names, or finite recurrences, never reach `verbose()`. The other `verbose()` call in the loop needs the id to match a system zone string, and the test ids `TestDTZ1` and `TestDTZ2` never do. So `buggyIf` covers the bug-triggering inputs.
+- **Valid domain is broad enough:** The ranges vary the standard offset, savings, months, times, names and whether the recurrence is infinite. `validIf` only excludes equal months. The name pool is small and `save2` is fixed at 0, but these are minor narrowings and don't restrict the domain to the bug-triggering inputs.
+
+One oddity: the log prints `forever` as `0`. `assumeTrue(buggyIf)` requires `forever` to be true, so this is almost certainly just how the input is displayed.
+
+====================================================================================================
+[13:36:10] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have equal recurring-savings names and an infinite end year. The first build succeeds, and the same build in a second thread throws a NullPointerException. This is the reported bug: `verbose()` unboxes a null `ThreadLocal<Boolean>` that was only initialized for the first thread. `buggyIf` (`forever && name1.equals(name2)`, with `month1 != month2` from `validIf`) matches the only path that reaches `verbose()` for these ids. That path needs a tail zone with equal start and end name keys, and a tail zone needs both recurrences to be infinite. It does not accept inputs that already behave correctly, and it does not miss bug-triggering inputs. The parameter ranges and `validIf` cover a broad valid domain, excluding only equal months. The only weaknesses are a small name pool and a fixed `save2` of 0, which are minor."
+}
+
+====================================================================================================
+[13:36:10] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:36:11] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3339
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs have equal recurring-savings names and an infinite end year. The first build succeeds, and the same build in a second thread throws a NullPointerException. This is the reported bug: `verbose()` unboxes a null `ThreadLocal<Boolean>` that was only initialized for the first thread. `buggyIf` (`forever && name1.equals(name2)`, with `month1 != month2` from `validIf`) matches the only path that reaches `verbose()` for these ids. That path needs a tail zone with equal start and end name keys, and a tail zone needs both recurrences to be infinite. It does not accept inputs that already behave correctly, and it does not miss bug-triggering inputs. The parameter ranges and `validIf` cover a broad valid domain, excluding only equal months. The only weaknesses are a small name pool and a fixed `save2` of 0, which are minor."
+}
+
+====================================================================================================
+[13:36:11] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:36:11] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:36:15] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test does not mock or simulate anything. It builds real DateTimeZoneBuilder objects and calls the real toDateTimeZone(), once on the calling thread and once on a new Thread. It records the real exceptions and returned zone IDs and asserts on them. The only generator is NameGen, which produces plain input strings. There are no mocking libraries, no fake subclasses of the code under test, and no hard-coded return values."
+}
+
+====================================================================================================
+[13:36:15] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:36:16] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4758
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test does not mock or simulate anything. It builds real DateTimeZoneBuilder objects and calls the real toDateTimeZone(), once on the calling thread and once on a new Thread. It records the real exceptions and returned zone IDs and asserts on them. The only generator is NameGen, which produces plain input strings. There are no mocking libraries, no fake subclasses of the code under test, and no hard-coded return values."
+}
+
+====================================================================================================
+[13:36:16] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:36:20] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. The only `fail()` call is in the `catch (InterruptedException e)` block around `th.join()`, so it runs only if the thread is interrupted. The assertions compare real results: `assertEquals(\"none\", fe)`, `assertEquals(\"none\", secondError[0])` and `assertEquals(\"TestDTZ2\", secondZone[0])`. These pass once the ThreadLocal bug is fixed, because both builds then succeed and the second zone's ID is \"TestDTZ2\". The test can therefore pass."
+}
+
+====================================================================================================
+[13:36:20] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:36:21] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4896
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failure. The only `fail()` call is in the `catch (InterruptedException e)` block around `th.join()`, so it runs only if the thread is interrupted. The assertions compare real results: `assertEquals(\"none\", fe)`, `assertEquals(\"none\", secondError[0])` and `assertEquals(\"TestDTZ2\", secondZone[0])`. These pass once the ThreadLocal bug is fixed, because both builds then succeed and the second zone's ID is \"TestDTZ2\". The test can therefore pass."
+}
+
+====================================================================================================
+[13:36:21] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:36:24] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All three assertions compare Strings with assertEquals, which uses equals(). That is correct for strings. No doubles, arrays or == comparisons are involved. The values are error class names (\"none\" or an exception class name) and the zone ID (\"TestDTZ2\"). Reading secondError[0] and secondZone[0] after th.join() is safe, because join() makes the thread's writes visible."
+}
+
+====================================================================================================
+[13:36:24] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:36:25] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.5033
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All three assertions compare Strings with assertEquals, which uses equals(). That is correct for strings. No doubles, arrays or == comparisons are involved. The values are error class names (\"none\" or an exception class name) and the zone ID (\"TestDTZ2\"). Reading secondError[0] and secondZone[0] after th.join() is safe, because join() makes the thread's writes visible."
+}
+
+====================================================================================================
+[13:36:25] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:36:25] AGENT FINISHED success=True llm_calls=10
+====================================================================================================
+
+
+====================================================================================================
+[13:36:27] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TestCompiler.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Time/Time_bug11"
+}
+
+====================================================================================================
+[13:36:27] FINAL TEST FILE JQF_TestCompiler.java (repro method + derived preservation method)
+====================================================================================================
+package org.joda.time.tz;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.joda.time.DateTimeZone;
+
+@RunWith(JQF.class)
+public class JQF_TestCompiler {
+
+    public static class NameGen extends Generator<String> {
+        public NameGen() { super(String.class); }
+        @Override public String generate(SourceOfRandomness r, GenerationStatus status) {
+            String[] names = new String[] {"", "X", "EST"};
+            // bias towards the empty name so that duplicates are frequent
+            if (r.nextInt(100) < 60) {
+                return names[0];
+            }
+            return names[r.nextInt(names.length)];
+        }
+    }
+
+    private static DateTimeZoneBuilder build(String name1, String name2, int stdHours,
+                                             int save1, int save2, int month1, int month2,
+                                             int toYear, int time1, int time2) {
+        return new DateTimeZoneBuilder()
+            .addCutover(1601, 'w', 1, 1, 1, false, 7200000)
+            .setStandardOffset(stdHours * 3600000)
+            .addRecurringSavings(name1, save1, 1601, toYear, 'w', month1, -1, 1, false, time1)
+            .addRecurringSavings(name2, save2, 1601, toYear, 'w', month2, -1, 1, false, time2);
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final int toYear = forever ? Integer.MAX_VALUE : 2000;
+        final int save1 = saveHours * 3600000;
+        final int save2 = 0;
+        final int time1 = hour1 * 3600000;
+        final int time2 = hour2 * 3600000;
+
+        String firstError = "none";
+        String firstZone = "null";
+        try {
+            DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                   toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+            firstZone = z.getID();
+        } catch (Throwable t) {
+            firstError = t.getClass().getName();
+        }
+
+        final String[] secondError = new String[] {"none"};
+        final String[] secondZone = new String[] {"null"};
+        final String n1 = name1, n2 = name2;
+        final int sh = stdHours, m1 = month1, m2 = month2;
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                           toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                    secondZone[0] = z.getID();
+                } catch (Throwable t) {
+                    secondError[0] = t.getClass().getName();
+                }
+            }
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            fail("interrupted");
+        }
+
+        final String fe = firstError, fz = firstZone;
+        Log.logOutIf(true, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        assertEquals("none", fe);
+        assertEquals("none", secondError[0]);
+        assertEquals("TestDTZ2", secondZone[0]);
+    }
+
+    @Fuzz
+    public void testDateTimeZoneBuilder(@From(NameGen.class) String name1,
+                                    @From(NameGen.class) String name2,
+                                    @InRange(minInt = -12, maxInt = 15) int stdHours,
+                                    @InRange(minInt = 1, maxInt = 3) int saveHours,
+                                    @InRange(minInt = 1, maxInt = 13) int month1,
+                                    @InRange(minInt = 1, maxInt = 13) int month2,
+                                    boolean forever,
+                                    @InRange(minInt = 0, maxInt = 24) int hour1,
+                                    @InRange(minInt = 0, maxInt = 24) int hour2) {
+        boolean validIf = month1 != month2;
+        boolean buggyIf = validIf && forever && name1.equals(name2);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            final int toYear = forever ? Integer.MAX_VALUE : 2000;
+            final int save1 = saveHours * 3600000;
+            final int save2 = 0;
+            final int time1 = hour1 * 3600000;
+            final int time2 = hour2 * 3600000;
+
+            String firstError = "none";
+            String firstZone = "null";
+            try {
+                DateTimeZone z = build(name1, name2, stdHours, save1, save2, month1, month2,
+                                       toYear, time1, time2).toDateTimeZone("TestDTZ1", true);
+                firstZone = z.getID();
+            } catch (Throwable t) {
+                firstError = t.getClass().getName();
+            }
+
+            final String[] secondError = new String[] {"none"};
+            final String[] secondZone = new String[] {"null"};
+            final String n1 = name1, n2 = name2;
+            final int sh = stdHours, m1 = month1, m2 = month2;
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        DateTimeZone z = build(n1, n2, sh, save1, save2, m1, m2,
+                                               toYear, time1, time2).toDateTimeZone("TestDTZ2", true);
+                        secondZone[0] = z.getID();
+                    } catch (Throwable t) {
+                        secondError[0] = t.getClass().getName();
+                    }
+                }
+            });
+            th.start();
+            try {
+                th.join();
+            } catch (InterruptedException e) {
+                fail("interrupted");
+            }
+
+            final String fe = firstError, fz = firstZone;
+            Log.logOutIf(preserveIf, () -> new String[]{ fe, fz, secondError[0], secondZone[0] });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:39:39] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 26531,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "org.junit.ComparisonFailure": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 100001,
+      "inside_buggyIf": 26340,
+      "unique_failures": {}
+    }
+  }
+}

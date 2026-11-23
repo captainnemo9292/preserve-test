@@ -1,0 +1,954 @@
+
+====================================================================================================
+[12:52:32] BUG Math-42: failing test org.apache.commons.math.optimization.linear.SimplexSolverTest::testMath713NegativeVariable -> org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-42/Math42b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-42/source
+====================================================================================================
+Title: Negative value with restrictNonNegative
+
+Problem: commons-math-2.2 SimplexSolver.
+
+A variable with 0 coefficient may be assigned a negative value nevertheless restrictToNonnegative flag in call:
+SimplexSolver.optimize(function, constraints, GoalType.MINIMIZE, true);
+
+Function
+1 * x + 1 * y + 0
+
+Constraints:
+1 * x + 0 * y = 1
+
+Result:
+x = 1; y = -1;
+
+Probably variables with 0 coefficients are omitted at some point of computation and because of that the restrictions do not affect their values.
+
+====================================================================================================
+[12:52:32] HIDDEN FROM THE AGENT: 2 relevant test classes
+====================================================================================================
+org.apache.commons.math.optimization.linear.SimplexSolverTest
+org.apache.commons.math.optimization.linear.SimplexTableauTest
+
+====================================================================================================
+[12:52:32] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:52:32] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Negative value with restrictNonNegative
+
+Problem: commons-math-2.2 SimplexSolver.
+
+A variable with 0 coefficient may be assigned a negative value nevertheless restrictToNonnegative flag in call:
+SimplexSolver.optimize(function, constraints, GoalType.MINIMIZE, true);
+
+Function
+1 * x + 1 * y + 0
+
+Constraints:
+1 * x + 0 * y = 1
+
+Result:
+x = 1; y = -1;
+
+Probably variables with 0 coefficients are omitted at some point of computation and because of that the restrictions do not affect their values.
+
+====================================================================================================
+[12:52:36] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "SimplexSolver.optimize with restrictToNonNegative=true can return a negative value for a variable whose objective coefficient is 0 (and which appears only with 0 coefficients in constraints), so the non-negativity restriction is ignored for that variable.",
+  "concrete_examples": [
+    {
+      "input": "SimplexSolver.optimize(f, constraints, GoalType.MINIMIZE, true) with objective 1*x + 1*y + 0 and a single constraint 1*x + 0*y = 1",
+      "expected": "Non-negative solution: x = 1, y = 0 (objective value 1)",
+      "actual": "x = 1, y = -1 (y violates the non-negativity restriction)"
+    }
+  ]
+}
+
+====================================================================================================
+[12:52:36] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:52:37] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0066
+====================================================================================================
+{
+  "issue_gist": "SimplexSolver.optimize with restrictToNonNegative=true can return a negative value for a variable whose objective coefficient is 0 (and which appears only with 0 coefficients in constraints), so the non-negativity restriction is ignored for that variable.",
+  "concrete_examples": [
+    {
+      "input": "SimplexSolver.optimize(f, constraints, GoalType.MINIMIZE, true) with objective 1*x + 1*y + 0 and a single constraint 1*x + 0*y = 1",
+      "expected": "Non-negative solution: x = 1, y = 0 (objective value 1)",
+      "actual": "x = 1, y = -1 (y violates the non-negativity restriction)"
+    }
+  ]
+}
+
+====================================================================================================
+[12:52:37] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:52:37] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-42/source
+Test file: src/test/java/org/apache/commons/math/optimization/linear/JQF_SimplexSolverTest.java
+Test class: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest
+Test method: testBugReproduction
+
+Bug summary: SimplexSolver.optimize with restrictToNonNegative=true can return a negative value for a variable whose objective coefficient is 0 (and which appears only with 0 coefficients in constraints), so the non-negativity restriction is ignored for that variable.
+
+Concrete examples:
+[{'input': 'SimplexSolver.optimize(f, constraints, GoalType.MINIMIZE, true) with objective 1*x + 1*y + 0 and a single constraint 1*x + 0*y = 1', 'expected': 'Non-negative solution: x = 1, y = 0 (objective value 1)', 'actual': 'x = 1, y = -1 (y violates the non-negativity restriction)'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-42/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:52:47] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "getSolution|mostNegative|restrictToNonNegative",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-42/source/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:52:47] [002_symbolize] TOOL RESULT
+====================================================================================================
+81:    private final boolean restrictToNonNegative;
+110:     * @param restrictToNonNegative whether to restrict the variables to non-negative values
+115:                   final GoalType goalType, final boolean restrictToNonNegative,
+117:        this(f, constraints, goalType, restrictToNonNegative, epsilon, DEFAULT_ULPS);
+126:     * @param restrictToNonNegative whether to restrict the variables to non-negative values
+132:                   final GoalType goalType, final boolean restrictToNonNegative,
+137:        this.restrictToNonNegative  = restrictToNonNegative;
+141:                                      (restrictToNonNegative ? 0 : 1);
+161:      if (!restrictToNonNegative) {
+198:        if (!restrictToNonNegative) {
+214:            if (!restrictToNonNegative) {
+396:    protected RealPointValuePair getSolution() {
+399:      double mostNegative = negativeVarBasicRow == null ? 0 : getEntry(negativeVarBasicRow, getRhsOffset());
+416:              coefficients[i] = 0 - (restrictToNonNegative ? 0 : mostNegative);
+421:                  (restrictToNonNegative ? 0 : mostNegative);
+574:          return (restrictToNonNegative  == rhs.restrictToNonNegative) &&
+590:        return Boolean.valueOf(restrictToNonNegative).hashCode() ^
+
+====================================================================================================
+[12:52:49] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-42/source/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java",
+  "offset": 390,
+  "limit": 50
+}
+
+====================================================================================================
+[12:52:49] [002_symbolize] TOOL RESULT
+====================================================================================================
+390	
+391	    /**
+392	     * Get the current solution.
+393	     *
+394	     * @return current solution
+395	     */
+396	    protected RealPointValuePair getSolution() {
+397	      int negativeVarColumn = columnLabels.indexOf(NEGATIVE_VAR_COLUMN_LABEL);
+398	      Integer negativeVarBasicRow = negativeVarColumn > 0 ? getBasicRow(negativeVarColumn) : null;
+399	      double mostNegative = negativeVarBasicRow == null ? 0 : getEntry(negativeVarBasicRow, getRhsOffset());
+400	
+401	      Set<Integer> basicRows = new HashSet<Integer>();
+402	      double[] coefficients = new double[getOriginalNumDecisionVariables()];
+403	      for (int i = 0; i < coefficients.length; i++) {
+404	          int colIndex = columnLabels.indexOf("x" + i);
+405	          if (colIndex < 0) {
+406	            coefficients[i] = 0;
+407	            continue;
+408	          }
+409	          Integer basicRow = getBasicRow(colIndex);
+410	              // if the basic row is found to be the objective function row
+411	              // set the coefficient to 0 -> this case handles unconstrained 
+412	              // variables that are still part of the objective function
+413	          if (basicRows.contains(basicRow)) {
+414	              // if multiple variables can take a given value
+415	              // then we choose the first and set the rest equal to 0
+416	              coefficients[i] = 0 - (restrictToNonNegative ? 0 : mostNegative);
+417	          } else {
+418	              basicRows.add(basicRow);
+419	              coefficients[i] =
+420	                  (basicRow == null ? 0 : getEntry(basicRow, getRhsOffset())) -
+421	                  (restrictToNonNegative ? 0 : mostNegative);
+422	          }
+423	      }
+424	      return new RealPointValuePair(coefficients, f.getValue(coefficients));
+425	    }
+426	
+427	    /**
+428	     * Subtracts a multiple of one row from another.
+429	     * <p>
+430	     * After application of this operation, the following will hold:
+431	     *   minuendRow = minuendRow - multiple * subtrahendRow
+432	     * </p>
+433	     * @param dividendRow index of the row
+434	     * @param divisor value of the divisor
+435	     */
+436	    protected void divideRow(final int dividendRow, final double divisor) {
+437	        for (int j = 0; j < getWidth(); j++) {
+438	            tableau.setEntry(dividendRow, j, tableau.getEntry(dividendRow, j) / divisor);
+439	        }
+
+====================================================================================================
+[12:53:02] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.optimization.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport org.apache.commons.math.optimization.GoalType;\nimport org.apache.commons.math.optimization.RealPointValuePair;\n\n@RunWith(JQF.class)\npublic class JQF_SimplexSolverTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,\n                                    @InRange(minInt = 0, maxInt = 11) int b) {\n        boolean validIf = a >= 1 && b >= 0;\n        boolean buggyIf = b >= 1;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);\n        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();\n        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));\n\n        String err = \"none\";\n        double rx = Double.NaN;\n        double ry = Double.NaN;\n        double rv = Double.NaN;\n        try {\n            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);\n            rx = sol.getPoint()[0];\n            ry = sol.getPoint()[1];\n            rv = sol.getValue();\n        } catch (Exception e) {\n            err = e.getClass().getName();\n        }\n\n        final String ferr = err;\n        final double fx = rx;\n        final double fy = ry;\n        final double fv = rv;\n        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });\n        double expectedX = (double) b / a;\n        assertEquals(\"none\", ferr);\n        assertEquals(expectedX, fx, 1e-6);\n        assertEquals(0.0, fy, 1e-6);\n        assertTrue(fy >= -1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:53:02] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:53:02] [002_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.1607
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.optimization.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport org.apache.commons.math.optimization.GoalType;\nimport org.apache.commons.math.optimization.RealPointValuePair;\n\n@RunWith(JQF.class)\npublic class JQF_SimplexSolverTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,\n                                    @InRange(minInt = 0, maxInt = 11) int b) {\n        boolean validIf = a >= 1 && b >= 0;\n        boolean buggyIf = b >= 1;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);\n        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();\n        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));\n\n        String err = \"none\";\n        double rx = Double.NaN;\n        double ry = Double.NaN;\n        double rv = Double.NaN;\n        try {\n            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);\n            rx = sol.getPoint()[0];\n            ry = sol.getPoint()[1];\n            rv = sol.getValue();\n        } catch (Exception e) {\n            err = e.getClass().getName();\n        }\n\n        final String ferr = err;\n        final double fx = rx;\n        final double fy = ry;\n        final double fv = rv;\n        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });\n        double expectedX = (double) b / a;\n        assertEquals(\"none\", ferr);\n        assertEquals(expectedX, fx, 1e-6);\n        assertEquals(0.0, fy, 1e-6);\n        assertTrue(fy >= -1e-9);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:53:02] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:53:02] TEST CODE (org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest)
+====================================================================================================
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+}
+
+====================================================================================================
+[12:53:04] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:53:25] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 25944,
+  "discarded_by_assume": 2401,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 4709
+  },
+  "passed_assume": 23543,
+  "classified": 4709
+}
+
+====================================================================================================
+[12:53:25] NODE 004 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:53:25] LLM CALL [004_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Negative value with restrictNonNegative
+
+Problem: commons-math-2.2 SimplexSolver.
+
+A variable with 0 coefficient may be assigned a negative value nevertheless restrictToNonnegative flag in call:
+SimplexSolver.optimize(function, constraints, GoalType.MINIMIZE, true);
+
+Function
+1 * x + 1 * y + 0
+
+Constraints:
+1 * x + 0 * y = 1
+
+Result:
+x = 1; y = -1;
+
+Probably variables with 0 coefficients are omitted at some point of computation and because of that the restrictions do not affect their values.
+
+=== Test ===
+```java
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<0.0> but was:<-0.5>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:53)
+
+Location: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:53)
+
+is triggered by the following inputs:
+
+    input (3, 4) -> logged [none, 1.3333333333333333, -1.3333333333333333, 0.0]
+    input (2, 5) -> logged [none, 2.5, -2.5, 0.0]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:53:38] [004_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, and I found no problem with buggyIf or the valid domain.
+
+- **Match with the report (1–3):** The failing inputs (3,4) and (2,5) mirror the report's setup. The objective is x + y, the only constraint is a·x + 0·y = b, the goal is MINIMIZE, and restrictToNonNegative is true. The solver returns y = -b/a, so y is negative even though non-negativity is requested. For (3,4) the log shows x = 1.333, y = -1.333, which is the same pattern as the report's x = 1, y = -1. The assertion that fails is the one checking y = 0 (expected 0.0, actual -0.5 in the quoted stack trace). That is the reported symptom and has the same root cause: a zero-coefficient variable is not constrained to be non-negative.
+- **buggyIf too wide (4):** The condition is b ≥ 1. When b = 0, x = 0 and y comes out as 0, so the solver is already correct there and the test excludes that case. Every input buggyIf accepts should therefore trigger the bug. The logged outputs are consistent with y = -x whenever b > 0.
+- **buggyIf too narrow (5):** I found no other inputs in the test's domain that trigger the bug. The only inputs left out are b = 0, which behave correctly.
+- **Valid domain (6):** The ranges are a in 1..5 and b in 0..10, and validIf is a ≥ 1 && b ≥ 0. They include non-buggy inputs (b = 0), so they are not limited to the bug-triggering cases. The structure is fixed to the report's scenario: two variables, a single EQ constraint, MINIMIZE. That is narrower than everything the API accepts. But it does follow the report's example, and buggyIf is the only thing that selects the bug-triggering inputs.
+
+I could not re-read the solver source in this session, so the claim that b = 0 is already correct rests on how the solution is built from the tableau, not on a fresh run.
+
+====================================================================================================
+[12:53:41] [004_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs (3,4) and (2,5) reproduce the reported bug. They use the report's scenario: objective x + y, one constraint a*x + 0*y = b, MINIMIZE, restrictToNonNegative=true. The solver returns y = -b/a, a negative value for a zero-constraint-coefficient variable, matching the report's x=1, y=-1. The failing assertion checks y = 0 (expected 0.0, actual -0.5 in the quoted trace). buggyIf (b >= 1) looks correct, because with b = 0 the solution is x = 0, y = 0, which the solver already gets right, and b = 0 is excluded. I found no other bug-triggering inputs in the domain that buggyIf misses. The ranges (a in 1..5, b in 0..10) and validIf also include non-buggy inputs rather than only buggy ones. The structure is fixed to the report's scenario (two variables, one EQ constraint, MINIMIZE), which is narrower than the whole API but follows the report. I could not re-read the solver source here, so the b = 0 claim rests on how the solution is built from the tableau, not on a fresh run."
+}
+
+====================================================================================================
+[12:53:41] [004_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:53:42] [004_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.2928
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs (3,4) and (2,5) reproduce the reported bug. They use the report's scenario: objective x + y, one constraint a*x + 0*y = b, MINIMIZE, restrictToNonNegative=true. The solver returns y = -b/a, a negative value for a zero-constraint-coefficient variable, matching the report's x=1, y=-1. The failing assertion checks y = 0 (expected 0.0, actual -0.5 in the quoted trace). buggyIf (b >= 1) looks correct, because with b = 0 the solution is x = 0, y = 0, which the solver already gets right, and b = 0 is excluded. I found no other bug-triggering inputs in the domain that buggyIf misses. The ranges (a in 1..5, b in 0..10) and validIf also include non-buggy inputs rather than only buggy ones. The structure is fixed to the report's scenario (two variables, one EQ constraint, MINIMIZE), which is narrower than the whole API but follows the report. I could not re-read the solver source here, so the b = 0 claim rests on how the solution is built from the tableau, not on a fresh run."
+}
+
+====================================================================================================
+[12:53:42] NODE 005 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:53:42] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:53:45] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real SimplexSolver.optimize with real LinearObjectiveFunction and LinearConstraint objects. It uses no mocking framework, no fake subclasses and no simulated return values. The only computed expectation is expectedX = b / a, which is used for the assertion and doesn't replace any code under test. Log.logOutIf only records values."
+}
+
+====================================================================================================
+[12:53:45] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:53:46] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4181
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real SimplexSolver.optimize with real LinearObjectiveFunction and LinearConstraint objects. It uses no mocking framework, no fake subclasses and no simulated return values. The only computed expectation is expectedX = b / a, which is used for the assertion and doesn't replace any code under test. Log.logOutIf only records values."
+}
+
+====================================================================================================
+[12:53:46] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:53:50] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. Every assertion depends on the solver's actual output: the error string, x compared to b/a, y compared to 0, and y >= -1e-9. A correct solver returns x = b/a and y = 0 for these inputs, so all of them would pass. There is no fail(), assertTrue(false) or constant-vs-constant assertEquals."
+}
+
+====================================================================================================
+[12:53:50] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:53:50] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4280
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. Every assertion depends on the solver's actual output: the error string, x compared to b/a, y compared to 0, and y >= -1e-9. A correct solver returns x = b/a and y = 0 for these inputs, so all of them would pass. There is no fail(), assertTrue(false) or constant-vs-constant assertEquals."
+}
+
+====================================================================================================
+[12:53:50] LLM CALL [005_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:53:54] [005_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are correct. The error string is compared with assertEquals(\"none\", ferr), which uses equals() and not ==. The double values x and y are compared with assertEquals(expected, actual, 1e-6), which uses a delta. The extra assertTrue(fy >= -1e-9) is a tolerance-based inequality, so it is also fine. No arrays or objects are compared with == or plain assertEquals."
+}
+
+====================================================================================================
+[12:53:54] [005_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:53:54] [005_validate] CALL DONE subtype=success turns=2 session_cost=$0.4382
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are correct. The error string is compared with assertEquals(\"none\", ferr), which uses equals() and not ==. The double values x and y are compared with assertEquals(expected, actual, 1e-6), which uses a delta. The extra assertTrue(fy >= -1e-9) is a tolerance-based inequality, so it is also fine. No arrays or objects are compared with == or plain assertEquals."
+}
+
+====================================================================================================
+[12:53:54] NODE 006 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:53:54] AGENT FINISHED success=True llm_calls=9
+====================================================================================================
+
+
+====================================================================================================
+[12:53:56] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimplexSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug42"
+}
+
+====================================================================================================
+[12:53:56] FINAL TEST FILE JQF_SimplexSolverTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.optimization.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+@RunWith(JQF.class)
+public class JQF_SimplexSolverTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+        Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+        String err = "none";
+        double rx = Double.NaN;
+        double ry = Double.NaN;
+        double rv = Double.NaN;
+        try {
+            RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+            rx = sol.getPoint()[0];
+            ry = sol.getPoint()[1];
+            rv = sol.getValue();
+        } catch (Exception e) {
+            err = e.getClass().getName();
+        }
+
+        final String ferr = err;
+        final double fx = rx;
+        final double fy = ry;
+        final double fv = rv;
+        Log.logOutIf(true, () -> new Object[]{ ferr, fx, fy, fv });
+        double expectedX = (double) b / a;
+        assertEquals("none", ferr);
+        assertEquals(expectedX, fx, 1e-6);
+        assertEquals(0.0, fy, 1e-6);
+        assertTrue(fy >= -1e-9);
+    }
+
+    @Fuzz
+    public void testMath713NegativeVariable(@InRange(minInt = 1, maxInt = 6) int a,
+                                    @InRange(minInt = 0, maxInt = 11) int b) {
+        boolean validIf = a >= 1 && b >= 0;
+        boolean buggyIf = b >= 1;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1, 1}, 0);
+            Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+            constraints.add(new LinearConstraint(new double[] {a, 0}, Relationship.EQ, b));
+
+            String err = "none";
+            double rx = Double.NaN;
+            double ry = Double.NaN;
+            double rv = Double.NaN;
+            try {
+                RealPointValuePair sol = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, true);
+                rx = sol.getPoint()[0];
+                ry = sol.getPoint()[1];
+                rv = sol.getValue();
+            } catch (Exception e) {
+                err = e.getClass().getName();
+            }
+
+            final String ferr = err;
+            final double fx = rx;
+            final double fy = ry;
+            final double fv = rv;
+            Log.logOutIf(preserveIf, () -> new Object[]{ ferr, fx, fy, fv });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:56:56] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 52372,
+    "inside_buggyIf": 47665,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 55455,
+      "inside_buggyIf": 50285,
+      "unique_failures": {}
+    }
+  }
+}

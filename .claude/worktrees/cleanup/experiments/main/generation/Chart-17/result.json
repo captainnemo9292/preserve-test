@@ -1,0 +1,158 @@
+{
+  "bug": "Chart-17",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.4202,
+  "tokens": {
+    "input": 20,
+    "output": 3204,
+    "cache_write": 95448,
+    "cache_read": 62971
+  },
+  "seconds": 72.8,
+  "started_at": "2026-11-21T12:12:59",
+  "timing": {
+    "checkout": 11.1,
+    "agent": 61.7,
+    "derive": 1.4,
+    "validation": 96.8
+  },
+  "llm_seconds": 39.0,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 386,
+        "cache_write": 1594,
+        "cache_read": 0
+      },
+      "cost_usd": 0.01024,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 13.1,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 1549,
+        "cache_write": 31605,
+        "cache_read": 539
+      },
+      "cost_usd": 0.141972,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 7.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 660,
+        "cache_write": 29055,
+        "cache_read": 0
+      },
+      "cost_usd": 0.122824,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 178,
+        "cache_write": 30578,
+        "cache_read": 0
+      },
+      "cost_usd": 0.1241,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 213,
+        "cache_write": 1276,
+        "cache_read": 30578
+      },
+      "cost_usd": 0.0103,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 218,
+        "cache_write": 1340,
+        "cache_read": 31854
+      },
+      "cost_usd": 0.010733,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.jfree.data.time.junit.TimeSeriesTests::testBug1832432",
+  "jqf_class": "org.jfree.data.time.junit.JQF_TimeSeriesTests",
+  "hidden_tests": [
+    "org.jfree.chart.junit.JFreeChartTests",
+    "org.jfree.chart.plot.junit.XYPlotTests",
+    "org.jfree.data.time.junit.MovingAverageTests",
+    "org.jfree.data.time.junit.TimeSeriesCollectionTests",
+    "org.jfree.data.time.junit.TimeSeriesTests"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testBug1832432",
+  "issue_gist": "Calling clone() on an empty JFreeChart TimeSeries throws IllegalArgumentException (\"Requires start <= end\") because clone → createCopy(0, -1) with an invalid range for empty series. Cloning an empty series should succeed and return an empty copy.",
+  "failing_inputs_count": 746,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_TimeSeriesTests.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Chart/Chart_bug17",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 14243,
+      "paired_inputs": 14243,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 14243
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 14243,
+        "failed_on_buggy": 14243,
+        "pass": 14243,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 14312,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 171.0,
+  "paired_inputs_archived": true
+}

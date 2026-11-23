@@ -1,0 +1,74 @@
+{
+ "patch": "269_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Lang-46",
+ "tool": "Nopol",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:00:44",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 268,
+   "failed_on_buggy": 268,
+   "pass": 268,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 19027,
+   "inside_buggyIf": 16603,
+   "unique_failures": {}
+  },
+  "seconds": 51.3
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 200.2,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 197.80729484558105,
+  "time": {
+   "CHECKOUT_BUGGY": 3.534118175506592,
+   "DELTA_BUGGY": 0.018491744995117188,
+   "COMPILE_BUGGY": 4.1081438064575195,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.614503860473633,
+   "PATCH": 0.015834331512451172,
+   "DELTA_PATCH": 0.023246288299560547,
+   "COMPILE_PATCH": 4.003558397293091,
+   "PATCH_TEST": 1.4263033866882324,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.50991916656494,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 256.4
+}

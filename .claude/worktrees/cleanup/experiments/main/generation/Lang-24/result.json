@@ -1,0 +1,157 @@
+{
+  "bug": "Lang-24",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 8,
+  "cost_usd": 0.5658,
+  "tokens": {
+    "input": 22,
+    "output": 5079,
+    "cache_write": 126977,
+    "cache_read": 70183
+  },
+  "seconds": 90.6,
+  "started_at": "2026-11-21T12:15:51",
+  "timing": {
+    "checkout": 9.8,
+    "agent": 80.8,
+    "derive": 1.5,
+    "validation": 115.6
+  },
+  "llm_seconds": 58.9,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 290,
+        "cache_write": 909,
+        "cache_read": 808
+      },
+      "cost_usd": 0.006621,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 19.6,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2220,
+        "cache_write": 31396,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.1479,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 21.6,
+      "turns": 3,
+      "tokens": {
+        "input": 4,
+        "output": 2032,
+        "cache_write": 59465,
+        "cache_read": 1222
+      },
+      "cost_usd": 0.25831,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 159,
+        "cache_write": 31803,
+        "cache_read": 603
+      },
+      "cost_usd": 0.12887,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 214,
+        "cache_write": 1660,
+        "cache_read": 32406
+      },
+      "cost_usd": 0.012029,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 164,
+        "cache_write": 1744,
+        "cache_read": 34066
+      },
+      "cost_usd": 0.012031,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.lang3.math.NumberUtilsTest::testIsNumber",
+  "jqf_class": "org.apache.commons.lang3.math.JQF_NumberUtilsTest",
+  "hidden_tests": [
+    "org.apache.commons.lang3.BooleanUtilsTest",
+    "org.apache.commons.lang3.math.NumberUtilsTest",
+    "org.apache.commons.lang3.reflect.ConstructorUtilsTest",
+    "org.apache.commons.lang3.reflect.MethodUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIsNumber",
+  "issue_gist": "NumberUtils.isNumber wrongly returns true for strings with a decimal point followed by an 'L'/'l' long suffix (e.g. \"1.1L\"), because the 'L' branch only checks for digits and no exponent, not for a decimal point. A long can't have a decimal part.",
+  "failing_inputs_count": 2733,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_NumberUtilsTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Lang/Lang_bug24",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 54133,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 53902,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 207.8,
+  "paired_inputs_archived": true
+}

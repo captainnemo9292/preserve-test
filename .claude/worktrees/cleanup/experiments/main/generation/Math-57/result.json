@@ -1,0 +1,154 @@
+{
+  "bug": "Math-57",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 14,
+  "cost_usd": 0.5677,
+  "tokens": {
+    "input": 26,
+    "output": 8171,
+    "cache_write": 117466,
+    "cache_read": 160537
+  },
+  "seconds": 117.7,
+  "started_at": "2026-11-21T12:57:45",
+  "timing": {
+    "checkout": 9.8,
+    "agent": 107.9,
+    "derive": 1.7,
+    "validation": 204.0
+  },
+  "llm_seconds": 86.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.2,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 554,
+        "cache_write": 886,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009169,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 41.7,
+      "turns": 9,
+      "tokens": {
+        "input": 10,
+        "output": 4762,
+        "cache_write": 38341,
+        "cache_read": 78740
+      },
+      "cost_usd": 0.208878,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 16.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1484,
+        "cache_write": 35611,
+        "cache_read": 611
+      },
+      "cost_usd": 0.157349,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 8.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 266,
+        "cache_write": 38276,
+        "cache_read": 603
+      },
+      "cost_usd": 0.155832,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 6.8,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 555,
+        "cache_write": 2017,
+        "cache_read": 38879
+      },
+      "cost_usd": 0.017514,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 6.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 550,
+        "cache_write": 2335,
+        "cache_read": 40896
+      },
+      "cost_usd": 0.018938,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest::testSmallDistances",
+  "jqf_class": "org.apache.commons.math.stat.clustering.JQF_KMeansPlusPlusClustererTest",
+  "hidden_tests": [
+    "org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testSmallDistances",
+  "issue_gist": "In KMeansPlusPlusClusterer.chooseInitialClusters, the accumulator `int sum = 0` in the loop should be `double`. Using an int truncates the squared distances between points to integers, which skews the weighted initial center selection. This is especially bad when distances are below 1, and it can lead to empty clusters.",
+  "failing_inputs_count": 1667,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_KMeansPlusPlusClustererTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug57",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 96565,
+      "inside_buggyIf": 31728,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 32826,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 323.5,
+  "paired_inputs_archived": true
+}

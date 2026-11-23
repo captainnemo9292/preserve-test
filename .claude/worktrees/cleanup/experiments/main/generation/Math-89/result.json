@@ -1,0 +1,154 @@
+{
+  "bug": "Math-89",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.4984,
+  "tokens": {
+    "input": 26,
+    "output": 5351,
+    "cache_write": 107885,
+    "cache_read": 133014
+  },
+  "seconds": 96.6,
+  "started_at": "2026-11-21T13:21:25",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 86.3,
+    "derive": 1.7,
+    "validation": 191.8
+  },
+  "llm_seconds": 64.1,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 9.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 609,
+        "cache_write": 1279,
+        "cache_read": 808
+      },
+      "cost_usd": 0.011291,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 19.0,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 2049,
+        "cache_write": 35881,
+        "cache_read": 26717
+      },
+      "cost_usd": 0.166698,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 22.2,
+      "turns": 3,
+      "tokens": {
+        "input": 6,
+        "output": 1993,
+        "cache_write": 33923,
+        "cache_read": 33568
+      },
+      "cost_usd": 0.158991,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 228,
+        "cache_write": 34483,
+        "cache_read": 603
+      },
+      "cost_usd": 0.14028,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 226,
+        "cache_write": 1146,
+        "cache_read": 35086
+      },
+      "cost_usd": 0.010361,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 246,
+        "cache_write": 1173,
+        "cache_read": 36232
+      },
+      "cost_usd": 0.010783,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.stat.FrequencyTest::testAddNonComparable",
+  "jqf_class": "org.apache.commons.math.stat.JQF_FrequencyTest",
+  "hidden_tests": [
+    "org.apache.commons.math.stat.FrequencyTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testAddNonComparable",
+  "issue_gist": "Frequency.addValue(Object) accepts non-Comparable objects on the first call and only fails on the second add with IllegalArgumentException. getCount/getPct silently return 0 for non-Comparable objects, and getCumFreq/getCumPct only work with Comparable objects. The API should only accept Comparable and reject a plain Object immediately.",
+  "failing_inputs_count": 2562,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FrequencyTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug89",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 73076,
+      "inside_buggyIf": 36542,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 69882,
+        "inside_buggyIf": 35029,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 290.1,
+  "paired_inputs_archived": true
+}

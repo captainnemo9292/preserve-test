@@ -1,0 +1,1224 @@
+
+====================================================================================================
+[12:57:07] BUG Math-53: failing test org.apache.commons.math.complex.ComplexTest::testAddNaN -> org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-53/Math53b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source
+====================================================================================================
+Title: Complex Add and Subtract handle NaN arguments differently, but javadoc contracts are the same
+
+For both Complex add and subtract, the javadoc states that
+
+{code}
+     * If either this or <code>rhs</code> has a NaN value in either part,
+     * {@link #NaN} is returned; otherwise Inifinite and NaN values are
+     * returned in the parts of the result according to the rules for
+     * {@link java.lang.Double} arithmetic
+{code}
+
+Subtract includes an isNaN test and returns Complex.NaN if either complex argument isNaN; but add omits this test.  The test should be added to the add implementation (actually restored, since this looks like a code merge problem going back to 1.1).
+
+====================================================================================================
+[12:57:07] HIDDEN FROM THE AGENT: 9 relevant test classes
+====================================================================================================
+org.apache.commons.math.analysis.solvers.LaguerreSolverTest
+org.apache.commons.math.complex.ComplexFieldTest
+org.apache.commons.math.complex.ComplexFormatTest
+org.apache.commons.math.complex.ComplexTest
+org.apache.commons.math.complex.ComplexUtilsTest
+org.apache.commons.math.complex.FrenchComplexFormatTest
+org.apache.commons.math.transform.FastCosineTransformerTest
+org.apache.commons.math.transform.FastFourierTransformerTest
+org.apache.commons.math.transform.FastSineTransformerTest
+
+====================================================================================================
+[12:57:07] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:57:07] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: Complex Add and Subtract handle NaN arguments differently, but javadoc contracts are the same
+
+For both Complex add and subtract, the javadoc states that
+
+{code}
+     * If either this or <code>rhs</code> has a NaN value in either part,
+     * {@link #NaN} is returned; otherwise Inifinite and NaN values are
+     * returned in the parts of the result according to the rules for
+     * {@link java.lang.Double} arithmetic
+{code}
+
+Subtract includes an isNaN test and returns Complex.NaN if either complex argument isNaN; but add omits this test.  The test should be added to the add implementation (actually restored, since this looks like a code merge problem going back to 1.1).
+
+====================================================================================================
+[12:57:11] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "Complex.add() lacks the isNaN check that Complex.subtract() has, so it doesn't return Complex.NaN when either operand has a NaN part. This contradicts the shared javadoc contract.",
+  "concrete_examples": [
+    {
+      "input": "new Complex(1.0, Double.NaN).add(new Complex(1.0, 1.0))",
+      "expected": "Complex.NaN (isNaN true, real part also NaN)",
+      "actual": "Complex(2.0, NaN): the real part is 2.0 and only the imaginary part is NaN"
+    },
+    {
+      "input": "new Complex(Double.NaN, 1.0).add(new Complex(3.0, 4.0))",
+      "expected": "Complex.NaN (both real and imaginary parts NaN)",
+      "actual": "Complex(NaN, 5.0): the imaginary part is 5.0"
+    },
+    {
+      "input": "new Complex(1.0, Double.NaN).subtract(new Complex(1.0, 1.0))",
+      "expected": "Complex.NaN",
+      "actual": "Complex.NaN (correct; shows the add/subtract inconsistency)"
+    }
+  ]
+}
+
+====================================================================================================
+[12:57:11] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:57:12] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0080
+====================================================================================================
+{
+  "issue_gist": "Complex.add() lacks the isNaN check that Complex.subtract() has, so it doesn't return Complex.NaN when either operand has a NaN part. This contradicts the shared javadoc contract.",
+  "concrete_examples": [
+    {
+      "input": "new Complex(1.0, Double.NaN).add(new Complex(1.0, 1.0))",
+      "expected": "Complex.NaN (isNaN true, real part also NaN)",
+      "actual": "Complex(2.0, NaN): the real part is 2.0 and only the imaginary part is NaN"
+    },
+    {
+      "input": "new Complex(Double.NaN, 1.0).add(new Complex(3.0, 4.0))",
+      "expected": "Complex.NaN (both real and imaginary parts NaN)",
+      "actual": "Complex(NaN, 5.0): the imaginary part is 5.0"
+    },
+    {
+      "input": "new Complex(1.0, Double.NaN).subtract(new Complex(1.0, 1.0))",
+      "expected": "Complex.NaN",
+      "actual": "Complex.NaN (correct; shows the add/subtract inconsistency)"
+    }
+  ]
+}
+
+====================================================================================================
+[12:57:12] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:57:12] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source
+Test file: src/test/java/org/apache/commons/math/complex/JQF_ComplexTest.java
+Test class: org.apache.commons.math.complex.JQF_ComplexTest
+Test method: testBugReproduction
+
+Bug summary: Complex.add() lacks the isNaN check that Complex.subtract() has, so it doesn't return Complex.NaN when either operand has a NaN part. This contradicts the shared javadoc contract.
+
+Concrete examples:
+[{'input': 'new Complex(1.0, Double.NaN).add(new Complex(1.0, 1.0))', 'expected': 'Complex.NaN (isNaN true, real part also NaN)', 'actual': 'Complex(2.0, NaN): the real part is 2.0 and only the imaginary part is NaN'}, {'input': 'new Complex(Double.NaN, 1.0).add(new Complex(3.0, 4.0))', 'expected': 'Complex.NaN (both real and imaginary parts NaN)', 'actual': 'Complex(NaN, 5.0): the imaginary part is 5.0'}, {'input': 'new Complex(1.0, Double.NaN).subtract(new Complex(1.0, 1.0))', 'expected': 'Complex.NaN', 'actual': 'Complex.NaN (correct; shows the add/subtract inconsistency)'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:57:18] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public Complex (add|subtract)|public Complex\\(|isNaN",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source/src/main/java/org/apache/commons/math/complex/Complex.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:57:18] [002_symbolize] TOOL RESULT
+====================================================================================================
+78:    private final transient boolean isNaN;
+89:    public Complex(double real, double imaginary) {
+94:        isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+95:        isInfinite = !isNaN &&
+110:        if (isNaN) {
+150:    public Complex add(Complex rhs)
+172:        if (isNaN) {
+216:        if (isNaN || rhs.isNaN) {
+268:            if (rhs.isNaN) {
+269:                return isNaN;
+286:        if (isNaN) {
+318:    public boolean isNaN() {
+319:        return isNaN;
+365:        if (isNaN || rhs.isNaN) {
+404:        if (isNaN || Double.isNaN(rhs)) {
+424:        if (isNaN) {
+449:    public Complex subtract(Complex rhs)
+452:        if (isNaN || rhs.isNaN) {
+475:        if (isNaN) {
+498:        if (isNaN) {
+521:        if (isNaN) {
+556:        if (isNaN) {
+590:        if (isNaN) {
+625:        if (isNaN) {
+663:        if (isNaN) {
+721:        if (isNaN) {
+755:        if (isNaN) {
+797:        if (isNaN) {
+863:        if (isNaN) {
+901:        if (isNaN) {
+960:        if (isNaN) {
+
+====================================================================================================
+[12:57:31] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.complex;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ComplexTest {\n\n    public static class PartGen extends Generator<Double> {\n        public PartGen() { super(Double.class); }\n\n        @Override\n        public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(10);\n            switch (k) {\n                case 0:\n                case 1:\n                    return Double.NaN;\n                case 2:\n                    return Double.POSITIVE_INFINITY;\n                case 3:\n                    return Double.NEGATIVE_INFINITY;\n                case 4:\n                    return 0.0;\n                default:\n                    return r.nextDouble(-100.0, 100.0);\n            }\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(PartGen.class) double r1,\n                                    @From(PartGen.class) double i1,\n                                    @From(PartGen.class) double r2,\n                                    @From(PartGen.class) double i2) {\n        boolean validIf = true;\n        boolean anyNaN = Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2);\n        // Buggy add yields (r1+r2, i1+i2); it differs from Complex.NaN unless both parts are NaN\n        boolean buggyIf = anyNaN\n                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Complex a = new Complex(r1, i1);\n        Complex b = new Complex(r2, i2);\n        Complex sum = a.add(b);\n        Complex diff = a.subtract(b);\n\n        Log.logOutIf(true, () -> new String[]{\n                Double.toString(sum.getReal()),\n                Double.toString(sum.getImaginary()),\n                Boolean.toString(sum.isNaN()),\n                Double.toString(diff.getReal()),\n                Double.toString(diff.getImaginary()),\n                Boolean.toString(diff.isNaN())\n        });\n\n        assertTrue(\"subtract should return NaN\", diff.isNaN());\n        assertTrue(\"add should be NaN when an operand has NaN\", sum.isNaN());\n        assertTrue(Double.isNaN(sum.getReal()));\n        assertTrue(Double.isNaN(sum.getImaginary()));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:57:31] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:57:32] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1512
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.complex;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ComplexTest {\n\n    public static class PartGen extends Generator<Double> {\n        public PartGen() { super(Double.class); }\n\n        @Override\n        public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(10);\n            switch (k) {\n                case 0:\n                case 1:\n                    return Double.NaN;\n                case 2:\n                    return Double.POSITIVE_INFINITY;\n                case 3:\n                    return Double.NEGATIVE_INFINITY;\n                case 4:\n                    return 0.0;\n                default:\n                    return r.nextDouble(-100.0, 100.0);\n            }\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(PartGen.class) double r1,\n                                    @From(PartGen.class) double i1,\n                                    @From(PartGen.class) double r2,\n                                    @From(PartGen.class) double i2) {\n        boolean validIf = true;\n        boolean anyNaN = Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2);\n        // Buggy add yields (r1+r2, i1+i2); it differs from Complex.NaN unless both parts are NaN\n        boolean buggyIf = anyNaN\n                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Complex a = new Complex(r1, i1);\n        Complex b = new Complex(r2, i2);\n        Complex sum = a.add(b);\n        Complex diff = a.subtract(b);\n\n        Log.logOutIf(true, () -> new String[]{\n                Double.toString(sum.getReal()),\n                Double.toString(sum.getImaginary()),\n                Boolean.toString(sum.isNaN()),\n                Double.toString(diff.getReal()),\n                Double.toString(diff.getImaginary()),\n                Boolean.toString(diff.isNaN())\n        });\n\n        assertTrue(\"subtract should return NaN\", diff.isNaN());\n        assertTrue(\"add should be NaN when an operand has NaN\", sum.isNaN());\n        assertTrue(Double.isNaN(sum.getReal()));\n        assertTrue(Double.isNaN(sum.getImaginary()));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:57:32] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:57:32] TEST CODE (org.apache.commons.math.complex.JQF_ComplexTest)
+====================================================================================================
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean anyNaN = Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2);
+        // Buggy add yields (r1+r2, i1+i2); it differs from Complex.NaN unless both parts are NaN
+        boolean buggyIf = anyNaN
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+====================================================================================================
+[12:57:32] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 2 of the method must be `boolean buggyIf = <expression>;`, found `boolean anyNaN = Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2);`
+
+====================================================================================================
+[12:57:32] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:57:32] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 2 of the method must be `boolean buggyIf = <expression>;`, found `boolean anyNaN = Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2);`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source
+Test file: src/test/java/org/apache/commons/math/complex/JQF_ComplexTest.java
+Test class: org.apache.commons.math.complex.JQF_ComplexTest
+Test method: testBugReproduction
+
+Bug summary: Complex.add() lacks the isNaN check that Complex.subtract() has, so it doesn't return Complex.NaN when either operand has a NaN part. This contradicts the shared javadoc contract.
+
+Concrete examples:
+[{'input': 'new Complex(1.0, Double.NaN).add(new Complex(1.0, 1.0))', 'expected': 'Complex.NaN (isNaN true, real part also NaN)', 'actual': 'Complex(2.0, NaN): the real part is 2.0 and only the imaginary part is NaN'}, {'input': 'new Complex(Double.NaN, 1.0).add(new Complex(3.0, 4.0))', 'expected': 'Complex.NaN (both real and imaginary parts NaN)', 'actual': 'Complex(NaN, 5.0): the imaginary part is 5.0'}, {'input': 'new Complex(1.0, Double.NaN).subtract(new Complex(1.0, 1.0))', 'expected': 'Complex.NaN', 'actual': 'Complex.NaN (correct; shows the add/subtract inconsistency)'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-53/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:57:38] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.complex;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ComplexTest {\n\n    public static class PartGen extends Generator<Double> {\n        public PartGen() { super(Double.class); }\n\n        @Override\n        public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(10);\n            switch (k) {\n                case 0:\n                case 1:\n                    return Double.NaN;\n                case 2:\n                    return Double.POSITIVE_INFINITY;\n                case 3:\n                    return Double.NEGATIVE_INFINITY;\n                case 4:\n                    return 0.0;\n                default:\n                    return r.nextDouble(-100.0, 100.0);\n            }\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(PartGen.class) double r1,\n                                    @From(PartGen.class) double i1,\n                                    @From(PartGen.class) double r2,\n                                    @From(PartGen.class) double i2) {\n        boolean validIf = true;\n        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))\n                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Complex a = new Complex(r1, i1);\n        Complex b = new Complex(r2, i2);\n        Complex sum = a.add(b);\n        Complex diff = a.subtract(b);\n\n        Log.logOutIf(true, () -> new String[]{\n                Double.toString(sum.getReal()),\n                Double.toString(sum.getImaginary()),\n                Boolean.toString(sum.isNaN()),\n                Double.toString(diff.getReal()),\n                Double.toString(diff.getImaginary()),\n                Boolean.toString(diff.isNaN())\n        });\n\n        assertTrue(\"subtract should return NaN\", diff.isNaN());\n        assertTrue(\"add should be NaN when an operand has NaN\", sum.isNaN());\n        assertTrue(Double.isNaN(sum.getReal()));\n        assertTrue(Double.isNaN(sum.getImaginary()));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:57:38] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:57:39] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.1887
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.complex;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\n\n@RunWith(JQF.class)\npublic class JQF_ComplexTest {\n\n    public static class PartGen extends Generator<Double> {\n        public PartGen() { super(Double.class); }\n\n        @Override\n        public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            int k = r.nextInt(10);\n            switch (k) {\n                case 0:\n                case 1:\n                    return Double.NaN;\n                case 2:\n                    return Double.POSITIVE_INFINITY;\n                case 3:\n                    return Double.NEGATIVE_INFINITY;\n                case 4:\n                    return 0.0;\n                default:\n                    return r.nextDouble(-100.0, 100.0);\n            }\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(PartGen.class) double r1,\n                                    @From(PartGen.class) double i1,\n                                    @From(PartGen.class) double r2,\n                                    @From(PartGen.class) double i2) {\n        boolean validIf = true;\n        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))\n                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        Complex a = new Complex(r1, i1);\n        Complex b = new Complex(r2, i2);\n        Complex sum = a.add(b);\n        Complex diff = a.subtract(b);\n\n        Log.logOutIf(true, () -> new String[]{\n                Double.toString(sum.getReal()),\n                Double.toString(sum.getImaginary()),\n                Boolean.toString(sum.isNaN()),\n                Double.toString(diff.getReal()),\n                Double.toString(diff.getImaginary()),\n                Boolean.toString(diff.isNaN())\n        });\n\n        assertTrue(\"subtract should return NaN\", diff.isNaN());\n        assertTrue(\"add should be NaN when an operand has NaN\", sum.isNaN());\n        assertTrue(Double.isNaN(sum.getReal()));\n        assertTrue(Double.isNaN(sum.getImaginary()));\n    }\n}\n"
+}
+
+====================================================================================================
+[12:57:39] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:57:39] TEST CODE (org.apache.commons.math.complex.JQF_ComplexTest)
+====================================================================================================
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+====================================================================================================
+[12:57:41] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:58:01] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 31644,
+  "discarded_by_assume": 17434,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2372
+  },
+  "passed_assume": 14210,
+  "classified": 2372
+}
+
+====================================================================================================
+[12:58:01] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:58:01] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: Complex Add and Subtract handle NaN arguments differently, but javadoc contracts are the same
+
+For both Complex add and subtract, the javadoc states that
+
+{code}
+     * If either this or <code>rhs</code> has a NaN value in either part,
+     * {@link #NaN} is returned; otherwise Inifinite and NaN values are
+     * returned in the parts of the result according to the rules for
+     * {@link java.lang.Double} arithmetic
+{code}
+
+Subtract includes an isNaN test and returns Complex.NaN if either complex argument isNaN; but add omits this test.  The test should be added to the add implementation (actually restored, since this looks like a code merge problem going back to 1.1).
+
+=== Test ===
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError
+    	at org.junit.Assert.fail(Assert.java:86)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.junit.Assert.assertTrue(Assert.java:52)
+    	at org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:66)
+
+Location: org.apache.commons.math.complex.JQF_ComplexTest.testBugReproduction(JQF_ComplexTest.java:66)
+
+is triggered by the following inputs:
+
+    input (NaN, -96.20991058408266, 0.0, -86.6287922744278) -> logged [NaN, -182.83870285851046, true, NaN, NaN, true]
+    input (86.47815991016586, NaN, Infinity, NaN) -> logged [Infinity, NaN, true, NaN, NaN, true]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:58:14] [006_check_inputs] MODEL TEXT
+====================================================================================================
+is_relevant is true. The failing inputs show `Complex.add` skipping the isNaN check, which is the reported bug, and the test's input domains look correct.
+
+**Do the inputs match the report?**
+- In both failing inputs one operand has a NaN part, so the javadoc says `add` must return `Complex.NaN`.
+- Input 1 is `(NaN, -96.2)` plus `(0.0, -86.6)`. `add` returned `(NaN, -182.84)`, so the imaginary part is not NaN.
+- Input 2 is `(86.48, NaN)` plus `(Infinity, NaN)`. `add` returned `(Infinity, NaN)`, so the real part is not NaN.
+- In both cases `subtract` returned `(NaN, NaN)`, which is correct. This is the add/subtract inconsistency the report describes.
+
+**Does the error match the expected behavior?**
+- The failing assertion is at line 66, one of the checks that both parts of `add`'s result are NaN. The `diff.isNaN()` assertion passes.
+- The `sum.isNaN()` assertion passes in both cases, because one part of the result is NaN. That is why the failure appears at the per-part checks. The result is still not `Complex.NaN`.
+
+**Is it the same root cause?**
+- Yes. `add` has no `isNaN || rhs.isNaN` early return, so it does plain part-wise addition.
+
+**Does buggyIf accept inputs where the buggy code already behaves correctly?**
+- No. buggyIf requires some NaN input, which is exactly when the contract demands `Complex.NaN`.
+- It also requires that the plain part-wise sums are not both NaN, which is exactly when buggy `add` returns something other than `Complex.NaN`.
+- Cases such as `NaN + NaN` in both parts, or an Infinity plus -Infinity part that already gives NaN, are correctly excluded because the buggy code already returns `Complex.NaN` there.
+
+**Does buggyIf miss any bug-triggering inputs?**
+- No. Whenever some part is NaN and the part-wise sum is not fully NaN, the bug shows. buggyIf covers all of those inputs.
+
+**Do the ranges and validIf cover the valid domain?**
+- Yes. validIf is true, and the generator produces NaN, ±Infinity, 0 and ordinary values in [-100, 100] for every part. That includes non-NaN inputs, so the valid domain is not restricted to the bug-triggering inputs.
+
+====================================================================================================
+[12:58:14] [006_check_inputs] CLI MESSAGE
+====================================================================================================
+[structured-output-enforce] You MUST call the StructuredOutput tool to complete this request. Call this tool now.
+
+====================================================================================================
+[12:58:17] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs reproduce the reported bug. In both, one operand has a NaN part, so the javadoc requires Complex.add to return Complex.NaN. Buggy add returned (NaN, -182.84) and (Infinity, NaN) instead, because it has no isNaN early return. subtract returned (NaN, NaN) correctly for the same inputs, which is the inconsistency the report describes. The assertion failure at line 66 is one of the checks that both parts of add's result are NaN. buggyIf is exact: it requires a NaN input and part-wise sums that are not both NaN, which is when buggy add visibly deviates. It excludes cases where buggy add already returns Complex.NaN, and it misses no bug-triggering inputs. The generator covers the whole valid domain, including NaN, ±Infinity, zero, ordinary values and non-NaN inputs, and validIf is true. The ranges and validIf are not restricted to bug-triggering inputs."
+}
+
+====================================================================================================
+[12:58:17] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:18] [006_check_inputs] CALL DONE subtype=success turns=3 session_cost=$0.3455
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failing inputs reproduce the reported bug. In both, one operand has a NaN part, so the javadoc requires Complex.add to return Complex.NaN. Buggy add returned (NaN, -182.84) and (Infinity, NaN) instead, because it has no isNaN early return. subtract returned (NaN, NaN) correctly for the same inputs, which is the inconsistency the report describes. The assertion failure at line 66 is one of the checks that both parts of add's result are NaN. buggyIf is exact: it requires a NaN input and part-wise sums that are not both NaN, which is when buggy add visibly deviates. It excludes cases where buggy add already returns Complex.NaN, and it misses no bug-triggering inputs. The generator covers the whole valid domain, including NaN, ±Infinity, zero, ordinary values and non-NaN inputs, and validIf is true. The ranges and validIf are not restricted to bug-triggering inputs."
+}
+
+====================================================================================================
+[12:58:18] NODE 007 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:58:18] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:58:22] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking or simulation. It builds real Complex objects with the constructor and calls the actual add and subtract methods. The assertions check their real return values. The only nested class is PartGen, an input generator that doesn't override or stand in for any code under test. buggyIf computes r1 + r2 and i1 + i2 only to select inputs. It doesn't fake the behavior of the code being tested."
+}
+
+====================================================================================================
+[12:58:22] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:23] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.4870
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking or simulation. It builds real Complex objects with the constructor and calls the actual add and subtract methods. The assertions check their real return values. The only nested class is PartGen, an input generator that doesn't override or stand in for any code under test. buggyIf computes r1 + r2 and i1 + i2 only to select inputs. It doesn't fake the behavior of the code being tested."
+}
+
+====================================================================================================
+[12:58:23] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:58:26] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no fail(), assertTrue(false) or assertEquals(1, 0). Every assertion depends on the values returned by add and subtract. A fixed add, one that returns Complex.NaN when either operand has a NaN part, would pass all four assertions: both isNaN() checks, and the NaN real and imaginary parts of the sum. So the test can pass."
+}
+
+====================================================================================================
+[12:58:26] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:27] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.4979
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no fail(), assertTrue(false) or assertEquals(1, 0). Every assertion depends on the values returned by add and subtract. A fixed add, one that returns Complex.NaN when either operand has a NaN part, would pass all four assertions: both isNaN() checks, and the NaN real and imaginary parts of the sum. So the test can pass."
+}
+
+====================================================================================================
+[12:58:27] LLM CALL [007_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:58:31] [007_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no equality checks. All four assertions are assertTrue on boolean conditions: diff.isNaN(), sum.isNaN(), Double.isNaN(sum.getReal()) and Double.isNaN(sum.getImaginary()). Using Double.isNaN is the correct way to test for NaN, because NaN never equals itself under == or assertEquals with a delta. No doubles are compared with ==, and no objects, strings or arrays are compared incorrectly."
+}
+
+====================================================================================================
+[12:58:31] [007_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:58:31] [007_validate] CALL DONE subtype=success turns=2 session_cost=$0.5092
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no equality checks. All four assertions are assertTrue on boolean conditions: diff.isNaN(), sum.isNaN(), Double.isNaN(sum.getReal()) and Double.isNaN(sum.getImaginary()). Using Double.isNaN is the correct way to test for NaN, because NaN never equals itself under == or assertEquals with a delta. No doubles are compared with ==, and no objects, strings or arrays are compared incorrectly."
+}
+
+====================================================================================================
+[12:58:31] NODE 008 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:58:31] AGENT FINISHED success=True llm_calls=10
+====================================================================================================
+
+
+====================================================================================================
+[12:58:33] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_ComplexTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug53"
+}
+
+====================================================================================================
+[12:58:33] FINAL TEST FILE JQF_ComplexTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.complex;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+
+@RunWith(JQF.class)
+public class JQF_ComplexTest {
+
+    public static class PartGen extends Generator<Double> {
+        public PartGen() { super(Double.class); }
+
+        @Override
+        public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            int k = r.nextInt(10);
+            switch (k) {
+                case 0:
+                case 1:
+                    return Double.NaN;
+                case 2:
+                    return Double.POSITIVE_INFINITY;
+                case 3:
+                    return Double.NEGATIVE_INFINITY;
+                case 4:
+                    return 0.0;
+                default:
+                    return r.nextDouble(-100.0, 100.0);
+            }
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        Complex a = new Complex(r1, i1);
+        Complex b = new Complex(r2, i2);
+        Complex sum = a.add(b);
+        Complex diff = a.subtract(b);
+
+        Log.logOutIf(true, () -> new String[]{
+                Double.toString(sum.getReal()),
+                Double.toString(sum.getImaginary()),
+                Boolean.toString(sum.isNaN()),
+                Double.toString(diff.getReal()),
+                Double.toString(diff.getImaginary()),
+                Boolean.toString(diff.isNaN())
+        });
+
+        assertTrue("subtract should return NaN", diff.isNaN());
+        assertTrue("add should be NaN when an operand has NaN", sum.isNaN());
+        assertTrue(Double.isNaN(sum.getReal()));
+        assertTrue(Double.isNaN(sum.getImaginary()));
+    }
+
+    @Fuzz
+    public void testAddNaN(@From(PartGen.class) double r1,
+                                    @From(PartGen.class) double i1,
+                                    @From(PartGen.class) double r2,
+                                    @From(PartGen.class) double i2) {
+        boolean validIf = true;
+        boolean buggyIf = (Double.isNaN(r1) || Double.isNaN(i1) || Double.isNaN(r2) || Double.isNaN(i2))
+                && !(Double.isNaN(r1 + r2) && Double.isNaN(i1 + i2));
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            Complex a = new Complex(r1, i1);
+            Complex b = new Complex(r2, i2);
+            Complex sum = a.add(b);
+            Complex diff = a.subtract(b);
+
+            Log.logOutIf(preserveIf, () -> new String[]{
+                    Double.toString(sum.getReal()),
+                    Double.toString(sum.getImaginary()),
+                    Boolean.toString(sum.isNaN()),
+                    Double.toString(diff.getReal()),
+                    Double.toString(diff.getImaginary()),
+                    Boolean.toString(diff.isNaN())
+            });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:01:38] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 65618,
+    "inside_buggyIf": 29378,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 81458,
+      "inside_buggyIf": 36406,
+      "unique_failures": {}
+    }
+  }
+}

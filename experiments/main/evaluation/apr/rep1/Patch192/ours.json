@@ -1,0 +1,82 @@
+{
+ "patch": "Patch192",
+ "dataset": "apr",
+ "bug": "Lang-35",
+ "tool": "ACS",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T13:55:26",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 20000,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 85916,
+   "inside_buggyIf": 30914,
+   "unique_failures": {}
+  },
+  "seconds": 84.5
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 31.2,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 29.21238684654236,
+  "time": {
+   "CHECKOUT_BUGGY": 3.509890079498291,
+   "DELTA_BUGGY": 0.0017724037170410156,
+   "COMPILE_BUGGY": 4.491809844970703,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.504575252532959,
+   "PATCH": 0.014219999313354492,
+   "DELTA_PATCH": 0.0016360282897949219,
+   "COMPILE_PATCH": 4.107075929641724,
+   "PATCH_TEST": 1.4830563068389893,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.8266162872314453,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.563251495361328,
+   "DELTA_FIX": 0.00168609619140625,
+   "COMPILE_FIX": 4.561499118804932,
+   "REPRO_FOR_VALIDATE": 1.6506001949310303,
+   "VALIDATE": 0.012767553329467773
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch192/log/test1/1/ORG/id_000000004/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch192/log/test1/1/ORG/id_000000004/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch192/log/test1/1/PATCH/id_000000004/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch192/validation/fix/test1/id_000000004/OUT.log",
+    "in_content": "s76;null;null",
+    "org_out_content": "none;[Ljava.lang.String;;3;[s76, null, null]",
+    "patch_out_content": "java.lang.IllegalArgumentException;null;-1;null",
+    "fix_out_content": "none;[Ljava.lang.String;;3;[s76, null, null]"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 116.7
+}

@@ -1,0 +1,37 @@
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+.in: 2.5012811954457916
+in: -3.970357046117755
+in: -1.4372928030520105
+in: -2.285603799803418
+in: 1.4204523901858543
+in: -4.721053207930329
+in: 3.980455930496415
+in: -3.8671723605660846
+in: -4.3815900928321625
+in: 1.2441414710666212
+in: -4.889645645029771
+Fuzzing stopped due to guidance exception: Assumption is too strong; too many inputs discarded
+edu.berkeley.cs.jqf.fuzz.guidance.GuidanceException: Assumption is too strong; too many inputs discarded
+	at edu.berkeley.cs.jqf.fuzz.random.NoGuidance.handleResult(NoGuidance.java:124)
+	at edu.berkeley.cs.jqf.fuzz.junit.quickcheck.FuzzStatement.evaluate(FuzzStatement.java:228)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+	at edu.berkeley.cs.jqf.fuzz.junit.GuidedFuzzing.run(GuidedFuzzing.java:176)
+	at edu.berkeley.cs.jqf.fuzz.junit.GuidedFuzzing.run(GuidedFuzzing.java:123)
+	at edu.berkeley.cs.jqf.fuzz.junit.GuidedFuzzing.run(GuidedFuzzing.java:92)
+	at edu.berkeley.cs.jqf.fuzz.random.RandomDriver.main(RandomDriver.java:54)
+
+Time: 0.04
+
+OK (1 test)
+

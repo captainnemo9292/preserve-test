@@ -1,0 +1,161 @@
+{
+  "bug": "Math-22",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 10,
+  "cost_usd": 0.4397,
+  "tokens": {
+    "input": 22,
+    "output": 5260,
+    "cache_write": 94486,
+    "cache_read": 91253
+  },
+  "seconds": 95.3,
+  "started_at": "2026-11-21T12:32:41",
+  "timing": {
+    "checkout": 11.8,
+    "agent": 83.6,
+    "derive": 1.7,
+    "validation": 173.5
+  },
+  "llm_seconds": 60.6,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 8.1,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 582,
+        "cache_write": 902,
+        "cache_read": 808
+      },
+      "cost_usd": 0.009513,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 20.5,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 2078,
+        "cache_write": 32222,
+        "cache_read": 25852
+      },
+      "cost_usd": 0.152265,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 18.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1970,
+        "cache_write": 28571,
+        "cache_read": 611
+      },
+      "cost_usd": 0.134049,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 5.1,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 193,
+        "cache_write": 30534,
+        "cache_read": 603
+      },
+      "cost_usd": 0.124134,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 4.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 211,
+        "cache_write": 1105,
+        "cache_read": 31137
+      },
+      "cost_usd": 0.009652,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 226,
+        "cache_write": 1152,
+        "cache_read": 32242
+      },
+      "cost_usd": 0.0101,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math3.distribution.FDistributionTest::testIsSupportLowerBoundInclusive",
+  "jqf_class": "org.apache.commons.math3.distribution.JQF_FDistributionTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.distribution.FDistributionTest",
+    "org.apache.commons.math3.distribution.UniformRealDistributionTest",
+    "org.apache.commons.math3.optimization.fitting.PolynomialFitterTest",
+    "org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizerTest",
+    "org.apache.commons.math3.stat.descriptive.AggregateSummaryStatisticsTest",
+    "org.apache.commons.math3.stat.inference.OneWayAnovaTest",
+    "org.apache.commons.math3.stat.inference.TestUtilsTest",
+    "org.apache.commons.math3.util.MathUtilsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIsSupportLowerBoundInclusive",
+  "issue_gist": "In Apache Commons Math, RealDistribution.isSupportLowerBoundInclusive()/isSupportUpperBoundInclusive() return values inconsistent with a precise definition: they should be true only if the density at the support bound is finite and not NaN. Several distributions return the wrong value, and the methods should be fixed to match this definition and then deprecated.",
+  "failing_inputs_count": 6093,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_FDistributionTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug22",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 37332,
+      "inside_buggyIf": 37331,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 37614,
+        "inside_buggyIf": 37614,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 270.5,
+  "paired_inputs_archived": true
+}

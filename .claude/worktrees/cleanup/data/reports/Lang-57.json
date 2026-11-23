@@ -1,0 +1,6 @@
+{
+  "bug": "Lang-57",
+  "url": "https://issues.apache.org/jira/browse/LANG-304",
+  "title": "NullPointerException in isAvailableLocale(Locale)",
+  "body": "FindBugs pointed out:\n\n   UwF: Field not initialized in constructor: org.apache.commons.lang.LocaleUtils.cAvailableLocaleSet\n\ncAvailableSet is used directly once in the source - and if availableLocaleSet() hasn't been called it will cause a NullPointerException."
+}

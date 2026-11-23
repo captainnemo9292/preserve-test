@@ -1,0 +1,81 @@
+{
+ "patch": "Patch153",
+ "dataset": "apr",
+ "bug": "Lang-58",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:12:57",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (8, 1, 0) -> logged [none, java.math.BigInteger, 8]\njava.lang.AssertionError: expected: java.lang.Long<8> but was: java.math.BigInteger<8>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodA",
+    "input (2, 1, 1) -> logged [none, java.math.BigInteger, 2]\njava.lang.AssertionError: expected: java.lang.Long<2> but was: java.math.BigInteger<2>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodA",
+    "input (4, 1, 0) -> logged [none, java.math.BigInteger, 4]\njava.lang.AssertionError: expected: java.lang.Long<4> but was: java.math.BigInteger<4>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodA"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 24822,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected: java.lang.Long<8> but was: java.math.BigInteger<8>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:118)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\nLocation: org.apache.commons.lang.math.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:63)\n\nis triggered by the following inputs:\n\n    input (8, 1, 0) -> logged [none, java.math.BigInteger, 8]\n    input (8, 1, 1) -> logged [none, java.math.BigInteger, 8]"
+  },
+  "seconds": 49.3
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 200.1,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 197.77425813674927,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5891973972320557,
+   "DELTA_BUGGY": 0.015200614929199219,
+   "COMPILE_BUGGY": 3.8941400051116943,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.471144199371338,
+   "PATCH": 0.012265443801879883,
+   "DELTA_PATCH": 0.01530766487121582,
+   "COMPILE_PATCH": 4.489981174468994,
+   "PATCH_TEST": 1.5779943466186523,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.26522159576416,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 258.2
+}

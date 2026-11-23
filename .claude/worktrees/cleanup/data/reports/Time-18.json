@@ -1,0 +1,6 @@
+{
+  "bug": "Time-18",
+  "url": "https://sourceforge.net/p/joda-time/bugs/130",
+  "title": "GJChronology rejects valid Julian dates",
+  "body": "Example:\r\n\r\nDateTime jdt  = new DateTime(1500, 2, 29, 0, 0, 0, 0, JulianChronology.getInstanceUTC());   // Valid.\r\nDateTime gjdt = new DateTime(1500, 2, 29, 0, 0, 0, 0, GJChronology.getInstanceUTC());       // Invalid.\r\n\r\nThe 2nd statement fails with \"org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]\".\r\n\r\nGiven that I left the cutover date at the default (October 15, 1582), isn't 1500/02/29 a valid date in the GJChronology?"
+}

@@ -1,0 +1,179 @@
+{
+  "bug": "Math-81",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 9,
+  "cost_usd": 0.2991,
+  "tokens": {
+    "input": 22,
+    "output": 5875,
+    "cache_write": 58680,
+    "cache_read": 56202
+  },
+  "seconds": 89.6,
+  "started_at": "2026-11-21T13:10:38",
+  "timing": {
+    "checkout": 10.4,
+    "agent": 79.2,
+    "derive": 1.8,
+    "validation": 199.8
+  },
+  "llm_seconds": 56.4,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 6.0,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 538,
+        "cache_write": 2130,
+        "cache_read": 808
+      },
+      "cost_usd": 0.013985,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 13.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1910,
+        "cache_write": 8238,
+        "cache_read": 539
+      },
+      "cost_usd": 0.05211,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 1621,
+        "cache_write": 5264,
+        "cache_read": 8777
+      },
+      "cost_usd": 0.038152,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 13.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1225,
+        "cache_write": 18479,
+        "cache_read": 611
+      },
+      "cost_usd": 0.086231,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 4.5,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 206,
+        "cache_write": 20920,
+        "cache_read": 603
+      },
+      "cost_usd": 0.085808,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 190,
+        "cache_write": 1818,
+        "cache_read": 21523
+      },
+      "cost_usd": 0.011332,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 4.2,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 185,
+        "cache_write": 1831,
+        "cache_read": 23341
+      },
+      "cost_usd": 0.011516,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math.linear.EigenDecompositionImplTest::testMath308",
+  "jqf_class": "org.apache.commons.math.linear.JQF_EigenDecompositionImplTest",
+  "hidden_tests": [
+    "org.apache.commons.math.linear.EigenDecompositionImplTest",
+    "org.apache.commons.math.linear.EigenSolverTest",
+    "org.apache.commons.math.linear.SingularValueDecompositionImplTest",
+    "org.apache.commons.math.linear.SingularValueSolverTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath308",
+  "issue_gist": "Constructing an EigenDecompositionImpl from a specific 5x5 symmetric tridiagonal matrix throws ArrayIndexOutOfBoundsException (-1) in computeShiftIncrement, called from goodStep during findEigenvalues, instead of computing the eigen decomposition.",
+  "failing_inputs_count": 945,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_EigenDecompositionImplTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug81",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 100001,
+      "inside_buggyIf": 17393,
+      "paired_inputs": 17393,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 17393
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 17393,
+        "failed_on_buggy": 17393,
+        "pass": 0,
+        "fail": 17393,
+        "not_run": 0,
+        "failing_examples": [
+          "input (22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437, 13.04450406501361, -5.977590941539671, 2.9040909856707517, 7.1570352792841225, 2.2250738585072014E-308) -> logged [none, [82.04441197864544, 53.45669876814309, 52.53627960031589, 18.847969621995247, 14.13820426087657], [[-4.6269048023703225E-4, -0.0021180735016993785, 0.011530082138606075, 0.2523224530871521, 0.9675720833902349], [0.31464776418807083, 0.750806429020263, -0.16770030474604952, -0.5370929569592711, 0.14385497560431426], [0.22236882751635365, 0.5149218825607714, -0.021377012640505174, 0.8011968056233338, -0.20744700865186422], [0.7139338170191439, -0.19058215109762308, 0.6714103631383127, -0.05605604918164035, 0.006541576270503056], [0.5846769876388551, -0.3671772302983342, -0.7214532643179355, 0.052971060608033915, -0.005740715900733503]]]\narrays first differed at element [0]; expected:<14.138204224043099> but was:<82.04441197864544>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:98)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccess",
+          "input (22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437, 13.04450406501361, -5.977590941539671, 2.9040909856707517, 7.1570352792841225, 2.2250738585072014E-308) -> logged [none, [82.04441197864544, 53.45669876814309, 52.53627960031589, 18.847969621995247, 14.13820426087657], [[-4.6269048023703225E-4, -0.0021180735016993785, 0.011530082138606075, 0.2523224530871521, 0.9675720833902349], [0.31464776418807083, 0.750806429020263, -0.16770030474604952, -0.5370929569592711, 0.14385497560431426], [0.22236882751635365, 0.5149218825607714, -0.021377012640505174, 0.8011968056233338, -0.20744700865186422], [0.7139338170191439, -0.19058215109762308, 0.6714103631383127, -0.05605604918164035, 0.006541576270503056], [0.5846769876388551, -0.3671772302983342, -0.7214532643179355, 0.052971060608033915, -0.005740715900733503]]]\narrays first differed at element [0]; expected:<14.138204224043099> but was:<82.04441197864544>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:98)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccess",
+          "input (22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437, 13.04450406501361, -5.977590941539671, 2.9040909856707517, 7.1570352792841225, 2.2250738585072014E-308) -> logged [none, [82.04441197864544, 53.45669876814309, 52.53627960031589, 18.847969621995247, 14.13820426087657], [[-4.6269048023703225E-4, -0.0021180735016993785, 0.011530082138606075, 0.2523224530871521, 0.9675720833902349], [0.31464776418807083, 0.750806429020263, -0.16770030474604952, -0.5370929569592711, 0.14385497560431426], [0.22236882751635365, 0.5149218825607714, -0.021377012640505174, 0.8011968056233338, -0.20744700865186422], [0.7139338170191439, -0.19058215109762308, 0.6714103631383127, -0.05605604918164035, 0.006541576270503056], [0.5846769876388551, -0.3671772302983342, -0.7214532643179355, 0.052971060608033915, -0.005740715900733503]]]\narrays first differed at element [0]; expected:<14.138204224043099> but was:<82.04441197864544>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:98)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccess"
+        ]
+      },
+      "fresh": {
+        "trials": 51635,
+        "inside_buggyIf": 8954,
+        "unique_failures": {
+          "org.junit.internal.ArrayComparisonFailure": 2
+        },
+        "failing_examples": "The error:\n    arrays first differed at element [0]; expected:<14.138204224043099> but was:<82.04441197864544>\n    \tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n    \tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n    \tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n    \tat org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:98)\n\nis triggered by the following inputs:\n\n    input (22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437, 13.04450406501361, -5.977590941539671, 2.9040909856707517, 7.1570352792841225, 2.2250738585072014E-308) -> logged [none, [82.04441197864544, 53.45669876814309, 52.53627960031589, 18.847969621995247, 14.13820426087657], [[-4.6269048023703225E-4, -0.0021180735016993785, 0.011530082138606075, 0.2523224530871521, 0.9675720833902349], [0.31464776418807083, 0.750806429020263, -0.16770030474604952, -0.5370929569592711, 0.14385497560431426], [0.22236882751635365, 0.5149218825607714, -0.021377012640505174, 0.8011968056233338, -0.20744700865186422], [0.7139338170191439, -0.19058215109762308, 0.6714103631383127, -0.05605604918164035, 0.006541576270503056], [0.5846769876388551, -0.3671772302983342, -0.7214532643179355, 0.052971060608033915, -0.005740715900733503]]]\n    input (22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437, 13.04450406501361, -5.97759094153"
+      }
+    }
+  },
+  "total_seconds": 291.2,
+  "paired_inputs_archived": true
+}

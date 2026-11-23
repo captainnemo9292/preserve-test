@@ -1,0 +1,90 @@
+{
+ "patch": "Patch193",
+ "dataset": "apr",
+ "bug": "Lang-39",
+ "tool": "ACS",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T13:59:11",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 10314,
+   "failed_on_buggy": 10314,
+   "pass": 4975,
+   "fail": 5339,
+   "not_run": 0,
+   "failing_examples": [
+    "input (abbbbab, a, b, a, null, null, b) -> logged [result=null, exception=java.lang.NullPointerException, text=abbbbab, search=[a, b, a], replacement=[null, null, b]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runner",
+    "input (bbbb, a, b, a, aa, bb, null) -> logged [result=null, exception=java.lang.NullPointerException, text=bbbb, search=[a, b, a], replacement=[aa, bb, null]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runner",
+    "input (babaab, a, a, null, aaa) -> logged [result=null, exception=java.lang.NullPointerException, text=babaab, search=[a, a], replacement=[null, aaa]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runner"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 10275,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 1
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)\n\nLocation: org.apache.commons.lang3.JQF_StringUtilsTest.testBugReproduction(JQF_StringUtilsTest.java:131)\n\nis triggered by the following inputs:\n\n    input (aba, a, b, null, bb) -> logged [result=null, exception=java.lang.NullPointerException, text=aba, search=[a, b], replacement=[null, bb]]"
+  },
+  "seconds": 42.7
+ },
+ "preserve": {
+  "deltas": "/tmp/preserve-experiment/main-11df6b11/deltas-ours-1630319",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 33.4,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 31.223313808441162,
+  "time": {
+   "CHECKOUT_BUGGY": 3.574143171310425,
+   "DELTA_BUGGY": 0.01699542999267578,
+   "COMPILE_BUGGY": 4.548521995544434,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.8991024494171143,
+   "PATCH": 0.013541936874389648,
+   "DELTA_PATCH": 0.016278505325317383,
+   "COMPILE_PATCH": 4.597471475601196,
+   "PATCH_TEST": 1.7000200748443604,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 3.3719241619110107,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.922287702560425,
+   "DELTA_FIX": 0.016087770462036133,
+   "COMPILE_FIX": 3.266439914703369,
+   "REPRO_FOR_VALIDATE": 1.80790114402771,
+   "VALIDATE": 0.015012741088867188
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch193/log/test1/1/ORG/id_000000112/IN.log",
+    "org_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch193/log/test1/1/ORG/id_000000112/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch193/log/test1/1/PATCH/id_000000112/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/main-11df6b11/poracle-root-apr-1630319/.poracle-ours-Patch193/validation/fix/test1/id_000000112/OUT.log",
+    "in_content": "bbbbabb;b;b;;a;aab;",
+    "org_out_content": "result=aaaaaaa;exception=none;text=bbbbabb;search=[b, b, ];replacement=[a, aab, ]",
+    "patch_out_content": "result=cbc;exception=none;text=bbbbabb;search=[b, b, ];replacement=[a, aab, ]",
+    "fix_out_content": "result=aaaaaaa;exception=none;text=bbbbabb;search=[b, b, ];replacement=[a, aab, ]"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 77.5
+}

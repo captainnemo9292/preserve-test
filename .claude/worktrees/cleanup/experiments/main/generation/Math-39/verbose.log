@@ -1,0 +1,1873 @@
+
+====================================================================================================
+[12:47:04] BUG Math-39: failing test org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest::testTooLargeFirstStep -> org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-39/Math39b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source
+====================================================================================================
+Title: too large first step with embedded Runge-Kutta integrators (Dormand-Prince 8(5,3) ...)
+
+Adaptive step size integrators compute the first step size by themselves if it is not provided.
+For embedded Runge-Kutta type, this step size is not checked against the integration range, so if the integration range is extremely short, this step size may evaluate the function out of the range (and in fact it tries afterward to go back, and fails to stop). Gragg-Bulirsch-Stoer integrators do not have this problem, the step size is checked and truncated if needed.
+
+====================================================================================================
+[12:47:04] HIDDEN FROM THE AGENT: 15 relevant test classes
+====================================================================================================
+org.apache.commons.math.ode.ContinuousOutputModelTest
+org.apache.commons.math.ode.JacobianMatricesTest
+org.apache.commons.math.ode.events.EventStateTest
+org.apache.commons.math.ode.events.OverlappingEventsTest
+org.apache.commons.math.ode.events.ReappearingEventTest
+org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegratorTest
+org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegratorTest
+org.apache.commons.math.ode.nonstiff.DormandPrince54IntegratorTest
+org.apache.commons.math.ode.nonstiff.DormandPrince54StepInterpolatorTest
+org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest
+org.apache.commons.math.ode.nonstiff.DormandPrince853StepInterpolatorTest
+org.apache.commons.math.ode.nonstiff.HighamHall54IntegratorTest
+org.apache.commons.math.ode.nonstiff.HighamHall54StepInterpolatorTest
+org.apache.commons.math.ode.sampling.NordsieckStepInterpolatorTest
+org.apache.commons.math.ode.sampling.StepNormalizerTest
+
+====================================================================================================
+[12:47:04] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[12:47:04] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: too large first step with embedded Runge-Kutta integrators (Dormand-Prince 8(5,3) ...)
+
+Adaptive step size integrators compute the first step size by themselves if it is not provided.
+For embedded Runge-Kutta type, this step size is not checked against the integration range, so if the integration range is extremely short, this step size may evaluate the function out of the range (and in fact it tries afterward to go back, and fails to stop). Gragg-Bulirsch-Stoer integrators do not have this problem, the step size is checked and truncated if needed.
+
+====================================================================================================
+[12:47:09] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.",
+  "concrete_examples": [
+    {
+      "input": "Use an embedded RK integrator such as DormandPrince853Integrator with no user-supplied initial step. Integrate an ODE over an extremely short interval, e.g. from t0=0 to t=1e-10 (much shorter than the automatically computed first step).",
+      "expected": "The automatically computed first step is truncated to the integration range, so the ODE is only evaluated within [t0, t] and integration ends exactly at t.",
+      "actual": "The first step is not checked against the range, so the ODE function is evaluated at times beyond the end of the range. The integrator then tries to step back and fails to stop correctly."
+    },
+    {
+      "input": "Run the same short-range integration with a Gragg-Bulirsch-Stoer integrator.",
+      "expected": "The first step is truncated to the range, which is correct.",
+      "actual": "Works correctly. The step size is checked and truncated, which shows the inconsistency with the embedded RK integrators."
+    }
+  ]
+}
+
+====================================================================================================
+[12:47:09] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:47:10] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0086
+====================================================================================================
+{
+  "issue_gist": "Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.",
+  "concrete_examples": [
+    {
+      "input": "Use an embedded RK integrator such as DormandPrince853Integrator with no user-supplied initial step. Integrate an ODE over an extremely short interval, e.g. from t0=0 to t=1e-10 (much shorter than the automatically computed first step).",
+      "expected": "The automatically computed first step is truncated to the integration range, so the ODE is only evaluated within [t0, t] and integration ends exactly at t.",
+      "actual": "The first step is not checked against the range, so the ODE function is evaluated at times beyond the end of the range. The integrator then tries to step back and fails to stop correctly."
+    },
+    {
+      "input": "Run the same short-range integration with a Gragg-Bulirsch-Stoer integrator.",
+      "expected": "The first step is truncated to the range, which is correct.",
+      "actual": "Works correctly. The step size is checked and truncated, which shows the inconsistency with the embedded RK integrators."
+    }
+  ]
+}
+
+====================================================================================================
+[12:47:10] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:47:10] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source
+Test file: src/test/java/org/apache/commons/math/ode/nonstiff/JQF_DormandPrince853IntegratorTest.java
+Test class: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest
+Test method: testBugReproduction
+
+Bug summary: Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.
+
+Concrete examples:
+[{'input': 'Use an embedded RK integrator such as DormandPrince853Integrator with no user-supplied initial step. Integrate an ODE over an extremely short interval, e.g. from t0=0 to t=1e-10 (much shorter than the automatically computed first step).', 'expected': 'The automatically computed first step is truncated to the integration range, so the ODE is only evaluated within [t0, t] and integration ends exactly at t.', 'actual': 'The first step is not checked against the range, so the ODE function is evaluated at times beyond the end of the range. The integrator then tries to step back and fails to stop correctly.'}, {'input': 'Run the same short-range integration with a Gragg-Bulirsch-Stoer integrator.', 'expected': 'The first step is truncated to the range, which is correct.', 'actual': 'Works correctly. The step size is checked and truncated, which shows the inconsistency with the embedded RK integrators.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:47:15] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "initializeStep|filteredH|firstTime",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[12:47:15] [002_symbolize] TOOL RESULT
+====================================================================================================
+215:    boolean firstTime = true;
+228:        if (firstTime || !fsal) {
+233:        if (firstTime) {
+244:          hNew = initializeStep(forward, getOrder(), scale,
+246:          firstTime = false;
+
+====================================================================================================
+[12:47:15] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public DormandPrince853Integrator|public void integrate",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source/src/main/java/org/apache/commons/math/ode/nonstiff",
+  "output_mode": "content",
+  "-A": 6
+}
+
+====================================================================================================
+[12:47:15] [002_symbolize] TOOL RESULT
+====================================================================================================
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java:191:    public void integrate(final ExpandableStatefulODE equations, final double t)
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-192-        throws MathIllegalStateException, MathIllegalArgumentException {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-193-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-194-        sanityChecks(equations, t);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-195-        setEquations(equations);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-196-        final boolean forward = t > equations.getTime();
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsBashforthIntegrator.java-197-
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java:208:    public void integrate(final ExpandableStatefulODE equations,final double t)
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-209-        throws MathIllegalStateException, MathIllegalArgumentException {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-210-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-211-        sanityChecks(equations, t);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-212-        setEquations(equations);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-213-        final boolean forward = t > equations.getTime();
+src/main/java/org/apache/commons/math/ode/nonstiff/AdamsMoultonIntegrator.java-214-
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java:217:  public DormandPrince853Integrator(final double minStep, final double maxStep,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-218-                                    final double scalAbsoluteTolerance,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-219-                                    final double scalRelativeTolerance) {
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-220-    super(METHOD_NAME, true, STATIC_C, STATIC_A, STATIC_B,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-221-          new DormandPrince853StepInterpolator(),
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-222-          minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance);
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-223-  }
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java:236:  public DormandPrince853Integrator(final double minStep, final double maxStep,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-237-                                    final double[] vecAbsoluteTolerance,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-238-                                    final double[] vecRelativeTolerance) {
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-239-    super(METHOD_NAME, true, STATIC_C, STATIC_A, STATIC_B,
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-240-          new DormandPrince853StepInterpolator(),
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-241-          minStep, maxStep, vecAbsoluteTolerance, vecRelativeTolerance);
+src/main/java/org/apache/commons/math/ode/nonstiff/DormandPrince853Integrator.java-242-  }
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java:191:  public void integrate(final ExpandableStatefulODE equations, final double t)
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-192-      throws MathIllegalStateException, MathIllegalArgumentException {
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-193-
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-194-    sanityChecks(equations, t);
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-195-    setEquations(equations);
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-196-    final boolean forward = t > equations.getTime();
+src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java-197-
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java:544:  public void integrate(final ExpandableStatefulODE equations, final double t)
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-545-      throws MathIllegalStateException, MathIllegalArgumentException {
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-546-
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-547-    sanityChecks(equations, t);
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-548-    setEquations(equations);
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-549-    final boolean forward = t > equations.getTime();
+src/main/java/org/apache/commons/math/ode/nonstiff/GraggBulirschStoerIntegrator.java-550-
+--
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java:93:  public void integrate(final ExpandableStatefulODE equations, final double t)
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-94-      throws MathIllegalStateException, MathIllegalArgumentException {
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-95-
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-96-    sanityChecks(equations, t);
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-97-    setEquations(equations);
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-98-    final boolean forward = t > equations.getTime();
+src/main/java/org/apache/commons/math/ode/nonstiff/RungeKuttaIntegrator.java-99-
+
+====================================================================================================
+[12:47:18] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java",
+  "offset": 185,
+  "limit": 180
+}
+
+====================================================================================================
+[12:47:18] [002_symbolize] TOOL RESULT
+====================================================================================================
+185	  public void setSafety(final double safety) {
+186	    this.safety = safety;
+187	  }
+188	
+189	  /** {@inheritDoc} */
+190	  @Override
+191	  public void integrate(final ExpandableStatefulODE equations, final double t)
+192	      throws MathIllegalStateException, MathIllegalArgumentException {
+193	
+194	    sanityChecks(equations, t);
+195	    setEquations(equations);
+196	    final boolean forward = t > equations.getTime();
+197	
+198	    // create some internal working arrays
+199	    final double[] y0  = equations.getCompleteState();
+200	    final double[] y = y0.clone();
+201	    final int stages = c.length + 1;
+202	    final double[][] yDotK = new double[stages][y.length];
+203	    final double[] yTmp    = y0.clone();
+204	    final double[] yDotTmp = new double[y.length];
+205	
+206	    // set up an interpolator sharing the integrator arrays
+207	    final RungeKuttaStepInterpolator interpolator = (RungeKuttaStepInterpolator) prototype.copy();
+208	    interpolator.reinitialize(this, yTmp, yDotK, forward,
+209	                              equations.getPrimaryMapper(), equations.getSecondaryMappers());
+210	    interpolator.storeTime(equations.getTime());
+211	
+212	    // set up integration control objects
+213	    stepStart         = equations.getTime();
+214	    double  hNew      = 0;
+215	    boolean firstTime = true;
+216	    initIntegration(equations.getTime(), y0, t);
+217	
+218	    // main integration loop
+219	    isLastStep = false;
+220	    do {
+221	
+222	      interpolator.shift();
+223	
+224	      // iterate over step size, ensuring local normalized error is smaller than 1
+225	      double error = 10;
+226	      while (error >= 1.0) {
+227	
+228	        if (firstTime || !fsal) {
+229	          // first stage
+230	          computeDerivatives(stepStart, y, yDotK[0]);
+231	        }
+232	
+233	        if (firstTime) {
+234	          final double[] scale = new double[mainSetDimension];
+235	          if (vecAbsoluteTolerance == null) {
+236	              for (int i = 0; i < scale.length; ++i) {
+237	                scale[i] = scalAbsoluteTolerance + scalRelativeTolerance * FastMath.abs(y[i]);
+238	              }
+239	          } else {
+240	              for (int i = 0; i < scale.length; ++i) {
+241	                scale[i] = vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * FastMath.abs(y[i]);
+242	              }
+243	          }
+244	          hNew = initializeStep(forward, getOrder(), scale,
+245	                                stepStart, y, yDotK[0], yTmp, yDotK[1]);
+246	          firstTime = false;
+247	        }
+248	
+249	        stepSize = hNew;
+250	
+251	        // next stages
+252	        for (int k = 1; k < stages; ++k) {
+253	
+254	          for (int j = 0; j < y0.length; ++j) {
+255	            double sum = a[k-1][0] * yDotK[0][j];
+256	            for (int l = 1; l < k; ++l) {
+257	              sum += a[k-1][l] * yDotK[l][j];
+258	            }
+259	            yTmp[j] = y[j] + stepSize * sum;
+260	          }
+261	
+262	          computeDerivatives(stepStart + c[k-1] * stepSize, yTmp, yDotK[k]);
+263	
+264	        }
+265	
+266	        // estimate the state at the end of the step
+267	        for (int j = 0; j < y0.length; ++j) {
+268	          double sum    = b[0] * yDotK[0][j];
+269	          for (int l = 1; l < stages; ++l) {
+270	            sum    += b[l] * yDotK[l][j];
+271	          }
+272	          yTmp[j] = y[j] + stepSize * sum;
+273	        }
+274	
+275	        // estimate the error at the end of the step
+276	        error = estimateError(yDotK, y, yTmp, stepSize);
+277	        if (error >= 1.0) {
+278	          // reject the step and attempt to reduce error by stepsize control
+279	          final double factor =
+280	              FastMath.min(maxGrowth,
+281	                           FastMath.max(minReduction, safety * FastMath.pow(error, exp)));
+282	          hNew = filterStep(stepSize * factor, forward, false);
+283	        }
+284	
+285	      }
+286	
+287	      // local error is small enough: accept the step, trigger events and step handlers
+288	      interpolator.storeTime(stepStart + stepSize);
+289	      System.arraycopy(yTmp, 0, y, 0, y0.length);
+290	      System.arraycopy(yDotK[stages - 1], 0, yDotTmp, 0, y0.length);
+291	      stepStart = acceptStep(interpolator, y, yDotTmp, t);
+292	      System.arraycopy(y, 0, yTmp, 0, y.length);
+293	
+294	      if (!isLastStep) {
+295	
+296	          // prepare next step
+297	          interpolator.storeTime(stepStart);
+298	
+299	          if (fsal) {
+300	              // save the last evaluation for the next step
+301	              System.arraycopy(yDotTmp, 0, yDotK[0], 0, y0.length);
+302	          }
+303	
+304	          // stepsize control for next step
+305	          final double factor =
+306	              FastMath.min(maxGrowth, FastMath.max(minReduction, safety * FastMath.pow(error, exp)));
+307	          final double  scaledH    = stepSize * factor;
+308	          final double  nextT      = stepStart + scaledH;
+309	          final boolean nextIsLast = forward ? (nextT >= t) : (nextT <= t);
+310	          hNew = filterStep(scaledH, forward, nextIsLast);
+311	
+312	          final double  filteredNextT      = stepStart + hNew;
+313	          final boolean filteredNextIsLast = forward ? (filteredNextT >= t) : (filteredNextT <= t);
+314	          if (filteredNextIsLast) {
+315	              hNew = t - stepStart;
+316	          }
+317	
+318	      }
+319	
+320	    } while (!isLastStep);
+321	
+322	    // dispatch results
+323	    equations.setTime(stepStart);
+324	    equations.setCompleteState(y);
+325	
+326	    resetInternalState();
+327	
+328	  }
+329	
+330	  /** Get the minimal reduction factor for stepsize control.
+331	   * @return minimal reduction factor
+332	   */
+333	  public double getMinReduction() {
+334	    return minReduction;
+335	  }
+336	
+337	  /** Set the minimal reduction factor for stepsize control.
+338	   * @param minReduction minimal reduction factor
+339	   */
+340	  public void setMinReduction(final double minReduction) {
+341	    this.minReduction = minReduction;
+342	  }
+343	
+344	  /** Get the maximal growth factor for stepsize control.
+345	   * @return maximal growth factor
+346	   */
+347	  public double getMaxGrowth() {
+348	    return maxGrowth;
+349	  }
+350	
+351	  /** Set the maximal growth factor for stepsize control.
+352	   * @param maxGrowth maximal growth factor
+353	   */
+354	  public void setMaxGrowth(final double maxGrowth) {
+355	    this.maxGrowth = maxGrowth;
+356	  }
+357	
+358	  /** Compute the error ratio.
+359	   * @param yDotK derivatives computed during the first stages
+360	   * @param y0 estimate of the step at the start of the step
+361	   * @param y1 estimate of the step at the end of the step
+362	   * @param h  current step
+363	   * @return error ratio, greater than 1 if step should be rejected
+364	   */
+
+====================================================================================================
+[12:47:38] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {\n        final double dt = Math.pow(10.0, logDt);\n        boolean validIf = dt > 0 && !Double.isNaN(dt) && t0 + dt > t0;\n        // the automatically computed first step (>= ~0.01) is much larger than the range\n        boolean buggyIf = dt < 1e-3;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + dt;\n        final double[] maxTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (t > maxTime[0]) {\n                    maxTime[0] = t;\n                }\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxTime[0] + \" > \" + tEnd,\n                   maxTime[0] <= tEnd);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:47:38] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:47:38] [002_symbolize] CALL DONE subtype=success turns=5 session_cost=$0.1897
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {\n        final double dt = Math.pow(10.0, logDt);\n        boolean validIf = dt > 0 && !Double.isNaN(dt) && t0 + dt > t0;\n        // the automatically computed first step (>= ~0.01) is much larger than the range\n        boolean buggyIf = dt < 1e-3;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + dt;\n        final double[] maxTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (t > maxTime[0]) {\n                    maxTime[0] = t;\n                }\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxTime[0] + \" > \" + tEnd,\n                   maxTime[0] <= tEnd);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:47:38] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:47:38] TEST CODE (org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest)
+====================================================================================================
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {
+        final double dt = Math.pow(10.0, logDt);
+        boolean validIf = dt > 0 && !Double.isNaN(dt) && t0 + dt > t0;
+        // the automatically computed first step (>= ~0.01) is much larger than the range
+        boolean buggyIf = dt < 1e-3;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + dt;
+        final double[] maxTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (t > maxTime[0]) {
+                    maxTime[0] = t;
+                }
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxTime[0] + " > " + tEnd,
+                   maxTime[0] <= tEnd);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+====================================================================================================
+[12:47:38] STRUCTURE CHECK FAILED
+====================================================================================================
+statement 1 of the method must be `boolean validIf = <expression>;`, found `final double dt = Math.pow(10.0, logDt);`
+
+====================================================================================================
+[12:47:38] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:47:38] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- statement 1 of the method must be `boolean validIf = <expression>;`, found `final double dt = Math.pow(10.0, logDt);`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source
+Test file: src/test/java/org/apache/commons/math/ode/nonstiff/JQF_DormandPrince853IntegratorTest.java
+Test class: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest
+Test method: testBugReproduction
+
+Bug summary: Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.
+
+Concrete examples:
+[{'input': 'Use an embedded RK integrator such as DormandPrince853Integrator with no user-supplied initial step. Integrate an ODE over an extremely short interval, e.g. from t0=0 to t=1e-10 (much shorter than the automatically computed first step).', 'expected': 'The automatically computed first step is truncated to the integration range, so the ODE is only evaluated within [t0, t] and integration ends exactly at t.', 'actual': 'The first step is not checked against the range, so the ODE function is evaluated at times beyond the end of the range. The integrator then tries to step back and fails to stop correctly.'}, {'input': 'Run the same short-range integration with a Gragg-Bulirsch-Stoer integrator.', 'expected': 'The first step is truncated to the range, which is correct.', 'actual': 'Works correctly. The step size is checked and truncated, which shows the inconsistency with the embedded RK integrators.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:47:46] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {\n        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;\n        boolean buggyIf = logDt < -3.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + Math.pow(10.0, logDt);\n        final double[] maxTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (t > maxTime[0]) {\n                    maxTime[0] = t;\n                }\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxTime[0] + \" > \" + tEnd,\n                   maxTime[0] <= tEnd);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:47:46] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:47:47] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2322
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {\n        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;\n        boolean buggyIf = logDt < -3.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + Math.pow(10.0, logDt);\n        final double[] maxTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (t > maxTime[0]) {\n                    maxTime[0] = t;\n                }\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxTime[0] + \" > \" + tEnd,\n                   maxTime[0] <= tEnd);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:47:47] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:47:47] TEST CODE (org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest)
+====================================================================================================
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = logDt < -3.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        final double[] maxTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (t > maxTime[0]) {
+                    maxTime[0] = t;
+                }
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxTime[0] + " > " + tEnd,
+                   maxTime[0] <= tEnd);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+====================================================================================================
+[12:47:49] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:48:06] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 1106,
+  "discarded_by_assume": 373,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 733
+  },
+  "passed_assume": 733,
+  "classified": 733
+}
+
+====================================================================================================
+[12:48:06] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:48:06] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: too large first step with embedded Runge-Kutta integrators (Dormand-Prince 8(5,3) ...)
+
+Adaptive step size integrators compute the first step size by themselves if it is not provided.
+For embedded Runge-Kutta type, this step size is not checked against the integration range, so if the integration range is extremely short, this step size may evaluate the function out of the range (and in fact it tries afterward to go back, and fails to stop). Gragg-Bulirsch-Stoer integrators do not have this problem, the step size is checked and truncated if needed.
+
+=== Test ===
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 0) double logDt) {
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = logDt < -3.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        final double[] maxTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (t > maxTime[0]) {
+                    maxTime[0] = t;
+                }
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxTime[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxTime[0] + " > " + tEnd,
+                   maxTime[0] <= tEnd);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: function evaluated beyond end of range: -6.921078776666662 > -6.982255474987517
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:53)
+
+Location: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:53)
+
+is triggered by the following inputs:
+
+    input (0.19798084630617652, 6.6031030155341695, -8.765314007324228) -> logged [0.19798084802284324, 6.603103017250836, 0.26401187646151825, none]
+    input (-5.363806838840215, 8.495684882089401, -7.8404678668369545) -> logged [-5.363806824401381, 8.495684896528235, -5.278849990019322, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:48:23] [006_check_inputs] MODEL TEXT
+====================================================================================================
+The failures are real instances of the reported bug, but I'm marking the test not relevant because `buggyIf` is too wide.
+
+**Why the failures are genuine.** The inputs have tiny ranges of about 1e-8 to 1e-9. The integrator returned normally with the final time at `tEnd`, but `computeDerivatives` was called at times beyond `tEnd`. That matches the report: the automatically chosen first step isn't truncated to the range, so the function is evaluated outside it.
+
+**Why `buggyIf` is wrong (point 4).** `buggyIf` is `logDt < -3.0`, which means a range shorter than 1e-3. I recalled `initializeStep` from memory rather than reading it, so this part is unchecked. For `yDot = 1` and `y0` in [1, 10], the initial step should come out around 1e-5·y0, so roughly 1e-5 to 1e-4.
+
+For ranges between about 1e-4 and 1e-3, the first step would then be smaller than the range, and nothing is evaluated outside it. Those inputs are accepted by `buggyIf` but don't trigger the bug. The true bug condition is that the range is shorter than the first step, and that depends on `y0`. A fixed 1e-3 threshold doesn't capture it.
+
+Points 1 to 3 hold, and the parameter ranges and `validIf` are broad enough (point 6). Point 5 is not clearly a problem, since `buggyIf` over-covers rather than misses. The over-wide `buggyIf` alone is enough to reject the test.
+
+====================================================================================================
+[12:48:25] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failing inputs, with ranges around 1e-8, do show the reported bug. The integrator evaluates the ODE past tEnd because the automatic first step isn't truncated to the range. The root cause matches the report, and the parameter ranges and validIf cover the valid domain. However, buggyIf (logDt < -3, i.e. range < 1e-3) is too wide. From my recollection of initializeStep, which I could not re-read, the first step for yDot=1 and y0 in [1,10] is about 1e-5*y0, roughly 1e-5 to 1e-4. For ranges between that and 1e-3 the first step is smaller than the range, so the buggy code behaves correctly. The bug condition is range < first step, which depends on y0, and a fixed 1e-3 threshold doesn't capture it. buggyIf therefore accepts inputs that don't trigger the bug, so the test is rejected."
+}
+
+====================================================================================================
+[12:48:25] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:48:26] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4077
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failing inputs, with ranges around 1e-8, do show the reported bug. The integrator evaluates the ODE past tEnd because the automatic first step isn't truncated to the range. The root cause matches the report, and the parameter ranges and validIf cover the valid domain. However, buggyIf (logDt < -3, i.e. range < 1e-3) is too wide. From my recollection of initializeStep, which I could not re-read, the first step for yDot=1 and y0 in [1,10] is about 1e-5*y0, roughly 1e-5 to 1e-4. For ranges between that and 1e-3 the first step is smaller than the range, so the buggy code behaves correctly. The bug condition is range < first step, which depends on y0, and a fixed 1e-3 threshold doesn't capture it. buggyIf therefore accepts inputs that don't trigger the bug, so the test is rejected."
+}
+
+====================================================================================================
+[12:48:26] NODE 007 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[12:48:26] LLM CALL [007_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: function evaluated beyond end of range: -6.921078776666662 > -6.982255474987517
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:53)
+
+Location: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:53)
+
+is triggered by the following inputs:
+
+    input (0.19798084630617652, 6.6031030155341695, -8.765314007324228) -> logged [0.19798084802284324, 6.603103017250836, 0.26401187646151825, none]
+    input (-5.363806838840215, 8.495684882089401, -7.8404678668369545) -> logged [-5.363806824401381, 8.495684896528235, -5.278849990019322, none]
+
+Analysis: The failing inputs, with ranges around 1e-8, do show the reported bug. The integrator evaluates the ODE past tEnd because the automatic first step isn't truncated to the range. The root cause matches the report, and the parameter ranges and validIf cover the valid domain. However, buggyIf (logDt < -3, i.e. range < 1e-3) is too wide. From my recollection of initializeStep, which I could not re-read, the first step for yDot=1 and y0 in [1,10] is about 1e-5*y0, roughly 1e-5 to 1e-4. For ranges between that and 1e-3 the first step is smaller than the range, so the buggy code behaves correctly. The bug condition is range < first step, which depends on y0, and a fixed 1e-3 threshold doesn't capture it. buggyIf therefore accepts inputs that don't trigger the bug, so the test is rejected.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source
+Test file: src/test/java/org/apache/commons/math/ode/nonstiff/JQF_DormandPrince853IntegratorTest.java
+Test class: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest
+Test method: testBugReproduction
+
+Bug summary: Embedded Runge-Kutta adaptive integrators (e.g. Dormand-Prince 8(5,3)) compute the initial step size automatically but don't truncate it to the integration range. With a very short range, the function is evaluated outside the range and the integrator then fails to stop properly. Gragg-Bulirsch-Stoer integrators already truncate the first step.
+
+Concrete examples:
+[{'input': 'Use an embedded RK integrator such as DormandPrince853Integrator with no user-supplied initial step. Integrate an ODE over an extremely short interval, e.g. from t0=0 to t=1e-10 (much shorter than the automatically computed first step).', 'expected': 'The automatically computed first step is truncated to the integration range, so the ODE is only evaluated within [t0, t] and integration ends exactly at t.', 'actual': 'The first step is not checked against the range, so the ODE function is evaluated at times beyond the end of the range. The integrator then tries to step back and fails to stop correctly.'}, {'input': 'Run the same short-range integration with a Gragg-Bulirsch-Stoer integrator.', 'expected': 'The first step is truncated to the range, which is correct.', 'actual': 'Works correctly. The step size is checked and truncated, which shows the inconsistency with the embedded RK integrators.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[12:48:29] [007_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public double initializeStep",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source/src/main/java/org/apache/commons/math/ode/AbstractIntegrator.java",
+  "output_mode": "content",
+  "-A": 90
+}
+
+====================================================================================================
+[12:48:29] [007_symbolize] TOOL RESULT
+====================================================================================================
+No matches found
+
+====================================================================================================
+[12:48:32] [007_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "double initializeStep",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-39/source/src/main/java",
+  "output_mode": "content",
+  "-A": 95
+}
+
+====================================================================================================
+[12:48:32] [007_symbolize] TOOL RESULT
+====================================================================================================
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java:246:  public double initializeStep(final boolean forward, final int order, final double[] scale,
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-247-                               final double t0, final double[] y0, final double[] yDot0,
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-248-                               final double[] y1, final double[] yDot1) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-249-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-250-    if (initialStep > 0) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-251-      // use the user provided value
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-252-      return forward ? initialStep : -initialStep;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-253-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-254-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-255-    // very rough first guess : h = 0.01 * ||y/scale|| / ||y'/scale||
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-256-    // this guess will be used to perform an Euler step
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-257-    double ratio;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-258-    double yOnScale2 = 0;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-259-    double yDotOnScale2 = 0;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-260-    for (int j = 0; j < scale.length; ++j) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-261-      ratio         = y0[j] / scale[j];
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-262-      yOnScale2    += ratio * ratio;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-263-      ratio         = yDot0[j] / scale[j];
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-264-      yDotOnScale2 += ratio * ratio;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-265-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-266-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-267-    double h = ((yOnScale2 < 1.0e-10) || (yDotOnScale2 < 1.0e-10)) ?
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-268-               1.0e-6 : (0.01 * FastMath.sqrt(yOnScale2 / yDotOnScale2));
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-269-    if (! forward) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-270-      h = -h;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-271-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-272-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-273-    // perform an Euler step using the preceding rough guess
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-274-    for (int j = 0; j < y0.length; ++j) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-275-      y1[j] = y0[j] + h * yDot0[j];
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-276-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-277-    computeDerivatives(t0 + h, y1, yDot1);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-278-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-279-    // estimate the second derivative of the solution
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-280-    double yDDotOnScale = 0;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-281-    for (int j = 0; j < scale.length; ++j) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-282-      ratio         = (yDot1[j] - yDot0[j]) / scale[j];
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-283-      yDDotOnScale += ratio * ratio;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-284-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-285-    yDDotOnScale = FastMath.sqrt(yDDotOnScale) / h;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-286-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-287-    // step size is computed such that
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-288-    // h^order * max (||y'/tol||, ||y''/tol||) = 0.01
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-289-    final double maxInv2 = FastMath.max(FastMath.sqrt(yDotOnScale2), yDDotOnScale);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-290-    final double h1 = (maxInv2 < 1.0e-15) ?
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-291-                      FastMath.max(1.0e-6, 0.001 * FastMath.abs(h)) :
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-292-                      FastMath.pow(0.01 / maxInv2, 1.0 / order);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-293-    h = FastMath.min(100.0 * FastMath.abs(h), h1);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-294-    h = FastMath.max(h, 1.0e-12 * FastMath.abs(t0));  // avoids cancellation when computing t1 - t0
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-295-    if (h < getMinStep()) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-296-      h = getMinStep();
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-297-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-298-    if (h > getMaxStep()) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-299-      h = getMaxStep();
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-300-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-301-    if (! forward) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-302-      h = -h;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-303-    }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-304-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-305-    return h;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-306-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-307-  }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-308-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-309-  /** Filter the integration step.
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-310-   * @param h signed step
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-311-   * @param forward forward integration indicator
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-312-   * @param acceptSmall if true, steps smaller than the minimal value
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-313-   * are silently increased up to this value, if false such small
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-314-   * steps generate an exception
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-315-   * @return a bounded integration step (h if no bound is reach, or a bounded value)
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-316-   * @exception NumberIsTooSmallException if the step is too small and acceptSmall is false
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-317-   */
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-318-  protected double filterStep(final double h, final boolean forward, final boolean acceptSmall)
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-319-    throws NumberIsTooSmallException {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-320-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-321-      double filteredH = h;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-322-      if (FastMath.abs(h) < minStep) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-323-          if (acceptSmall) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-324-              filteredH = forward ? minStep : -minStep;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-325-          } else {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-326-              throw new NumberIsTooSmallException(LocalizedFormats.MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION,
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-327-                                                  minStep, FastMath.abs(h), true);
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-328-          }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-329-      }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-330-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-331-      if (filteredH > maxStep) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-332-          filteredH = maxStep;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-333-      } else if (filteredH < -maxStep) {
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-334-          filteredH = -maxStep;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-335-      }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-336-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-337-      return filteredH;
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-338-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-339-  }
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-340-
+src/main/java/org/apache/commons/math/ode/nonstiff/AdaptiveStepsizeIntegrator.java-341-  /** {@inheritDoc} */
+
+====================================================================================================
+[12:49:07] [007_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {\n        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10\n        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)\n        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;\n        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12\n                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + Math.pow(10.0, logDt);\n        // call 0: initial derivative, call 1: step size initialization probe,\n        // calls >= 2: Runge-Kutta stages of the first step and later steps\n        final int[] calls = new int[] { 0 };\n        final double[] maxStageTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (calls[0] >= 2 && t > maxStageTime[0]) {\n                    maxStageTime[0] = t;\n                }\n                calls[0]++;\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxStageTime[0] + \" > \" + tEnd,\n                   maxStageTime[0] <= tEnd + 1.0e-12);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:49:07] [007_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:49:08] [007_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.7880
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.ode.nonstiff;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.ode.FirstOrderDifferentialEquations;\n\n@RunWith(JQF.class)\npublic class JQF_DormandPrince853IntegratorTest {\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,\n                         @InRange(minDouble = 1, maxDouble = 10) double y0,\n                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {\n        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10\n        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)\n        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;\n        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12\n                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        final double tEnd = t0 + Math.pow(10.0, logDt);\n        // call 0: initial derivative, call 1: step size initialization probe,\n        // calls >= 2: Runge-Kutta stages of the first step and later steps\n        final int[] calls = new int[] { 0 };\n        final double[] maxStageTime = new double[] { t0 };\n        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n            public int getDimension() { return 1; }\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                if (calls[0] >= 2 && t > maxStageTime[0]) {\n                    maxStageTime[0] = t;\n                }\n                calls[0]++;\n                yDot[0] = 1.0;\n            }\n        };\n\n        DormandPrince853Integrator integrator =\n            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);\n        double[] y = new double[] { y0 };\n        double finalTime = Double.NaN;\n        String exception = \"none\";\n        try {\n            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);\n        } catch (Exception e) {\n            exception = e.getClass().getName();\n        }\n\n        final double fFinalTime = finalTime;\n        final String fException = exception;\n        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });\n        assertEquals(\"none\", fException);\n        assertTrue(\"function evaluated beyond end of range: \" + maxStageTime[0] + \" > \" + tEnd,\n                   maxStageTime[0] <= tEnd + 1.0e-12);\n        assertEquals(tEnd, fFinalTime, 1e-12);\n    }\n}\n"
+}
+
+====================================================================================================
+[12:49:08] NODE 008 execute
+====================================================================================================
+
+
+====================================================================================================
+[12:49:08] TEST CODE (org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest)
+====================================================================================================
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+====================================================================================================
+[12:49:09] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[12:49:28] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 3041,
+  "discarded_by_assume": 759,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2282
+  },
+  "passed_assume": 2282,
+  "classified": 2282
+}
+
+====================================================================================================
+[12:49:28] NODE 009 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[12:49:28] LLM CALL [009_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: too large first step with embedded Runge-Kutta integrators (Dormand-Prince 8(5,3) ...)
+
+Adaptive step size integrators compute the first step size by themselves if it is not provided.
+For embedded Runge-Kutta type, this step size is not checked against the integration range, so if the integration range is extremely short, this step size may evaluate the function out of the range (and in fact it tries afterward to go back, and fails to stop). Gragg-Bulirsch-Stoer integrators do not have this problem, the step size is checked and truncated if needed.
+
+=== Test ===
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: function evaluated beyond end of range: -2.384174848002649 > -2.42243674384141
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)
+
+Location: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)
+
+is triggered by the following inputs:
+
+    input (7.650725417496556, 5.655969270104245, -2.0406866078542913) -> logged [7.659831118636637, 5.6650749712443265, 7.690802990467289, 32, none]
+    input (4.823346817278097, 6.441543300684149, -5.775273554757857) -> logged [4.823348495024997, 6.4415449784310495, 4.863987208185916, 32, none]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[12:49:44] [009_check_inputs] MODEL TEXT
+====================================================================================================
+The failures reproduce the reported bug, and `buggyIf` now matches the bug condition closely.
+
+**Failures match the report (points 1 to 3).**
+- The two failing ranges are about 0.009 and 1.7e-6, which are both much shorter than the automatic first step.
+- The ODE is evaluated at times past `tEnd` by about 0.03 to 0.04, which is the size of the automatic first step.
+- The integrator returns normally with no exception, and the assertion that fails is the one checking for evaluations beyond the end of the range. This is the reported behavior: the first step isn't truncated to the range, so the function is evaluated outside it.
+
+**`buggyIf` is exact (points 4 and 5).**
+- For `y' = 1`, `initializeStep` gives h0 = 0.01·y0, and the Euler probe leaves the second derivative at zero.
+- That makes h1 = (0.01·scale)^(1/8), with scale = 1e-10·(1+y0). The order of Dormand-Prince 8(5,3) is 8.
+- The step is min(100·h0, h1), which is h1 (about 0.034 to 0.043) because y0 ≥ 1. The min and max step limits and the `1e-12·|t0|` floor don't change it.
+- The last stage coefficient c is 1, so any first step h larger than the range puts a stage evaluation at t0 + h, beyond `tEnd`.
+- `buggyIf` is therefore `dt < h1`, which is the real trigger condition, with a tiny 1e-12 margin. It doesn't accept inputs where the code behaves correctly, and it doesn't miss triggering inputs.
+- The call counter skips the first two evaluations, which are the initial derivative and the step-size probe. Only the Runge-Kutta stage evaluations are checked against the range.
+
+**Valid domain (point 6).**
+- `t0` ranges over [-10, 10], `y0` over [1, 10], and log10 of the range length over [-9, 1].
+- That spans ranges from far shorter than the first step to far longer, so non-buggy inputs are also generated.
+- The ODE, tolerances and step limits are fixed rather than generated. That is a minor limitation, but it doesn't restrict the inputs to the bug-triggering ones.
+
+====================================================================================================
+[12:49:47] [009_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures show the reported bug. Ranges of about 0.009 and 1.7e-6 are far shorter than the automatic first step of about 0.04. The ODE is evaluated up to about 0.03-0.04 past tEnd, which is the size of that first step. The integrator returns without an exception, and the assertion that fails is the one checking for evaluations beyond the range, so the first step is not truncated to the range. buggyIf is now accurate. For y'=1, initializeStep gives h1 = (0.01*scale)^(1/8) with scale = 1e-10*(1+y0) and order 8. The step is min(100*h0, h1) = h1, since y0 >= 1, and the min/max step limits don't change it. The last stage has c=1, so a stage evaluation lands at t0+h, beyond tEnd, exactly when h exceeds the range. buggyIf is therefore dt < h1 with a negligible margin, so it neither accepts correct inputs nor misses bug-triggering ones. The call counter skips the initial-derivative call and the step-size probe, so only the Runge-Kutta stage evaluations are checked against the range. The parameter ranges (t0 in [-10,10], y0 in [1,10], log10 of the range length in [-9,1]) and validIf include many non-buggy valid inputs, such as ranges longer than the first step. The ODE, tolerances and step limits are fixed, which is a minor limitation but does not restrict the inputs to the bug-triggering ones."
+}
+
+====================================================================================================
+[12:49:47] [009_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:49:48] [009_check_inputs] CALL DONE subtype=success turns=2 session_cost=$1.1085
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures show the reported bug. Ranges of about 0.009 and 1.7e-6 are far shorter than the automatic first step of about 0.04. The ODE is evaluated up to about 0.03-0.04 past tEnd, which is the size of that first step. The integrator returns without an exception, and the assertion that fails is the one checking for evaluations beyond the range, so the first step is not truncated to the range. buggyIf is now accurate. For y'=1, initializeStep gives h1 = (0.01*scale)^(1/8) with scale = 1e-10*(1+y0) and order 8. The step is min(100*h0, h1) = h1, since y0 >= 1, and the min/max step limits don't change it. The last stage has c=1, so a stage evaluation lands at t0+h, beyond tEnd, exactly when h exceeds the range. buggyIf is therefore dt < h1 with a negligible margin, so it neither accepts correct inputs nor misses bug-triggering ones. The call counter skips the initial-derivative call and the step-size probe, so only the Runge-Kutta stage evaluations are checked against the range. The parameter ranges (t0 in [-10,10], y0 in [1,10], log10 of the range length in [-9,1]) and validIf include many non-buggy valid inputs, such as ranges longer than the first step. The ODE, tolerances and step limits are fixed, which is a minor limitation but does not restrict the inputs to the bug-triggering ones."
+}
+
+====================================================================================================
+[12:49:48] NODE 010 validate
+====================================================================================================
+
+
+====================================================================================================
+[12:49:48] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[12:49:54] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real DormandPrince853Integrator.integrate. The only custom code is an anonymous FirstOrderDifferentialEquations, which is the user-supplied ODE input the API expects, not a replacement for code under test. It computes a simple derivative (y' = 1) and records evaluation times, so it observes the integrator's behavior without altering it. There are no mocking frameworks, no fake subclasses of the integrator, and no simulated return values."
+}
+
+====================================================================================================
+[12:49:54] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:49:55] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4131
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test calls the real DormandPrince853Integrator.integrate. The only custom code is an anonymous FirstOrderDifferentialEquations, which is the user-supplied ODE input the API expects, not a replacement for code under test. It computes a simple derivative (y' = 1) and records evaluation times, so it observes the integrator's behavior without altering it. There are no mocking frameworks, no fake subclasses of the integrator, and no simulated return values."
+}
+
+====================================================================================================
+[12:49:55] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[12:49:58] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail(), assertTrue(false) or assertEquals(1, 0). Its three assertions depend on the integrator's behavior: no exception was thrown, no stage evaluation happened beyond tEnd, and the final time equals tEnd. A fixed integrator that truncates the first step to the range would satisfy all three, so the test can pass."
+}
+
+====================================================================================================
+[12:49:58] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:49:59] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4290
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no fail(), assertTrue(false) or assertEquals(1, 0). Its three assertions depend on the integrator's behavior: no exception was thrown, no stage evaluation happened beyond tEnd, and the final time equals tEnd. A fixed integrator that truncates the first step to the range would satisfy all three, so the test can pass."
+}
+
+====================================================================================================
+[12:49:59] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[12:50:03] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All equality checks are done correctly. The exception check compares two Strings with assertEquals(\"none\", fException), which uses equals() and is correct. The final time check is assertEquals(tEnd, fFinalTime, 1e-12), which compares doubles with a delta. The check on stage evaluation times uses assertTrue with a <= comparison and a small tolerance, which is also appropriate for doubles. No objects or arrays are compared with == or without an appropriate method."
+}
+
+====================================================================================================
+[12:50:03] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[12:50:04] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4453
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All equality checks are done correctly. The exception check compares two Strings with assertEquals(\"none\", fException), which uses equals() and is correct. The final time check is assertEquals(tEnd, fFinalTime, 1e-12), which compares doubles with a delta. The check on stage evaluation times uses assertTrue with a <= comparison and a small tolerance, which is also appropriate for doubles. No objects or arrays are compared with == or without an appropriate method."
+}
+
+====================================================================================================
+[12:50:04] NODE 011 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[12:50:04] AGENT FINISHED success=True llm_calls=17
+====================================================================================================
+
+
+====================================================================================================
+[12:50:06] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_DormandPrince853IntegratorTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug39"
+}
+
+====================================================================================================
+[12:50:06] FINAL TEST FILE JQF_DormandPrince853IntegratorTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.ode.nonstiff;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
+
+@RunWith(JQF.class)
+public class JQF_DormandPrince853IntegratorTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        // range length is 10^logDt; the automatic first step for y'=1, tolerances 1e-10/1e-10
+        // is h1 = (0.01 * (1e-10 + 1e-10 * y0))^(1/8) (about 0.034 .. 0.043)
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        final double tEnd = t0 + Math.pow(10.0, logDt);
+        // call 0: initial derivative, call 1: step size initialization probe,
+        // calls >= 2: Runge-Kutta stages of the first step and later steps
+        final int[] calls = new int[] { 0 };
+        final double[] maxStageTime = new double[] { t0 };
+        FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+            public int getDimension() { return 1; }
+            public void computeDerivatives(double t, double[] y, double[] yDot) {
+                if (calls[0] >= 2 && t > maxStageTime[0]) {
+                    maxStageTime[0] = t;
+                }
+                calls[0]++;
+                yDot[0] = 1.0;
+            }
+        };
+
+        DormandPrince853Integrator integrator =
+            new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+        double[] y = new double[] { y0 };
+        double finalTime = Double.NaN;
+        String exception = "none";
+        try {
+            finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+        } catch (Exception e) {
+            exception = e.getClass().getName();
+        }
+
+        final double fFinalTime = finalTime;
+        final String fException = exception;
+        Log.logOutIf(true, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        assertEquals("none", fException);
+        assertTrue("function evaluated beyond end of range: " + maxStageTime[0] + " > " + tEnd,
+                   maxStageTime[0] <= tEnd + 1.0e-12);
+        assertEquals(tEnd, fFinalTime, 1e-12);
+    }
+
+    @Fuzz
+    public void testTooLargeFirstStep(@InRange(minDouble = -10, maxDouble = 10) double t0,
+                         @InRange(minDouble = 1, maxDouble = 10) double y0,
+                         @InRange(minDouble = -9, maxDouble = 1) double logDt) {
+        boolean validIf = !Double.isNaN(logDt) && t0 + Math.pow(10.0, logDt) > t0;
+        boolean buggyIf = Math.pow(10.0, logDt) + 1.0e-12
+                          < Math.pow(0.01 * (1.0e-10 + 1.0e-10 * y0), 0.125);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            final double tEnd = t0 + Math.pow(10.0, logDt);
+            // call 0: initial derivative, call 1: step size initialization probe,
+            // calls >= 2: Runge-Kutta stages of the first step and later steps
+            final int[] calls = new int[] { 0 };
+            final double[] maxStageTime = new double[] { t0 };
+            FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {
+                public int getDimension() { return 1; }
+                public void computeDerivatives(double t, double[] y, double[] yDot) {
+                    if (calls[0] >= 2 && t > maxStageTime[0]) {
+                        maxStageTime[0] = t;
+                    }
+                    calls[0]++;
+                    yDot[0] = 1.0;
+                }
+            };
+
+            DormandPrince853Integrator integrator =
+                new DormandPrince853Integrator(0.0, 100.0, 1.0e-10, 1.0e-10);
+            double[] y = new double[] { y0 };
+            double finalTime = Double.NaN;
+            String exception = "none";
+            try {
+                finalTime = integrator.integrate(ode, t0, new double[] { y0 }, tEnd, y);
+            } catch (Exception e) {
+                exception = e.getClass().getName();
+            }
+
+            final double fFinalTime = finalTime;
+            final String fException = exception;
+            Log.logOutIf(preserveIf, () -> new Object[]{ fFinalTime, y[0], maxStageTime[0], calls[0], fException });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[12:52:20] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 1163,
+    "inside_buggyIf": 894,
+    "paired_inputs": 894,
+    "outcomes": {
+      "java.lang.AssertionError": 894
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 894,
+      "failed_on_buggy": 894,
+      "pass": 894,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 32498,
+      "inside_buggyIf": 24713,
+      "unique_failures": {}
+    }
+  }
+}

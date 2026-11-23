@@ -1,0 +1,1975 @@
+
+====================================================================================================
+[13:03:14] BUG Math-69: failing test org.apache.commons.math.stat.correlation.PearsonsCorrelationTest::testPValueNearZero -> org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-69/Math69b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source
+====================================================================================================
+Title: PearsonsCorrelation.getCorrelationPValues() precision limited by machine epsilon
+
+Similar to the issue described in MATH-201, using PearsonsCorrelation.getCorrelationPValues() with many treatments results in p-values that are continuous down to 2.2e-16 but that drop to 0 after that.
+
+In MATH-201, the problem was described as such:
+> So in essence, the p-value returned by TTestImpl.tTest() is:
+> 
+> 1.0 - (cumulativeProbability(t) - cumulativeProbabily(-t))
+> 
+> For large-ish t-statistics, cumulativeProbabilty(-t) can get quite small, and cumulativeProbabilty(t) can get very close to 1.0. When 
+> cumulativeProbability(-t) is less than the machine epsilon, we get p-values equal to zero because:
+> 
+> 1.0 - 1.0 + 0.0 = 0.0
+
+The solution in MATH-201 was to modify the p-value calculation to this:
+> p = 2.0 * cumulativeProbability(-t)
+
+Here, the problem is similar.  From PearsonsCorrelation.getCorrelationPValues():
+  p = 2 * (1 - tDistribution.cumulativeProbability(t));
+
+Directly calculating the p-value using identical code as PearsonsCorrelation.getCorrelationPValues(), but with the following change seems to solve the problem:
+  p = 2 * (tDistribution.cumulativeProbability(-t));
+
+====================================================================================================
+[13:03:14] HIDDEN FROM THE AGENT: 2 relevant test classes
+====================================================================================================
+org.apache.commons.math.stat.correlation.PearsonsCorrelationTest
+org.apache.commons.math.stat.correlation.SpearmansRankCorrelationTest
+
+====================================================================================================
+[13:03:14] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:03:14] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: PearsonsCorrelation.getCorrelationPValues() precision limited by machine epsilon
+
+Similar to the issue described in MATH-201, using PearsonsCorrelation.getCorrelationPValues() with many treatments results in p-values that are continuous down to 2.2e-16 but that drop to 0 after that.
+
+In MATH-201, the problem was described as such:
+> So in essence, the p-value returned by TTestImpl.tTest() is:
+> 
+> 1.0 - (cumulativeProbability(t) - cumulativeProbabily(-t))
+> 
+> For large-ish t-statistics, cumulativeProbabilty(-t) can get quite small, and cumulativeProbabilty(t) can get very close to 1.0. When 
+> cumulativeProbability(-t) is less than the machine epsilon, we get p-values equal to zero because:
+> 
+> 1.0 - 1.0 + 0.0 = 0.0
+
+The solution in MATH-201 was to modify the p-value calculation to this:
+> p = 2.0 * cumulativeProbability(-t)
+
+Here, the problem is similar.  From PearsonsCorrelation.getCorrelationPValues():
+  p = 2 * (1 - tDistribution.cumulativeProbability(t));
+
+Directly calculating the p-value using identical code as PearsonsCorrelation.getCorrelationPValues(), but with the following change seems to solve the problem:
+  p = 2 * (tDistribution.cumulativeProbability(-t));
+
+====================================================================================================
+[13:03:18] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.",
+  "concrete_examples": [
+    {
+      "input": "PearsonsCorrelation.getCorrelationPValues() on data with a very strong correlation (large |t| statistic), e.g. many observations where the true p-value is ~1e-20",
+      "expected": "A small positive p-value, e.g. ~1e-20, computed as 2 * tDistribution.cumulativeProbability(-t)",
+      "actual": "p-value is exactly 0.0 because 1 - cumulativeProbability(t) evaluates to 1.0 - 1.0 = 0.0"
+    },
+    {
+      "input": "t-statistic large enough that cumulativeProbability(-t) < 2.2e-16 (e.g. cumulativeProbability(-t) = 1e-18)",
+      "expected": "p = 2 * 1e-18 = 2e-18",
+      "actual": "cumulativeProbability(t) rounds to 1.0, so p = 2 * (1 - 1.0) = 0"
+    }
+  ]
+}
+
+====================================================================================================
+[13:03:18] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:03:19] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0100
+====================================================================================================
+{
+  "issue_gist": "PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.",
+  "concrete_examples": [
+    {
+      "input": "PearsonsCorrelation.getCorrelationPValues() on data with a very strong correlation (large |t| statistic), e.g. many observations where the true p-value is ~1e-20",
+      "expected": "A small positive p-value, e.g. ~1e-20, computed as 2 * tDistribution.cumulativeProbability(-t)",
+      "actual": "p-value is exactly 0.0 because 1 - cumulativeProbability(t) evaluates to 1.0 - 1.0 = 0.0"
+    },
+    {
+      "input": "t-statistic large enough that cumulativeProbability(-t) < 2.2e-16 (e.g. cumulativeProbability(-t) = 1e-18)",
+      "expected": "p = 2 * 1e-18 = 2e-18",
+      "actual": "cumulativeProbability(t) rounds to 1.0, so p = 2 * (1 - 1.0) = 0"
+    }
+  ]
+}
+
+====================================================================================================
+[13:03:19] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:03:19] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source
+Test file: src/test/java/org/apache/commons/math/stat/correlation/JQF_PearsonsCorrelationTest.java
+Test class: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest
+Test method: testBugReproduction
+
+Bug summary: PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.
+
+Concrete examples:
+[{'input': 'PearsonsCorrelation.getCorrelationPValues() on data with a very strong correlation (large |t| statistic), e.g. many observations where the true p-value is ~1e-20', 'expected': 'A small positive p-value, e.g. ~1e-20, computed as 2 * tDistribution.cumulativeProbability(-t)', 'actual': 'p-value is exactly 0.0 because 1 - cumulativeProbability(t) evaluates to 1.0 - 1.0 = 0.0'}, {'input': 't-statistic large enough that cumulativeProbability(-t) < 2.2e-16 (e.g. cumulativeProbability(-t) = 1e-18)', 'expected': 'p = 2 * 1e-18 = 2e-18', 'actual': 'cumulativeProbability(t) rounds to 1.0, so p = 2 * (1 - 1.0) = 0'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:03:22] [002_symbolize] TOOL CALL Read
+====================================================================================================
+{
+  "file_path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source/src/main/java/org/apache/commons/math/stat/correlation/PearsonsCorrelation.java"
+}
+
+====================================================================================================
+[13:03:22] [002_symbolize] TOOL RESULT
+====================================================================================================
+1	/*
+2	 * Licensed to the Apache Software Foundation (ASF) under one or more
+3	 * contributor license agreements.  See the NOTICE file distributed with
+4	 * this work for additional information regarding copyright ownership.
+5	 * The ASF licenses this file to You under the Apache License, Version 2.0
+6	 * (the "License"); you may not use this file except in compliance with
+7	 * the License.  You may obtain a copy of the License at
+8	 *
+9	 *      http://www.apache.org/licenses/LICENSE-2.0
+10	 *
+11	 * Unless required by applicable law or agreed to in writing, software
+12	 * distributed under the License is distributed on an "AS IS" BASIS,
+13	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14	 * See the License for the specific language governing permissions and
+15	 * limitations under the License.
+16	 */
+17	package org.apache.commons.math.stat.correlation;
+18	
+19	import org.apache.commons.math.MathException;
+20	import org.apache.commons.math.MathRuntimeException;
+21	import org.apache.commons.math.distribution.TDistribution;
+22	import org.apache.commons.math.distribution.TDistributionImpl;
+23	import org.apache.commons.math.linear.RealMatrix;
+24	import org.apache.commons.math.linear.BlockRealMatrix;
+25	import org.apache.commons.math.stat.regression.SimpleRegression;
+26	
+27	/**
+28	 * Computes Pearson's product-moment correlation coefficients for pairs of arrays
+29	 * or columns of a matrix.
+30	 *
+31	 * <p>The constructors that take <code>RealMatrix</code> or
+32	 * <code>double[][]</code> arguments generate correlation matrices.  The
+33	 * columns of the input matrices are assumed to represent variable values.
+34	 * Correlations are given by the formula</p>
+35	 * <code>cor(X, Y) = &Sigma;[(x<sub>i</sub> - E(X))(y<sub>i</sub> - E(Y))] / [(n - 1)s(X)s(Y)]</code>
+36	 * where <code>E(X)</code> is the mean of <code>X</code>, <code>E(Y)</code>
+37	 * is the mean of the <code>Y</code> values and s(X), s(Y) are standard deviations.
+38	 *
+39	 * @version $Revision$ $Date$
+40	 * @since 2.0
+41	 */
+42	public class PearsonsCorrelation {
+43	
+44	    /** correlation matrix */
+45	    private final RealMatrix correlationMatrix;
+46	
+47	    /** number of observations */
+48	    private final int nObs;
+49	
+50	    /**
+51	     * Create a PearsonsCorrelation instance without data
+52	     */
+53	    public PearsonsCorrelation() {
+54	        super();
+55	        correlationMatrix = null;
+56	        nObs = 0;
+57	    }
+58	
+59	    /**
+60	     * Create a PearsonsCorrelation from a rectangular array
+61	     * whose columns represent values of variables to be correlated.
+62	     *
+63	     * @param data rectangular array with columns representing variables
+64	     * @throws IllegalArgumentException if the input data array is not
+65	     * rectangular with at least two rows and two columns.
+66	     */
+67	    public PearsonsCorrelation(double[][] data) {
+68	        this(new BlockRealMatrix(data));
+69	    }
+70	
+71	    /**
+72	     * Create a PearsonsCorrelation from a RealMatrix whose columns
+73	     * represent variables to be correlated.
+74	     *
+75	     * @param matrix matrix with columns representing variables to correlate
+76	     */
+77	    public PearsonsCorrelation(RealMatrix matrix) {
+78	        checkSufficientData(matrix);
+79	        nObs = matrix.getRowDimension();
+80	        correlationMatrix = computeCorrelationMatrix(matrix);
+81	    }
+82	
+83	    /**
+84	     * Create a PearsonsCorrelation from a {@link Covariance}.  The correlation
+85	     * matrix is computed by scaling the Covariance's covariance matrix.
+86	     * The Covariance instance must have been created from a data matrix with
+87	     * columns representing variable values.
+88	     *
+89	     * @param covariance Covariance instance
+90	     */
+91	    public PearsonsCorrelation(Covariance covariance) {
+92	        RealMatrix covarianceMatrix = covariance.getCovarianceMatrix();
+93	        if (covarianceMatrix == null) {
+94	            throw MathRuntimeException.createIllegalArgumentException("covariance matrix is null");
+95	        }
+96	        nObs = covariance.getN();
+97	        correlationMatrix = covarianceToCorrelation(covarianceMatrix);
+98	    }
+99	
+100	    /**
+101	     * Create a PearsonsCorrelation from a covariance matrix.  The correlation
+102	     * matrix is computed by scaling the covariance matrix.
+103	     *
+104	     * @param covarianceMatrix covariance matrix
+105	     * @param numberOfObservations the number of observations in the dataset used to compute
+106	     * the covariance matrix
+107	     */
+108	    public PearsonsCorrelation(RealMatrix covarianceMatrix, int numberOfObservations) {
+109	        nObs = numberOfObservations;
+110	        correlationMatrix = covarianceToCorrelation(covarianceMatrix);
+111	
+112	    }
+113	
+114	    /**
+115	     * Returns the correlation matrix
+116	     *
+117	     * @return correlation matrix
+118	     */
+119	    public RealMatrix getCorrelationMatrix() {
+120	        return correlationMatrix;
+121	    }
+122	
+123	    /**
+124	     * Returns a matrix of standard errors associated with the estimates
+125	     * in the correlation matrix.<br/>
+126	     * <code>getCorrelationStandardErrors().getEntry(i,j)</code> is the standard
+127	     * error associated with <code>getCorrelationMatrix.getEntry(i,j)</code>
+128	     * <p>The formula used to compute the standard error is <br/>
+129	     * <code>SE<sub>r</sub> = ((1 - r<sup>2</sup>) / (n - 2))<sup>1/2</sup></code>
+130	     * where <code>r</code> is the estimated correlation coefficient and
+131	     * <code>n</code> is the number of observations in the source dataset.</p>
+132	     *
+133	     * @return matrix of correlation standard errors
+134	     */
+135	    public RealMatrix getCorrelationStandardErrors() {
+136	        int nVars = correlationMatrix.getColumnDimension();
+137	        double[][] out = new double[nVars][nVars];
+138	        for (int i = 0; i < nVars; i++) {
+139	            for (int j = 0; j < nVars; j++) {
+140	                double r = correlationMatrix.getEntry(i, j);
+141	                out[i][j] = Math.sqrt((1 - r * r) /(nObs - 2));
+142	            }
+143	        }
+144	        return new BlockRealMatrix(out);
+145	    }
+146	
+147	    /**
+148	     * Returns a matrix of p-values associated with the (two-sided) null
+149	     * hypothesis that the corresponding correlation coefficient is zero.
+150	     * <p><code>getCorrelationPValues().getEntry(i,j)</code> is the probability
+151	     * that a random variable distributed as <code>t<sub>n-2</sub></code> takes
+152	     * a value with absolute value greater than or equal to <br>
+153	     * <code>|r|((n - 2) / (1 - r<sup>2</sup>))<sup>1/2</sup></code></p>
+154	     * <p>The values in the matrix are sometimes referred to as the
+155	     * <i>significance</i> of the corresponding correlation coefficients.</p>
+156	     *
+157	     * @return matrix of p-values
+158	     * @throws MathException if an error occurs estimating probabilities
+159	     */
+160	    public RealMatrix getCorrelationPValues() throws MathException {
+161	        TDistribution tDistribution = new TDistributionImpl(nObs - 2);
+162	        int nVars = correlationMatrix.getColumnDimension();
+163	        double[][] out = new double[nVars][nVars];
+164	        for (int i = 0; i < nVars; i++) {
+165	            for (int j = 0; j < nVars; j++) {
+166	                if (i == j) {
+167	                    out[i][j] = 0d;
+168	                } else {
+169	                    double r = correlationMatrix.getEntry(i, j);
+170	                    double t = Math.abs(r * Math.sqrt((nObs - 2)/(1 - r * r)));
+171	                    out[i][j] = 2 * (1 - tDistribution.cumulativeProbability(t));
+172	                }
+173	            }
+174	        }
+175	        return new BlockRealMatrix(out);
+176	    }
+177	
+178	
+179	    /**
+180	     * Computes the correlation matrix for the columns of the
+181	     * input matrix.
+182	     *
+183	     * @param matrix matrix with columns representing variables to correlate
+184	     * @return correlation matrix
+185	     */
+186	    public RealMatrix computeCorrelationMatrix(RealMatrix matrix) {
+187	        int nVars = matrix.getColumnDimension();
+188	        RealMatrix outMatrix = new BlockRealMatrix(nVars, nVars);
+189	        for (int i = 0; i < nVars; i++) {
+190	            for (int j = 0; j < i; j++) {
+191	              double corr = correlation(matrix.getColumn(i), matrix.getColumn(j));
+192	              outMatrix.setEntry(i, j, corr);
+193	              outMatrix.setEntry(j, i, corr);
+194	            }
+195	            outMatrix.setEntry(i, i, 1d);
+196	        }
+197	        return outMatrix;
+198	    }
+199	
+200	    /**
+201	     * Computes the correlation matrix for the columns of the
+202	     * input rectangular array.  The colums of the array represent values
+203	     * of variables to be correlated.
+204	     *
+205	     * @param data matrix with columns representing variables to correlate
+206	     * @return correlation matrix
+207	     */
+208	    public RealMatrix computeCorrelationMatrix(double[][] data) {
+209	       return computeCorrelationMatrix(new BlockRealMatrix(data));
+210	    }
+211	
+212	    /**
+213	     * Computes the Pearson's product-moment correlation coefficient between the two arrays.
+214	     *
+215	     * </p>Throws IllegalArgumentException if the arrays do not have the same length
+216	     * or their common length is less than 2</p>
+217	     *
+218	     * @param xArray first data array
+219	     * @param yArray second data array
+220	     * @return Returns Pearson's correlation coefficient for the two arrays
+221	     * @throws  IllegalArgumentException if the arrays lengths do not match or
+222	     * there is insufficient data
+223	     */
+224	    public double correlation(final double[] xArray, final double[] yArray) throws IllegalArgumentException {
+225	        SimpleRegression regression = new SimpleRegression();
+226	        if(xArray.length == yArray.length && xArray.length > 1) {
+227	            for(int i=0; i<xArray.length; i++) {
+228	                regression.addData(xArray[i], yArray[i]);
+229	            }
+230	            return regression.getR();
+231	        }
+232	        else {
+233	            throw MathRuntimeException.createIllegalArgumentException(
+234	                    "invalid array dimensions. xArray has size {0}; yArray has {1} elements",
+235	                    xArray.length, yArray.length);
+236	        }
+237	    }
+238	
+239	    /**
+240	     * Derives a correlation matrix from a covariance matrix.
+241	     *
+242	     * <p>Uses the formula <br/>
+243	     * <code>r(X,Y) = cov(X,Y)/s(X)s(Y)</code> where
+244	     * <code>r(&middot,&middot;)</code> is the correlation coefficient and
+245	     * <code>s(&middot;)</code> means standard deviation.</p>
+246	     *
+247	     * @param covarianceMatrix the covariance matrix
+248	     * @return correlation matrix
+249	     */
+250	    public RealMatrix covarianceToCorrelation(RealMatrix covarianceMatrix) {
+251	        int nVars = covarianceMatrix.getColumnDimension();
+252	        RealMatrix outMatrix = new BlockRealMatrix(nVars, nVars);
+253	        for (int i = 0; i < nVars; i++) {
+254	            double sigma = Math.sqrt(covarianceMatrix.getEntry(i, i));
+255	            outMatrix.setEntry(i, i, 1d);
+256	            for (int j = 0; j < i; j++) {
+257	                double entry = covarianceMatrix.getEntry(i, j) /
+258	                       (sigma * Math.sqrt(covarianceMatrix.getEntry(j, j)));
+259	                outMatrix.setEntry(i, j, entry);
+260	                outMatrix.setEntry(j, i, entry);
+261	            }
+262	        }
+263	        return outMatrix;
+264	    }
+265	
+266	    /**
+267	     * Throws IllegalArgumentException of the matrix does not have at least
+268	     * two columns and two rows
+269	     *
+270	     * @param matrix matrix to check for sufficiency
+271	     */
+272	    private void checkSufficientData(final RealMatrix matrix) {
+273	        int nRows = matrix.getRowDimension();
+274	        int nCols = matrix.getColumnDimension();
+275	        if (nRows < 2 || nCols < 2) {
+276	            throw MathRuntimeException.createIllegalArgumentException(
+277	                    "insufficient data: only {0} rows and {1} columns.",
+278	                    nRows, nCols);
+279	        }
+280	    }
+281	}
+282
+
+====================================================================================================
+[13:03:41] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            if (r.nextBoolean()) {\n                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);\n            } else {\n                mag = r.nextDouble() * 0.99999;\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n        double expected = 0;\n        try {\n            expected = 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            fail(\"reference computation failed: \" + e);\n        }\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-6);\n        assertEquals(expected, fp10, expected * 1e-6);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:03:41] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:03:41] [002_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.1818
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            if (r.nextBoolean()) {\n                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);\n            } else {\n                mag = r.nextDouble() * 0.99999;\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n        double expected = 0;\n        try {\n            expected = 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            fail(\"reference computation failed: \" + e);\n        }\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-6);\n        assertEquals(expected, fp10, expected * 1e-6);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:03:41] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:03:41] TEST CODE (org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest)
+====================================================================================================
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            if (r.nextBoolean()) {
+                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);
+            } else {
+                mag = r.nextDouble() * 0.99999;
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+        double expected = 0;
+        try {
+            expected = 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            fail("reference computation failed: " + e);
+        }
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-6);
+        assertEquals(expected, fp10, expected * 1e-6);
+    }
+}
+
+====================================================================================================
+[13:03:41] STRUCTURE CHECK FAILED
+====================================================================================================
+only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `try { expected = 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t); } catch (Exception e) { fail("reference `
+
+====================================================================================================
+[13:03:41] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:03:41] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `try { expected = 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t); } catch (Exception e) { fail("reference `
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source
+Test file: src/test/java/org/apache/commons/math/stat/correlation/JQF_PearsonsCorrelationTest.java
+Test class: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest
+Test method: testBugReproduction
+
+Bug summary: PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.
+
+Concrete examples:
+[{'input': 'PearsonsCorrelation.getCorrelationPValues() on data with a very strong correlation (large |t| statistic), e.g. many observations where the true p-value is ~1e-20', 'expected': 'A small positive p-value, e.g. ~1e-20, computed as 2 * tDistribution.cumulativeProbability(-t)', 'actual': 'p-value is exactly 0.0 because 1 - cumulativeProbability(t) evaluates to 1.0 - 1.0 = 0.0'}, {'input': 't-statistic large enough that cumulativeProbability(-t) < 2.2e-16 (e.g. cumulativeProbability(-t) = 1e-18)', 'expected': 'p = 2 * 1e-18 = 2e-18', 'actual': 'cumulativeProbability(t) rounds to 1.0, so p = 2 * (1 - 1.0) = 0'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:03:50] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            if (r.nextBoolean()) {\n                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);\n            } else {\n                mag = r.nextDouble() * 0.99999;\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    private static double referenceP(int nObs, double rho) {\n        try {\n            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double expected = referenceP(nObs, rho);\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-6);\n        assertEquals(expected, fp10, expected * 1e-6);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:03:50] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:03:51] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2281
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            if (r.nextBoolean()) {\n                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);\n            } else {\n                mag = r.nextDouble() * 0.99999;\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    private static double referenceP(int nObs, double rho) {\n        try {\n            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double expected = referenceP(nObs, rho);\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-6);\n        assertEquals(expected, fp10, expected * 1e-6);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:03:51] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:03:51] TEST CODE (org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest)
+====================================================================================================
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            if (r.nextBoolean()) {
+                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);
+            } else {
+                mag = r.nextDouble() * 0.99999;
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-6);
+        assertEquals(expected, fp10, expected * 1e-6);
+    }
+}
+
+====================================================================================================
+[13:03:53] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:04:13] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 66808,
+  "discarded_by_assume": 41337,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 1933
+  },
+  "passed_assume": 25471,
+  "classified": 1933
+}
+
+====================================================================================================
+[13:04:13] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:04:13] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: PearsonsCorrelation.getCorrelationPValues() precision limited by machine epsilon
+
+Similar to the issue described in MATH-201, using PearsonsCorrelation.getCorrelationPValues() with many treatments results in p-values that are continuous down to 2.2e-16 but that drop to 0 after that.
+
+In MATH-201, the problem was described as such:
+> So in essence, the p-value returned by TTestImpl.tTest() is:
+> 
+> 1.0 - (cumulativeProbability(t) - cumulativeProbabily(-t))
+> 
+> For large-ish t-statistics, cumulativeProbabilty(-t) can get quite small, and cumulativeProbabilty(t) can get very close to 1.0. When 
+> cumulativeProbability(-t) is less than the machine epsilon, we get p-values equal to zero because:
+> 
+> 1.0 - 1.0 + 0.0 = 0.0
+
+The solution in MATH-201 was to modify the p-value calculation to this:
+> p = 2.0 * cumulativeProbability(-t)
+
+Here, the problem is similar.  From PearsonsCorrelation.getCorrelationPValues():
+  p = 2 * (1 - tDistribution.cumulativeProbability(t));
+
+Directly calculating the p-value using identical code as PearsonsCorrelation.getCorrelationPValues(), but with the following change seems to solve the problem:
+  p = 2 * (tDistribution.cumulativeProbability(-t));
+
+=== Test ===
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1); about half of them are strong (|r| >= 0.99). */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            if (r.nextBoolean()) {
+                mag = 0.99 + r.nextDouble() * (0.99999 - 0.99);
+            } else {
+                mag = r.nextDouble() * 0.99999;
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        boolean buggyIf = nObs >= 50 && Math.abs(rho) >= 0.99;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-6);
+        assertEquals(expected, fp10, expected * 1e-6);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: p-value must be positive for strong correlation, was 0.0
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:75)
+
+Location: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:75)
+
+is triggered by the following inputs:
+
+    input (182, -0.9967364754688101) -> logged [none, 0.0, 0.0, 0.0]
+    input (195, -0.9963194527287953) -> logged [none, 0.0, 0.0, 0.0]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:04:27] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The two failing inputs do show the reported bug. For (182, -0.9967) the t statistic is about 165 with 180 degrees of freedom, so the true p-value is tiny and positive. The buggy code returns exactly 0.0 because 1 - cumulativeProbability(t) rounds to 0, which matches the report. The test is still wrong because of problem (5), and probably problem (4).\n\n(5) buggyIf is too narrow. It is `nObs >= 50 && |rho| >= 0.99`, but the bug depends only on whether the true p-value is below about 1e-16. Many inputs outside that region also trigger it:\n- n=200, rho=0.6 gives t of about 10.5 and p of about 1e-20.\n- n=30, rho=0.98 gives t of about 26 and p of about 1e-20.\n\n(4) buggyIf may also be too wide, though I did not confirm this. With nObs = 200 and |rho| near 0.99999, t is about 3000 and the true p-value is about 1e-690, which underflows a double. A fixed implementation would then also return 0, so the `fp01 > 0` assertion would fail even on correct code. These inputs would be wrongly treated as bug-triggering.\n\nThe ranges (nObs 3 to 200, |rho| < 1) are fine for (6). The buggyIf boundary is not accurate, so the test is not relevant as written."
+}
+
+====================================================================================================
+[13:04:27] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:04:27] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.3982
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The two failing inputs do show the reported bug. For (182, -0.9967) the t statistic is about 165 with 180 degrees of freedom, so the true p-value is tiny and positive. The buggy code returns exactly 0.0 because 1 - cumulativeProbability(t) rounds to 0, which matches the report. The test is still wrong because of problem (5), and probably problem (4).\n\n(5) buggyIf is too narrow. It is `nObs >= 50 && |rho| >= 0.99`, but the bug depends only on whether the true p-value is below about 1e-16. Many inputs outside that region also trigger it:\n- n=200, rho=0.6 gives t of about 10.5 and p of about 1e-20.\n- n=30, rho=0.98 gives t of about 26 and p of about 1e-20.\n\n(4) buggyIf may also be too wide, though I did not confirm this. With nObs = 200 and |rho| near 0.99999, t is about 3000 and the true p-value is about 1e-690, which underflows a double. A fixed implementation would then also return 0, so the `fp01 > 0` assertion would fail even on correct code. These inputs would be wrongly treated as bug-triggering.\n\nThe ranges (nObs 3 to 200, |rho| < 1) are fine for (6). The buggyIf boundary is not accurate, so the test is not relevant as written."
+}
+
+====================================================================================================
+[13:04:27] NODE 007 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:04:27] LLM CALL [007_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: p-value must be positive for strong correlation, was 0.0
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:75)
+
+Location: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:75)
+
+is triggered by the following inputs:
+
+    input (182, -0.9967364754688101) -> logged [none, 0.0, 0.0, 0.0]
+    input (195, -0.9963194527287953) -> logged [none, 0.0, 0.0, 0.0]
+
+Analysis: The two failing inputs do show the reported bug. For (182, -0.9967) the t statistic is about 165 with 180 degrees of freedom, so the true p-value is tiny and positive. The buggy code returns exactly 0.0 because 1 - cumulativeProbability(t) rounds to 0, which matches the report. The test is still wrong because of problem (5), and probably problem (4).
+
+(5) buggyIf is too narrow. It is `nObs >= 50 && |rho| >= 0.99`, but the bug depends only on whether the true p-value is below about 1e-16. Many inputs outside that region also trigger it:
+- n=200, rho=0.6 gives t of about 10.5 and p of about 1e-20.
+- n=30, rho=0.98 gives t of about 26 and p of about 1e-20.
+
+(4) buggyIf may also be too wide, though I did not confirm this. With nObs = 200 and |rho| near 0.99999, t is about 3000 and the true p-value is about 1e-690, which underflows a double. A fixed implementation would then also return 0, so the `fp01 > 0` assertion would fail even on correct code. These inputs would be wrongly treated as bug-triggering.
+
+The ranges (nObs 3 to 200, |rho| < 1) are fine for (6). The buggyIf boundary is not accurate, so the test is not relevant as written.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source
+Test file: src/test/java/org/apache/commons/math/stat/correlation/JQF_PearsonsCorrelationTest.java
+Test class: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest
+Test method: testBugReproduction
+
+Bug summary: PearsonsCorrelation.getCorrelationPValues() computes p = 2 * (1 - cumulativeProbability(t)), which loses precision via catastrophic cancellation near 1.0, so p-values below ~2.2e-16 (machine epsilon) become exactly 0. It should use p = 2 * cumulativeProbability(-t), as MATH-201 did for TTestImpl.
+
+Concrete examples:
+[{'input': 'PearsonsCorrelation.getCorrelationPValues() on data with a very strong correlation (large |t| statistic), e.g. many observations where the true p-value is ~1e-20', 'expected': 'A small positive p-value, e.g. ~1e-20, computed as 2 * tDistribution.cumulativeProbability(-t)', 'actual': 'p-value is exactly 0.0 because 1 - cumulativeProbability(t) evaluates to 1.0 - 1.0 = 0.0'}, {'input': 't-statistic large enough that cumulativeProbability(-t) < 2.2e-16 (e.g. cumulativeProbability(-t) = 1e-18)', 'expected': 'p = 2 * 1e-18 = 2e-18', 'actual': 'cumulativeProbability(t) rounds to 1.0, so p = 2 * (1 - 1.0) = 0'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-69/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:04:54] [007_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            int k = r.nextInt(3);\n            if (k == 0) {\n                mag = r.nextDouble() * 0.99999999;\n            } else if (k == 1) {\n                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);\n            } else {\n                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    private static double referenceP(int nObs, double rho) {\n        try {\n            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.\n        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.\n        boolean buggyIf = validIf\n                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0\n                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double expected = referenceP(nObs, rho);\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-3);\n        assertEquals(expected, fp10, expected * 1e-3);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:04:54] [007_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:04:55] [007_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.4796
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.stat.correlation;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.generator.Generator;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport org.apache.commons.math.distribution.TDistributionImpl;\nimport org.apache.commons.math.linear.BlockRealMatrix;\nimport org.apache.commons.math.linear.RealMatrix;\n\n@RunWith(JQF.class)\npublic class JQF_PearsonsCorrelationTest {\n\n    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */\n    public static class CorrGen extends Generator<Double> {\n        public CorrGen() { super(Double.class); }\n        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {\n            double mag;\n            int k = r.nextInt(3);\n            if (k == 0) {\n                mag = r.nextDouble() * 0.99999999;\n            } else if (k == 1) {\n                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);\n            } else {\n                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);\n            }\n            return r.nextBoolean() ? mag : -mag;\n        }\n    }\n\n    private static double referenceP(int nObs, double rho) {\n        try {\n            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));\n            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,\n                         @From(CorrGen.class) double rho) {\n        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;\n        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.\n        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.\n        boolean buggyIf = validIf\n                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0\n                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});\n        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);\n        String exc = \"none\";\n        double p01 = Double.NaN;\n        double p10 = Double.NaN;\n        double p00 = Double.NaN;\n        try {\n            RealMatrix p = pc.getCorrelationPValues();\n            p01 = p.getEntry(0, 1);\n            p10 = p.getEntry(1, 0);\n            p00 = p.getEntry(0, 0);\n        } catch (Exception e) {\n            exc = e.getClass().getName();\n        }\n        final String fexc = exc;\n        final double fp01 = p01;\n        final double fp10 = p10;\n        final double fp00 = p00;\n\n        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });\n        double expected = referenceP(nObs, rho);\n        assertEquals(\"none\", fexc);\n        assertTrue(\"p-value must be positive for strong correlation, was \" + fp01, fp01 > 0);\n        assertEquals(expected, fp01, expected * 1e-3);\n        assertEquals(expected, fp10, expected * 1e-3);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:04:55] NODE 008 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:04:55] TEST CODE (org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest)
+====================================================================================================
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+}
+
+====================================================================================================
+[13:04:57] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:05:18] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 51926,
+  "discarded_by_assume": 26129,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2642
+  },
+  "passed_assume": 25797,
+  "classified": 2642
+}
+
+====================================================================================================
+[13:05:18] NODE 009 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:05:18] LLM CALL [009_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: PearsonsCorrelation.getCorrelationPValues() precision limited by machine epsilon
+
+Similar to the issue described in MATH-201, using PearsonsCorrelation.getCorrelationPValues() with many treatments results in p-values that are continuous down to 2.2e-16 but that drop to 0 after that.
+
+In MATH-201, the problem was described as such:
+> So in essence, the p-value returned by TTestImpl.tTest() is:
+> 
+> 1.0 - (cumulativeProbability(t) - cumulativeProbabily(-t))
+> 
+> For large-ish t-statistics, cumulativeProbabilty(-t) can get quite small, and cumulativeProbabilty(t) can get very close to 1.0. When 
+> cumulativeProbability(-t) is less than the machine epsilon, we get p-values equal to zero because:
+> 
+> 1.0 - 1.0 + 0.0 = 0.0
+
+The solution in MATH-201 was to modify the p-value calculation to this:
+> p = 2.0 * cumulativeProbability(-t)
+
+Here, the problem is similar.  From PearsonsCorrelation.getCorrelationPValues():
+  p = 2 * (1 - tDistribution.cumulativeProbability(t));
+
+Directly calculating the p-value using identical code as PearsonsCorrelation.getCorrelationPValues(), but with the following change seems to solve the problem:
+  p = 2 * (tDistribution.cumulativeProbability(-t));
+
+=== Test ===
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: p-value must be positive for strong correlation, was 0.0
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.assertTrue(Assert.java:41)
+    	at org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)
+
+Location: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)
+
+is triggered by the following inputs:
+
+    input (154, -0.9040541102369147) -> logged [none, 0.0, 0.0, 0.0]
+    input (97, -0.9451443215898657) -> logged [none, 0.0, 0.0, 0.0]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:05:33] [009_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported bug.\n\n(1)-(3) Both failing inputs have a true p-value far below machine epsilon.\n- (154, -0.904): the exponent (n-2)/2 * log10(1-r^2) is about -56, so p is about 1e-56.\n- (97, -0.945): the exponent is about -46, so p is about 1e-46.\nFor both, the buggy code returns exactly 0.0 for every off-diagonal entry. The cause is `2 * (1 - cumulativeProbability(t))`, where cumulativeProbability(t) rounds to 1.0. That is the cancellation described in the report, and the fix is `2 * cumulativeProbability(-t)`. The assertion that p > 0 matches the expected behavior.\n\n(4) buggyIf selects inputs where the true p is about 1e-18 or smaller, using the approximation p ≈ K * (1-r^2)^((n-2)/2). There the buggy code gives 0 or a value quantized to machine epsilon, so it is wrong, and a fixed version would return a positive, accurate value. The upper cut at -250 keeps p above double underflow. A fix therefore returns a positive value on every selected input, and the positivity assertion is valid.\n\n(5) buggyIf may miss a thin band where p is roughly 1e-17 to 1e-15. Those inputs are imprecise or quantized rather than clearly zero. That band is a gray zone and not a clear omission. Inputs below the -250 cutoff are ones where even the fixed code underflows to 0, so excluding them is correct.\n\n(6) The ranges (nObs 3 to 200, |rho| < 1) and validIf cover the whole valid domain. rho is generated across weak, moderate and very strong values, so many valid inputs fall outside buggyIf."
+}
+
+====================================================================================================
+[13:05:33] [009_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:05:34] [009_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.5486
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failures reproduce the reported bug.\n\n(1)-(3) Both failing inputs have a true p-value far below machine epsilon.\n- (154, -0.904): the exponent (n-2)/2 * log10(1-r^2) is about -56, so p is about 1e-56.\n- (97, -0.945): the exponent is about -46, so p is about 1e-46.\nFor both, the buggy code returns exactly 0.0 for every off-diagonal entry. The cause is `2 * (1 - cumulativeProbability(t))`, where cumulativeProbability(t) rounds to 1.0. That is the cancellation described in the report, and the fix is `2 * cumulativeProbability(-t)`. The assertion that p > 0 matches the expected behavior.\n\n(4) buggyIf selects inputs where the true p is about 1e-18 or smaller, using the approximation p ≈ K * (1-r^2)^((n-2)/2). There the buggy code gives 0 or a value quantized to machine epsilon, so it is wrong, and a fixed version would return a positive, accurate value. The upper cut at -250 keeps p above double underflow. A fix therefore returns a positive value on every selected input, and the positivity assertion is valid.\n\n(5) buggyIf may miss a thin band where p is roughly 1e-17 to 1e-15. Those inputs are imprecise or quantized rather than clearly zero. That band is a gray zone and not a clear omission. Inputs below the -250 cutoff are ones where even the fixed code underflows to 0, so excluding them is correct.\n\n(6) The ranges (nObs 3 to 200, |rho| < 1) and validIf cover the whole valid domain. rho is generated across weak, moderate and very strong values, so many valid inputs fall outside buggyIf."
+}
+
+====================================================================================================
+[13:05:34] NODE 010 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:05:34] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:05:41] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds a real BlockRealMatrix and a real PearsonsCorrelation, and calls the real getCorrelationPValues(). The return values come from that call. The referenceP helper uses the real TDistributionImpl to compute the expected value. That is an independent oracle for the assertions, not a stand-in for the code under test."
+}
+
+====================================================================================================
+[13:05:41] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:05:42] [010_validate] CALL DONE subtype=success turns=2 session_cost=$0.7591
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test uses no mocking framework and no fake subclasses. It builds a real BlockRealMatrix and a real PearsonsCorrelation, and calls the real getCorrelationPValues(). The return values come from that call. The referenceP helper uses the real TDistributionImpl to compute the expected value. That is an independent oracle for the assertions, not a stand-in for the code under test."
+}
+
+====================================================================================================
+[13:05:42] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:05:46] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no `fail()` call, no `assertTrue(false)` and no constant-mismatch assertion. Every assertion compares values computed from the code's output. Those assertions would pass once getCorrelationPValues() returns correct, positive p-values. The `RuntimeException` in `referenceP` is thrown only if the reference computation itself fails, and that is not a hardcoded failure."
+}
+
+====================================================================================================
+[13:05:46] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:05:47] [010_validate] CALL DONE subtype=success turns=2 session_cost=$0.7739
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It has no `fail()` call, no `assertTrue(false)` and no constant-mismatch assertion. Every assertion compares values computed from the code's output. Those assertions would pass once getCorrelationPValues() returns correct, positive p-values. The `RuntimeException` in `referenceP` is thrown only if the reference computation itself fails, and that is not a hardcoded failure."
+}
+
+====================================================================================================
+[13:05:47] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:05:52] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are done correctly. The string comparison `assertEquals(\"none\", fexc)` uses `equals` through JUnit, not `==`. The double comparisons use `assertEquals(expected, actual, delta)` with a delta of `expected * 1e-3`. A relative delta suits values as small as 1e-20, where a fixed absolute delta like 1e-9 would hide the bug. The delta is never negative. A fixed implementation computes the same `2 * cumulativeProbability(-t)` as the reference, so it would pass. The `fp01 > 0` check is a plain boolean assertion and needs no delta."
+}
+
+====================================================================================================
+[13:05:52] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:05:53] [010_validate] CALL DONE subtype=success turns=2 session_cost=$0.7913
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The equality checks are done correctly. The string comparison `assertEquals(\"none\", fexc)` uses `equals` through JUnit, not `==`. The double comparisons use `assertEquals(expected, actual, delta)` with a delta of `expected * 1e-3`. A relative delta suits values as small as 1e-20, where a fixed absolute delta like 1e-9 would hide the bug. The delta is never negative. A fixed implementation computes the same `2 * cumulativeProbability(-t)` as the reference, so it would pass. The `fp01 > 0` check is a plain boolean assertion and needs no delta."
+}
+
+====================================================================================================
+[13:05:53] NODE 011 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:05:53] AGENT FINISHED success=True llm_calls=13
+====================================================================================================
+
+
+====================================================================================================
+[13:05:55] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_PearsonsCorrelationTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug69"
+}
+
+====================================================================================================
+[13:05:55] FINAL TEST FILE JQF_PearsonsCorrelationTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.stat.correlation;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.linear.BlockRealMatrix;
+import org.apache.commons.math.linear.RealMatrix;
+
+@RunWith(JQF.class)
+public class JQF_PearsonsCorrelationTest {
+
+    /** Generates correlation values in (-1, 1) with a mix of weak, moderate and very strong values. */
+    public static class CorrGen extends Generator<Double> {
+        public CorrGen() { super(Double.class); }
+        @Override public Double generate(SourceOfRandomness r, GenerationStatus status) {
+            double mag;
+            int k = r.nextInt(3);
+            if (k == 0) {
+                mag = r.nextDouble() * 0.99999999;
+            } else if (k == 1) {
+                mag = 0.5 + r.nextDouble() * (0.99 - 0.5);
+            } else {
+                mag = 0.9 + r.nextDouble() * (0.99999999 - 0.9);
+            }
+            return r.nextBoolean() ? mag : -mag;
+        }
+    }
+
+    private static double referenceP(int nObs, double rho) {
+        try {
+            double t = Math.abs(rho * Math.sqrt((nObs - 2) / (1 - rho * rho)));
+            return 2 * new TDistributionImpl(nObs - 2).cumulativeProbability(-t);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        // The true two-sided p-value is approximately K * (1 - r^2)^((n-2)/2) with K of order 1.
+        // The bug zeroes p when it is below ~1e-17; keep it far above double underflow so a fix returns a positive value.
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+        PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+        String exc = "none";
+        double p01 = Double.NaN;
+        double p10 = Double.NaN;
+        double p00 = Double.NaN;
+        try {
+            RealMatrix p = pc.getCorrelationPValues();
+            p01 = p.getEntry(0, 1);
+            p10 = p.getEntry(1, 0);
+            p00 = p.getEntry(0, 0);
+        } catch (Exception e) {
+            exc = e.getClass().getName();
+        }
+        final String fexc = exc;
+        final double fp01 = p01;
+        final double fp10 = p10;
+        final double fp00 = p00;
+
+        Log.logOutIf(true, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        double expected = referenceP(nObs, rho);
+        assertEquals("none", fexc);
+        assertTrue("p-value must be positive for strong correlation, was " + fp01, fp01 > 0);
+        assertEquals(expected, fp01, expected * 1e-3);
+        assertEquals(expected, fp10, expected * 1e-3);
+    }
+
+    @Fuzz
+    public void testPValueNearZero(@InRange(minInt = 3, maxInt = 201) int nObs,
+                         @From(CorrGen.class) double rho) {
+        boolean validIf = nObs >= 3 && Math.abs(rho) < 1.0;
+        boolean buggyIf = validIf
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) <= -18.0
+                && (nObs - 2) / 2.0 * Math.log10(1 - rho * rho) >= -250.0;
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            RealMatrix cov = new BlockRealMatrix(new double[][] {{1.0, rho}, {rho, 1.0}});
+            PearsonsCorrelation pc = new PearsonsCorrelation(cov, nObs);
+            String exc = "none";
+            double p01 = Double.NaN;
+            double p10 = Double.NaN;
+            double p00 = Double.NaN;
+            try {
+                RealMatrix p = pc.getCorrelationPValues();
+                p01 = p.getEntry(0, 1);
+                p10 = p.getEntry(1, 0);
+                p00 = p.getEntry(0, 0);
+            } catch (Exception e) {
+                exc = e.getClass().getName();
+            }
+            final String fexc = exc;
+            final double fp01 = p01;
+            final double fp10 = p10;
+            final double fp00 = p00;
+
+            Log.logOutIf(preserveIf, () -> new Object[]{ fexc, fp01, fp10, fp00 });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:09:11] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 100001,
+    "inside_buggyIf": 49452,
+    "paired_inputs": 20000,
+    "outcomes": {
+      "java.lang.AssertionError": 20000
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 20000,
+      "failed_on_buggy": 20000,
+      "pass": 20000,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 60759,
+      "inside_buggyIf": 30051,
+      "unique_failures": {}
+    }
+  }
+}

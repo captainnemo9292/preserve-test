@@ -1,0 +1,163 @@
+{
+  "bug": "Math-88",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 9,
+  "cost_usd": 0.5944,
+  "tokens": {
+    "input": 20,
+    "output": 8048,
+    "cache_write": 126229,
+    "cache_read": 90026
+  },
+  "seconds": 111.0,
+  "started_at": "2026-11-21T13:19:19",
+  "timing": {
+    "checkout": 10.3,
+    "agent": 100.7,
+    "derive": 1.7,
+    "validation": 197.7
+  },
+  "llm_seconds": 78.2,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 10.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 984,
+        "cache_write": 733,
+        "cache_read": 808
+      },
+      "cost_usd": 0.012857,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 23.4,
+      "turns": 4,
+      "tokens": {
+        "input": 4,
+        "output": 2913,
+        "cache_write": 40883,
+        "cache_read": 1078
+      },
+      "cost_usd": 0.192778,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 28.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 3248,
+        "cache_write": 39262,
+        "cache_read": 611
+      },
+      "cost_usd": 0.189593,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_validate",
+      "seconds": 4.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 205,
+        "cache_write": 42021,
+        "cache_read": 603
+      },
+      "cost_usd": 0.170202,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "005_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 150,
+        "cache_write": 1678,
+        "cache_read": 42624
+      },
+      "cost_usd": 0.012482,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "005_validate",
+      "seconds": 6.7,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 548,
+        "cache_write": 1652,
+        "cache_read": 44302
+      },
+      "cost_usd": 0.016526,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 1,
+  "failing_test": "org.apache.commons.math.optimization.linear.SimplexSolverTest::testMath272",
+  "jqf_class": "org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.optimization.linear.SimplexSolverTest",
+    "org.apache.commons.math.optimization.linear.SimplexTableauTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testMath272",
+  "issue_gist": "The SimplexSolver returns a wrong (non-optimal or infeasible) solution for a small linear program. The report says the test case is attached, but the attachment isn't in the report text, so the exact input is unknown.",
+  "failing_inputs_count": 2274,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SimplexSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug88",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 84462,
+      "inside_buggyIf": 36700,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "java.lang.AssertionError": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 19380,
+        "fail": 620,
+        "not_run": 0,
+        "failing_examples": [
+          "input (14, 30, 16) -> logged [none, [14.0, 30.0, 0.0, 0.0, 16.0, 0.0], 26.800000000000004]\njava.lang.AssertionError: expected:<29.8> but was:<26.800000000000004>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMeth",
+          "input (12, 30, 4) -> logged [none, [12.0, 30.0, 0.0, 0.0, 18.0, 0.0], 26.4]\njava.lang.AssertionError: expected:<29.4> but was:<26.4>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl",
+          "input (5, 30, 11) -> logged [none, [5.0, 30.0, 0.0, 0.0, 25.0, 0.0], 25.0]\njava.lang.AssertionError: expected:<28.0> but was:<25.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl"
+        ]
+      },
+      "fresh": {
+        "trials": 85248,
+        "inside_buggyIf": 37288,
+        "unique_failures": {
+          "java.lang.AssertionError": 1
+        },
+        "failing_examples": "The error:\n    java.lang.AssertionError: expected:<27.8> but was:<24.799999999999997>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\nLocation: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\nis triggered by the following inputs:\n\n    input (4, 30, 22) -> logged [none, [4.0, 30.0, 0.0, 0.0, 26.0, 0.0], 24.799999999999997]"
+      }
+    }
+  },
+  "total_seconds": 310.4,
+  "paired_inputs_archived": true
+}

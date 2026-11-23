@@ -1,0 +1,2385 @@
+
+====================================================================================================
+[13:09:27] BUG Math-80: failing test org.apache.commons.math.linear.EigenDecompositionImplTest::testMathpbx02 -> org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction; checkout /tmp/preserve-experiment/main-11df6b11/Math-80/Math80b; agent root /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source
+====================================================================================================
+Title: wrong result in eigen decomposition
+
+Some results computed by EigenDecompositionImpl are wrong. The following case computed by Fortran Lapack fails with version 2.0
+{code}
+    public void testMathpbx02() {
+
+        double[] mainTridiagonal = {
+        	  7484.860960227216, 18405.28129035345, 13855.225609560746,
+        	 10016.708722343366, 559.8117399576674, 6750.190788301587, 
+        	    71.21428769782159
+        };
+        double[] secondaryTridiagonal = {
+        	 -4175.088570476366,1975.7955858241994,5193.178422374075, 
+        	  1995.286659169179,75.34535882933804,-234.0808002076056
+        };
+
+        // the reference values have been computed using routine DSTEMR
+        // from the fortran library LAPACK version 3.2.1
+        double[] refEigenValues = {
+        		20654.744890306974412,16828.208208485466457,
+        		6893.155912634994820,6757.083016675340332,
+        		5887.799885688558788,64.309089923240379,
+        		57.992628792736340
+        };
+        RealVector[] refEigenVectors = {
+        		new ArrayRealVector(new double[] {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321}),
+        		new ArrayRealVector(new double[] {0.179995273578326,-0.402807848153042,0.701870993525734,0.555058211014888,0.068079148898236,0.000509139115227,-0.000007112235617}),
+        		new ArrayRealVector(new double[] {-0.399582721284727,-0.056629954519333,-0.514406488522827,0.711168164518580,0.225548081276367,0.125943999652923,-0.004321507456014}),
+        		new ArrayRealVector(new double[] {0.058515721572821,0.010200130057739,0.063516274916536,-0.090696087449378,-0.017148420432597,0.991318870265707,-0.034707338554096}),
+        		new ArrayRealVector(new double[] {0.855205995537564,0.327134656629775,-0.265382397060548,0.282690729026706,0.105736068025572,-0.009138126622039,0.000367751821196}),
+        		new ArrayRealVector(new double[] {-0.002913069901144,-0.005177515777101,0.041906334478672,-0.109315918416258,0.436192305456741,0.026307315639535,0.891797507436344}),
+        		new ArrayRealVector(new double[] {-0.005738311176435,-0.010207611670378,0.082662420517928,-0.215733886094368,0.861606487840411,-0.025478530652759,-0.451080697503958})
+        };
+
+        // the following line triggers the exception
+        EigenDecomposition decomposition =
+            new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN);
+
+        double[] eigenValues = decomposition.getRealEigenvalues();
+        for (int i = 0; i < refEigenValues.length; ++i) {
+            assertEquals(refEigenValues[i], eigenValues[i], 1.0e-3);
+            if (refEigenVectors[i].dotProduct(decomposition.getEigenvector(i)) < 0) {
+                assertEquals(0, refEigenVectors[i].add(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            } else {
+                assertEquals(0, refEigenVectors[i].subtract(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            }
+        }
+
+    }
+{code}
+
+====================================================================================================
+[13:09:27] HIDDEN FROM THE AGENT: 4 relevant test classes
+====================================================================================================
+org.apache.commons.math.linear.EigenDecompositionImplTest
+org.apache.commons.math.linear.EigenSolverTest
+org.apache.commons.math.linear.SingularValueDecompositionImplTest
+org.apache.commons.math.linear.SingularValueSolverTest
+
+====================================================================================================
+[13:09:27] NODE 001 generalize
+====================================================================================================
+
+
+====================================================================================================
+[13:09:27] LLM CALL [001_generalize] model=sonnet tools=none structured=GeneralizeOutput | PROMPT
+====================================================================================================
+Analyze this bug report and extract:
+1. A 1-2 sentence summary of the bug (issue_gist)
+2. Concrete examples showing: input, expected behavior, actual (buggy) behavior
+
+Bug report:
+Title: wrong result in eigen decomposition
+
+Some results computed by EigenDecompositionImpl are wrong. The following case computed by Fortran Lapack fails with version 2.0
+{code}
+    public void testMathpbx02() {
+
+        double[] mainTridiagonal = {
+        	  7484.860960227216, 18405.28129035345, 13855.225609560746,
+        	 10016.708722343366, 559.8117399576674, 6750.190788301587, 
+        	    71.21428769782159
+        };
+        double[] secondaryTridiagonal = {
+        	 -4175.088570476366,1975.7955858241994,5193.178422374075, 
+        	  1995.286659169179,75.34535882933804,-234.0808002076056
+        };
+
+        // the reference values have been computed using routine DSTEMR
+        // from the fortran library LAPACK version 3.2.1
+        double[] refEigenValues = {
+        		20654.744890306974412,16828.208208485466457,
+        		6893.155912634994820,6757.083016675340332,
+        		5887.799885688558788,64.309089923240379,
+        		57.992628792736340
+        };
+        RealVector[] refEigenVectors = {
+        		new ArrayRealVector(new double[] {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321}),
+        		new ArrayRealVector(new double[] {0.179995273578326,-0.402807848153042,0.701870993525734,0.555058211014888,0.068079148898236,0.000509139115227,-0.000007112235617}),
+        		new ArrayRealVector(new double[] {-0.399582721284727,-0.056629954519333,-0.514406488522827,0.711168164518580,0.225548081276367,0.125943999652923,-0.004321507456014}),
+        		new ArrayRealVector(new double[] {0.058515721572821,0.010200130057739,0.063516274916536,-0.090696087449378,-0.017148420432597,0.991318870265707,-0.034707338554096}),
+        		new ArrayRealVector(new double[] {0.855205995537564,0.327134656629775,-0.265382397060548,0.282690729026706,0.105736068025572,-0.009138126622039,0.000367751821196}),
+        		new ArrayRealVector(new double[] {-0.002913069901144,-0.005177515777101,0.041906334478672,-0.109315918416258,0.436192305456741,0.026307315639535,0.891797507436344}),
+        		new ArrayRealVector(new double[] {-0.005738311176435,-0.010207611670378,0.082662420517928,-0.215733886094368,0.861606487840411,-0.025478530652759,-0.451080697503958})
+        };
+
+        // the following line triggers the exception
+        EigenDecomposition decomposition =
+            new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN);
+
+        double[] eigenValues = decomposition.getRealEigenvalues();
+        for (int i = 0; i < refEigenValues.length; ++i) {
+            assertEquals(refEigenValues[i], eigenValues[i], 1.0e-3);
+            if (refEigenVectors[i].dotProduct(decomposition.getEigenvector(i)) < 0) {
+                assertEquals(0, refEigenVectors[i].add(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            } else {
+                assertEquals(0, refEigenVectors[i].subtract(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            }
+        }
+
+    }
+{code}
+
+====================================================================================================
+[13:09:32] [001_generalize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "issue_gist": "EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.",
+  "concrete_examples": [
+    {
+      "input": "new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN) with main={7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159} and secondary={-4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056}",
+      "expected": "Eigenvalues {20654.744890306974, 16828.208208485466, 6893.155912634995, 6757.083016675340, 5887.799885688559, 64.309089923240, 57.992628792736} within 1e-3. Eigenvectors match the LAPACK references (e.g. vector 0 = {-0.2703563, 0.8528111, 0.3996395, 0.1987947, 0.0197393, 0.000106983, -0.0000012166}) up to sign, within 1e-5.",
+      "actual": "The constructor throws an exception, or the computed eigenvalues and eigenvectors do not match the reference values, so the test testMathpbx02 fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:09:32] [001_generalize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:09:33] [001_generalize] CALL DONE subtype=success turns=2 session_cost=$0.0138
+====================================================================================================
+{
+  "issue_gist": "EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.",
+  "concrete_examples": [
+    {
+      "input": "new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN) with main={7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159} and secondary={-4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056}",
+      "expected": "Eigenvalues {20654.744890306974, 16828.208208485466, 6893.155912634995, 6757.083016675340, 5887.799885688559, 64.309089923240, 57.992628792736} within 1e-3. Eigenvectors match the LAPACK references (e.g. vector 0 = {-0.2703563, 0.8528111, 0.3996395, 0.1987947, 0.0197393, 0.000106983, -0.0000012166}) up to sign, within 1e-5.",
+      "actual": "The constructor throws an exception, or the computed eigenvalues and eigenvectors do not match the reference values, so the test testMathpbx02 fails."
+    }
+  ]
+}
+
+====================================================================================================
+[13:09:33] NODE 002 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:09:33] LLM CALL [002_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source
+Test file: src/test/java/org/apache/commons/math/linear/JQF_EigenDecompositionImplTest.java
+Test class: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest
+Test method: testBugReproduction
+
+Bug summary: EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.
+
+Concrete examples:
+[{'input': 'new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN) with main={7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159} and secondary={-4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056}', 'expected': 'Eigenvalues {20654.744890306974, 16828.208208485466, 6893.155912634995, 6757.083016675340, 5887.799885688559, 64.309089923240, 57.992628792736} within 1e-3. Eigenvectors match the LAPACK references (e.g. vector 0 = {-0.2703563, 0.8528111, 0.3996395, 0.1987947, 0.0197393, 0.000106983, -0.0000012166}) up to sign, within 1e-5.', 'actual': 'The constructor throws an exception, or the computed eigenvalues and eigenvectors do not match the reference values, so the test testMathpbx02 fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:09:37] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "public EigenDecompositionImpl|public .* getRealEigenvalues|public .* getEigenvector\\(",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[13:09:37] [002_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "SAFE_MIN",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source/src/main/java/org/apache/commons/math/util/MathUtils.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[13:09:37] [002_symbolize] TOOL RESULT
+====================================================================================================
+165:    public EigenDecompositionImpl(final RealMatrix matrix,
+189:    public EigenDecompositionImpl(final double[] main, double[] secondary,
+310:    public double[] getRealEigenvalues()
+334:    public RealVector getEigenvector(final int i)
+
+====================================================================================================
+[13:09:37] [002_symbolize] TOOL RESULT
+====================================================================================================
+35:    /** Safe minimum, such that 1 / SAFE_MIN does not overflow.
+39:    public static final double SAFE_MIN = 0x1.0p-1022;
+
+====================================================================================================
+[13:09:54] [002_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[7];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[6];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length == 7 && secondary.length == 6;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[7][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < 7; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double[] refEigenValues = {\n            20654.744890306974412, 16828.208208485466457,\n            6893.155912634994820, 6757.083016675340332,\n            5887.799885688558788, 64.309089923240379,\n            57.992628792736340\n        };\n        double[][] refVecs = {\n            {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n            {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n            {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n            {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n            {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n            {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n            {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n        };\n\n        assertEquals(\"none\", exc);\n        for (int i = 0; i < 7; i++) {\n            assertEquals(refEigenValues[i], values[i], 1.0e-3);\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += refVecs[i][j] * vectors[i][j];\n            double sign = dot < 0 ? 1.0 : -1.0;\n            double sum = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = refVecs[i][j] + (dot < 0 ? vectors[i][j] : -vectors[i][j]);\n                sum += diff * diff;\n            }\n            assertEquals(0, Math.sqrt(sum), 1.0e-5);\n        }\n    }\n}\n"
+}
+
+====================================================================================================
+[13:09:54] [002_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:09:54] [002_symbolize] CALL DONE subtype=success turns=4 session_cost=$0.1787
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[7];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[6];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length == 7 && secondary.length == 6;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[7][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < 7; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double[] refEigenValues = {\n            20654.744890306974412, 16828.208208485466457,\n            6893.155912634994820, 6757.083016675340332,\n            5887.799885688558788, 64.309089923240379,\n            57.992628792736340\n        };\n        double[][] refVecs = {\n            {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n            {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n            {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n            {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n            {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n            {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n            {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n        };\n\n        assertEquals(\"none\", exc);\n        for (int i = 0; i < 7; i++) {\n            assertEquals(refEigenValues[i], values[i], 1.0e-3);\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += refVecs[i][j] * vectors[i][j];\n            double sign = dot < 0 ? 1.0 : -1.0;\n            double sum = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = refVecs[i][j] + (dot < 0 ? vectors[i][j] : -vectors[i][j]);\n                sum += diff * diff;\n            }\n            assertEquals(0, Math.sqrt(sum), 1.0e-5);\n        }\n    }\n}\n"
+}
+
+====================================================================================================
+[13:09:54] NODE 003 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:09:54] TEST CODE (org.apache.commons.math.linear.JQF_EigenDecompositionImplTest)
+====================================================================================================
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[7];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[6];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length == 7 && secondary.length == 6;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[7][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < 7; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double[] refEigenValues = {
+            20654.744890306974412, 16828.208208485466457,
+            6893.155912634994820, 6757.083016675340332,
+            5887.799885688558788, 64.309089923240379,
+            57.992628792736340
+        };
+        double[][] refVecs = {
+            {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+            {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+            {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+            {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+            {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+            {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+            {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+        };
+
+        assertEquals("none", exc);
+        for (int i = 0; i < 7; i++) {
+            assertEquals(refEigenValues[i], values[i], 1.0e-3);
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += refVecs[i][j] * vectors[i][j];
+            double sign = dot < 0 ? 1.0 : -1.0;
+            double sum = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = refVecs[i][j] + (dot < 0 ? vectors[i][j] : -vectors[i][j]);
+                sum += diff * diff;
+            }
+            assertEquals(0, Math.sqrt(sum), 1.0e-5);
+        }
+    }
+}
+
+====================================================================================================
+[13:09:54] STRUCTURE CHECK FAILED
+====================================================================================================
+only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `for (int i = 0; i < 7; i++) { assertEquals(refEigenValues[i], values[i], 1.0e-3); double dot = 0; for (int j = 0; j < 7;`
+
+====================================================================================================
+[13:09:54] NODE 004 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:09:54] LLM CALL [004_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The test does not follow the required structure:
+- only local variable declarations and assertions may follow the `Log.logOutIf(true, ...)` line; found `for (int i = 0; i < 7; i++) { assertEquals(refEigenValues[i], values[i], 1.0e-3); double dot = 0; for (int j = 0; j < 7;`
+
+Revise the test so that it follows the structure exactly.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source
+Test file: src/test/java/org/apache/commons/math/linear/JQF_EigenDecompositionImplTest.java
+Test class: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest
+Test method: testBugReproduction
+
+Bug summary: EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.
+
+Concrete examples:
+[{'input': 'new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN) with main={7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159} and secondary={-4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056}', 'expected': 'Eigenvalues {20654.744890306974, 16828.208208485466, 6893.155912634995, 6757.083016675340, 5887.799885688559, 64.309089923240, 57.992628792736} within 1e-3. Eigenvectors match the LAPACK references (e.g. vector 0 = {-0.2703563, 0.8528111, 0.3996395, 0.1987947, 0.0197393, 0.000106983, -0.0000012166}) up to sign, within 1e-5.', 'actual': 'The constructor throws an exception, or the computed eigenvalues and eigenvectors do not match the reference values, so the test testMathpbx02 fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:10:09] [004_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    static final double[] REF_VALUES = {\n        20654.744890306974412, 16828.208208485466457,\n        6893.155912634994820, 6757.083016675340332,\n        5887.799885688558788, 64.309089923240379,\n        57.992628792736340\n    };\n    static final double[][] REF_VECS = {\n        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n    };\n\n    static double valueError(double[] values) {\n        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;\n        double m = 0;\n        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));\n        return m;\n    }\n\n    static double vectorError(double[][] vecs) {\n        double worst = 0;\n        for (int i = 0; i < 7; i++) {\n            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];\n            double s = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];\n                s += diff * diff;\n            }\n            worst = Math.max(worst, Math.sqrt(s));\n        }\n        return worst;\n    }\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[7];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[6];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length == 7 && secondary.length == 6;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[7][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < 7; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double valErr = valueError(fvalues);\n        double vecErr = vectorError(fvectors);\n        assertEquals(\"none\", fexc);\n        assertEquals(0.0, valErr, 1.0e-3);\n        assertEquals(0.0, vecErr, 1.0e-5);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:10:09] [004_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:10:10] [004_symbolize] CALL DONE subtype=success turns=2 session_cost=$0.2357
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    static final double[] REF_VALUES = {\n        20654.744890306974412, 16828.208208485466457,\n        6893.155912634994820, 6757.083016675340332,\n        5887.799885688558788, 64.309089923240379,\n        57.992628792736340\n    };\n    static final double[][] REF_VECS = {\n        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n    };\n\n    static double valueError(double[] values) {\n        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;\n        double m = 0;\n        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));\n        return m;\n    }\n\n    static double vectorError(double[][] vecs) {\n        double worst = 0;\n        for (int i = 0; i < 7; i++) {\n            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];\n            double s = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];\n                s += diff * diff;\n            }\n            worst = Math.max(worst, Math.sqrt(s));\n        }\n        return worst;\n    }\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[7];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[6];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length == 7 && secondary.length == 6;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[7][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < 7; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double valErr = valueError(fvalues);\n        double vecErr = vectorError(fvectors);\n        assertEquals(\"none\", fexc);\n        assertEquals(0.0, valErr, 1.0e-3);\n        assertEquals(0.0, vecErr, 1.0e-5);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:10:10] NODE 005 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:10:10] TEST CODE (org.apache.commons.math.linear.JQF_EigenDecompositionImplTest)
+====================================================================================================
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[7];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[6];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length == 7 && secondary.length == 6;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[7][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < 7; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+    }
+}
+
+====================================================================================================
+[13:10:12] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:10:39] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 8028,
+  "discarded_by_assume": 5119,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2908
+  },
+  "passed_assume": 2909,
+  "classified": 2908
+}
+
+====================================================================================================
+[13:10:39] NODE 006 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:10:39] LLM CALL [006_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: wrong result in eigen decomposition
+
+Some results computed by EigenDecompositionImpl are wrong. The following case computed by Fortran Lapack fails with version 2.0
+{code}
+    public void testMathpbx02() {
+
+        double[] mainTridiagonal = {
+        	  7484.860960227216, 18405.28129035345, 13855.225609560746,
+        	 10016.708722343366, 559.8117399576674, 6750.190788301587, 
+        	    71.21428769782159
+        };
+        double[] secondaryTridiagonal = {
+        	 -4175.088570476366,1975.7955858241994,5193.178422374075, 
+        	  1995.286659169179,75.34535882933804,-234.0808002076056
+        };
+
+        // the reference values have been computed using routine DSTEMR
+        // from the fortran library LAPACK version 3.2.1
+        double[] refEigenValues = {
+        		20654.744890306974412,16828.208208485466457,
+        		6893.155912634994820,6757.083016675340332,
+        		5887.799885688558788,64.309089923240379,
+        		57.992628792736340
+        };
+        RealVector[] refEigenVectors = {
+        		new ArrayRealVector(new double[] {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321}),
+        		new ArrayRealVector(new double[] {0.179995273578326,-0.402807848153042,0.701870993525734,0.555058211014888,0.068079148898236,0.000509139115227,-0.000007112235617}),
+        		new ArrayRealVector(new double[] {-0.399582721284727,-0.056629954519333,-0.514406488522827,0.711168164518580,0.225548081276367,0.125943999652923,-0.004321507456014}),
+        		new ArrayRealVector(new double[] {0.058515721572821,0.010200130057739,0.063516274916536,-0.090696087449378,-0.017148420432597,0.991318870265707,-0.034707338554096}),
+        		new ArrayRealVector(new double[] {0.855205995537564,0.327134656629775,-0.265382397060548,0.282690729026706,0.105736068025572,-0.009138126622039,0.000367751821196}),
+        		new ArrayRealVector(new double[] {-0.002913069901144,-0.005177515777101,0.041906334478672,-0.109315918416258,0.436192305456741,0.026307315639535,0.891797507436344}),
+        		new ArrayRealVector(new double[] {-0.005738311176435,-0.010207611670378,0.082662420517928,-0.215733886094368,0.861606487840411,-0.025478530652759,-0.451080697503958})
+        };
+
+        // the following line triggers the exception
+        EigenDecomposition decomposition =
+            new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN);
+
+        double[] eigenValues = decomposition.getRealEigenvalues();
+        for (int i = 0; i < refEigenValues.length; ++i) {
+            assertEquals(refEigenValues[i], eigenValues[i], 1.0e-3);
+            if (refEigenVectors[i].dotProduct(decomposition.getEigenvector(i)) < 0) {
+                assertEquals(0, refEigenVectors[i].add(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            } else {
+                assertEquals(0, refEigenVectors[i].subtract(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            }
+        }
+
+    }
+{code}
+
+=== Test ===
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[7];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(0, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[6];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length == 7 && secondary.length == 6;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[7][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < 7; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<0.0> but was:<13897.662099084111>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:121)
+
+Location: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:121)
+
+is triggered by the following inputs:
+
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:10:50] [006_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure itself is the reported bug. The failing input is exactly the matrix from the report, and the output is wrong in the way described. The eigenvalue 20654.745 appears four times, there is a spurious negative eigenvalue (-134.79), and the eigenvectors are duplicated. This differs from the LAPACK reference, so the assertion failure (error 13897.66 against a tolerance of 1e-3) is a genuine eigen-decomposition error, not a test artifact.\n\nThe test is still not acceptable, because of two problems with the input domains:\n\n1. **Valid domain is too narrow (point 6).** The generators and validIf only allow a 7-element main diagonal and a 6-element secondary diagonal. `EigenDecompositionImpl` accepts tridiagonal matrices of any size n with n-1 off-diagonals. Both generators also use fixed value ranges (main [0, 20000), secondary [-6000, 6000)). The valid domain has therefore been cut down to the size of the reported example, instead of covering the API's legal inputs.\n\n2. **buggyIf is too narrow (point 5).** buggyIf is `Arrays.equals(main, REF_MAIN) && Arrays.equals(secondary, REF_SEC)`, which selects one single point. The report says that \"some results\" of the decomposition are wrong, so other tridiagonal matrices can trigger the same defect. The test cannot represent them. Its assertions compare against hard-coded LAPACK reference values, which only makes sense for that one input.\n\nBecause points 5 and 6 are problems, the test does not meet the relevance criteria, even though the reproduced failure is real."
+}
+
+====================================================================================================
+[13:10:50] [006_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:10:51] [006_check_inputs] CALL DONE subtype=success turns=2 session_cost=$0.4061
+====================================================================================================
+{
+  "is_relevant": false,
+  "reasoning": "The failure itself is the reported bug. The failing input is exactly the matrix from the report, and the output is wrong in the way described. The eigenvalue 20654.745 appears four times, there is a spurious negative eigenvalue (-134.79), and the eigenvectors are duplicated. This differs from the LAPACK reference, so the assertion failure (error 13897.66 against a tolerance of 1e-3) is a genuine eigen-decomposition error, not a test artifact.\n\nThe test is still not acceptable, because of two problems with the input domains:\n\n1. **Valid domain is too narrow (point 6).** The generators and validIf only allow a 7-element main diagonal and a 6-element secondary diagonal. `EigenDecompositionImpl` accepts tridiagonal matrices of any size n with n-1 off-diagonals. Both generators also use fixed value ranges (main [0, 20000), secondary [-6000, 6000)). The valid domain has therefore been cut down to the size of the reported example, instead of covering the API's legal inputs.\n\n2. **buggyIf is too narrow (point 5).** buggyIf is `Arrays.equals(main, REF_MAIN) && Arrays.equals(secondary, REF_SEC)`, which selects one single point. The report says that \"some results\" of the decomposition are wrong, so other tridiagonal matrices can trigger the same defect. The test cannot represent them. Its assertions compare against hard-coded LAPACK reference values, which only makes sense for that one input.\n\nBecause points 5 and 6 are problems, the test does not meet the relevance criteria, even though the reproduced failure is real."
+}
+
+====================================================================================================
+[13:10:51] NODE 007 symbolize
+====================================================================================================
+
+
+====================================================================================================
+[13:10:51] LLM CALL [007_symbolize] model=sonnet tools=Read,Grep,Glob structured=TestOutput | PROMPT
+====================================================================================================
+The error:
+    java.lang.AssertionError: expected:<0.0> but was:<13897.662099084111>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:121)
+
+Location: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:121)
+
+is triggered by the following inputs:
+
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+
+Analysis: The failure itself is the reported bug. The failing input is exactly the matrix from the report, and the output is wrong in the way described. The eigenvalue 20654.745 appears four times, there is a spurious negative eigenvalue (-134.79), and the eigenvectors are duplicated. This differs from the LAPACK reference, so the assertion failure (error 13897.66 against a tolerance of 1e-3) is a genuine eigen-decomposition error, not a test artifact.
+
+The test is still not acceptable, because of two problems with the input domains:
+
+1. **Valid domain is too narrow (point 6).** The generators and validIf only allow a 7-element main diagonal and a 6-element secondary diagonal. `EigenDecompositionImpl` accepts tridiagonal matrices of any size n with n-1 off-diagonals. Both generators also use fixed value ranges (main [0, 20000), secondary [-6000, 6000)). The valid domain has therefore been cut down to the size of the reported example, instead of covering the API's legal inputs.
+
+2. **buggyIf is too narrow (point 5).** buggyIf is `Arrays.equals(main, REF_MAIN) && Arrays.equals(secondary, REF_SEC)`, which selects one single point. The report says that "some results" of the decomposition are wrong, so other tridiagonal matrices can trigger the same defect. The test cannot represent them. Its assertions compare against hard-coded LAPACK reference values, which only makes sense for that one input.
+
+Because points 5 and 6 are problems, the test does not meet the relevance criteria, even though the reproduced failure is real.
+
+The failing inputs do not reproduce the reported bug. Revise the test (buggyIf, the code it calls, or its assertions) to match the issue description.
+
+Write a JQF property-based test to reproduce this bug.
+
+Project root: /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source
+Test file: src/test/java/org/apache/commons/math/linear/JQF_EigenDecompositionImplTest.java
+Test class: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest
+Test method: testBugReproduction
+
+Bug summary: EigenDecompositionImpl (Apache Commons Math 2.0) returns wrong eigenvalues/eigenvectors, or throws an exception, for some symmetric tridiagonal matrices. The 7x7 matrix in the report is one such case. Its results differ from the LAPACK DSTEMR reference values.
+
+Concrete examples:
+[{'input': 'new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN) with main={7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159} and secondary={-4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056}', 'expected': 'Eigenvalues {20654.744890306974, 16828.208208485466, 6893.155912634995, 6757.083016675340, 5887.799885688559, 64.309089923240, 57.992628792736} within 1e-3. Eigenvectors match the LAPACK references (e.g. vector 0 = {-0.2703563, 0.8528111, 0.3996395, 0.1987947, 0.0197393, 0.000106983, -0.0000012166}) up to sign, within 1e-5.', 'actual': 'The constructor throws an exception, or the computed eigenvalues and eigenvectors do not match the reference values, so the test testMathpbx02 fails.'}]
+
+Use exactly this structure for the property-based test:
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+// ... imports of the classes under test
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    @Fuzz
+    public void testBugReproduction(@InRange(minInt = -100, maxInt = 100) int x,
+                         @InRange(minDouble = 0, maxDouble = 1) double y) {  // The ranges cover the whole valid input domain, not only the bug-triggering inputs
+        boolean validIf = <inputs that are legal for the API, within the parameter ranges>;
+        boolean buggyIf = <inputs that trigger the bug>;
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        <call the code under test; keep what you will check in local variables>
+
+        Log.logOutIf(true, () -> new Object[]{ <what the code returned and the resulting state> });
+        <local variables only the assertions need, e.g. the expected value>
+        <assertions that fail on the buggy code and would pass once it is fixed>
+    }
+}
+```
+
+You may explore the codebase at /home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source with your Read, Grep and Glob tools to understand the function signatures, types, code structure, and required imports.
+
+IMPORTANT - the test defines two input domains, and both must be as exact as you can make them:
+1. VALID DOMAIN = the parameter ranges together with validIf. They must cover ALL valid inputs of the code under test, as completely as possible - not only the inputs that trigger the bug.
+2. BUG DOMAIN = buggyIf. It must be true for ALL inputs that trigger the bug, and ONLY for inputs that trigger the bug. Do not leave out bug-triggering inputs (e.g. only one side of an invalid range), and do not include inputs for which the buggy code already behaves correctly.
+Every valid input outside buggyIf will later be treated as an input whose behavior must stay unchanged by a fix, so a buggyIf that is too narrow or too wide makes the test wrong.
+
+PARAMETERS = API ARGUMENTS:
+Give the test one parameter per argument of the API you call, including the constructor arguments and the calls that set up the object's state (their number, arguments and order). Primitive arguments use @InRange; strings, arrays, collections and objects use a @From generator that produces the whole value, so the test explores the API's input space rather than your concrete example. Keep a value fixed only when the API requires that exact value.
+
+A generator is a static nested class in the test file:
+    public static class WordsGen extends Generator<String[]> {
+        public WordsGen() { super(String[].class); }
+        @Override public String[] generate(SourceOfRandomness r, GenerationStatus status) { ... }
+    }
+used as `@From(WordsGen.class) String[] words`. Use only `r` for randomness (no Math.random, Random or time). Cover the valid domain (including null, empty and boundary values where the API allows them), but produce bug-triggering inputs often (say 30-50% of the time). Needed imports: com.pholser.junit.quickcheck.From, com.pholser.junit.quickcheck.generator.Generator, com.pholser.junit.quickcheck.generator.GenerationStatus, com.pholser.junit.quickcheck.random.SourceOfRandomness.
+
+LOG THE OBSERVABLE BEHAVIOR:
+The Log.logOutIf line should record what the code did, not only what your assertions check: every return value, the class of any exception thrown, and the resulting state of the objects you used (e.g. all elements in order, sizes, values read through getters). The preservation test compares exactly these values between versions, so anything not logged cannot reveal a difference. Log only deterministic values (no identity hash codes, times, or hash-ordered collections).
+
+Guidelines:
+- validIf and buggyIf are boolean expressions over the parameters only; they must not call the code under test
+- All generated inputs that satisfy validIf and buggyIf should trigger the bug
+- The test should represent the general case of the issue, not be specific to any single input
+- Generalize beyond specific inputs, but do not vary external resources (URLs, files)
+- Give every parameter @InRange(...) (e.g. minInt/maxInt, minLong/maxLong, minDouble/maxDouble) or @From(SomeGenerator.class) with a static nested generator class; an unannotated double only ranges over [0, 1)
+- The upper bound of an int range is excluded: @InRange(minInt = a, maxInt = b) produces only a to b - 1, so a parameter that should take the values 0 to n is @InRange(minInt = 0, maxInt = n + 1). The same holds for short, byte and char ranges; a long range (minLong/maxLong) includes both bounds. For a yes/no choice use a boolean parameter, which takes both values
+- The parameter ranges together with validIf must describe the valid input domain of the code under test as completely as possible: every kind of legal input should be generated, including the inputs that do NOT trigger the bug. The ranges give the outer bounds, and validIf removes the illegal inputs inside them
+- Do not narrow the parameter ranges or validIf to the bug-triggering inputs; buggyIf alone selects those. The same ranges and validIf are reused later to test the inputs outside buggyIf
+- Bound the ranges reasonably (unless the bug report specifies otherwise), but wide enough that both bug-triggering and non-triggering legal inputs are generated often
+- Right before the assertions, log the observable behavior (see LOG THE OBSERVABLE BEHAVIOR) with one Log.logOutIf(true, () -> new T[]{ ... }) line; T is Double, Integer, Long, Boolean or String (Object only for mixed types); log objects via toString() or their relevant getters
+- Only local variable declarations and assertions may follow the Log.logOutIf(true, ...) line, and at least one assertion must. Compute the values that only the assertions need (e.g. the expected value) there, after the log line: the preservation test is derived from everything before the log line, with the code after it left out, so a computation placed before it runs on every input of the preservation test too and can throw there. Variables used in the log's lambda must be effectively final
+- If the code under test throws, catch the exception and record what happened in a variable (e.g. its class name), then log and assert on it; the test must fail through an assertion
+- Avoid using mocks; reveal genuine bug behavior
+- Do not modify source code; only create tests
+- Do not install new libraries; use the existing environment
+- If the test does not reproduce the bug, revise the test rather than changing the environment
+- Write a standalone test: no JUnit fixtures (@Before, @Rule) or project test base classes
+- Import and call the relevant class directly rather than relying on the project's test infrastructure
+
+Requirements:
+- Use the class name, method name and structure given above
+- Use Java 8 and JUnit 4 assertions (for doubles: assertEquals(expected, actual, delta))
+- The test should fail on buggy code (trigger the bug)
+- Include necessary imports (JQF, the classes being tested, etc.)
+- Do not run the test yourself; it will be compiled and run on the buggy code for you
+
+Output:
+- pbt: The complete Java source of the test file
+
+====================================================================================================
+[13:10:56] [007_symbolize] TOOL CALL Grep
+====================================================================================================
+{
+  "pattern": "private|public|protected",
+  "path": "/home/byoungwoo/preserve-testing/experiments/main/workspace/Math-80/source/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java",
+  "output_mode": "content"
+}
+
+====================================================================================================
+[13:10:56] [007_symbolize] TOOL RESULT
+====================================================================================================
+43: * <a href="http://www.cs.utexas.edu/users/inderjit/public_papers/thesis.pdf">A
+61:public class EigenDecompositionImpl implements EigenDecomposition {
+64:    private static final double TOLERANCE = 100 * MathUtils.EPSILON;
+67:    private static final double TOLERANCE_2 = TOLERANCE * TOLERANCE;
+70:    private double splitTolerance;
+73:    private double[] main;
+76:    private double[] secondary;
+79:    private double[] squaredSecondary;
+82:    private TriDiagonalTransformer transformer;
+85:    private double lowerSpectra;
+88:    private double upperSpectra;
+91:    private double minPivot;
+94:    private double sigma;
+97:    private double sigmaLow;
+100:    private double tau;
+103:    private double[] work;
+106:    private int pingPong;
+109:    private double qMax;
+112:    private double eMin;
+115:    private int    tType;
+118:    private double dMin;
+121:    private double dMin1;
+124:    private double dMin2;
+127:    private double dN;
+130:    private double dN1;
+133:    private double dN2;
+136:    private double g;
+139:    private double[] realEigenvalues;
+142:    private double[] imagEigenvalues;
+145:    private ArrayRealVector[] eigenvectors;
+148:    private RealMatrix cachedV;
+151:    private RealMatrix cachedD;
+154:    private RealMatrix cachedVt;
+165:    public EigenDecompositionImpl(final RealMatrix matrix,
+189:    public EigenDecompositionImpl(final double[] main, double[] secondary,
+214:    private boolean isSymmetric(final RealMatrix matrix) {
+235:    private void decompose() {
+254:    public RealMatrix getV()
+277:    public RealMatrix getD()
+287:    public RealMatrix getVT()
+310:    public double[] getRealEigenvalues()
+316:    public double getRealEigenvalue(final int i)
+322:    public double[] getImagEigenvalues()
+328:    public double getImagEigenvalue(final int i)
+334:    public RealVector getEigenvector(final int i)
+346:    public double getDeterminant() {
+355:    public DecompositionSolver getSolver() {
+363:    private static class Solver implements DecompositionSolver {
+366:        private double[] realEigenvalues;
+369:        private double[] imagEigenvalues;
+372:        private final ArrayRealVector[] eigenvectors;
+380:        private Solver(final double[] realEigenvalues, final double[] imagEigenvalues,
+395:        public double[] solve(final double[] b)
+431:        public RealVector solve(final RealVector b)
+467:        public RealMatrix solve(final RealMatrix b)
+506:        public boolean isNonSingular() {
+519:        public RealMatrix getInverse()
+550:    private void transformToTridiagonal(final RealMatrix matrix) {
+569:    private void computeGershgorinCircles() {
+612:    private void findEigenvalues()
+691:    private List<Integer> computeSplits() {
+718:    private void process1RowBlock(final int index) {
+728:    private void process2RowsBlock(final int index)
+756:    private void process3RowsBlock(final int index)
+823:    private void processGeneralBlock(final int n)
+935:    private void initialSplits(final int n) {
+991:    private int goodStep(final int start, final int end) {
+1132:    private boolean flipIfWarranted(final int n, final int step) {
+1155:    private double[] eigenvaluesRange(final int index, final int n) {
+1230:    private int countEigenValues(final double t, final int index, final int n) {
+1253:    private void ldlTDecomposition(final double lambda, final int index, final int n) {
+1272:    private void dqds(final int start, final int end) {
+1329:    private void dqd(final int start, final int end) {
+1431:    private void computeShiftIncrement(final int start, final int end, final int deflated) {
+1679:    private void updateSigma(final double shift) {
+1698:    private void findEigenVectors() {
+1734:    private ArrayRealVector findEigenvector(final double eigenvalue,
+1795:    private void stationaryQuotientDifferenceWithShift(final double[] d, final double[] l,
+1823:    private void progressiveQuotientDifferenceWithShift(final double[] d, final double[] l,
+
+====================================================================================================
+[13:11:21] [007_symbolize] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    static final double[] REF_VALUES = {\n        20654.744890306974412, 16828.208208485466457,\n        6893.155912634994820, 6757.083016675340332,\n        5887.799885688558788, 64.309089923240379,\n        57.992628792736340\n    };\n    static final double[][] REF_VECS = {\n        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n    };\n\n    static double valueError(double[] values) {\n        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;\n        double m = 0;\n        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));\n        return m;\n    }\n\n    static double vectorError(double[][] vecs) {\n        double worst = 0;\n        for (int i = 0; i < 7; i++) {\n            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];\n            double s = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];\n                s += diff * diff;\n            }\n            worst = Math.max(worst, Math.sqrt(s));\n        }\n        return worst;\n    }\n\n    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */\n    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {\n        int n = main.length;\n        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;\n        double worst = 0;\n        for (int k = 0; k < n; k++) {\n            double[] v = vecs[k];\n            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;\n            for (int i = 0; i < n; i++) {\n                double t = main[i] * v[i];\n                if (i > 0) t += sec[i - 1] * v[i - 1];\n                if (i < n - 1) t += sec[i] * v[i + 1];\n                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));\n            }\n        }\n        return worst;\n    }\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[1 + r.nextInt(9)];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[r.nextInt(9)];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length >= 1 && secondary.length == main.length - 1;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[main.length][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < main.length; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double valErr = valueError(fvalues);\n        double vecErr = vectorError(fvectors);\n        double res = residual(main, secondary, fvalues, fvectors);\n        assertEquals(\"none\", fexc);\n        assertEquals(0.0, valErr, 1.0e-3);\n        assertEquals(0.0, vecErr, 1.0e-5);\n        assertEquals(0.0, res, 1.0e-2);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:11:21] [007_symbolize] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:11:22] [007_symbolize] CALL DONE subtype=success turns=3 session_cost=$0.7851
+====================================================================================================
+{
+  "pbt": "package org.apache.commons.math.linear;\n\nimport static org.junit.Assert.*;\nimport static org.junit.Assume.assumeTrue;\n\nimport com.pholser.junit.quickcheck.*;\nimport com.pholser.junit.quickcheck.generator.*;\nimport com.pholser.junit.quickcheck.generator.GenerationStatus;\nimport com.pholser.junit.quickcheck.random.SourceOfRandomness;\nimport edu.berkeley.cs.jqf.fuzz.*;\nimport org.junit.runner.RunWith;\nimport anonymous.log.Log;\nimport java.util.Arrays;\nimport org.apache.commons.math.util.MathUtils;\n\n@RunWith(JQF.class)\npublic class JQF_EigenDecompositionImplTest {\n\n    static final double[] REF_MAIN = {\n        7484.860960227216, 18405.28129035345, 13855.225609560746,\n        10016.708722343366, 559.8117399576674, 6750.190788301587,\n        71.21428769782159\n    };\n    static final double[] REF_SEC = {\n        -4175.088570476366, 1975.7955858241994, 5193.178422374075,\n        1995.286659169179, 75.34535882933804, -234.0808002076056\n    };\n\n    static final double[] REF_VALUES = {\n        20654.744890306974412, 16828.208208485466457,\n        6893.155912634994820, 6757.083016675340332,\n        5887.799885688558788, 64.309089923240379,\n        57.992628792736340\n    };\n    static final double[][] REF_VECS = {\n        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},\n        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},\n        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},\n        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},\n        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},\n        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},\n        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}\n    };\n\n    static double valueError(double[] values) {\n        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;\n        double m = 0;\n        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));\n        return m;\n    }\n\n    static double vectorError(double[][] vecs) {\n        double worst = 0;\n        for (int i = 0; i < 7; i++) {\n            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;\n            double dot = 0;\n            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];\n            double s = 0;\n            for (int j = 0; j < 7; j++) {\n                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];\n                s += diff * diff;\n            }\n            worst = Math.max(worst, Math.sqrt(s));\n        }\n        return worst;\n    }\n\n    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */\n    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {\n        int n = main.length;\n        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;\n        double worst = 0;\n        for (int k = 0; k < n; k++) {\n            double[] v = vecs[k];\n            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;\n            for (int i = 0; i < n; i++) {\n                double t = main[i] * v[i];\n                if (i > 0) t += sec[i - 1] * v[i - 1];\n                if (i < n - 1) t += sec[i] * v[i + 1];\n                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));\n            }\n        }\n        return worst;\n    }\n\n    public static class MainGen extends Generator<double[]> {\n        public MainGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_MAIN.clone();\n            double[] a = new double[1 + r.nextInt(9)];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);\n            return a;\n        }\n    }\n\n    public static class SecGen extends Generator<double[]> {\n        public SecGen() { super(double[].class); }\n        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {\n            if (r.nextInt(10) < 6) return REF_SEC.clone();\n            double[] a = new double[r.nextInt(9)];\n            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);\n            return a;\n        }\n    }\n\n    @Fuzz\n    public void testBugReproduction(@From(MainGen.class) double[] main,\n                                    @From(SecGen.class) double[] secondary) {\n        boolean validIf = main != null && secondary != null\n                && main.length >= 1 && secondary.length == main.length - 1;\n        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)\n                && Arrays.equals(secondary, REF_SEC);\n\n        assumeTrue(validIf);\n        assumeTrue(buggyIf);\n\n        String exc = \"none\";\n        double[] values = null;\n        double[][] vectors = new double[main.length][];\n        try {\n            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);\n            values = d.getRealEigenvalues();\n            for (int i = 0; i < main.length; i++) {\n                vectors[i] = d.getEigenvector(i).getData();\n            }\n        } catch (Throwable t) {\n            exc = t.getClass().getName();\n        }\n\n        final String fexc = exc;\n        final double[] fvalues = values;\n        final double[][] fvectors = vectors;\n        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? \"null\" : Arrays.toString(fvalues),\n                Arrays.deepToString(fvectors) });\n\n        double valErr = valueError(fvalues);\n        double vecErr = vectorError(fvectors);\n        double res = residual(main, secondary, fvalues, fvectors);\n        assertEquals(\"none\", fexc);\n        assertEquals(0.0, valErr, 1.0e-3);\n        assertEquals(0.0, vecErr, 1.0e-5);\n        assertEquals(0.0, res, 1.0e-2);\n    }\n}\n"
+}
+
+====================================================================================================
+[13:11:22] NODE 008 execute
+====================================================================================================
+
+
+====================================================================================================
+[13:11:22] TEST CODE (org.apache.commons.math.linear.JQF_EigenDecompositionImplTest)
+====================================================================================================
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+}
+
+====================================================================================================
+[13:11:24] COMPILE OK
+====================================================================================================
+
+
+====================================================================================================
+[13:11:52] FUZZ (testBugReproduction, 15s)
+====================================================================================================
+{
+  "trials": 8095,
+  "discarded_by_assume": 5173,
+  "passing": 0,
+  "failing_by_error": {
+    "java.lang.AssertionError": 2922
+  },
+  "passed_assume": 2922,
+  "classified": 2922
+}
+
+====================================================================================================
+[13:11:52] NODE 009 check_inputs
+====================================================================================================
+
+
+====================================================================================================
+[13:11:52] LLM CALL [009_check_inputs] model=sonnet tools=none structured=RelevanceCheck | PROMPT
+====================================================================================================
+Determine whether the following test failures reproduce the reported bug.
+
+=== Bug Report ===
+Title: wrong result in eigen decomposition
+
+Some results computed by EigenDecompositionImpl are wrong. The following case computed by Fortran Lapack fails with version 2.0
+{code}
+    public void testMathpbx02() {
+
+        double[] mainTridiagonal = {
+        	  7484.860960227216, 18405.28129035345, 13855.225609560746,
+        	 10016.708722343366, 559.8117399576674, 6750.190788301587, 
+        	    71.21428769782159
+        };
+        double[] secondaryTridiagonal = {
+        	 -4175.088570476366,1975.7955858241994,5193.178422374075, 
+        	  1995.286659169179,75.34535882933804,-234.0808002076056
+        };
+
+        // the reference values have been computed using routine DSTEMR
+        // from the fortran library LAPACK version 3.2.1
+        double[] refEigenValues = {
+        		20654.744890306974412,16828.208208485466457,
+        		6893.155912634994820,6757.083016675340332,
+        		5887.799885688558788,64.309089923240379,
+        		57.992628792736340
+        };
+        RealVector[] refEigenVectors = {
+        		new ArrayRealVector(new double[] {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321}),
+        		new ArrayRealVector(new double[] {0.179995273578326,-0.402807848153042,0.701870993525734,0.555058211014888,0.068079148898236,0.000509139115227,-0.000007112235617}),
+        		new ArrayRealVector(new double[] {-0.399582721284727,-0.056629954519333,-0.514406488522827,0.711168164518580,0.225548081276367,0.125943999652923,-0.004321507456014}),
+        		new ArrayRealVector(new double[] {0.058515721572821,0.010200130057739,0.063516274916536,-0.090696087449378,-0.017148420432597,0.991318870265707,-0.034707338554096}),
+        		new ArrayRealVector(new double[] {0.855205995537564,0.327134656629775,-0.265382397060548,0.282690729026706,0.105736068025572,-0.009138126622039,0.000367751821196}),
+        		new ArrayRealVector(new double[] {-0.002913069901144,-0.005177515777101,0.041906334478672,-0.109315918416258,0.436192305456741,0.026307315639535,0.891797507436344}),
+        		new ArrayRealVector(new double[] {-0.005738311176435,-0.010207611670378,0.082662420517928,-0.215733886094368,0.861606487840411,-0.025478530652759,-0.451080697503958})
+        };
+
+        // the following line triggers the exception
+        EigenDecomposition decomposition =
+            new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN);
+
+        double[] eigenValues = decomposition.getRealEigenvalues();
+        for (int i = 0; i < refEigenValues.length; ++i) {
+            assertEquals(refEigenValues[i], eigenValues[i], 1.0e-3);
+            if (refEigenVectors[i].dotProduct(decomposition.getEigenvector(i)) < 0) {
+                assertEquals(0, refEigenVectors[i].add(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            } else {
+                assertEquals(0, refEigenVectors[i].subtract(decomposition.getEigenvector(i)).getNorm(), 1.0e-5);
+            }
+        }
+
+    }
+{code}
+
+=== Test ===
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+}
+
+```
+
+=== Failing Inputs and Stacktraces ===
+The error:
+    java.lang.AssertionError: expected:<0.0> but was:<13897.662099084111>
+    	at org.junit.Assert.fail(Assert.java:88)
+    	at org.junit.Assert.failNotEquals(Assert.java:834)
+    	at org.junit.Assert.assertEquals(Assert.java:553)
+    	at org.junit.Assert.assertEquals(Assert.java:683)
+    	at org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:140)
+
+Location: org.apache.commons.math.linear.JQF_EigenDecompositionImplTest.testBugReproduction(JQF_EigenDecompositionImplTest.java:140)
+
+is triggered by the following inputs:
+
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+    input (7484.860960227216, 18405.28129035345, 13855.225609560746, 10016.708722343366, 559.8117399576674, 6750.190788301587, 71.21428769782159, -4175.088570476366, 1975.7955858241994, 5193.178422374075, 1995.286659169179, 75.34535882933804, -234.0808002076056) -> logged [none, [20654.74511575945, 20654.74511575945, 20654.74511575945, 20654.74511575945, 7685.448286987214, 6755.11056541476, -134.7961147293172], [[-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.2703563517130323, 0.8528110895541346, 0.3996394891005381, 0.19879465547641523, 0.01973932320361581, 1.0698301764920411E-4, -1.2166362801958785E-6], [-0.004983828017454594, 2.3944228300256922E-4, -0.011830527838170136, 0.013964209866498049, 0.01447603119530255, 0.9992431711588003, -0.030719260943210664], [0.05780829094529586, 0.010104126518194981, 0.0625772912583713, -0.08939990462459098, -0.01673367302236928, 0.9915452440354684, -0.03472550957136464], [7.554893335624581E-5, 1.3787898264578787E-4, -0.0011341575711056446, 0.0030028755234097057, -0.012325959611950411, 0.03411107109904014, 0.9993368687560069]]]
+
+Analyze whether these failures demonstrate the same bug described in the report. Consider: (1) Do the inputs match the conditions described? (2) Does the error match the expected behavior? (3) Is this the same root cause or a different issue? (4) Does buggyIf accept inputs for which the buggy code already behaves correctly, so the test fails there only because its assertion is wrong for them? (5) Does buggyIf miss inputs that also trigger the reported bug (it must cover all bug-triggering inputs)? (6) Do the parameter ranges and validIf cover the valid input domain, or are they restricted to the bug-triggering inputs? Set is_relevant=False if any of (4), (5) or (6) is a problem.
+
+====================================================================================================
+[13:12:02] [009_check_inputs] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failure reproduces the reported bug.\n\n1. **Inputs match the report.** The failing input is exactly the 7x7 tridiagonal matrix from testMathpbx02. The constructor is called with `MathUtils.SAFE_MIN`, as in the report.\n\n2. **Behaviour is wrong in the way the report describes.** The constructor does not throw (`none` is logged), but the results are wrong. The eigenvalue 20654.745 appears four times, and there is a spurious negative eigenvalue (-134.8). The first four eigenvectors are identical, which is impossible for a symmetric matrix with distinct eigenvalues. The largest eigenvalue error against the LAPACK DSTEMR reference is about 13897.66, far outside the 1e-3 tolerance. This is a genuine decomposition error, not an artifact of the assertion. The reported test would fail the same way.\n\n3. **Same root cause.** The wrong, duplicated eigenvalues and eigenvectors come from the same `EigenDecompositionImpl` computation the report points at. Only the assertion style differs. The extra residual check is a valid mathematical property and does not change the diagnosis.\n\n4. **buggyIf does not accept correct behaviour.** buggyIf selects only the reported matrix, and the buggy code gives wrong results there, so the failure is not caused by a wrong assertion.\n\n5. **buggyIf coverage.** buggyIf is a single point. The report gives only this one failing case and nothing else that would define a wider bug domain, so it is as exact as the report allows. I cannot name any other input that is known to trigger the bug.\n\n6. **Valid domain is no longer restricted.** The earlier problem is fixed. The generators now produce main arrays of length 1–9 and secondary arrays of length n-1, with values in both signs. validIf requires only `secondary.length == main.length - 1` with `main.length >= 1`. That matches the API's legal inputs, so the valid domain is not narrowed to the bug-triggering case."
+}
+
+====================================================================================================
+[13:12:02] [009_check_inputs] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:12:03] [009_check_inputs] CALL DONE subtype=success turns=2 session_cost=$1.1038
+====================================================================================================
+{
+  "is_relevant": true,
+  "reasoning": "The failure reproduces the reported bug.\n\n1. **Inputs match the report.** The failing input is exactly the 7x7 tridiagonal matrix from testMathpbx02. The constructor is called with `MathUtils.SAFE_MIN`, as in the report.\n\n2. **Behaviour is wrong in the way the report describes.** The constructor does not throw (`none` is logged), but the results are wrong. The eigenvalue 20654.745 appears four times, and there is a spurious negative eigenvalue (-134.8). The first four eigenvectors are identical, which is impossible for a symmetric matrix with distinct eigenvalues. The largest eigenvalue error against the LAPACK DSTEMR reference is about 13897.66, far outside the 1e-3 tolerance. This is a genuine decomposition error, not an artifact of the assertion. The reported test would fail the same way.\n\n3. **Same root cause.** The wrong, duplicated eigenvalues and eigenvectors come from the same `EigenDecompositionImpl` computation the report points at. Only the assertion style differs. The extra residual check is a valid mathematical property and does not change the diagnosis.\n\n4. **buggyIf does not accept correct behaviour.** buggyIf selects only the reported matrix, and the buggy code gives wrong results there, so the failure is not caused by a wrong assertion.\n\n5. **buggyIf coverage.** buggyIf is a single point. The report gives only this one failing case and nothing else that would define a wider bug domain, so it is as exact as the report allows. I cannot name any other input that is known to trigger the bug.\n\n6. **Valid domain is no longer restricted.** The earlier problem is fixed. The generators now produce main arrays of length 1–9 and secondary arrays of length n-1, with values in both signs. validIf requires only `secondary.length == main.length - 1` with `main.length >= 1`. That matches the API's legal inputs, so the valid domain is not narrowed to the bug-triggering case."
+}
+
+====================================================================================================
+[13:12:03] NODE 010 validate
+====================================================================================================
+
+
+====================================================================================================
+[13:12:03] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test uses mocking or simulation to fake code behavior (e.g., Mockito, EasyMock, PowerMock, fake subclasses overriding the code under test, or manually simulating return values instead of calling actual code).
+
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+}
+
+```
+
+Set is_valid=True if the test directly exercises the actual code without mocking or simulation. Set is_valid=False if mocking or simulation is used.
+
+====================================================================================================
+[13:12:08] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test does not use mocking or simulation. It imports no mocking library (Mockito, EasyMock, PowerMock) and defines no subclasses that override the code under test. It constructs a real `EigenDecompositionImpl` and calls the real `getRealEigenvalues()` and `getEigenvector(i)`. The values it checks come from those calls. The other methods (`valueError`, `vectorError`, `residual`) and the constants only compute expected values and error measures from the actual output. The nested generators only produce input arrays."
+}
+
+====================================================================================================
+[13:12:08] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:12:09] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4276
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test does not use mocking or simulation. It imports no mocking library (Mockito, EasyMock, PowerMock) and defines no subclasses that override the code under test. It constructs a real `EigenDecompositionImpl` and calls the real `getRealEigenvalues()` and `getEigenvector(i)`. The values it checks come from those calls. The other methods (`valueError`, `vectorError`, `residual`) and the constants only compute expected values and error measures from the actual output. The nested generators only produce input arrays."
+}
+
+====================================================================================================
+[13:12:09] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Check whether the following test contains hardcoded failures, like `fail()`, `assertTrue(false)`, or `assertEquals(1, 0)`. Such a test is impossible to pass and makes no sense.
+
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+}
+
+```
+
+Set is_valid=True if the test does NOT contain hardcoded failures (i.e., it's possible to pass). Set is_valid=False if hardcoded failures exist.
+
+====================================================================================================
+[13:12:13] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no `fail()`, `assertTrue(false)` or `assertEquals(1, 0)`. Every assertion compares a value computed from the real `EigenDecompositionImpl` output against a threshold: the exception name against \"none\", and the value, vector and residual errors against 0.0 within a tolerance. A correct implementation would produce the LAPACK reference eigenvalues and eigenvectors for the fixed matrix. The errors would then be near zero and all assertions would pass, so the test can pass."
+}
+
+====================================================================================================
+[13:12:13] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:12:14] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4504
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "The test has no hardcoded failures. It contains no `fail()`, `assertTrue(false)` or `assertEquals(1, 0)`. Every assertion compares a value computed from the real `EigenDecompositionImpl` output against a threshold: the exception name against \"none\", and the value, vector and residual errors against 0.0 within a tolerance. A correct implementation would produce the LAPACK reference eigenvalues and eigenvectors for the fixed matrix. The errors would then be near zero and all assertions would pass, so the test can pass."
+}
+
+====================================================================================================
+[13:12:14] LLM CALL [010_validate] model=sonnet tools=none structured=ValidationCheck | PROMPT
+====================================================================================================
+Analyze the assertion in the test. Is the equality check performed correctly? Note that not all comparisons should use `assertEquals` or `==`. For example, doubles need a delta (`assertEquals(expected, actual, delta)`), objects and strings must not be compared with `==`, and arrays need `assertArrayEquals`.
+
+```java
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+}
+
+```
+
+Set is_valid=True if the equality check is performed correctly, or if no equality check is present. Set is_valid=False if the equality check is improper.
+
+====================================================================================================
+[13:12:19] [010_validate] TOOL CALL StructuredOutput
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All equality checks are done correctly. `assertEquals(\"none\", fexc)` compares strings with `equals`, not `==`. The three double comparisons (`valErr`, `vecErr` and `res` against 0.0) use the three-argument `assertEquals` with deltas (1e-3, 1e-5, 1e-2), so there is no exact floating-point equality. Arrays are never compared directly. They are reduced to scalar error measures first. The deltas match the tolerances in the original report (1e-3 for eigenvalues, 1e-5 for eigenvectors)."
+}
+
+====================================================================================================
+[13:12:19] [010_validate] TOOL RESULT
+====================================================================================================
+Structured output provided successfully
+
+====================================================================================================
+[13:12:20] [010_validate] CALL DONE subtype=success turns=2 session_cost=$1.4748
+====================================================================================================
+{
+  "is_valid": true,
+  "reasoning": "All equality checks are done correctly. `assertEquals(\"none\", fexc)` compares strings with `equals`, not `==`. The three double comparisons (`valErr`, `vecErr` and `res` against 0.0) use the three-argument `assertEquals` with deltas (1e-3, 1e-5, 1e-2), so there is no exact floating-point equality. Arrays are never compared directly. They are reduced to scalar error measures first. The deltas match the tolerances in the original report (1e-3 for eigenvalues, 1e-5 for eigenvectors)."
+}
+
+====================================================================================================
+[13:12:20] NODE 011 finalize_success
+====================================================================================================
+
+
+====================================================================================================
+[13:12:20] AGENT FINISHED success=True llm_calls=15
+====================================================================================================
+
+
+====================================================================================================
+[13:12:21] DERIVED PRESERVATION TEST
+====================================================================================================
+{
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_EigenDecompositionImplTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug80"
+}
+
+====================================================================================================
+[13:12:21] FINAL TEST FILE JQF_EigenDecompositionImplTest.java (repro method + derived preservation method)
+====================================================================================================
+package org.apache.commons.math.linear;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
+
+import com.pholser.junit.quickcheck.*;
+import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.*;
+import org.junit.runner.RunWith;
+import anonymous.log.Log;
+import java.util.Arrays;
+import org.apache.commons.math.util.MathUtils;
+
+@RunWith(JQF.class)
+public class JQF_EigenDecompositionImplTest {
+
+    static final double[] REF_MAIN = {
+        7484.860960227216, 18405.28129035345, 13855.225609560746,
+        10016.708722343366, 559.8117399576674, 6750.190788301587,
+        71.21428769782159
+    };
+    static final double[] REF_SEC = {
+        -4175.088570476366, 1975.7955858241994, 5193.178422374075,
+        1995.286659169179, 75.34535882933804, -234.0808002076056
+    };
+
+    static final double[] REF_VALUES = {
+        20654.744890306974412, 16828.208208485466457,
+        6893.155912634994820, 6757.083016675340332,
+        5887.799885688558788, 64.309089923240379,
+        57.992628792736340
+    };
+    static final double[][] REF_VECS = {
+        {-0.270356342026904, 0.852811091326997, 0.399639490702077, 0.198794657813990, 0.019739323307666, 0.000106983022327, -0.000001216636321},
+        {0.179995273578326, -0.402807848153042, 0.701870993525734, 0.555058211014888, 0.068079148898236, 0.000509139115227, -0.000007112235617},
+        {-0.399582721284727, -0.056629954519333, -0.514406488522827, 0.711168164518580, 0.225548081276367, 0.125943999652923, -0.004321507456014},
+        {0.058515721572821, 0.010200130057739, 0.063516274916536, -0.090696087449378, -0.017148420432597, 0.991318870265707, -0.034707338554096},
+        {0.855205995537564, 0.327134656629775, -0.265382397060548, 0.282690729026706, 0.105736068025572, -0.009138126622039, 0.000367751821196},
+        {-0.002913069901144, -0.005177515777101, 0.041906334478672, -0.109315918416258, 0.436192305456741, 0.026307315639535, 0.891797507436344},
+        {-0.005738311176435, -0.010207611670378, 0.082662420517928, -0.215733886094368, 0.861606487840411, -0.025478530652759, -0.451080697503958}
+    };
+
+    static double valueError(double[] values) {
+        if (values == null || values.length != 7) return Double.POSITIVE_INFINITY;
+        double m = 0;
+        for (int i = 0; i < 7; i++) m = Math.max(m, Math.abs(values[i] - REF_VALUES[i]));
+        return m;
+    }
+
+    static double vectorError(double[][] vecs) {
+        double worst = 0;
+        for (int i = 0; i < 7; i++) {
+            if (vecs[i] == null || vecs[i].length != 7) return Double.POSITIVE_INFINITY;
+            double dot = 0;
+            for (int j = 0; j < 7; j++) dot += REF_VECS[i][j] * vecs[i][j];
+            double s = 0;
+            for (int j = 0; j < 7; j++) {
+                double diff = dot < 0 ? REF_VECS[i][j] + vecs[i][j] : REF_VECS[i][j] - vecs[i][j];
+                s += diff * diff;
+            }
+            worst = Math.max(worst, Math.sqrt(s));
+        }
+        return worst;
+    }
+
+    /** Largest residual |T v - lambda v| over all computed eigenpairs of the tridiagonal matrix. */
+    static double residual(double[] main, double[] sec, double[] values, double[][] vecs) {
+        int n = main.length;
+        if (values == null || values.length != n) return Double.POSITIVE_INFINITY;
+        double worst = 0;
+        for (int k = 0; k < n; k++) {
+            double[] v = vecs[k];
+            if (v == null || v.length != n) return Double.POSITIVE_INFINITY;
+            for (int i = 0; i < n; i++) {
+                double t = main[i] * v[i];
+                if (i > 0) t += sec[i - 1] * v[i - 1];
+                if (i < n - 1) t += sec[i] * v[i + 1];
+                worst = Math.max(worst, Math.abs(t - values[k] * v[i]));
+            }
+        }
+        return worst;
+    }
+
+    public static class MainGen extends Generator<double[]> {
+        public MainGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_MAIN.clone();
+            double[] a = new double[1 + r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-20000, 20000);
+            return a;
+        }
+    }
+
+    public static class SecGen extends Generator<double[]> {
+        public SecGen() { super(double[].class); }
+        @Override public double[] generate(SourceOfRandomness r, GenerationStatus status) {
+            if (r.nextInt(10) < 6) return REF_SEC.clone();
+            double[] a = new double[r.nextInt(9)];
+            for (int i = 0; i < a.length; i++) a[i] = r.nextDouble(-6000, 6000);
+            return a;
+        }
+    }
+
+    @Fuzz
+    public void testBugReproduction(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+
+        assumeTrue(validIf);
+        assumeTrue(buggyIf);
+
+        String exc = "none";
+        double[] values = null;
+        double[][] vectors = new double[main.length][];
+        try {
+            EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+            values = d.getRealEigenvalues();
+            for (int i = 0; i < main.length; i++) {
+                vectors[i] = d.getEigenvector(i).getData();
+            }
+        } catch (Throwable t) {
+            exc = t.getClass().getName();
+        }
+
+        final String fexc = exc;
+        final double[] fvalues = values;
+        final double[][] fvectors = vectors;
+        Log.logOutIf(true, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                Arrays.deepToString(fvectors) });
+
+        double valErr = valueError(fvalues);
+        double vecErr = vectorError(fvectors);
+        double res = residual(main, secondary, fvalues, fvectors);
+        assertEquals("none", fexc);
+        assertEquals(0.0, valErr, 1.0e-3);
+        assertEquals(0.0, vecErr, 1.0e-5);
+        assertEquals(0.0, res, 1.0e-2);
+    }
+
+    @Fuzz
+    public void testMathpbx02(@From(MainGen.class) double[] main,
+                                    @From(SecGen.class) double[] secondary) {
+        boolean validIf = main != null && secondary != null
+                && main.length >= 1 && secondary.length == main.length - 1;
+        boolean buggyIf = validIf && Arrays.equals(main, REF_MAIN)
+                && Arrays.equals(secondary, REF_SEC);
+        boolean preserveIf = !buggyIf;
+
+        assumeTrue(validIf);
+        assumeTrue(preserveIf);
+
+        try {
+            String exc = "none";
+            double[] values = null;
+            double[][] vectors = new double[main.length][];
+            try {
+                EigenDecomposition d = new EigenDecompositionImpl(main.clone(), secondary.clone(), MathUtils.SAFE_MIN);
+                values = d.getRealEigenvalues();
+                for (int i = 0; i < main.length; i++) {
+                    vectors[i] = d.getEigenvector(i).getData();
+                }
+            } catch (Throwable t) {
+                exc = t.getClass().getName();
+            }
+
+            final String fexc = exc;
+            final double[] fvalues = values;
+            final double[][] fvectors = vectors;
+            Log.logOutIf(preserveIf, () -> new Object[]{ fexc, fvalues == null ? "null" : Arrays.toString(fvalues),
+                    Arrays.deepToString(fvectors) });
+        } catch (edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException __timeout) {
+            throw __timeout;
+        } catch (Exception __e) {
+            Log.logOutIf(preserveIf, () -> new String[]{ __e.toString() });
+        }
+    }
+}
+
+====================================================================================================
+[13:15:28] VALIDATION valid=True 
+====================================================================================================
+{
+  "valid": true,
+  "why_invalid": "",
+  "on_buggy": {
+    "result": "fail",
+    "trials": 17555,
+    "inside_buggyIf": 6375,
+    "paired_inputs": 6375,
+    "outcomes": {
+      "java.lang.AssertionError": 6375
+    }
+  },
+  "on_fix": {
+    "result": "pass",
+    "paired": {
+      "inputs": 6375,
+      "failed_on_buggy": 6375,
+      "pass": 6375,
+      "fail": 0,
+      "not_run": 0
+    },
+    "fresh": {
+      "trials": 17728,
+      "inside_buggyIf": 6383,
+      "unique_failures": {}
+    }
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "bug": "Math-4",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 12,
+  "cost_usd": 0.5617,
+  "tokens": {
+    "input": 24,
+    "output": 6553,
+    "cache_write": 120560,
+    "cache_read": 138730
+  },
+  "seconds": 99.0,
+  "started_at": "2026-11-21T12:28:03",
+  "timing": {
+    "checkout": 11.6,
+    "agent": 87.4,
+    "derive": 1.7,
+    "validation": 176.6
+  },
+  "llm_seconds": 64.5,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.7,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 433,
+        "cache_write": 797,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007603,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 20.9,
+      "turns": 5,
+      "tokens": {
+        "input": 6,
+        "output": 2478,
+        "cache_write": 33832,
+        "cache_read": 27736
+      },
+      "cost_usd": 0.162894,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_symbolize",
+      "seconds": 10.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1537,
+        "cache_write": 6510,
+        "cache_read": 27658
+      },
+      "cost_usd": 0.04418,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "006_check_inputs",
+      "seconds": 13.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1524,
+        "cache_write": 36703,
+        "cache_read": 611
+      },
+      "cost_usd": 0.162117,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_validate",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 205,
+        "cache_write": 39177,
+        "cache_read": 603
+      },
+      "cost_usd": 0.158826,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "007_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 209,
+        "cache_write": 1754,
+        "cache_read": 39780
+      },
+      "cost_usd": 0.013092,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "007_validate",
+      "seconds": 3.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 167,
+        "cache_write": 1787,
+        "cache_read": 41534
+      },
+      "cost_usd": 0.012979,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 2,
+  "failing_test": "org.apache.commons.math3.geometry.euclidean.threed.SubLineTest::testIntersectionNotIntersecting",
+  "jqf_class": "org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest",
+  "hidden_tests": [
+    "org.apache.commons.math3.geometry.euclidean.threed.PolyhedronsSetTest",
+    "org.apache.commons.math3.geometry.euclidean.threed.SubLineTest",
+    "org.apache.commons.math3.geometry.euclidean.twod.PolygonsSetTest",
+    "org.apache.commons.math3.geometry.euclidean.twod.SubLineTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIntersectionNotIntersecting",
+  "issue_gist": "SubLine.intersection() in the 2D and 3D Apache Commons Math geometry implementations throws a NullPointerException when the two lines don't intersect. Line.intersection returns null, and that null is passed to Line.toSubSpace(). The method should return null instead.",
+  "failing_inputs_count": 5043,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_SubLineTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug4",
+  "valid": true,
+  "validation": {
+    "valid": true,
+    "why_invalid": "",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 52376,
+      "inside_buggyIf": 52238,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "pass",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 20000,
+        "fail": 0,
+        "not_run": 0
+      },
+      "fresh": {
+        "trials": 100001,
+        "inside_buggyIf": 99710,
+        "unique_failures": {}
+      }
+    }
+  },
+  "total_seconds": 277.3,
+  "paired_inputs_archived": true
+}

@@ -1,0 +1,223 @@
+{
+  "bug": "Math-50",
+  "success": true,
+  "failure_reason": "",
+  "model": "sonnet",
+  "llm_call_count": 17,
+  "cost_usd": 0.8062,
+  "tokens": {
+    "input": 30,
+    "output": 12212,
+    "cache_write": 164081,
+    "cache_read": 277413
+  },
+  "seconds": 208.7,
+  "started_at": "2026-11-21T12:56:11",
+  "timing": {
+    "checkout": 11.0,
+    "agent": 197.7,
+    "derive": 1.7,
+    "validation": 201.0
+  },
+  "llm_seconds": 136.3,
+  "llm_calls": [
+    {
+      "call": 1,
+      "step": "001_generalize",
+      "seconds": 5.6,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 419,
+        "cache_write": 924,
+        "cache_read": 808
+      },
+      "cost_usd": 0.007971,
+      "outcome": "success"
+    },
+    {
+      "call": 2,
+      "step": "002_symbolize",
+      "seconds": 20.6,
+      "turns": 6,
+      "tokens": {
+        "input": 6,
+        "output": 1783,
+        "cache_write": 34509,
+        "cache_read": 25248
+      },
+      "cost_usd": 0.158403,
+      "outcome": "success"
+    },
+    {
+      "call": 3,
+      "step": "004_check_inputs",
+      "seconds": 18.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1855,
+        "cache_write": 31328,
+        "cache_read": 611
+      },
+      "cost_usd": 0.143927,
+      "outcome": "success"
+    },
+    {
+      "call": 4,
+      "step": "005_symbolize",
+      "seconds": 14.3,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 1446,
+        "cache_write": 11585,
+        "cache_read": 28232
+      },
+      "cost_usd": 0.063627,
+      "outcome": "success"
+    },
+    {
+      "call": 5,
+      "step": "007_check_inputs",
+      "seconds": 9.8,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 887,
+        "cache_write": 10673,
+        "cache_read": 31939
+      },
+      "cost_usd": 0.05476,
+      "outcome": "success"
+    },
+    {
+      "call": 6,
+      "step": "008_symbolize",
+      "seconds": 26.5,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2661,
+        "cache_write": 10140,
+        "cache_read": 39817
+      },
+      "cost_usd": 0.071156,
+      "outcome": "success"
+    },
+    {
+      "call": 7,
+      "step": "010_check_inputs",
+      "seconds": 26.4,
+      "turns": 2,
+      "tokens": {
+        "input": 2,
+        "output": 2490,
+        "cache_write": 9977,
+        "cache_read": 42612
+      },
+      "cost_usd": 0.069073,
+      "outcome": "success"
+    },
+    {
+      "call": 8,
+      "step": "011_validate",
+      "seconds": 5.3,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 208,
+        "cache_write": 52578,
+        "cache_read": 603
+      },
+      "cost_usd": 0.21246,
+      "outcome": "success"
+    },
+    {
+      "call": 9,
+      "step": "011_validate",
+      "seconds": 4.4,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 184,
+        "cache_write": 1181,
+        "cache_read": 53181
+      },
+      "cost_usd": 0.01189,
+      "outcome": "success"
+    },
+    {
+      "call": 10,
+      "step": "011_validate",
+      "seconds": 4.9,
+      "turns": 2,
+      "tokens": {
+        "input": 4,
+        "output": 279,
+        "cache_write": 1186,
+        "cache_read": 54362
+      },
+      "cost_usd": 0.012978,
+      "outcome": "success"
+    }
+  ],
+  "test_versions": 3,
+  "failing_test": "org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest::testIssue631",
+  "jqf_class": "org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest",
+  "hidden_tests": [
+    "org.apache.commons.math.analysis.solvers.IllinoisSolverTest",
+    "org.apache.commons.math.analysis.solvers.PegasusSolverTest",
+    "org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest",
+    "org.apache.commons.math.analysis.solvers.SecantSolverTest",
+    "org.apache.commons.math.ode.events.EventStateTest",
+    "org.apache.commons.math.ode.events.OverlappingEventsTest"
+  ],
+  "repro_method": "testBugReproduction",
+  "preserve_method": "testIssue631",
+  "issue_gist": "RegulaFalsiSolver fails to converge on a simple monotonic function, exceeding the 100-evaluation limit and throwing a MaxCount exceeded exception, because the regula falsi implementation keeps one bracket endpoint stuck and converges only linearly or slowly. PegasusSolver solves the same problem in 17 evaluations.",
+  "failing_inputs_count": 3747,
+  "derived": true,
+  "derived_compiles": true,
+  "test_file": "JQF_RegulaFalsiSolverTest.java",
+  "poracle_delta": "/home/byoungwoo/preserve-testing/experiments/main/generation/deltas/Math/Math_bug50",
+  "valid": false,
+  "validation": {
+    "valid": false,
+    "why_invalid": "some inputs inside buggyIf fail on the developer fix",
+    "on_buggy": {
+      "result": "fail",
+      "trials": 52340,
+      "inside_buggyIf": 38121,
+      "paired_inputs": 20000,
+      "outcomes": {
+        "org.junit.ComparisonFailure": 20000
+      }
+    },
+    "on_fix": {
+      "result": "fail",
+      "paired": {
+        "inputs": 20000,
+        "failed_on_buggy": 20000,
+        "pass": 0,
+        "fail": 20000,
+        "not_run": 0,
+        "failing_examples": [
+          "input (-4.48513315159973, 17.830313895893777, 81.22919329049759) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j",
+          "input (-0.06375630869890347, 15.164436157134002, 51.127160663575076) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j",
+          "input (3.0387019150149737, 15.356309937980736, 50.81456334482393) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j"
+        ]
+      },
+      "fresh": {
+        "trials": 54067,
+        "inside_buggyIf": 39416,
+        "unique_failures": {
+          "org.junit.ComparisonFailure": 2
+        },
+        "failing_examples": "The error:\n    org.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\nLocation: org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\nis triggered by the following inputs:\n\n    input (-3.32025632336033, 13.436943510325747, 2.533912870641929) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\n    input (-3.351902332810389, 8.21566895984266, 86.10059455799791) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]"
+      }
+    }
+  },
+  "total_seconds": 411.4,
+  "paired_inputs_archived": true
+}
