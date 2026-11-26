@@ -46,6 +46,7 @@ class JqfRun:
     too_strong: bool = False                  # JQF's random driver gave up (parse_jqf_output)
     guidance_error: str = ""                  # fuzzing stopped, e.g. a generator threw
     valid: int = 0                            # trials that passed assumeTrue
+    features: dict | None = None              # llm_features.json dumped by the collector (see modify.md)
 
     @property
     def passing(self) -> list[str]:
@@ -232,8 +233,13 @@ def fuzz(env: DockerEnv, test_class: str, test_method: str, classpath: str, out_
     `valid`, and the classified ones in `counts`, with up to three example inputs per outcome
     (and, for a failure, its message and stack trace)."""
     save_all = classify != 0
+    # tier-feedback integration (see modify.md): enable the LLMFeatureCollector
+    # on every Zest run and pin its JSON output to this run's out_dir. The
+    # property is harmless when the collector isn't installed on the JVM.
+    _feedback_props = f"-Dllmfeedback.on=true -Dllmfeedback.out={out_dir}"
     zest = _jqf_java(classpath, "edu.berkeley.cs.jqf.fuzz.ei.ZestDriver",
-                     "-Djqf.ei.SAVE_ALL_INPUTS=true" if save_all else "")
+                     (f"-Djqf.ei.SAVE_ALL_INPUTS=true {_feedback_props}" if save_all
+                      else _feedback_props))
     # Zest has no time limit of its own here, so `timeout` stops it; its output stays in out_dir
     r = env.exec_cmd(
         f"rm -rf {out_dir} {out_dir}.out\n"
@@ -274,10 +280,24 @@ def fuzz(env: DockerEnv, test_class: str, test_method: str, classpath: str, out_
         env.exec_cmd(f"rm -rf {keep_dir} && mkdir -p {keep_dir} && cd {inputs} && "
                      f"xargs -r mv -t {keep_dir} < {out_dir}/keep", timeout=600)
         run.outcomes = {f: outcomes[f] for f in kept}
+    # tier-feedback (see modify.md): read features.json before out_dir is deleted
+    try:
+        ls_out = env.exec_cmd(f"ls -la {out_dir}/ 2>/dev/null | head -20; "
+                              f"stat {out_dir}/llm_features.json 2>&1 | head -5", timeout=10).stdout
+        if log: log("FEATURES PATH DEBUG", ls_out)
+        features_blob = env.exec_cmd(
+            f"cat {out_dir}/llm_features.json 2>/dev/null || true", timeout=10).stdout
+        if features_blob.strip():
+            import json as _json
+            run.features = _json.loads(features_blob)
+    except Exception as e:
+        if log: log("FEATURES READ EXC", repr(e))
+        run.features = None
     env.exec_cmd(f"rm -rf {out_dir}", timeout=300)
     if log:
         log(f"FUZZ ({test_method}, {seconds}s)", {**run.summary(), "passed_assume": run.valid,
-                                                    "classified": sum(run.counts.values())})
+                                                    "classified": sum(run.counts.values()),
+                                                    "features_schema": (run.features or {}).get("schema", "MISSING")})
     return run
 
 

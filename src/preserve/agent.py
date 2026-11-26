@@ -29,11 +29,23 @@ from typing import Any, Callable, TypedDict
 from langgraph.graph import END, StateGraph
 from pydantic import BaseModel, ConfigDict, Field
 
+import os
 from preserve import prompts as P
+from preserve import tiered_feedback as TF  # tier feedback (see modify.md)
 from preserve.container import DockerEnv
 from preserve.derive import format_problems
 from preserve.jqf import JqfRun, exception_types, fuzz, install_test, is_assertion_failure
 from preserve.llm import READ_ONLY_TOOLS, ClaudeCLI, Trace, VerboseLog
+
+def _tf_flags():
+    """Read tier on/off from env vars so ablation flips without code edits."""
+    def _on(name: str, default: str) -> bool:
+        return os.environ.get(name, default) not in ("", "0", "false", "False")
+    return dict(
+        essential_on=_on("PRESERVE_FEEDBACK_ESSENTIAL", "1"),
+        supplementary_on=_on("PRESERVE_FEEDBACK_SUPPLEMENTARY", "1"),
+        bulk_on=_on("PRESERVE_FEEDBACK_BULK", "0"),
+    )
 
 EXPLORE_MAX_TURNS = 30          # turns the model may take in one call that has tools
 CLASSIFY_INPUTS = 5000          # fuzzed inputs replayed per execution to count passing and failing ones
@@ -193,15 +205,35 @@ class ReproAgent:
             reason = (P.NO_INPUT_GENERATOR_FAILED.format(error=run.guidance_error) if run.guidance_error
                       else P.NO_INPUT_NONE_MATCHED.format(trials=run.trials))
             self.pending.append(reason)
+            self._maybe_append_tier_feedback(run)
             self.trace.write("execution", **attempt, outcome="no input checked", guidance_error=run.guidance_error)
             return rewrite
 
         exceptions: list[str] = []
         for trace in run.failing:
             exceptions += [e for e in exception_types(trace) if e not in exceptions]
+        self._maybe_append_tier_feedback(run)
         self.trace.write("execution", **attempt, outcome="ran", exceptions=exceptions,
                          failing_examples=run.show_failing(), passing_examples=run.show_passing())
         return {"run": run, "exceptions": exceptions, "needs_rewrite": False}
+
+    def _maybe_append_tier_feedback(self, run: JqfRun) -> None:
+        """Append fuzzer-side tier feedback so it reaches the next LLM call.
+        Attaches to the latest pending message when one exists; otherwise
+        pushes a standalone message so downstream check_inputs / validate /
+        filter_passing can chain their own feedback after it."""
+        if run is None or not run.features:
+            return
+        try:
+            block = TF.build(run.features, **_tf_flags())
+        except Exception:
+            return
+        if not block:
+            return
+        if self.pending:
+            self.pending[-1] = self.pending[-1] + "\n\n" + block
+        else:
+            self.pending.append(block)
 
     def check_inputs(self, s: State) -> State:
         """The failures must be assertion failures, and must reproduce the reported bug."""

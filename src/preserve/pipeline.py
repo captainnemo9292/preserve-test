@@ -13,6 +13,8 @@ import shutil
 import time
 from pathlib import Path
 
+import os
+
 from preserve.agent import ReproAgent, TestTarget
 from preserve.bugs import Bug, report_text
 from preserve.config import (DEFAULT_FUZZ_SECONDS, DEFAULT_MAX_LLM_CALLS, DEFAULT_MODEL, PORACLE_HOST,
@@ -20,6 +22,7 @@ from preserve.config import (DEFAULT_FUZZ_SECONDS, DEFAULT_MAX_LLM_CALLS, DEFAUL
 from preserve.container import Checkout, jqf_test_unit
 from preserve.derive import derive
 from preserve.llm import Trace, VerboseLog
+from preserve.preserve_refine import PreserveRefiner, PreserveTarget
 from preserve.repro import validate
 
 
@@ -96,6 +99,39 @@ def generate(bug_name: str, out_dir: Path | None = None, model: str = DEFAULT_MO
         result.update(_derive_and_package(checkout, final["test"], repro_method, preserve_method,
                                           path_rel, out, log))
         phase("derive", derive_started, **{k: result.get(k) for k in ("derived", "derived_compiles", "derive_error")})
+
+        # Pass 2 (opt-in): refine the derived preserve's logOut based on buggy-only
+        # preserve-fuzz tier feedback. Controlled by PRESERVE_REFINE_ITERATIONS env var.
+        refine_iters = int(os.environ.get("PRESERVE_REFINE_ITERATIONS", "0") or "0")
+        if refine_iters > 0 and result.get("derived_compiles"):
+            refine_started = time.time()
+            final_src = (out / Path(path_rel).name).read_text()
+            target = PreserveTarget(
+                env=checkout.env, compile_fn=checkout.compile_tests,
+                path=f"{checkout.dir}/{path_rel}", path_rel=path_rel,
+                test_class=test_class, preserve_method=preserve_method,
+                classpath=checkout.classpath, workdir=checkout.workdir,
+                fuzz_seconds=fuzz_seconds,
+            )
+            refiner = PreserveRefiner(target, agent.llm, log, trace,
+                                       max_iterations=refine_iters,
+                                       max_llm_calls=refine_iters + 2)
+            refine_info = refiner.refine(final_src)
+            # Persist the refined version back to disk + deltas
+            if refine_info["final_src"] != final_src:
+                (out / Path(path_rel).name).write_text(refine_info["final_src"])
+                bug_obj = checkout.bug
+                delta_name = Path(bug_obj.project) / f"{bug_obj.project}_bug{bug_obj.bug_id}"
+                delta_dst = RESULTS_DIR / "deltas" / delta_name / path_rel
+                if delta_dst.parent.exists():
+                    delta_dst.write_text(refine_info["final_src"])
+                checkout.env.write(f"{checkout.dir}/{path_rel}", refine_info["final_src"].encode())
+            result["preserve_refine_iterations"] = refine_info["iterations_run"]
+            result["preserve_refine_llm_calls"] = refine_info["llm_calls"]
+            result["preserve_refine_features"] = refine_info["features_history"]
+            phase("preserve_refine", refine_started,
+                  iterations=refine_info["iterations_run"],
+                  llm_calls=refine_info["llm_calls"])
     (out / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
 
     # is the test valid? every input inside buggyIf fails on buggy and passes on the developer fix

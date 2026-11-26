@@ -254,3 +254,38 @@ USES_MOCKING = (
     "The test contains mocking or simulation constructs. Tests must exercise actual code "
     "behavior to ensure genuine bug reproduction. Please revise the test to directly invoke the "
     "relevant code paths without mocking or simulating behavior.")
+
+PRESERVE_REFINE = """The following JQF test's REPRO method ({{testBugReproduction}}) is valid.
+The PRESERVE method ({preserve_method}) has been mechanically derived from it
+(preserveIf = !buggyIf). The goal now is to improve the PRESERVE method's
+`Log.logOutIf(preserveIf, ...)` so that patched vs buggy outputs are more
+distinguishable — without changing predicates or structure.
+
+The fuzzer ran the preserve method on the BUGGY version only and reports the
+following statistics on log diversity:
+
+{feedback}
+
+Four rules:
+  R1. ONLY modify the preserve method `{preserve_method}`'s logOutIf call arguments.
+      Change which values are logged, not the surrounding logic.
+  R2. Do NOT change `buggyIf`, `validIf`, `preserveIf` predicates.
+  R3. Do NOT change the repro method `testBugReproduction`.
+  R4. Keep every @Fuzz annotation, parameter list, and method signature.
+
+Ideas for richer logging (choose only values that come from the already-computed
+state of the test — do not introduce new computation that could fail):
+  - include a scalar hash of the return value
+  - include collection sizes, array lengths, string lengths
+  - include type names of returned objects
+  - include numeric bit representation for doubles
+  - include specific fields that the API exposes (via getters already in your test)
+
+Current full test file:
+```java
+{test}
+```
+
+Return the full updated test source (with the repro method byte-identical,
+only the preserve method's logOutIf arguments changed).
+"""
