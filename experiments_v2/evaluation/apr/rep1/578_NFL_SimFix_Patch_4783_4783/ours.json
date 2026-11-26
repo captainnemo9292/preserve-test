@@ -1,0 +1,82 @@
+{
+ "patch": "578_NFL_SimFix_Patch_4783_4783",
+ "dataset": "apr",
+ "bug": "Math-44",
+ "tool": "SimFix",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T19:04:34",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (0.19757502750621292, 0.32000861849325773, 0.8990660024439441) -> logged [org.apache.commons.math.exception.NoBracketingException, NaN, 0.0, 1, 0]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.NoBracketingException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.run",
+    "input (0.3598714730966862, 0.8130753870607896, 0.7084511024882079) -> logged [org.apache.commons.math.exception.NoBracketingException, NaN, 0.0, 1, 0]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.NoBracketingException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.run",
+    "input (0.5672589493596639, 0.8323326735652746, 0.7537350590232741) -> logged [org.apache.commons.math.exception.NoBracketingException, NaN, 0.0, 1, 0]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.NoBracketingException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:72)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.run"
+   ]
+  },
+  "fresh": {
+   "trials": 83914,
+   "inside_buggyIf": 22074,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.NoBracketingException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:72)\n\nLocation: org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:72)\n\nis triggered by the following inputs:\n\n    input (0.4110520399040448, 0.8717031572526877, 1.1900112082958891) -> logged [org.apache.commons.math.exception.NoBracketingException, NaN, 0.0, 1, 0]\n    input (0.11754083524079376, 0.26351625644592264, 1.0963857646641717) -> logged [org.apache.commons.math.exception.NoBracketingException, NaN, 0.0, 1, 0]"
+  },
+  "seconds": 100.8
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 207.9,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 205.4295346736908,
+  "time": {
+   "CHECKOUT_BUGGY": 3.69588565826416,
+   "DELTA_BUGGY": 0.0011661052703857422,
+   "COMPILE_BUGGY": 6.034550905227661,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.572401762008667,
+   "PATCH": 0.009846210479736328,
+   "DELTA_PATCH": 0.0010919570922851562,
+   "COMPILE_PATCH": 8.749326467514038,
+   "PATCH_TEST": 2.0380828380584717,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.6510751247406,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 310.1
+}

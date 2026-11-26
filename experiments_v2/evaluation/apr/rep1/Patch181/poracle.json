@@ -1,0 +1,57 @@
+{
+ "patch": "Patch181",
+ "dataset": "apr",
+ "bug": "Time-7",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-22T13:46:35",
+ "container": "poracle-original",
+ "preserve": {
+  "container": "poracle-original",
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 229.5,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 226.93780612945557,
+  "time": {
+   "CHECKOUT_BUGGY": 1.7790987491607666,
+   "DELTA_BUGGY": 0.0017786026000976562,
+   "COMPILE_BUGGY": 16.21523427963257,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.7739524841308594,
+   "PATCH": 0.044882774353027344,
+   "DELTA_PATCH": 0.0014600753784179688,
+   "COMPILE_PATCH": 19.610904932022095,
+   "PATCH_TEST": 5.449153423309326,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.7328004837036,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 229.5
+}

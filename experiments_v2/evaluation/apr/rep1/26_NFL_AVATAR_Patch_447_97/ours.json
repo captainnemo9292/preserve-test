@@ -1,0 +1,41 @@
+{
+ "patch": "26_NFL_AVATAR_Patch_447_97",
+ "dataset": "apr",
+ "bug": "Math-57",
+ "tool": "AVATAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T19:20:16",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "unknown",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 0,
+   "not_run": 20000
+  },
+  "fresh": {
+   "trials": 1,
+   "inside_buggyIf": 0,
+   "unique_failures": {}
+  },
+  "seconds": 1874.4
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 124,
+  "verdict": null,
+  "seconds": 2520.0,
+  "error": "INFO     poracle         Check out (buggy) Math 57\nINFO     poracle         Apply deltas for buggy\nINFO     poracle         Compile the buggy version\nINFO     poracle         Retrieving a failing test\nINFO     poracle         Failing test: org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest::testSmallDistances\nINFO     poracle         Retrieving a test unit\nINFO     poracle         Existing JQF file: /tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942/Math/Math_bug57/src/test/java/org/apache/commons/math/stat/clustering/JQF_KMeansPlusPlusClustererTest.java\nINFO     poracle         Retrieving a buggy project class path\nINFO     poracle         Retrieving a patch project class path\nINFO     poracle         Retrieving a fix project class path\nINFO     poracle         Check out (patch) Math 57\nINFO     poracle         Apply deltas for patch\nINFO     poracle         Apply patch file /tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-26_NFL_AVATAR_Patch_447_97-s0/../patches/26_NFL_AVATAR_Patch_447_97\nINFO     poracle         Compile the patched version\nINFO     poracle         Check whether the patch passes the test\nINFO     poracle         Handle test unit: org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest::testSmallDistances\nINFO     poracle         Run zest to find diff-revealing input\nINFO     poracle         Run zest_patch with thread 1\n"
+ },
+ "verdict": "?",
+ "seconds": 4395.5
+}

@@ -1,0 +1,83 @@
+{
+ "patch": "Patch197",
+ "dataset": "apr",
+ "bug": "Math-25",
+ "tool": "ACS",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:46:47",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-6.557240481056152, -5.110621850273306, -3.5481342515931065, -2.911164086537632, -2.6358003659153852, -27.501775087385482, -4.265571483018138, 7.8532518848709, -0.46562052457192493, 6.540451592314952) -> logged [none, 6.05941168394452, 1.6022647605710127, -0.9136708282077475]\njava.lang.AssertionError: expected:<17.67751348612819> but was:<6.05941168394452>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invok",
+    "input (3.2522771115926083, 3.729786354323691, 3.9466770496657286, 5.305669755618423, 5.406167627404131, 6.416874227574486, 7.188060360255877, 21.28283838520408, -6.980928716644907, 7.687838572148923, -2.707274434259819, 5.851604229555305, -0.6457628355064209, -6.3650321838134065) -> logged [none, 7.334383644396915, 1.5964256439461137, 2.867481480683113]\njava.lang.AssertionError: expected:<14.131883550924494> but was:<7.334383644396915>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv",
+    "input (8.604845782047, 9.19356249346115, 11.158996371668929, 12.194392821813851, 12.375146499110086, 18.447899609358544, 3.0783622179670633, 2.350872739144478, -2.9754720540695123, -9.737423745962289) -> logged [none, 6.407892981964676, 1.666494473171344, -0.20283950077299995]\njava.lang.AssertionError: expected:<14.092661677660416> but was:<6.407892981964676>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv"
+   ]
+  },
+  "fresh": {
+   "trials": 63287,
+   "inside_buggyIf": 36021,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<14.15423632061084> but was:<6.917912707024691>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nLocation: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nis triggered by the following inputs:\n\n    input (0.7250109505482083, 1.7986870337047358, 3.714595924907007, 5.4151225764963105, 6.941893388764503, 7.694366840166421, -18.46411711425842, 9.844355526963259, 5.005469523800631, 8.216321337669758, -0.6364975826937638, -3.991469887086123) -> logged [none, 6.917912707024691, 0.9015446200041571, 2.832059898186932]\n    input (7.85235991390088, 8.611516089390744, 9.065602286680138, 9.194278407021587, 9.664421213953204, 10.067819235402126, 10.467316281696226, 11.063600920109703, 12.96414232677833, 13.784898809510636, 29.062324327224086, -4.660924933187108, 5.07818615717386, 7.814431811394158, 3.1877747126130647, -6.772847439794223, -4.6766921398287, -9.321090382481973, 3.9066605298612203, -9.76937763920088) -> logged [none, 8.791904725297519, 1.0591056237034229, -1.856144523110718]"
+  },
+  "seconds": 100.8
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 203.0,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 201.57266974449158,
+  "time": {
+   "CHECKOUT_BUGGY": 3.424154758453369,
+   "DELTA_BUGGY": 0.0010113716125488281,
+   "COMPILE_BUGGY": 6.384739637374878,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.501084327697754,
+   "PATCH": 0.008033514022827148,
+   "DELTA_PATCH": 0.0010213851928710938,
+   "COMPILE_PATCH": 5.680130243301392,
+   "PATCH_TEST": 1.6895201206207275,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.29853200912476,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 306.2
+}

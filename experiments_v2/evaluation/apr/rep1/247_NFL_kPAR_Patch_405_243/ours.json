@@ -1,0 +1,83 @@
+{
+ "patch": "247_NFL_kPAR_Patch_405_243",
+ "dataset": "apr",
+ "bug": "Math-7",
+ "tool": "kPAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:39:35",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 6026,
+   "failed_on_buggy": 6023,
+   "pass": 6026,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 5908,
+   "unique_failures": {}
+  },
+  "seconds": 31.6
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 49.3,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 47.148940086364746,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5715701580047607,
+   "DELTA_BUGGY": 0.0022046566009521484,
+   "COMPILE_BUGGY": 9.239585161209106,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.9603271484375,
+   "PATCH": 0.014452934265136719,
+   "DELTA_PATCH": 0.002049684524536133,
+   "COMPILE_PATCH": 9.785668134689331,
+   "PATCH_TEST": 3.5723085403442383,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.908001184463501,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.4631507396698,
+   "DELTA_FIX": 0.0017421245574951172,
+   "COMPILE_FIX": 8.843003273010254,
+   "REPRO_FOR_VALIDATE": 1.8855152130126953,
+   "VALIDATE": 0.025414466857910156
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-247_NFL_kPAR_Patch_405_243-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-247_NFL_kPAR_Patch_405_243-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-247_NFL_kPAR_Patch_405_243-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-247_NFL_kPAR_Patch_405_243-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "0.4448710190917188;1;0.22271538478157843;9.956616467918558;0.3790052316644163",
+    "org_out_content": "none;0.4611385303608854;4601978753171903767;0.44487101909338816;4601685703741173583;0.8954741234815737;4606240933402939490;1;0.4611385303608854;4601978753171903767;6;0;1.0;4607182418800017408;1",
+    "patch_out_content": "none;0.4611385303608854;4601978753171903767;0.44487101909338816;4601685703741173583;0.8954741234815737;4606240933402939490;1;0.4611385303608854;4601978753171903767;4;0;1.0;4607182418800017408;1",
+    "fix_out_content": "none;0.4611385303608854;4601978753171903767;0.44487101909338816;4601685703741173583;0.8954741234815737;4606240933402939490;1;0.4611385303608854;4601978753171903767;7;0;1.0;4607182418800017408;1"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 82.3
+}

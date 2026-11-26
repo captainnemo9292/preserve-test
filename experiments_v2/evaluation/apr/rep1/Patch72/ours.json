@@ -1,0 +1,92 @@
+{
+ "patch": "Patch72",
+ "dataset": "apr",
+ "bug": "Math-85",
+ "tool": "Nopol2015",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T20:29:59",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 495,
+   "fail": 19505,
+   "not_run": 0,
+   "failing_examples": [
+    "input (7, 1.9404567946213251, 8, 1, 1, 0.2940850101921998) -> logged [0.9999998494367537, 1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<16.940456794621326> but was:<1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.",
+    "input (-5, 2.2246952750603697, 1, 1, 2, 0.08989623079682241) -> logged [0.7090118426405736, NaN, org.apache.commons.math.MathException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho",
+    "input (8, 3.185230810342681, 4, 0, 1, 0.7583953382921971) -> logged [0.012041706075280434, NaN, org.apache.commons.math.MathException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 26196,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2,
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nis triggered by the following inputs:\n\n    input (5, 1.7286495459524158, 6, 1, 1, 0.6013810548784825) -> logged [0.9999961057633726, NaN, org.apache.commons.math.MathException]\n    input (-5, 3.3492412308434023, 1, 1, 2, 0.23494270491539715) -> logged [0.7584810597355635, NaN, org.apache.commons.math.MathException]\n\nThe error:\n    java.lang.AssertionError: expected:<1.031750501438788> but was:<1.7976931348623157E308>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nis triggered by the following inputs:\n\n    input (-6, 1.0317505014387878, 6, 1, 1, 0.9442415678491576) -> logged [0.999999999"
+  },
+  "seconds": 77.0
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 44.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 41.844399213790894,
+  "time": {
+   "CHECKOUT_BUGGY": 3.7456963062286377,
+   "DELTA_BUGGY": 0.0014557838439941406,
+   "COMPILE_BUGGY": 6.357164621353149,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.6917548179626465,
+   "PATCH": 0.017716646194458008,
+   "DELTA_PATCH": 0.0014886856079101562,
+   "COMPILE_PATCH": 8.641453742980957,
+   "PATCH_TEST": 2.5753390789031982,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 3.4092226028442383,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.7734971046447754,
+   "DELTA_FIX": 0.0012819766998291016,
+   "COMPILE_FIX": 6.964688539505005,
+   "REPRO_FOR_VALIDATE": 1.7824673652648926,
+   "VALIDATE": 0.03982353210449219
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch72-s0/log/test1/1/ORG/id_000000053/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch72-s0/log/test1/1/ORG/id_000000053/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch72-s0/log/test1/1/PATCH/id_000000053/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch72-s0/validation/fix/test1/id_000000053/OUT.log",
+    "in_content": "0;0.23648604317659133;2;1;1;0.04016185851171328",
+    "org_out_content": "0.9999999999999987;1.7976931348623157E308;none;4607182418800017396;9218868437227405311;0;0.23648604317659133;2;1;1",
+    "patch_out_content": "0.9999999999999987;2.2364860431765914;none;4607182418800017396;4612218537655352114;0;0.23648604317659133;2;1;1",
+    "fix_out_content": "0.9999999999999987;2.2364860431765914;none;4607182418800017396;4612218537655352114;0;0.23648604317659133;2;1;1"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 123.1
+}

@@ -1,0 +1,56 @@
+{
+ "patch": "343_PFL_ARJA_Patch_5_5",
+ "dataset": "apr",
+ "bug": "Lang-46",
+ "tool": "ARJA",
+ "label": "Correct",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T14:01:20",
+ "preserve": {
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 200.2,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 198.0606815814972,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5227060317993164,
+   "DELTA_BUGGY": 0.018107175827026367,
+   "COMPILE_BUGGY": 3.929969549179077,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.520301342010498,
+   "PATCH": 0.013246774673461914,
+   "DELTA_PATCH": 0.018129587173461914,
+   "COMPILE_PATCH": 4.56003212928772,
+   "PATCH_TEST": 1.6403939723968506,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.34619784355164,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 200.2
+}

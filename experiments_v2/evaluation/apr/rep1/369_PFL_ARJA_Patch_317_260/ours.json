@@ -1,0 +1,91 @@
+{
+ "patch": "369_PFL_ARJA_Patch_317_260",
+ "dataset": "apr",
+ "bug": "Math-88",
+ "tool": "ARJA",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T20:35:28",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1, 28, 26) -> logged [none, [1.0, 2.0, 0.0, 28.0, 29.0, 2.0], 27.8]\njava.lang.AssertionError: expected:<27.0> but was:<27.8>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl",
+    "input (8, 25, 19) -> logged [none, [8.0, 5.0, 0.0, 25.0, 22.0, 5.0], 30.1]\njava.lang.AssertionError: expected:<28.1> but was:<30.1>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl",
+    "input (1, 17, 17) -> logged [none, [1.0, 13.0, 0.0, 17.0, 29.0, 13.0], 31.099999999999998]\njava.lang.AssertionError: expected:<25.9> but was:<31.099999999999998>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMeth"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 43703,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<28.4> but was:<33.2>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\nLocation: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:59)\n\nis triggered by the following inputs:\n\n    input (13, 18, 16) -> logged [none, [13.0, 12.0, 0.0, 18.0, 17.0, 12.0], 33.2]\n    input (3, 25, 7) -> logged [none, [3.0, 5.0, 0.0, 25.0, 27.0, 5.0], 29.1]"
+  },
+  "seconds": 92.5
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 45.9,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 43.522300243377686,
+  "time": {
+   "CHECKOUT_BUGGY": 3.6937735080718994,
+   "DELTA_BUGGY": 0.0015377998352050781,
+   "COMPILE_BUGGY": 8.021868467330933,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.616278648376465,
+   "PATCH": 0.016564607620239258,
+   "DELTA_PATCH": 0.001443624496459961,
+   "COMPILE_PATCH": 6.53851842880249,
+   "PATCH_TEST": 3.119417428970337,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 2.886798143386841,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.6347267627716064,
+   "DELTA_FIX": 0.0011515617370605469,
+   "COMPILE_FIX": 9.000336170196533,
+   "REPRO_FOR_VALIDATE": 1.9010908603668213,
+   "VALIDATE": 0.018591880798339844
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-369_PFL_ARJA_Patch_317_260-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-369_PFL_ARJA_Patch_317_260-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-369_PFL_ARJA_Patch_317_260-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-369_PFL_ARJA_Patch_317_260-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "16;14;0",
+    "org_out_content": "none;[16.0, 16.0, 0.0, 14.0, 0.0, 0.0];20.2;4626379012211684147;6;16;14;0",
+    "patch_out_content": "none;[16.0, 16.0, 0.0, 14.0, 14.0, 16.0];35.0;4630122629401935872;6;16;14;0",
+    "fix_out_content": "none;[16.0, 16.0, 0.0, 14.0, 14.0, 0.0];28.6;4628743402016053658;6;16;14;0"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 139.9
+}

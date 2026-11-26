@@ -1,0 +1,82 @@
+{
+ "patch": "Patch171",
+ "dataset": "apr",
+ "bug": "Math-78",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T19:47:33",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (89.55683844838171, 34.757592738386386, 22.201037261924032, 0.41585589453131533, 24.810732470881465, 1.6655870707318283E-4, 1.3238412699122427E-4) -> logged [0, 1, NaN, org.apache.commons.math.MathRuntimeException$4]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$4]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:93)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:49",
+    "input (83.10586834790307, 47.10006493869848, 16.7138453773853, 0.1442385274644578, 4.728652885800148, 3.0648283102510443E-4, 2.7752449350895524E-4) -> logged [0, 1, NaN, org.apache.commons.math.MathRuntimeException$4]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$4]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:93)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:49",
+    "input (98.0195621720907, 50.14852450566989, 17.80491995565, 0.15322011073511022, 28.47316618113309, 7.894329193198111E-4, 6.678625596287312E-4) -> logged [0, 1, NaN, org.apache.commons.math.MathRuntimeException$4]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$4]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:93)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:49"
+   ]
+  },
+  "fresh": {
+   "trials": 65770,
+   "inside_buggyIf": 32918,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$4]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:93)\n\nLocation: org.apache.commons.math.ode.events.JQF_EventStateTest.testBugReproduction(JQF_EventStateTest.java:93)\n\nis triggered by the following inputs:\n\n    input (85.13698444653349, 29.067097775007447, 21.12270168680658, 0.12626083196967458, 9.695824211085426, 3.5355397457553713E-4, 2.97315149458414E-4) -> logged [0, 1, NaN, org.apache.commons.math.MathRuntimeException$4]\n    input (93.35516659338064, 50.0217231218846, 28.598873938018933, 0.5640416198868056, 16.49501362959853, 3.978281794125858E-4, 3.850724981957756E-4) -> logged [0, 1, NaN, org.apache.commons.math.MathRuntimeException$4]"
+  },
+  "seconds": 94.4
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 204.0,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 201.98482728004456,
+  "time": {
+   "CHECKOUT_BUGGY": 3.4773082733154297,
+   "DELTA_BUGGY": 0.0011992454528808594,
+   "COMPILE_BUGGY": 5.475099086761475,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.539105176925659,
+   "PATCH": 0.008625507354736328,
+   "DELTA_PATCH": 0.0010161399841308594,
+   "COMPILE_PATCH": 6.124430179595947,
+   "PATCH_TEST": 2.211580991744995,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.32917380332947,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 300.1
+}

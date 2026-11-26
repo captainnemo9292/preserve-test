@@ -1,0 +1,82 @@
+{
+ "patch": "345_NFL_TBar_Patch_468_285",
+ "dataset": "apr",
+ "bug": "Math-2",
+ "tool": "TBar",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:18:29",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1923581128, 961173168, 1870971340) -> logged [-0.6511497278528093, 908563380, 961173168, 1923581128, 961173168, 1870971340]\njava.lang.AssertionError: expected:<9.348851597305778E8> but was:<-0.6511497278528093>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMeth",
+    "input (1492726959, 150152400, 1214071506) -> logged [-0.2865222935924747, 0, 150152400, 1492726959, 150152400, 1214071506]\njava.lang.AssertionError: expected:<1.2212263555529073E8> but was:<-0.2865222935924747>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMet",
+    "input (2095152369, 1313973586, 522660270) -> logged [0.8685312356869449, 0, 522660270, 2095152369, 1313973586, 522660270]\njava.lang.AssertionError: expected:<3.2778608343383366E8> but was:<0.8685312356869449>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMeth"
+   ]
+  },
+  "fresh": {
+   "trials": 97182,
+   "inside_buggyIf": 32189,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<4.022145011852164E7> but was:<-0.9595888081413915>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)\n\nLocation: org.apache.commons.math3.distribution.JQF_HypergeometricDistributionTest.testBugReproduction(JQF_HypergeometricDistributionTest.java:34)\n\nis triggered by the following inputs:\n\n    input (319337451, 71705699, 179124052) -> logged [-0.9595888081413915, 0, 71705699, 319337451, 71705699, 179124052]\n    input (2132792830, 782384115, 915716065) -> logged [-0.25229365245006, 0, 782384115, 2132792830, 782384115, 915716065]"
+  },
+  "seconds": 104.4
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 205.8,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 203.98601174354553,
+  "time": {
+   "CHECKOUT_BUGGY": 3.579381227493286,
+   "DELTA_BUGGY": 0.0011179447174072266,
+   "COMPILE_BUGGY": 6.987696409225464,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.474285364151001,
+   "PATCH": 0.009022951126098633,
+   "DELTA_PATCH": 0.0011036396026611328,
+   "COMPILE_PATCH": 6.551226615905762,
+   "PATCH_TEST": 2.0441248416900635,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.65734672546387,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 311.5
+}

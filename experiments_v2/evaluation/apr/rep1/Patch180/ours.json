@@ -1,0 +1,82 @@
+{
+ "patch": "Patch180",
+ "dataset": "apr",
+ "bug": "Time-4",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T20:56:16",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1, 0, 6, 7) -> logged [[hourOfDay=6, clockhourOfDay=7], none]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgumentException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat o",
+    "input (0, 1, 1, 5) -> logged [[clockhourOfDay=1, hourOfDay=5], none]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgumentException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat o",
+    "input (3, 2, 6, 4) -> logged [[hourOfHalfday=6, clockhourOfHalfday=4], none]\norg.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgumentException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat o"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 34350,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: with() must reject duplicate field types like the constructor does expected:<[java.lang.IllegalArgumentException]> but was:<[none]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\nLocation: org.joda.time.JQF_TestPartial_Basics.testBugReproduction(JQF_TestPartial_Basics.java:111)\n\nis triggered by the following inputs:\n\n    input (3, 2, 10, 9) -> logged [[hourOfHalfday=10, clockhourOfHalfday=9], none]\n    input (3, 2, 2, 7) -> logged [[hourOfHalfday=2, clockhourOfHalfday=7], none]"
+  },
+  "seconds": 50.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 208.7,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 206.7171516418457,
+  "time": {
+   "CHECKOUT_BUGGY": 1.4465923309326172,
+   "DELTA_BUGGY": 0.0008332729339599609,
+   "COMPILE_BUGGY": 9.305356502532959,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.5154199600219727,
+   "PATCH": 0.01906871795654297,
+   "DELTA_PATCH": 0.0010333061218261719,
+   "COMPILE_PATCH": 10.234416961669922,
+   "PATCH_TEST": 3.0032100677490234,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.45772671699524,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 261.2
+}

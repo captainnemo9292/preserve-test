@@ -1,0 +1,82 @@
+{
+ "patch": "279_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Lang-53",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:04:37",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 17752,
+   "fail": 2248,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1, 2048, 5, 12, 19, 39, 2, 983) -> logged [2475603541000, 2475603542983]\njava.lang.AssertionError: expected:<2475603543000> but was:<2475603541000>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java",
+    "input (1, 2091, 2, 22, 12, 39, 6, 710) -> logged [3825405541000, 3825405546710]\njava.lang.AssertionError: expected:<3825405547000> but was:<3825405541000>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java",
+    "input (1, 2095, 3, 17, 0, 18, 6, 707) -> logged [3953836801000, 3953837886707]\njava.lang.AssertionError: expected:<3953837887000> but was:<3953836801000>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 55727,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<2685312542000> but was:<2685312001000>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:645)\n    \tat org.junit.Assert.assertEquals(Assert.java:631)\n    \tat org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nLocation: org.apache.commons.lang.time.JQF_DateUtilsTest.testBugReproduction(JQF_DateUtilsTest.java:92)\n\nis triggered by the following inputs:\n\n    input (1, 2055, 1, 4, 0, 9, 1, 777) -> logged [2685312001000, 2685312541777]\n    input (1, 1986, 4, 2, 19, 22, 0, 868) -> logged [515444401000, 515445720868]"
+  },
+  "seconds": 51.2
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 199.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 197.77454566955566,
+  "time": {
+   "CHECKOUT_BUGGY": 3.4316911697387695,
+   "DELTA_BUGGY": 0.013695478439331055,
+   "COMPILE_BUGGY": 4.436720609664917,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4068763256073,
+   "PATCH": 0.010711669921875,
+   "DELTA_PATCH": 0.017791271209716797,
+   "COMPILE_PATCH": 4.1274254322052,
+   "PATCH_TEST": 1.4464271068572998,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.348881483078,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 252.6
+}

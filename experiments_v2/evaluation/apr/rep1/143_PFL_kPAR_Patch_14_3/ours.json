@@ -1,0 +1,91 @@
+{
+ "patch": "143_PFL_kPAR_Patch_14_3",
+ "dataset": "apr",
+ "bug": "Math-8",
+ "tool": "kPAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:40:31",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 9801,
+   "fail": 10199,
+   "not_run": 0,
+   "failing_examples": [
+    "input (3, 2, 1, 3, 2, 7, 304) -> logged [java.lang.ArrayStoreException, -1, ]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.ArrayStoreException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.distribution.JQF_DiscreteRealDistributionTest.testBugReproduction(JQF_DiscreteRealDistributionTest.java:110)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke",
+    "input (2, 0, 2, 1, 3, 5, 988) -> logged [java.lang.ArrayStoreException, -1, ]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.ArrayStoreException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.distribution.JQF_DiscreteRealDistributionTest.testBugReproduction(JQF_DiscreteRealDistributionTest.java:110)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke",
+    "input (6, 2, 0, 3, 2, 9, 34) -> logged [java.lang.ArrayStoreException, -1, ]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.ArrayStoreException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.distribution.JQF_DiscreteRealDistributionTest.testBugReproduction(JQF_DiscreteRealDistributionTest.java:110)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 40014,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.ArrayStoreException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math3.distribution.JQF_DiscreteRealDistributionTest.testBugReproduction(JQF_DiscreteRealDistributionTest.java:110)\n\nLocation: org.apache.commons.math3.distribution.JQF_DiscreteRealDistributionTest.testBugReproduction(JQF_DiscreteRealDistributionTest.java:110)\n\nis triggered by the following inputs:\n\n    input (3, 2, 0, 1, 1, 3, 373) -> logged [java.lang.ArrayStoreException, -1, ]\n    input (5, 0, 2, 2, 2, 10, 596) -> logged [java.lang.ArrayStoreException, -1, ]"
+  },
+  "seconds": 57.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 40.7,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 38.54685974121094,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5402235984802246,
+   "DELTA_BUGGY": 0.0015950202941894531,
+   "COMPILE_BUGGY": 8.125070810317993,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4781687259674072,
+   "PATCH": 0.012260675430297852,
+   "DELTA_PATCH": 0.0011818408966064453,
+   "COMPILE_PATCH": 7.231511831283569,
+   "PATCH_TEST": 1.8719186782836914,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.6114890575408936,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.4661800861358643,
+   "DELTA_FIX": 0.001260995864868164,
+   "COMPILE_FIX": 6.663746356964111,
+   "REPRO_FOR_VALIDATE": 1.786531686782837,
+   "VALIDATE": 0.010139226913452148
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-143_PFL_kPAR_Patch_14_3-s0/log/test1/1/ORG/id_000000003/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-143_PFL_kPAR_Patch_14_3-s0/log/test1/1/ORG/id_000000003/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-143_PFL_kPAR_Patch_14_3-s0/log/test1/1/PATCH/id_000000003/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-143_PFL_kPAR_Patch_14_3-s0/validation/fix/test1/id_000000003/OUT.log",
+    "in_content": "4;0;1;1;0;1;546",
+    "org_out_content": "none;1;0;;2;1547;4;1",
+    "patch_out_content": "java.lang.ArrayStoreException;-1;;0;0;4;1",
+    "fix_out_content": "none;1;0;;2;1547;4;1"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 99.7
+}

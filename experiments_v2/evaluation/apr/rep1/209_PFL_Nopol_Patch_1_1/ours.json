@@ -1,0 +1,91 @@
+{
+ "patch": "209_PFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-42",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T19:02:09",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (5, 2) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: expected:<0.4> but was:<0.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:52)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.j",
+    "input (1, 7) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: expected:<7.0> but was:<0.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:52)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.j",
+    "input (1, 5) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: expected:<5.0> but was:<0.0>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:52)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.j"
+   ]
+  },
+  "fresh": {
+   "trials": 69954,
+   "inside_buggyIf": 63659,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<1.6> but was:<0.0>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:52)\n\nLocation: org.apache.commons.math.optimization.linear.JQF_SimplexSolverTest.testBugReproduction(JQF_SimplexSolverTest.java:52)\n\nis triggered by the following inputs:\n\n    input (5, 8) -> logged [none, 0.0, 0.0, 0.0]\n    input (1, 9) -> logged [none, 0.0, 0.0, 0.0]"
+  },
+  "seconds": 91.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 40.0,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 37.652379512786865,
+  "time": {
+   "CHECKOUT_BUGGY": 3.622403860092163,
+   "DELTA_BUGGY": 0.001611948013305664,
+   "COMPILE_BUGGY": 7.574375629425049,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.5313727855682373,
+   "PATCH": 0.00845026969909668,
+   "DELTA_PATCH": 0.0010428428649902344,
+   "COMPILE_PATCH": 5.760348558425903,
+   "PATCH_TEST": 2.487229108810425,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.4592506885528564,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.503739833831787,
+   "DELTA_FIX": 0.0010390281677246094,
+   "COMPILE_FIX": 7.361846208572388,
+   "REPRO_FOR_VALIDATE": 1.5322902202606201,
+   "VALIDATE": 0.020372867584228516
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-209_PFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-209_PFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-209_PFL_Nopol_Patch_1_1-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-209_PFL_Nopol_Patch_1_1-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "1;0",
+    "org_out_content": "none;0.0;-0.0;0.0;0;-9223372036854775808;0;1;0;4",
+    "patch_out_content": "none;0.0;0.0;0.0;0;0;0;1;0;4",
+    "fix_out_content": "none;0.0;0.0;0.0;0;0;0;1;0;4"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 133.0
+}

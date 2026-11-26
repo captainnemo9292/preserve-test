@@ -1,0 +1,91 @@
+{
+ "patch": "Patch184",
+ "dataset": "apr",
+ "bug": "Time-14",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T21:07:37",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 7236,
+   "fail": 12764,
+   "not_run": 0,
+   "failing_examples": [
+    "input (2, 29, 0, -77) -> logged [--02-29, null, java.lang.IllegalArgumentException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.IllegalArgumentException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runner",
+    "input (2, 29, 1, -8) -> logged [--02-29, null, org.joda.time.IllegalFieldValueException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.joda.time.IllegalFieldValueException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.",
+    "input (2, 29, 1, 40) -> logged [--02-29, null, org.joda.time.IllegalFieldValueException]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.joda.time.IllegalFieldValueException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit."
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 36264,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.joda.time.IllegalFieldValueException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:69)\n\nLocation: org.joda.time.JQF_TestMonthDay_Basics.testBugReproduction(JQF_TestMonthDay_Basics.java:69)\n\nis triggered by the following inputs:\n\n    input (2, 29, 1, 4) -> logged [--02-29, null, org.joda.time.IllegalFieldValueException]\n    input (2, 29, 1, -27) -> logged [--02-29, null, org.joda.time.IllegalFieldValueException]"
+  },
+  "seconds": 76.3
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 33.3,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 31.630991220474243,
+  "time": {
+   "CHECKOUT_BUGGY": 1.3643989562988281,
+   "DELTA_BUGGY": 0.0011670589447021484,
+   "COMPILE_BUGGY": 6.457117557525635,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.2929162979125977,
+   "PATCH": 0.023626327514648438,
+   "DELTA_PATCH": 0.0012483596801757812,
+   "COMPILE_PATCH": 6.4559948444366455,
+   "PATCH_TEST": 2.6853861808776855,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 3.5742180347442627,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 1.2384374141693115,
+   "DELTA_FIX": 0.000926971435546875,
+   "COMPILE_FIX": 6.4498677253723145,
+   "REPRO_FOR_VALIDATE": 1.722491979598999,
+   "VALIDATE": 0.010336637496948242
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch184-s0/log/test1/1/ORG/id_000000024/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch184-s0/log/test1/1/ORG/id_000000024/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch184-s0/log/test1/1/PATCH/id_000000024/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v2-fc603dca/poracle-root-apr-9942/.poracle-ours-Patch184-s0/validation/fix/test1/id_000000024/OUT.log",
+    "in_content": "4;7;0;-99",
+    "org_out_content": "--04-07;null;org.joda.time.IllegalFieldValueException;op=0;amount=-99;resLen=-1;resHash=3392903;month=4;day=7",
+    "patch_out_content": "--04-07;null;java.lang.IllegalArgumentException;op=0;amount=-99;resLen=-1;resHash=3392903;month=4;day=7",
+    "fix_out_content": "--04-07;--03-01;none;op=0;amount=-99;resLen=7;resHash=-1677802389;month=4;day=7"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 110.8
+}

@@ -1,0 +1,76 @@
+{
+ "patch": "511_PFL_FixMiner_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-35",
+ "tool": "FixMiner",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T18:57:06",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 10063,
+   "fail": 9937,
+   "not_run": 0,
+   "failing_examples": [
+    "input (19, 3.070189520421387, 1) -> logged [none, 3.070189520421387]\norg.junit.ComparisonFailure: expected:<[org.apache.commons.math3.exception.OutOfRangeException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest.testBugReproduction(JQF_ElitisticListPopulationTest.java:49)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+    "input (80, 1.1349952278833308, 1) -> logged [none, 1.1349952278833308]\norg.junit.ComparisonFailure: expected:<[org.apache.commons.math3.exception.OutOfRangeException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest.testBugReproduction(JQF_ElitisticListPopulationTest.java:49)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+    "input (29, 3.1923185266525085, 1) -> logged [none, 3.1923185266525085]\norg.junit.ComparisonFailure: expected:<[org.apache.commons.math3.exception.OutOfRangeException]> but was:<[none]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest.testBugReproduction(JQF_ElitisticListPopulationTest.java:49)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref"
+   ]
+  },
+  "fresh": {
+   "trials": 74129,
+   "inside_buggyIf": 63541,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[org.apache.commons.math3.exception.OutOfRangeException]> but was:<[none]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest.testBugReproduction(JQF_ElitisticListPopulationTest.java:49)\n\nLocation: org.apache.commons.math3.genetics.JQF_ElitisticListPopulationTest.testBugReproduction(JQF_ElitisticListPopulationTest.java:49)\n\nis triggered by the following inputs:\n\n    input (92, -0.5723406744356696, 1) -> logged [none, -0.5723406744356696]\n    input (31, 2.520938513680104, 1) -> logged [none, 2.520938513680104]"
+  },
+  "seconds": 88.3
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 23.5,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 21.700101137161255,
+  "time": {
+   "CHECKOUT_BUGGY": 3.707305431365967,
+   "DELTA_BUGGY": 0.001154184341430664,
+   "COMPILE_BUGGY": 5.734763145446777,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.459740400314331,
+   "PATCH": 0.020453691482543945,
+   "DELTA_PATCH": 0.0010480880737304688,
+   "COMPILE_PATCH": 6.523490905761719,
+   "PATCH_TEST": 1.7073872089385986,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 112.6
+}

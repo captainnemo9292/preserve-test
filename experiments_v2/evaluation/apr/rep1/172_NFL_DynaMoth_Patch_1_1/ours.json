@@ -1,0 +1,68 @@
+{
+ "patch": "172_NFL_DynaMoth_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-71",
+ "tool": "DynaMoth",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-25T19:36:39",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 14994,
+   "failed_on_buggy": 14994,
+   "pass": 14994,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 15089,
+   "unique_failures": {}
+  },
+  "seconds": 29.5
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v2-fc603dca/deltas-ours-9942",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 20.2,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 18.749931812286377,
+  "time": {
+   "CHECKOUT_BUGGY": 3.462193012237549,
+   "DELTA_BUGGY": 0.0011513233184814453,
+   "COMPILE_BUGGY": 4.742861270904541,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4593708515167236,
+   "PATCH": 0.00900411605834961,
+   "DELTA_PATCH": 0.0010745525360107422,
+   "COMPILE_PATCH": 4.783033132553101,
+   "PATCH_TEST": 1.707679271697998,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 50.3
+}
