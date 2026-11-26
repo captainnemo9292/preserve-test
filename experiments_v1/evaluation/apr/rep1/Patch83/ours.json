@@ -1,0 +1,76 @@
+{
+ "patch": "Patch83",
+ "dataset": "apr",
+ "bug": "Time-11",
+ "tool": "jKali",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T03:42:27",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 17089,
+   "failed_on_buggy": 17089,
+   "pass": 0,
+   "fail": 17089,
+   "not_run": 0,
+   "failing_examples": [
+    "input (, , -7, 2, 11, 9, 0, 18, 21) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.Framewo",
+    "input (, , 4, 1, 8, 11, 0, 15, 0) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.Framewo",
+    "input (, , -2, 1, 11, 4, 0, 13, 9) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.Framewo"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 26368,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)\n\nLocation: org.joda.time.tz.JQF_TestCompiler.testBugReproduction(JQF_TestCompiler.java:97)\n\nis triggered by the following inputs:\n\n    input (, , 13, 2, 11, 5, 0, 5, 20) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]\n    input (, , 14, 1, 6, 9, 0, 6, 1) -> logged [none, TestDTZ1, java.lang.NullPointerException, null]"
+  },
+  "seconds": 87.0
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 20.7,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 19.11749267578125,
+  "time": {
+   "CHECKOUT_BUGGY": 1.4110743999481201,
+   "DELTA_BUGGY": 0.0010094642639160156,
+   "COMPILE_BUGGY": 6.918436288833618,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.3299307823181152,
+   "PATCH": 0.012488842010498047,
+   "DELTA_PATCH": 0.0014388561248779297,
+   "COMPILE_PATCH": 6.834794759750366,
+   "PATCH_TEST": 2.207592487335205,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 108.3
+}

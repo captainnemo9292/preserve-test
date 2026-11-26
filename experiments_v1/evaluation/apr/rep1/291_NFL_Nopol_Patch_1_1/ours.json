@@ -1,0 +1,82 @@
+{
+ "patch": "291_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-7",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:14:20",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 5809,
+   "failed_on_buggy": 5806,
+   "pass": 3,
+   "fail": 5806,
+   "not_run": 0,
+   "failing_examples": [
+    "input (0.8040076774803813, 3, 0.005449921244838125, 6.529389425806912, 0.43796030951281173) -> logged [none, 6.529389425806912, 0.24181203009251562, 0.9695524606597, 2, 0.9344724018401235, 1305, 10, 1.0755400897184249]\njava.lang.AssertionError: silent handler evaluated at times before the restart time (stale event state) expected:<0> but was:<10>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:136)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAcces",
+    "input (0.53443303236216, 2, 0.014622596766658225, 6.447864409793341, 0.1420934452221055) -> logged [none, 6.447864409793341, 0.16391412773507433, 0.9864709839240648, 2, 0.5638392927036591, 510, 9, 1.0]\njava.lang.AssertionError: silent handler evaluated at times before the restart time (stale event state) expected:<0> but was:<9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:136)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccess",
+    "input (0.7989564720642096, 3, 0.17829638932008526, 4.880961856928775, 0.23467527820202363) -> logged [none, 4.880961856928775, -0.985809180839453, 0.16765656974701865, 2, 0.9255994273758226, 64, 1, 1.0]\njava.lang.AssertionError: silent handler evaluated at times before the restart time (stale event state) expected:<0> but was:<1>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:136)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccess"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 5844,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: silent handler evaluated at times before the restart time (stale event state) expected:<0> but was:<1>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:645)\n    \tat org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:136)\n\nLocation: org.apache.commons.math3.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:136)\n\nis triggered by the following inputs:\n\n    input (0.0791284549471441, 2, 0.07920959571050779, 9.540042507264904, 0.09778062763667679) -> logged [none, 9.540042507264904, -0.11500225570647804, -0.9933635985872651, 4, 0.07921128920675616, 294, 1, 1.0]\n    input (0.40222793673517165, 3, 0.05559984243112741, 4.439189977292515, 0.12174816591055104) -> logged [none, 4.439189977292515, -0.962907586739752, -0.2698199188402177, 2, 0.4139506064465479, 151, 1, 1.0]"
+  },
+  "seconds": 31.2
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 206.0,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 203.62171959877014,
+  "time": {
+   "CHECKOUT_BUGGY": 3.451143503189087,
+   "DELTA_BUGGY": 0.001611471176147461,
+   "COMPILE_BUGGY": 5.78921103477478,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.82951283454895,
+   "PATCH": 0.009340286254882812,
+   "DELTA_PATCH": 0.001965761184692383,
+   "COMPILE_PATCH": 7.09364914894104,
+   "PATCH_TEST": 2.0633299350738525,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.45023250579834,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 240.7
+}

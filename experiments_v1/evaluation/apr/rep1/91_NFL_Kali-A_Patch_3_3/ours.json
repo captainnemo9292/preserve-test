@@ -1,0 +1,91 @@
+{
+ "patch": "91_NFL_Kali-A_Patch_3_3",
+ "dataset": "apr",
+ "bug": "Math-84",
+ "tool": "Kali-A",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T02:56:20",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 19897,
+   "fail": 103,
+   "not_run": 0,
+   "failing_examples": [
+    "input (0.0, 0, -1.7770107835420133, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 1002]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+    "input (21.75, -22.75, 0.0, 0, 0.5822489707890943, 1) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 3004]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref",
+    "input (0.0, -27.5, 17.25, 0, 2.7875355776546664, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 3004]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.ref"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 33465,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 1
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.optimization.OptimizationException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\nLocation: org.apache.commons.math.optimization.direct.JQF_MultiDirectionalTest.testBugReproduction(JQF_MultiDirectionalTest.java:84)\n\nis triggered by the following inputs:\n\n    input (30.5, -32.75, 0.0, 0, 3.11458292406933, 0) -> logged [org.apache.commons.math.optimization.OptimizationException, null, null, 501, 3004]"
+  },
+  "seconds": 77.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 40.7,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 38.00408482551575,
+  "time": {
+   "CHECKOUT_BUGGY": 3.727410316467285,
+   "DELTA_BUGGY": 0.001622915267944336,
+   "COMPILE_BUGGY": 5.999331712722778,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.870776653289795,
+   "PATCH": 0.021852731704711914,
+   "DELTA_PATCH": 0.0020525455474853516,
+   "COMPILE_PATCH": 8.359704732894897,
+   "PATCH_TEST": 3.016633987426758,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.6259779930114746,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.6845314502716064,
+   "DELTA_FIX": 0.0012717247009277344,
+   "COMPILE_FIX": 5.223377704620361,
+   "REPRO_FOR_VALIDATE": 1.6246018409729004,
+   "VALIDATE": 0.017981529235839844
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-91_NFL_Kali-A_Patch_3_3-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-91_NFL_Kali-A_Patch_3_3-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-91_NFL_Kali-A_Patch_3_3-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-91_NFL_Kali-A_Patch_3_3-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "23.5;41.25;-15.75;-1;4.956178250422784;0",
+    "org_out_content": "org.apache.commons.math.optimization.OptimizationException;null;null;501;3004",
+    "patch_out_content": "none;[23.5, 41.25, -15.75];-0.0;66;400",
+    "fix_out_content": "none;[23.5, 41.25, -15.75];-0.0;67;406"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 119.9
+}

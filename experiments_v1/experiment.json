@@ -1,0 +1,60 @@
+[
+ {
+  "time": "2026-11-25T23:54:14",
+  "argv": [
+   "evaluate",
+   "--out",
+   "experiments_v1",
+   "--suites",
+   "ours",
+   "--duration",
+   "3m",
+   "-f",
+   "data/bugs77.txt",
+   "-j",
+   "6"
+  ],
+  "args": {
+   "stage": "evaluate",
+   "out": "experiments_v1",
+   "bugs": null,
+   "bug_file": "data/bugs77.txt",
+   "jobs": 6,
+   "redo": false,
+   "gen_jobs": 2,
+   "model": null,
+   "fuzz_seconds": null,
+   "max_llm_calls": null,
+   "datasets": [
+    "apr"
+   ],
+   "suites": [
+    "ours"
+   ],
+   "poracle_container": "poracle-original",
+   "patches": null,
+   "duration": "3m",
+   "repro_seconds": null,
+   "paired_inputs": null,
+   "reps": 1,
+   "no_gate": false,
+   "retry_unknown": false
+  },
+  "defaults": {
+   "model": "sonnet",
+   "fuzz_seconds": 15,
+   "max_llm_calls": 50,
+   "repro_seconds": 60,
+   "paired_inputs": 20000
+  },
+  "git_commit": "a648ec61eeda352b80402bfdf68e399e74e7f823",
+  "git_dirty": true,
+  "claude_cli": "2.1.331 (Claude Code)",
+  "container": "poracle-reproduce",
+  "container_image": "sha256:aa9798cf63913db796e6d9e664205f56417099ba9319611a3135781c9c6adc8e",
+  "container_work": "/tmp/preserve-experiment/experiments_v1-03c53d3a",
+  "datasets": {
+   "apr": "6d5f021905da62a7b4d6360d8d1ab7990aa99d1c2ebee5d41b6bd9ed680e8785"
+  }
+ }
+]

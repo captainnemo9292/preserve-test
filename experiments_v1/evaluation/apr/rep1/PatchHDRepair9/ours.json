@@ -1,0 +1,92 @@
+{
+ "patch": "PatchHDRepair9",
+ "dataset": "apr",
+ "bug": "Math-85",
+ "tool": "HDRepair",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T03:04:41",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 10000,
+   "fail": 10000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-3, 1.0, 4, 0, 1, 0.1369191571647156) -> logged [2.8665157209006864E-7, -1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<-8.0> but was:<-1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Delega",
+    "input (2, 1.4876274134834069, 7, 0, 1, 0.5844909412764603) -> logged [5.800808111633415E-9, -1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<-6.487627413483407> but was:<-1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl",
+    "input (-3, 1.6322108431469478, 7, 0, 1, 0.6950098496479168) -> logged [6.160729493220884E-8, -1.7976931348623157E308, none]\njava.lang.AssertionError: expected:<-11.632210843146948> but was:<-1.7976931348623157E308>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImp"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 26238,
+   "unique_failures": {
+    "java.lang.AssertionError": 1,
+    "org.junit.ComparisonFailure": 1
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<-16.0> but was:<-1.7976931348623157E308>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:89)\n\nis triggered by the following inputs:\n\n    input (-10, 1.0, 5, 0, 1, 0.8035148191400434) -> logged [9.865886441140503E-10, -1.7976931348623157E308, none]\n\nThe error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nLocation: org.apache.commons.math.distribution.JQF_NormalDistributionTest.testBugReproduction(JQF_NormalDistributionTest.java:88)\n\nis triggered by the following inputs:\n\n    input (3, 2.602633010424561, 8, 0, 1, 0.4613528052172118) -> logged [2.3125085164221737E-5, NaN, org.apache.commons.math.MathException]"
+  },
+  "seconds": 62.5
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 46.4,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 44.508777141571045,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5511980056762695,
+   "DELTA_BUGGY": 0.0011861324310302734,
+   "COMPILE_BUGGY": 8.727532863616943,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.6695938110351562,
+   "PATCH": 0.015282154083251953,
+   "DELTA_PATCH": 0.001604318618774414,
+   "COMPILE_PATCH": 7.652559995651245,
+   "PATCH_TEST": 3.285305976867676,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 3.776095151901245,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.660100221633911,
+   "DELTA_FIX": 0.0012159347534179688,
+   "COMPILE_FIX": 7.08986234664917,
+   "REPRO_FOR_VALIDATE": 2.1615140438079834,
+   "VALIDATE": 0.01717519760131836
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-PatchHDRepair9-s0/log/test1/1/ORG/id_000000023/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-PatchHDRepair9-s0/log/test1/1/ORG/id_000000023/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-PatchHDRepair9-s0/log/test1/1/PATCH/id_000000023/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-PatchHDRepair9-s0/validation/fix/test1/id_000000023/OUT.log",
+    "in_content": "7;1.0;7;0;2;0.8277561463467454",
+    "org_out_content": "0.9999999990134114;1.7976931348623157E308;none",
+    "patch_out_content": "0.9999999990134114;13.0;none",
+    "fix_out_content": "0.9999999990134114;13.0;none"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 110.5
+}

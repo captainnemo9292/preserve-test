@@ -1,0 +1,91 @@
+{
+ "patch": "281_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-49",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:39:33",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 15531,
+   "failed_on_buggy": 15531,
+   "pass": 0,
+   "fail": 15531,
+   "not_run": 0,
+   "failing_examples": [
+    "input (4, 3.2840761329181286E-4, -3.470717215299592, 0.0, 0.0, -1.9919720448145384, -8.094414717715104, 0.0, 0.0, -5.28941916581922E-9, 0.0, -8.4252226108817, 0.0, -0.7173461705390984, 2.883284629818372E-9, -8.608109653138229, 0.0, -0.38853626151332676) -> logged [none, [-3.470717215299592, 0.0, 0.0, 1.4289335181686464], [-3.470717215299592, 0.0, 0.0, -1.9919720448145384], [0.0, -8.4252226108817, 0.0, -0.7173461705390984]]\narrays first differed at element [0]; expected:<0.0> but was:<-3.470717215299592>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingM",
+    "input (8, 3.45901399639292E-4, 1.4502773980447579, -5.282000272305587, -9.040102258763326, 5.416436903618658, 5.28949534032969, 0.8135208007655965, -9.738985816347475E-10, 0.0, 3.416273421144302, 6.18692784111327, 3.101508472111454E-9, 0.23809513253563175, -0.613954656536924, -1.8282988016702588E-9, -0.4076439441168027, -7.518330901602988) -> logged [none, [4.954544128226622, -32.679354541495314, -9.040102258763326, 1.2896272624379712, -3.247510294925775, 0.8135208007655965, 0.0, 0.0], [1.4502773980447579, -5.282000272305587, -9.040102258763326, 5.416436903618658, 5.28949534032969, 0.8135208007655965, 0.0, 0.0], [3.416273421144302, 6.18692784111327, 0.0, 0.23809513253563175, -0.613954656536924, 0.0, -0.4076439441168027, -7.518330901602988]]\narrays first differed at element [2]; expected:<0.0> but was:<-9.040102258763326>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingM",
+    "input (5, 4.420044978083149E-4, 8.20342325324054, 3.5874309169035428, 0.0, -6.016503327540632, -4.485406844889779, 0.0, 3.713945761991903, 2.809696703493721, 0.0, 0.0, -8.849223125841448, 0.0, 7.536135402818303, -1.617668480831293, 5.2498326466439575, 0.0) -> logged [none, [8.20342325324054, 3.5874309169035428, 0.0, -6.016503327540632, -33.80263331981741], [8.20342325324054, 3.5874309169035428, 0.0, -6.016503327540632, -4.485406844889779], [0.0, 0.0, -8.849223125841448, 0.0, 7.536135402818303]]\narrays first differed at element [0]; expected:<0.0> but was:<8.20342325324054>\n\tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n\tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMet"
+   ]
+  },
+  "fresh": {
+   "trials": 33993,
+   "inside_buggyIf": 15226,
+   "unique_failures": {
+    "org.junit.internal.ArrayComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    arrays first differed at element [2]; expected:<0.0> but was:<6.1363901347219>\n    \tat org.junit.internal.ComparisonCriteria.arrayEquals(ComparisonCriteria.java:55)\n    \tat org.junit.Assert.assertArrayEquals(Assert.java:469)\n    \tat org.junit.Assert.assertArrayEquals(Assert.java:483)\n    \tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:103)\n\nis triggered by the following inputs:\n\n    input (8, 8.506954227114178E-4, 0.0, 1.051287343869578E-9, 6.1363901347219, -9.004091514651307, -3.715407320367765, 0.0, 0.0, 0.0, 0.0, -6.485781671355575, 0.0, -3.7301117304763043, 0.0, 5.084365183491599, 0.0, 0.0) -> logged [none, [0.0, 0.0, 6.1363901347219, 33.586267381083, -3.715407320367765, 0.0, 0.0, 0.0], [0.0, 0.0, 6.1363901347219, -9.004091514651307, -3.715407320367765, 0.0, 0.0, 0.0], [0.0, -6.485781671355575, 0.0, -3.7301117304763043, 0.0, 5.084365183491599, 0.0, 0.0]]\n    input (3, 1.0931564607884753E-4, 0.0, -7.267500199791042, -3.8689773739001527, -5.428871755566145, -9.436644209452007, -3.055892776052527, -6.785576849504231, -5.195849584722216, 0.0, 0.0, 1.6803823942026632, 0.43925265889146914, -0.6606675344855812, 5.0914972472988715, 0.0, 0.0) -> logged [none, [0.0, -7.267500199791042, -6.501361462670271], [0.0, -7.267500199791042, -3.8689773739001527], [0.0, 0.0, 1.6803823942026632]]"
+  },
+  "seconds": 121.4
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 44.5,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 42.13882756233215,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5893242359161377,
+   "DELTA_BUGGY": 0.0012025833129882812,
+   "COMPILE_BUGGY": 7.270912408828735,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.8019142150878906,
+   "PATCH": 0.013812541961669922,
+   "DELTA_PATCH": 0.0012447834014892578,
+   "COMPILE_PATCH": 7.770756959915161,
+   "PATCH_TEST": 2.5364022254943848,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 2.5815072059631348,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.6865384578704834,
+   "DELTA_FIX": 0.0015041828155517578,
+   "COMPILE_FIX": 7.804811239242554,
+   "REPRO_FOR_VALIDATE": 1.8464570045471191,
+   "VALIDATE": 0.01800084114074707
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-281_NFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000002/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-281_NFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000002/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-281_NFL_Nopol_Patch_1_1-s0/log/test1/1/PATCH/id_000000002/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-281_NFL_Nopol_Patch_1_1-s0/validation/fix/test1/id_000000002/OUT.log",
+    "in_content": "6;7.742477362155806E-4;-7.3767920884857645;-9.938511606956133E-9;0.0;6.308132443159494;0.0;0.0;3.256438367447128;-7.467340065044963;9.539272811241105;-1.7187561289923318E-9;0.0;0.0;0.0;0.0;0.0;1.2575377097433886",
+    "org_out_content": "none;[-70.36923220387074, 0.0, 0.0, 0.0, 0.0, 0.0];[-7.3767920884857645, 0.0, 0.0, 6.308132443159494, 0.0, 0.0];[9.539272811241105, 0.0, 0.0, 0.0, 0.0, 0.0]",
+    "patch_out_content": "none;[-70.36923220387074, 0.0, 0.0, 6.308132443159494, 0.0, 0.0];[-7.3767920884857645, 0.0, 0.0, 6.308132443159494, 0.0, 0.0];[9.539272811241105, 0.0, 0.0, 0.0, 0.0, 0.0]",
+    "fix_out_content": "none;[-70.36923220387074, 0.0, 0.0, 0.0, 0.0, 0.0];[-7.3767920884857645, 0.0, 0.0, 6.308132443159494, 0.0, 0.0];[9.539272811241105, 0.0, 0.0, 0.0, 0.0, 0.0]"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 167.4
+}

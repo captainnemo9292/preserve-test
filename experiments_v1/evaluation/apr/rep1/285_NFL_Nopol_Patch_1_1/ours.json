@@ -1,0 +1,83 @@
+{
+ "patch": "285_NFL_Nopol_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Lang-55",
+ "tool": "Nopol",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T00:40:17",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 790,
+   "failed_on_buggy": 790,
+   "pass": 790,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 1675,
+   "inside_buggyIf": 822,
+   "unique_failures": {}
+  },
+  "seconds": 125.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 28.7,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 26.78306484222412,
+  "time": {
+   "CHECKOUT_BUGGY": 3.3900997638702393,
+   "DELTA_BUGGY": 0.011169672012329102,
+   "COMPILE_BUGGY": 2.4540045261383057,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.3536500930786133,
+   "PATCH": 0.0061566829681396484,
+   "DELTA_PATCH": 0.010024785995483398,
+   "COMPILE_PATCH": 2.6097474098205566,
+   "PATCH_TEST": 1.5807712078094482,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 4.25562858581543,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.4040732383728027,
+   "DELTA_FIX": 0.02449774742126465,
+   "COMPILE_FIX": 3.699451208114624,
+   "REPRO_FOR_VALIDATE": 1.5972559452056885,
+   "VALIDATE": 0.009931087493896484
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "I",
+    "diff_count": 0,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-285_NFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000015/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-285_NFL_Nopol_Patch_1_1-s0/log/test1/1/ORG/id_000000015/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-285_NFL_Nopol_Patch_1_1-s0/log/test1/1/PATCH/id_000000015/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-285_NFL_Nopol_Patch_1_1-s0/validation/fix/test1/id_000000015/OUT.log",
+    "in_content": "12;0;2;28;0;1",
+    "org_out_content": "1;0",
+    "patch_out_content": "0;0",
+    "fix_out_content": "0;0"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 155.7
+}

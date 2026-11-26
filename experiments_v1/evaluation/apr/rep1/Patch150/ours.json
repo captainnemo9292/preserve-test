@@ -1,0 +1,82 @@
+{
+ "patch": "Patch150",
+ "dataset": "apr",
+ "bug": "Lang-44",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T00:31:42",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M",
+    "input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M",
+    "input (l) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\norg.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(M"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 40676,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<java.lang.[NumberFormat]Exception> but was:<java.lang.[StringIndexOutOfBounds]Exception>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\nLocation: org.apache.commons.lang.JQF_NumberUtilsTest.testBugReproduction(JQF_NumberUtilsTest.java:62)\n\nis triggered by the following inputs:\n\n    input (L) -> logged [exception, java.lang.StringIndexOutOfBoundsException]\n    input (l) -> logged [exception, java.lang.StringIndexOutOfBoundsException]"
+  },
+  "seconds": 64.1
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 199.1,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 197.0823724269867,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5445358753204346,
+   "DELTA_BUGGY": 0.01445460319519043,
+   "COMPILE_BUGGY": 3.6753132343292236,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4048988819122314,
+   "PATCH": 0.008966445922851562,
+   "DELTA_PATCH": 0.012253999710083008,
+   "COMPILE_PATCH": 4.097079753875732,
+   "PATCH_TEST": 1.5243933200836182,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.42279696464539,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 275.6
+}

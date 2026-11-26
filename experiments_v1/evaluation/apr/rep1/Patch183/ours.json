@@ -1,0 +1,76 @@
+{
+ "patch": "Patch183",
+ "dataset": "apr",
+ "bug": "Time-12",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T03:44:10",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (721, 5, 11, 0) -> logged [none, 0721-05-11, 721, 5, 11]\njava.lang.AssertionError: expected:<-720> but was:<721>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.joda.time.JQF_TestLocalDate_Constructors.testBugReproduction(JQF_TestLocalDate_Constructors.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat",
+    "input (1304, 10, 10, 0) -> logged [none, 1304-10-10, 1304, 10, 10]\njava.lang.AssertionError: expected:<-1303> but was:<1304>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.joda.time.JQF_TestLocalDate_Constructors.testBugReproduction(JQF_TestLocalDate_Constructors.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\t",
+    "input (1609, 1, 11, 0) -> logged [none, 1609-01-11, 1609, 1, 11]\njava.lang.AssertionError: expected:<-1608> but was:<1609>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:645)\n\tat org.junit.Assert.assertEquals(Assert.java:631)\n\tat org.joda.time.JQF_TestLocalDate_Constructors.testBugReproduction(JQF_TestLocalDate_Constructors.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\t"
+   ]
+  },
+  "fresh": {
+   "trials": 89413,
+   "inside_buggyIf": 44641,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<-1820> but was:<1821>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:645)\n    \tat org.junit.Assert.assertEquals(Assert.java:631)\n    \tat org.joda.time.JQF_TestLocalDate_Constructors.testBugReproduction(JQF_TestLocalDate_Constructors.java:50)\n\nLocation: org.joda.time.JQF_TestLocalDate_Constructors.testBugReproduction(JQF_TestLocalDate_Constructors.java:50)\n\nis triggered by the following inputs:\n\n    input (1821, 10, 2, 0) -> logged [none, 1821-10-02, 1821, 10, 2]\n    input (558, 8, 15, 0) -> logged [none, 0558-08-15, 558, 8, 15]"
+  },
+  "seconds": 85.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 25.7,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 23.48660707473755,
+  "time": {
+   "CHECKOUT_BUGGY": 1.5158865451812744,
+   "DELTA_BUGGY": 0.0017521381378173828,
+   "COMPILE_BUGGY": 8.477132558822632,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.428863763809204,
+   "PATCH": 0.015876293182373047,
+   "DELTA_PATCH": 0.0011875629425048828,
+   "COMPILE_PATCH": 8.234740972518921,
+   "PATCH_TEST": 3.0466275215148926,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 112.5
+}

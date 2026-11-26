@@ -1,0 +1,55 @@
+{
+ "patch": "12_PFL_AVATAR_Patch_109",
+ "dataset": "apr",
+ "bug": "Time-18",
+ "tool": "AVATAR",
+ "label": "Incorrect",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-21T16:35:39",
+ "preserve": {
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 200.0,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 197.91441917419434,
+  "time": {
+   "CHECKOUT_BUGGY": 1.3542060852050781,
+   "DELTA_BUGGY": 0.0021309852600097656,
+   "COMPILE_BUGGY": 6.039039373397827,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 1.3367960453033447,
+   "PATCH": 0.012586355209350586,
+   "DELTA_PATCH": 0.0016732215881347656,
+   "COMPILE_PATCH": 5.71443247795105,
+   "PATCH_TEST": 2.7009332180023193,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.28629207611084,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 200.0
+}

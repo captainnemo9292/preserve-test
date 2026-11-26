@@ -1,0 +1,82 @@
+{
+ "patch": "Patch169",
+ "dataset": "apr",
+ "bug": "Math-69",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T02:03:51",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (133, 0.7469080595045068) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: p-value must be positive for strong correlation, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.",
+    "input (193, -0.7984831357265965) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: p-value must be positive for strong correlation, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.",
+    "input (108, -0.8422523277929372) -> logged [none, 0.0, 0.0, 0.0]\njava.lang.AssertionError: p-value must be positive for strong correlation, was 0.0\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org."
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 49415,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: p-value must be positive for strong correlation, was 0.0\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)\n\nLocation: org.apache.commons.math.stat.correlation.JQF_PearsonsCorrelationTest.testBugReproduction(JQF_PearsonsCorrelationTest.java:82)\n\nis triggered by the following inputs:\n\n    input (162, 0.890165358144265) -> logged [none, 0.0, 0.0, 0.0]\n    input (144, -0.7698798543402914) -> logged [none, 0.0, 0.0, 0.0]"
+  },
+  "seconds": 69.0
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 203.3,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 201.84221029281616,
+  "time": {
+   "CHECKOUT_BUGGY": 3.698319435119629,
+   "DELTA_BUGGY": 0.0010886192321777344,
+   "COMPILE_BUGGY": 6.055485010147095,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4441025257110596,
+   "PATCH": 0.009533405303955078,
+   "DELTA_PATCH": 0.001117706298828125,
+   "COMPILE_PATCH": 5.9703192710876465,
+   "PATCH_TEST": 1.802189588546753,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.24254179000854,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 283.5
+}

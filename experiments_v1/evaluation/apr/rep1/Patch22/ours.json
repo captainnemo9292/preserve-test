@@ -1,0 +1,76 @@
+{
+ "patch": "Patch22",
+ "dataset": "apr",
+ "bug": "Lang-46",
+ "tool": "Nopol2015",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T00:36:34",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 519,
+   "failed_on_buggy": 519,
+   "pass": 0,
+   "fail": 519,
+   "not_run": 0,
+   "failing_examples": [
+    "input (!/) -> logged [!\\/]\norg.junit.ComparisonFailure: expected:<![]/> but was:<![\\]/>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_StringEscapeUtilsTest.testBugReproduction(JQF_StringEscapeUtilsTest.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMe",
+    "input (Z/Y/;;Tb}) -> logged [Z\\/Y\\/;;Tb}\\r\\\\\\/\\u0245\\/k'\\u01B2^\\/g_$a!,\\/\\\"\\u011D& \\\\\\/]\norg.junit.ComparisonFailure: expected:<Z[/Y/;;Tb}\\r\\\\\\/\\u0245/k'\\u01B2^/g_$a!,]/\\\"\\u011D& \\\\\\/> but was:<Z[\\/Y\\/;;Tb}\\r\\\\\\/\\u0245\\/k'\\u01B2^\\/g_$a!,\\]/\\\"\\u011D& \\\\\\/>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_StringEscapeUtilsTest.testBugReproduction(JQF_StringEscapeUtilsTest.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessor",
+    "input (ǸF~/>+§1/<4{}//Ĭ^~/) -> logged [\\u01F8F~\\/>+\\u00A71\\/<4{}\\/\\/\\u012C^~\\/]\norg.junit.ComparisonFailure: expected:<\\u01F8F~[/>+\\u00A71/<4{}//\\u012C^~]/> but was:<\\u01F8F~[\\/>+\\u00A71\\/<4{}\\/\\/\\u012C^~\\]/>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.lang.JQF_StringEscapeUtilsTest.testBugReproduction(JQF_StringEscapeUtilsTest.java:69)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Me"
+   ]
+  },
+  "fresh": {
+   "trials": 37343,
+   "inside_buggyIf": 32680,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<\\u017B.-m[//N\\u02EF/T/]/Z\\u02C8);#a\\r\\b> but was:<\\u017B.-m[\\/\\/N\\u02EF\\/T\\/\\]/Z\\u02C8);#a\\r\\b>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.lang.JQF_StringEscapeUtilsTest.testBugReproduction(JQF_StringEscapeUtilsTest.java:69)\n\nLocation: org.apache.commons.lang.JQF_StringEscapeUtilsTest.testBugReproduction(JQF_StringEscapeUtilsTest.java:69)\n\nis triggered by the following inputs:\n\n    input (Ż.-m//N˯/T//Zˈ);#a) -> logged [\\u017B.-m\\/\\/N\\u02EF\\/T\\/\\/Z\\u02C8);#a\\r\\b]\n    input (/_,a) -> logged [\\/_,a]"
+  },
+  "seconds": 39.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 16.8,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 14.945468187332153,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5151538848876953,
+   "DELTA_BUGGY": 0.012288808822631836,
+   "COMPILE_BUGGY": 2.699333906173706,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.3832309246063232,
+   "PATCH": 0.00867605209350586,
+   "DELTA_PATCH": 0.011853456497192383,
+   "COMPILE_PATCH": 3.1373982429504395,
+   "PATCH_TEST": 1.508376121520996,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 57.7
+}

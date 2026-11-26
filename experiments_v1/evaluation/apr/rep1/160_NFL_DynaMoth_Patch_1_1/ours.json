@@ -1,0 +1,82 @@
+{
+ "patch": "160_NFL_DynaMoth_Patch_1_1",
+ "dataset": "apr",
+ "bug": "Math-41",
+ "tool": "DynaMoth",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:34:34",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (4.0, 22.513657422833376, 1.0, 34.96897990707794, 25.615307176351166, 51.51053706039653, 0.0, 2.8069606532403784, 1.0, 4.984106917352427, 0.04409368889036519, 1.0, -88.3547505860478, 1, 3, 0) -> logged [1527.4177791452064, 0]\njava.lang.AssertionError: expected:<134.62421292578017> but was:<1527.4177791452064>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Deleg",
+    "input (4.0, 18.479084478721646, 45.496343705250524, -3.0, 55.32392157734398, 12.285270751864402, 1.6387725735693903, 3.5989813261180297, 3.6373833412594374, 2.6441355810256226, 2.2433023785987283, 1.0467013134784957, 90.59431067110145, 2, 3, 1) -> logged [1154.4013250740993, 1]\njava.lang.AssertionError: expected:<599.7499346511966> but was:<1154.4013250740993>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Delega",
+    "input (1.0, 76.11716446847322, -3.0, -49.30350428288304, -2.0, -66.63845464148994, 1.2475777282189653, 4.7045267704180995, 1.3595161328182486, 1.0, 1.7043515512251068, 1.0, 48.968107147460046, 1, 4, 1) -> logged [1791.5008744163147, 1]\njava.lang.AssertionError: expected:<2207.1873484187845> but was:<1791.5008744163147>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Deleg"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 23658,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<476.09841564426927> but was:<1192.070539906735>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)\n\nLocation: org.apache.commons.math.stat.descriptive.moment.JQF_VarianceTest.testBugReproduction(JQF_VarianceTest.java:103)\n\nis triggered by the following inputs:\n\n    input (4.505833373024743, 48.34606659317632, 1.0, -83.50346928953248, 20.335582166458693, 0.0, 0.0, 4.134145891605709, 1.823356387449212, 0.0, 4.433142110788262, 2.357301511113458, 96.26467375396129, 1, 3, 1) -> logged [1192.070539906735, 1]\n    input (-80.4625374474774, -48.14481739593835, 80.32709335704976, 0.0, 6.541737589618847, -24.419760297939945, 2.7199238380475785, 1.0, 0.0, 3.3624242013587065, 0.599490003642541, 0.0, 43.020338733155626, 1, 2, 0) -> logged [1081.913683348564, 0]"
+  },
+  "seconds": 41.3
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 205.4,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 203.3035638332367,
+  "time": {
+   "CHECKOUT_BUGGY": 3.587825059890747,
+   "DELTA_BUGGY": 0.0019147396087646484,
+   "COMPILE_BUGGY": 5.668525457382202,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.633312225341797,
+   "PATCH": 0.009105920791625977,
+   "DELTA_PATCH": 0.001149892807006836,
+   "COMPILE_PATCH": 6.517338275909424,
+   "PATCH_TEST": 2.5422542095184326,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.39541816711426,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 254.7
+}

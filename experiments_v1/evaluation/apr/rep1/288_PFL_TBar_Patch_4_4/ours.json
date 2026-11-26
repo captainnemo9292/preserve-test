@@ -1,0 +1,92 @@
+{
+ "patch": "288_PFL_TBar_Patch_4_4",
+ "dataset": "apr",
+ "bug": "Math-50",
+ "tool": "TBar",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:44:47",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 12462,
+   "fail": 7538,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1.1572493446946366, 19.852223654775294, 28.78468851659244) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j",
+    "input (0.3256024167684295, 14.086587753904336, 53.37376646136046) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j",
+    "input (-0.8273881959578056, 12.420609535763056, 76.44871139724852) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\norg.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.j"
+   ]
+  },
+  "fresh": {
+   "trials": 83189,
+   "inside_buggyIf": 60707,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2,
+    "java.lang.AssertionError": 1
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: no exception expected expected:<[none]> but was:<[org.apache.commons.math.exception.TooManyEvaluationsException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\nLocation: org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:50)\n\nis triggered by the following inputs:\n\n    input (-4.706032824578335, 12.720216775151385, 19.835389673481238) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\n    input (-2.050315568764076, 15.864375233198786, 95.11029788258453) -> logged [org.apache.commons.math.exception.TooManyEvaluationsException, NaN]\n\nThe error:\n    java.lang.AssertionError: expected:<4.074932159086592> but was:<4.074912348092798>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:51)\n\nLocation: org.apache.commons.math.analysis.solvers.JQF_RegulaFalsiSolverTest.testBugReproduction(JQF_RegulaFalsiSolverTest.java:51)\n\nis triggered by the following inputs:\n\n    input (1.584018476820546, 15.324878372702429, 58.84648825341315) ->"
+  },
+  "seconds": 101.2
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 44.6,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 42.8484103679657,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5538299083709717,
+   "DELTA_BUGGY": 0.0010890960693359375,
+   "COMPILE_BUGGY": 6.026003837585449,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 4.094975471496582,
+   "PATCH": 0.02889275550842285,
+   "DELTA_PATCH": 0.00121307373046875,
+   "COMPILE_PATCH": 8.075163841247559,
+   "PATCH_TEST": 2.6416239738464355,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 3.048168659210205,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.814234972000122,
+   "DELTA_FIX": 0.0015370845794677734,
+   "COMPILE_FIX": 8.480547428131104,
+   "REPRO_FOR_VALIDATE": 1.962812900543213,
+   "VALIDATE": 0.01646137237548828
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-288_PFL_TBar_Patch_4_4-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-288_PFL_TBar_Patch_4_4-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-288_PFL_TBar_Patch_4_4-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-288_PFL_TBar_Patch_4_4-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "-0.317147167455591;6.177016707726203;66.60904931501578",
+    "org_out_content": "org.apache.commons.math.exception.TooManyEvaluationsException;NaN",
+    "patch_out_content": "none;4.198840443916928",
+    "fix_out_content": "org.apache.commons.math.exception.TooManyEvaluationsException;NaN"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 147.3
+}

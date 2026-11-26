@@ -1,0 +1,82 @@
+{
+ "patch": "Patch157",
+ "dataset": "apr",
+ "bug": "Math-24",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:20:31",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 8228,
+   "failed_on_buggy": 8228,
+   "pass": 0,
+   "fail": 8228,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-28.89490486659233, -39.26800784208814, 36.67548148429469, -25.108525093850055, 7.561780351116E-4, 0.006127511962399403, 0) -> logged [-28.86692766224317, 7.827239631946424E-4, 1.2621774483536189E-29, 6.0]\njava.lang.AssertionError: Returned value 7.827239631946424E-4 is worse than best evaluated value 1.2621774483536189E-29\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Met",
+    "input (5.237696157910008, -0.577158183040126, 29.764825115723156, 18.9027652781176, 9.955583460859701E-4, 0.0011632364187262076, 0) -> logged [5.231318489367012, 4.0674656044328316E-5, 7.888609052210118E-31, 6.0]\njava.lang.AssertionError: Returned value 4.0674656044328316E-5 is worse than best evaluated value 7.888609052210118E-31\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Met",
+    "input (18.088909223775133, -34.500158432076624, 40.77265252948075, -25.63574553394168, 6.609005917094239E-4, 0.006245385760338958, 0) -> logged [18.07070886720542, 3.312529792647467E-4, 1.2621774483536189E-29, 6.0]\njava.lang.AssertionError: Returned value 3.312529792647467E-4 is worse than best evaluated value 1.2621774483536189E-29\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Met"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 8275,
+   "unique_failures": {
+    "java.lang.AssertionError": 1
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: Returned value -4.0746096205768466E-4 is worse than best evaluated value -5.0487097934144756E-29\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\nLocation: org.apache.commons.math3.optimization.univariate.JQF_BrentOptimizerTest.testBugReproduction(JQF_BrentOptimizerTest.java:163)\n\nis triggered by the following inputs:\n\n    input (-39.11876880724287, -48.8966586450177, 21.10250341106422, 7.16147861600264, 4.676610844742486E-4, 0.0018913364456009862, 1) -> logged [-39.09858314495357, -4.0746096205768466E-4, -5.0487097934144756E-29, 6.0]"
+  },
+  "seconds": 37.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 208.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 206.4436857700348,
+  "time": {
+   "CHECKOUT_BUGGY": 3.6319515705108643,
+   "DELTA_BUGGY": 0.0018703937530517578,
+   "COMPILE_BUGGY": 7.364580392837524,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.843129873275757,
+   "PATCH": 0.0463101863861084,
+   "DELTA_PATCH": 0.0014233589172363281,
+   "COMPILE_PATCH": 7.61019492149353,
+   "PATCH_TEST": 2.615374803543091,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.3761806488037,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 252.9
+}

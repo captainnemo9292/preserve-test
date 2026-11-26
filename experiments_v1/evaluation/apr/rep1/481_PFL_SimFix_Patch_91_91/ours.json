@@ -1,0 +1,83 @@
+{
+ "patch": "481_PFL_SimFix_Patch_91_91",
+ "dataset": "apr",
+ "bug": "Math-71",
+ "tool": "SimFix",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T02:13:26",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 15036,
+   "failed_on_buggy": 15036,
+   "pass": 0,
+   "fail": 15036,
+   "not_run": 0,
+   "failing_examples": [
+    "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.813547096969561) -> logged [1.878250479999994E9, none, 1.0001600127918597]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250479999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati",
+    "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.11229458010013882) -> logged [1.878250479999994E9, none, 1.0001600127918597]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250479999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati",
+    "input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.5005819144424419) -> logged [1.878250479999994E9, none, 1.0001600127918597]\njava.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250479999994E9>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.Delegati"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 15064,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<1.8782503799999986E9> but was:<1.878250479999994E9>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\nLocation: org.apache.commons.math.ode.nonstiff.JQF_ClassicalRungeKuttaIntegratorTest.testBugReproduction(JQF_ClassicalRungeKuttaIntegratorTest.java:89)\n\nis triggered by the following inputs:\n\n    input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.7031160239719989) -> logged [1.878250479999994E9, none, 1.0001600127918597]\n    input (1.8782503200000029E9, 1.8782503799999986E9, 60.0, 0.7290111034391837) -> logged [1.878250479999994E9, none, 1.0001600127918597]"
+  },
+  "seconds": 32.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 203.3,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 201.7656180858612,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5818440914154053,
+   "DELTA_BUGGY": 0.0017242431640625,
+   "COMPILE_BUGGY": 5.126612186431885,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4839136600494385,
+   "PATCH": 0.008603096008300781,
+   "DELTA_PATCH": 0.0013117790222167969,
+   "COMPILE_PATCH": 5.982272148132324,
+   "PATCH_TEST": 1.7024428844451904,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 181.271470785141,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 236.7
+}

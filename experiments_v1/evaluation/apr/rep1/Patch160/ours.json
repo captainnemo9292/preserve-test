@@ -1,0 +1,91 @@
+{
+ "patch": "Patch160",
+ "dataset": "apr",
+ "bug": "Math-39",
+ "tool": "Nopol2017",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:32:07",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 415,
+   "failed_on_buggy": 415,
+   "pass": 0,
+   "fail": 415,
+   "not_run": 0,
+   "failing_examples": [
+    "input (7.4983027861811316, 4.2332811773549865, -4.685931315395996) -> logged [7.498323395739452, 4.233301786913307, 7.5371935755983595, 32, none]\njava.lang.AssertionError: function evaluated beyond end of range: 7.5371935755983595 > 7.498323395739452\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.",
+    "input (-5.635291908108164, 5.158378817508424, -6.428382642121855) -> logged [-5.635291535186719, 5.158379190429869, -5.59560170695129, 32, none]\njava.lang.AssertionError: function evaluated beyond end of range: -5.59560170695129 > -5.635291535186719\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.",
+    "input (-1.2917098869939885, 8.67352218527443, -6.204949969252349) -> logged [-1.2917092631872946, 8.673522809081124, -1.2497148392831858, 32, none]\njava.lang.AssertionError: function evaluated beyond end of range: -1.2497148392831858 > -1.2917092631872946\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.assertTrue(Assert.java:41)\n\tat org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Meth"
+   ]
+  },
+  "fresh": {
+   "trials": 376,
+   "inside_buggyIf": 288,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: function evaluated beyond end of range: -4.773979252040484 > -4.8101620021914\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.assertTrue(Assert.java:41)\n    \tat org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)\n\nLocation: org.apache.commons.math.ode.nonstiff.JQF_DormandPrince853IntegratorTest.testBugReproduction(JQF_DormandPrince853IntegratorTest.java:60)\n\nis triggered by the following inputs:\n\n    input (-4.810166456293081, 1.9406291214648337, -5.351239872813159) -> logged [-4.8101620021914, 1.9406335755665145, -4.773979252040484, 32, none]\n    input (-2.1484532490002923, 4.89388006992313, -2.0151696012433433) -> logged [-2.138796512108243, 4.903536806815179, -2.108980246527458, 32, none]"
+  },
+  "seconds": 76.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 37.4,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 35.886470794677734,
+  "time": {
+   "CHECKOUT_BUGGY": 3.9023523330688477,
+   "DELTA_BUGGY": 0.0016925334930419922,
+   "COMPILE_BUGGY": 6.5400004386901855,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.684034585952759,
+   "PATCH": 0.02009749412536621,
+   "DELTA_PATCH": 0.001155853271484375,
+   "COMPILE_PATCH": 7.211533546447754,
+   "PATCH_TEST": 1.7524745464324951,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.3341255187988281,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.621372938156128,
+   "DELTA_FIX": 0.001116037368774414,
+   "COMPILE_FIX": 5.592365980148315,
+   "REPRO_FOR_VALIDATE": 1.5656788349151611,
+   "VALIDATE": 0.00938558578491211
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch160-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch160-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch160-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch160-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "-5.634294396740636;8.377178909900927;0.8036691542977366",
+    "org_out_content": "0.7288115489468385;14.740284855588403;0.7288115489468385;62;none",
+    "patch_out_content": "0.7288115489468385;14.740284855588403;0.7288115489468385;65;none",
+    "fix_out_content": "0.7288115489468385;14.740284855588403;0.7288115489468385;62;none"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 115.6
+}

@@ -1,0 +1,83 @@
+{
+ "patch": "Patch38",
+ "dataset": "apr",
+ "bug": "Math-40",
+ "tool": "jKali",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:34:21",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 6793,
+   "failed_on_buggy": 6793,
+   "pass": 6793,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 6907,
+   "unique_failures": {}
+  },
+  "seconds": 20.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 38.8,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 36.54012155532837,
+  "time": {
+   "CHECKOUT_BUGGY": 3.692636013031006,
+   "DELTA_BUGGY": 0.0013384819030761719,
+   "COMPILE_BUGGY": 5.444081783294678,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.8654675483703613,
+   "PATCH": 0.017757177352905273,
+   "DELTA_PATCH": 0.0011563301086425781,
+   "COMPILE_PATCH": 6.334630966186523,
+   "PATCH_TEST": 2.2324674129486084,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 1.926011085510254,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 3.8734705448150635,
+   "DELTA_FIX": 0.0014007091522216797,
+   "COMPILE_FIX": 6.587482690811157,
+   "REPRO_FOR_VALIDATE": 1.590533971786499,
+   "VALIDATE": 0.011565208435058594
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "R",
+    "consistency": "C",
+    "diff_count": 1,
+    "in": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch38-s0/log/test1/1/ORG/id_000000001/IN.log",
+    "org_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch38-s0/log/test1/1/ORG/id_000000001/OUT.log",
+    "patch_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch38-s0/log/test1/1/PATCH/id_000000001/OUT.log",
+    "fix_out": "/tmp/preserve-experiment/experiments_v1-03c53d3a/poracle-root-apr-29509/.poracle-ours-Patch38-s0/validation/fix/test1/id_000000001/OUT.log",
+    "in_content": "1.022240849309451E9;1.8268683894836876E-7;878.1163394978275;17.530719013559516;2",
+    "org_out_content": "NaN;org.apache.commons.math.exception.TooManyEvaluationsException;101;100;98",
+    "patch_out_content": "-0.49999999997661815;none;18;18;11",
+    "fix_out_content": "-0.49999999999996625;none;16;16;7"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 61.1
+}

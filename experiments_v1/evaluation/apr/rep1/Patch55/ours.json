@@ -1,0 +1,82 @@
+{
+ "patch": "Patch55",
+ "dataset": "apr",
+ "bug": "Math-73",
+ "tool": "Nopol2015",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T02:21:14",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 14191,
+   "failed_on_buggy": 14191,
+   "pass": 0,
+   "fail": 14191,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-1.6292822067398127, 1.7596989863597816, 7.1330519350328245, 3.829465415309826, -9.456314494954757, 4.420616848151219, 1) -> logged [returned, 1.7596989863597816]\norg.junit.ComparisonFailure: expected:<[IllegalArgumentException]> but was:<[returned]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org",
+    "input (-8.921323150479907, -3.2280847862950406, 0.6123751325476423, 3.531996837459296, -5.465594165984349, -1.183441975384544, 0) -> logged [returned, -3.2280847862950406]\norg.junit.ComparisonFailure: expected:<[IllegalArgumentException]> but was:<[returned]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org",
+    "input (2.3607416743811562, 3.3165623517721166, 3.3354484704669716, 0.9127014015166964, 2.33478843604313, 3.1676022015440974, 0) -> logged [returned, 3.3165623517721166]\norg.junit.ComparisonFailure: expected:<[IllegalArgumentException]> but was:<[returned]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:59)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org"
+   ]
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 14219,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[IllegalArgumentException]> but was:<[returned]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:59)\n\nLocation: org.apache.commons.math.analysis.solvers.JQF_BrentSolverTest.testBugReproduction(JQF_BrentSolverTest.java:59)\n\nis triggered by the following inputs:\n\n    input (-6.2395218212250665, -0.137753269167888, 5.5410041860340264, 2.9418930386519464, 4.201581929107888, 4.198380578580428, 0) -> logged [returned, 4.201582045527721]\n    input (-8.801860075444987, 3.0397939111984673, 7.5565613579441475, 3.757679287358072, -8.64708202350133, 1.8441098434971224, 0) -> logged [returned, 3.0397939111984673]"
+  },
+  "seconds": 26.8
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 201.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 200.0273995399475,
+  "time": {
+   "CHECKOUT_BUGGY": 2.5935943126678467,
+   "DELTA_BUGGY": 0.0013267993927001953,
+   "COMPILE_BUGGY": 5.131049394607544,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 2.5790634155273438,
+   "PATCH": 0.015543937683105469,
+   "DELTA_PATCH": 0.0013630390167236328,
+   "COMPILE_PATCH": 6.424523115158081,
+   "PATCH_TEST": 2.127074718475342,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.31399869918823,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 229.9
+}

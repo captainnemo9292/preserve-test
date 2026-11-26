@@ -1,0 +1,76 @@
+{
+ "patch": "572_PFL_FixMiner_Patch_2_2",
+ "dataset": "apr",
+ "bug": "Math-22",
+ "tool": "FixMiner",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:19:40",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (58.53521829199173, 32.97065988086571) -> logged [0.0, Infinity, 0, 1, NaN, NaN]\njava.lang.AssertionError: lower bound inclusive must match finiteness of density at lower bound expected:<false> but was:<true>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMeth",
+    "input (63.60093050987408, 18.006712567018003) -> logged [0.0, Infinity, 0, 1, NaN, NaN]\njava.lang.AssertionError: lower bound inclusive must match finiteness of density at lower bound expected:<false> but was:<true>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMeth",
+    "input (1.2483901626399656, 70.01644410056353) -> logged [0.0, Infinity, 0, 1, NaN, NaN]\njava.lang.AssertionError: lower bound inclusive must match finiteness of density at lower bound expected:<false> but was:<true>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:118)\n\tat org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMeth"
+   ]
+  },
+  "fresh": {
+   "trials": 36806,
+   "inside_buggyIf": 36805,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: lower bound inclusive must match finiteness of density at lower bound expected:<false> but was:<true>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:118)\n    \tat org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)\n\nLocation: org.apache.commons.math3.distribution.JQF_FDistributionTest.testBugReproduction(JQF_FDistributionTest.java:38)\n\nis triggered by the following inputs:\n\n    input (83.76505892874519, 64.87601603919897) -> logged [0.0, Infinity, 0, 1, NaN, NaN]\n    input (41.12680233252751, 60.189587560308205) -> logged [0.0, Infinity, 0, 1, NaN, NaN]"
+  },
+  "seconds": 99.2
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 30.8,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 28.265597581863403,
+  "time": {
+   "CHECKOUT_BUGGY": 3.645805597305298,
+   "DELTA_BUGGY": 0.0014147758483886719,
+   "COMPILE_BUGGY": 8.442219495773315,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.7878611087799072,
+   "PATCH": 0.02718067169189453,
+   "DELTA_PATCH": 0.0019214153289794922,
+   "COMPILE_PATCH": 9.168433904647827,
+   "PATCH_TEST": 2.421689033508301,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 130.9
+}

@@ -1,0 +1,83 @@
+{
+ "patch": "Patch206",
+ "dataset": "apr",
+ "bug": "Math-90",
+ "tool": "ACS",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T03:19:00",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (java.lang.Object@3712b94, 1) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 1]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j",
+    "input (sb31, 3) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 3]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j",
+    "input (NC-39, 2) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 2]\njava.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failEquals(Assert.java:185)\n\tat org.junit.Assert.assertNotEquals(Assert.java:161)\n\tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat j"
+   ]
+  },
+  "fresh": {
+   "trials": 63061,
+   "inside_buggyIf": 31422,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: getCount of a non-Comparable object must be rejected, not silently return 0. Actual: none\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failEquals(Assert.java:185)\n    \tat org.junit.Assert.assertNotEquals(Assert.java:161)\n    \tat org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\nLocation: org.apache.commons.math.stat.JQF_FrequencyTest.testBugReproduction(JQF_FrequencyTest.java:94)\n\nis triggered by the following inputs:\n\n    input (NC86, 4) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 4]\n    input (java.lang.Object@528931cf, 2) -> logged [0, none, 0.0, none, 0, none, 0.0, none, 2]"
+  },
+  "seconds": 98.7
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 202.4,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 200.63779258728027,
+  "time": {
+   "CHECKOUT_BUGGY": 3.511026620864868,
+   "DELTA_BUGGY": 0.0010745525360107422,
+   "COMPILE_BUGGY": 5.542099714279175,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4726474285125732,
+   "PATCH": 0.009843111038208008,
+   "DELTA_PATCH": 0.0009248256683349609,
+   "COMPILE_PATCH": 5.475613594055176,
+   "PATCH_TEST": 1.7358782291412354,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.28350043296814,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 312.6
+}

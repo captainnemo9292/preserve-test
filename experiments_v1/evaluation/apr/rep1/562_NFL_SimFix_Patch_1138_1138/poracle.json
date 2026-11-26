@@ -1,0 +1,58 @@
+{
+ "patch": "562_NFL_SimFix_Patch_1138_1138",
+ "dataset": "apr",
+ "bug": "Lang-58",
+ "tool": "SimFix",
+ "label": "Correct",
+ "suite": "poracle",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-22T12:31:30",
+ "container": "poracle-original",
+ "preserve": {
+  "container": "poracle-original",
+  "deltas": "/poracle-experiments/deltas",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 204.0,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 201.349867105484,
+  "time": {
+   "CHECKOUT_BUGGY": 3.7037627696990967,
+   "DELTA_BUGGY": 0.022040843963623047,
+   "COMPILE_BUGGY": 5.623312950134277,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.5524513721466064,
+   "PATCH": 0.01453256607055664,
+   "DELTA_PATCH": 0.024283647537231445,
+   "COMPILE_PATCH": 5.594638347625732,
+   "PATCH_TEST": 1.7341103553771973,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.33512330055237,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 204.0
+}

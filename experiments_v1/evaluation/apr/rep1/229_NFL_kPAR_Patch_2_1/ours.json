@@ -1,0 +1,82 @@
+{
+ "patch": "229_NFL_kPAR_Patch_2_1",
+ "dataset": "apr",
+ "bug": "Math-49",
+ "tool": "kPAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:39:10",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 15531,
+   "failed_on_buggy": 15531,
+   "pass": 0,
+   "fail": 15531,
+   "not_run": 0,
+   "failing_examples": [
+    "input (4, 3.2840761329181286E-4, -3.470717215299592, 0.0, 0.0, -1.9919720448145384, -8.094414717715104, 0.0, 0.0, -5.28941916581922E-9, 0.0, -8.4252226108817, 0.0, -0.7173461705390984, 2.883284629818372E-9, -8.608109653138229, 0.0, -0.38853626151332676) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [-3.470717215299592, 0.0, 0.0, -1.9919720448145384], [0.0, -8.4252226108817, 0.0, -0.7173461705390984]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho",
+    "input (8, 3.45901399639292E-4, 1.4502773980447579, -5.282000272305587, -9.040102258763326, 5.416436903618658, 5.28949534032969, 0.8135208007655965, -9.738985816347475E-10, 0.0, 3.416273421144302, 6.18692784111327, 3.101508472111454E-9, 0.23809513253563175, -0.613954656536924, -1.8282988016702588E-9, -0.4076439441168027, -7.518330901602988) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [1.4502773980447579, -5.282000272305587, -9.040102258763326, 5.416436903618658, 5.28949534032969, 0.8135208007655965, 0.0, 0.0], [3.416273421144302, 6.18692784111327, 0.0, 0.23809513253563175, -0.613954656536924, 0.0, -0.4076439441168027, -7.518330901602988]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho",
+    "input (5, 4.420044978083149E-4, 8.20342325324054, 3.5874309169035428, 0.0, -6.016503327540632, -4.485406844889779, 0.0, 3.713945761991903, 2.809696703493721, 0.0, 0.0, -8.849223125841448, 0.0, 7.536135402818303, -1.617668480831293, 5.2498326466439575, 0.0) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [8.20342325324054, 3.5874309169035428, 0.0, -6.016503327540632, -4.485406844889779], [0.0, 0.0, -8.849223125841448, 0.0, 7.536135402818303]]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Metho"
+   ]
+  },
+  "fresh": {
+   "trials": 31305,
+   "inside_buggyIf": 13948,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[org.apache.commons.math.MathRuntimeException$6]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\nLocation: org.apache.commons.math.linear.JQF_SparseRealVectorTest.testBugReproduction(JQF_SparseRealVectorTest.java:101)\n\nis triggered by the following inputs:\n\n    input (4, 4.032779802297997E-4, 0.0, -0.32793494446899096, 9.238186919771032, 0.0, -4.704096308347032, -7.984375261378823, 3.8546523464970335, 3.757005741523523, 0.0, 0.0, -3.625301939113572, 2.1294926548642827, -8.301857063437502, -5.524080118830684, 8.878019699091542, -2.3218533162490314) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [0.0, -0.32793494446899096, 9.238186919771032, 0.0], [0.0, 0.0, -3.625301939113572, 2.1294926548642827]]\n    input (8, 3.356372876770271E-4, 2.9631122388471898, 0.0, 0.0, -9.812284118084149, 0.0, -7.848416853660643, 7.766462764962213, -8.917141469696952, 0.0, -2.19629014888268E-9, 0.0, -6.883825911438892, 9.044712516148202, 3.001576069437462, 0.0, 0.0) -> logged [org.apache.commons.math.MathRuntimeException$6, null, [2.9631122388471898, 0.0, 0.0, -9.812284118084149, 0.0, -7.848416853660643, 7.766462764962213, -8.917141469696952], [0.0, 0.0, 0.0, -6.883825911438892, 9.044712516148202, 3.001576069437462, 0.0, 0.0]]"
+  },
+  "seconds": 110.6
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 213.6,
+  "consistency": "I",
+  "patch_plausible": true,
+  "total_time": 211.39582514762878,
+  "time": {
+   "CHECKOUT_BUGGY": 3.675776720046997,
+   "DELTA_BUGGY": 0.0014514923095703125,
+   "COMPILE_BUGGY": 10.118365049362183,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.800865888595581,
+   "PATCH": 0.03823518753051758,
+   "DELTA_PATCH": 0.0017025470733642578,
+   "COMPILE_PATCH": 8.330344915390015,
+   "PATCH_TEST": 3.581667423248291,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.4943687915802,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "I"
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 330.0
+}

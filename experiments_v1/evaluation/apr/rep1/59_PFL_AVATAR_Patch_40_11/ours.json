@@ -1,0 +1,76 @@
+{
+ "patch": "59_PFL_AVATAR_Patch_40_11",
+ "dataset": "apr",
+ "bug": "Math-4",
+ "tool": "AVATAR",
+ "label": "Incorrect",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:06:16",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-9, 1, 7, 8, 8, 1, 9, -1, 1, -1, -7, 2, 1) -> logged [java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest.testBugReproduction(JQF_SubLineTest.java:68)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat",
+    "input (1, -8, 9, -4, -2, 3, -3, 2, 7, 1, 9, 9, 1) -> logged [java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest.testBugReproduction(JQF_SubLineTest.java:68)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat",
+    "input (0, 9, -3, -9, -5, -1, -8, 8, 3, 8, -8, -5, 1) -> logged [java.lang.NullPointerException, null]\norg.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n\tat org.junit.Assert.assertEquals(Assert.java:115)\n\tat org.junit.Assert.assertEquals(Assert.java:144)\n\tat org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest.testBugReproduction(JQF_SubLineTest.java:68)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat"
+   ]
+  },
+  "fresh": {
+   "trials": 65489,
+   "inside_buggyIf": 65297,
+   "unique_failures": {
+    "org.junit.ComparisonFailure": 2
+   },
+   "failing_examples": "The error:\n    org.junit.ComparisonFailure: expected:<[none]> but was:<[java.lang.NullPointerException]>\n    \tat org.junit.Assert.assertEquals(Assert.java:115)\n    \tat org.junit.Assert.assertEquals(Assert.java:144)\n    \tat org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest.testBugReproduction(JQF_SubLineTest.java:68)\n\nLocation: org.apache.commons.math3.geometry.euclidean.threed.JQF_SubLineTest.testBugReproduction(JQF_SubLineTest.java:68)\n\nis triggered by the following inputs:\n\n    input (3, -9, -6, 5, -2, 2, -8, -6, -8, 4, 3, -9, 0) -> logged [java.lang.NullPointerException, null]\n    input (0, -10, 2, 9, 8, -4, 9, -3, -4, 2, 10, 6, 0) -> logged [java.lang.NullPointerException, null]"
+  },
+  "seconds": 93.2
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "R",
+  "seconds": 29.6,
+  "consistency": "C",
+  "patch_plausible": false,
+  "total_time": 27.747831344604492,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5538015365600586,
+   "DELTA_BUGGY": 0.002039670944213867,
+   "COMPILE_BUGGY": 9.371519327163696,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.765085220336914,
+   "PATCH": 0.030462980270385742,
+   "DELTA_PATCH": 0.0014371871948242188,
+   "COMPILE_PATCH": 8.010801315307617,
+   "PATCH_TEST": 1.8855242729187012,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 0,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": []
+ },
+ "verdict": "R",
+ "seconds": 123.7
+}

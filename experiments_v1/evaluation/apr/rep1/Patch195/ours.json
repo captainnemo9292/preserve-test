@@ -1,0 +1,75 @@
+{
+ "patch": "Patch195",
+ "dataset": "apr",
+ "bug": "Math-4",
+ "tool": "ACS",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:06:43",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "pass",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 20000,
+   "fail": 0,
+   "not_run": 0
+  },
+  "fresh": {
+   "trials": 100001,
+   "inside_buggyIf": 99731,
+   "unique_failures": {}
+  },
+  "seconds": 67.1
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 209.8,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 207.89784145355225,
+  "time": {
+   "CHECKOUT_BUGGY": 3.5902957916259766,
+   "DELTA_BUGGY": 0.0014872550964355469,
+   "COMPILE_BUGGY": 9.144845485687256,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.6621124744415283,
+   "PATCH": 0.015319108963012695,
+   "DELTA_PATCH": 0.0015685558319091797,
+   "COMPILE_PATCH": 8.164250373840332,
+   "PATCH_TEST": 1.9740004539489746,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.31925320625305,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "A",
+ "seconds": 278.4
+}

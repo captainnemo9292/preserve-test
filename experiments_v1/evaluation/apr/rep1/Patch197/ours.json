@@ -1,0 +1,83 @@
+{
+ "patch": "Patch197",
+ "dataset": "apr",
+ "bug": "Math-25",
+ "tool": "ACS",
+ "label": "Correct",
+ "suite": "ours",
+ "rep": 1,
+ "duration": "3m",
+ "started_at": "2026-11-26T01:21:51",
+ "test_status": "valid",
+ "repro_seconds": 60,
+ "repro": {
+  "result": "fail",
+  "paired": {
+   "inputs": 20000,
+   "failed_on_buggy": 20000,
+   "pass": 0,
+   "fail": 20000,
+   "not_run": 0,
+   "failing_examples": [
+    "input (-5.104892822837246, -3.813835418105489, -2.898426213913039, -1.4599310099184173, -29.46692894453303, -1.6385064297387686, -6.282145269549611, -9.241283859541177) -> logged [none, 3.8013887149012042, 1.7238000367823083, -0.8806373823440266]\njava.lang.AssertionError: expected:<13.914211257397131> but was:<3.8013887149012042>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.in",
+    "input (6.182287181563716, 7.517483276007234, 8.02260388982273, 9.390756354145607, 11.365677397428287, 12.627324946054669, 14.202657503031611, 15.843066085709951, 16.69281588025722, 17.87923433775622, 19.660744040433272, 19.88043596105939, -20.993244257896542, 0.8402277072220166, -2.569559538051527, -6.452045826464364, 9.193176811685543, 8.261345658355566, -6.285377784502404, 0.41199192794295314, 4.739462736047344, -8.817922681633291, -6.905947659877876, -5.050513654994633) -> logged [none, 9.005549746659417, 0.4586886453288263, 0.8929132192722411]\njava.lang.AssertionError: expected:<15.093210534791043> but was:<9.005549746659417>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv",
+    "input (5.762693432724586, 7.735973675724194, 8.628794817640298, 9.326365179264975, 10.611083616178892, 12.376681226410088, 14.10828170219435, 14.472209319061083, 15.770992514854107, 17.1504132039261, 18.550269564744156, 19.56562005108862, 22.886811244740464, 6.75187320906571, 6.775090709986372, -9.481904154855927, -0.31425195520752425, -1.91476312006683, -9.76941997789256, -8.498951363496712, 0.21549526963475607, -1.657016864239253, 3.450801868402211, -3.8052352759292907) -> logged [none, 8.272255343939467, 0.4552067457071136, -2.4925043098765323]\njava.lang.AssertionError: expected:<16.328115611316512> but was:<8.272255343939467>\n\tat org.junit.Assert.fail(Assert.java:88)\n\tat org.junit.Assert.failNotEquals(Assert.java:834)\n\tat org.junit.Assert.assertEquals(Assert.java:553)\n\tat org.junit.Assert.assertEquals(Assert.java:683)\n\tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.inv"
+   ]
+  },
+  "fresh": {
+   "trials": 71689,
+   "inside_buggyIf": 40846,
+   "unique_failures": {
+    "java.lang.AssertionError": 2
+   },
+   "failing_examples": "The error:\n    java.lang.AssertionError: expected:<17.317297471775667> but was:<5.887499108878747>\n    \tat org.junit.Assert.fail(Assert.java:88)\n    \tat org.junit.Assert.failNotEquals(Assert.java:834)\n    \tat org.junit.Assert.assertEquals(Assert.java:553)\n    \tat org.junit.Assert.assertEquals(Assert.java:683)\n    \tat org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nLocation: org.apache.commons.math3.optimization.fitting.JQF_HarmonicFitterTest.testBugReproduction(JQF_HarmonicFitterTest.java:152)\n\nis triggered by the following inputs:\n\n    input (5.534867434435924, 6.460591947002651, 7.709707567013874, 8.946870885997042, 9.112955912873943, -27.570967165672943, 4.531353142856878, 0.20399397099180483, -4.711370439879106, 7.063627777878388) -> logged [none, 5.887499108878747, 1.7560173106514267, 0.8632659217225427]\n    input (-0.3447346028214504, 0.16243258840155994, 1.2943196429942252, 1.9875154851797883, 2.2070180156010046, 3.0452853953342665, 4.521651178781685, 29.8620286403145, -9.8375246377449, 2.3735745444023078, -1.8838198386273817, -4.528796981436911, 6.41822584647257, 8.967424181471134) -> logged [none, 9.402474409608018, 1.291139993654534, 1.3096927492808386]"
+  },
+  "seconds": 92.9
+ },
+ "preserve": {
+  "container": "poracle-reproduce",
+  "deltas": "/tmp/preserve-experiment/experiments_v1-03c53d3a/deltas-ours-29509",
+  "duration": "3m",
+  "seed": 0,
+  "returncode": 0,
+  "verdict": "A",
+  "seconds": 202.8,
+  "consistency": "C",
+  "patch_plausible": true,
+  "total_time": 201.1993443965912,
+  "time": {
+   "CHECKOUT_BUGGY": 3.4409055709838867,
+   "DELTA_BUGGY": 0.0010235309600830078,
+   "COMPILE_BUGGY": 5.001528978347778,
+   "ZEST_BUGGY": 0,
+   "PREP_DATA": 0,
+   "SANITIZE_DATA": 0,
+   "TRAIN_MODEL": 0,
+   "CHECKOUT_PATCH": 3.4414114952087402,
+   "PATCH": 0.008507251739501953,
+   "DELTA_PATCH": 0.0009963512420654297,
+   "COMPILE_PATCH": 6.606133937835693,
+   "PATCH_TEST": 1.7921249866485596,
+   "REPRO_FOR_FIND_DIFF": 0,
+   "FIND_DIFF": 180.35696530342102,
+   "PREP_DIFF_DATA": 0,
+   "SANITIZE_DIFF_DATA": 0,
+   "PREDICT": 0,
+   "CHECKOUT_FIX": 0,
+   "DELTA_FIX": 0,
+   "COMPILE_FIX": 0,
+   "REPRO_FOR_VALIDATE": 0,
+   "VALIDATE": 0
+  },
+  "test_results": [
+   {
+    "test_ID": "1",
+    "judge": "A",
+    "consistency": "C",
+    "validation_size": 0
+   }
+  ]
+ },
+ "verdict": "R",
+ "seconds": 297.4
+}
